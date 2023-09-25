@@ -66,5 +66,15 @@
     <string name="remove">remove</string>
     <string name="add_address">+ Add Address</string>
     <string name="select_a_payment_method">Select a payment method</string>
+    <string name="cash_on_delivery_cod">Cash on delivery (COD)</string>
+    <string name="go_next">-----)</string>
+    <string name="select_a_payment">Select a Payment</string>
+    <string name="checkout">CheckOut</string>
+    <string name="delivery_address">Delivery Address</string>
+    <string name="delivery_options">Delivery Options</string>
+    <string name="free_standard_delivery">Free Standard delivery</string>
+    <string name="delivered_on_today_as_per_fast">Delivered on Today as per fast</string>
+    <string name="delivered_on_today_or_tomorrow">Delivered on Today or Tomorrow</string>
+    <string name="_60_fast_delivery">₹60 Fast delivery</string>
 
 </resources>

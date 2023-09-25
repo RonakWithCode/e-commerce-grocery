@@ -56,7 +56,10 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
         }
 
         binding.Buy.setOnClickListener(Buy->{
-            startActivity(new Intent(requireContext(), OderActivity.class));
+            Intent i = new Intent(requireContext(), OderActivity.class);
+            i.putExtra("BuyType","Cart");
+            startActivity(i);
+
         });
 
         init();
@@ -121,5 +124,6 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
             totalPrice += productModels.get(i).getPrice();
             binding.SubTotal.setText("SubTotal ₹"+totalPrice);
         }
+
     }
 }

@@ -4,23 +4,169 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Fragment.PaymentScreenFragment">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="UselessParent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/view_chockOut"
+                android:text="@string/checkout"
+                android:textSize="@dimen/_15ssp"
+                android:layout_margin="@dimen/_15sdp"
+                android:textColor="@color/MainTextColor"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
 
-    <TextView
-        android:id="@+id/view"
-        android:text="@string/select_a_payment_method"
-        android:textSize="@dimen/_15ssp"
-        android:layout_margin="@dimen/_15sdp"
-        android:textColor="@color/MainTextColor"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/view_Delivery"
+                android:textSize="@dimen/_15ssp"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_width="wrap_content"
+                android:layout_below="@id/view_chockOut"
+                android:textColor="@color/MainTextColor"
+                android:text="@string/delivery_address"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:layout_alignParentEnd="true"
+                android:id="@+id/Change"
+                android:textColor="@color/orange_secondary"
+                android:layout_marginEnd="@dimen/_25sdp"
+                android:text="@string/change"
+                android:layout_below="@id/view_chockOut"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/DeliveryAddress"
+                android:textSize="@dimen/_15ssp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_width="wrap_content"
+                android:layout_below="@id/view_Delivery"
+                android:textColor="@color/MainTextColor"
+                android:maxLines="3"
+                android:layout_height="wrap_content"/>
 
 
+            <TextView
+                android:id="@+id/Delivery_Options"
+                android:layout_below="@id/DeliveryAddress"
+                android:text="@string/delivery_options"
+                android:textSize="@dimen/_15ssp"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:textColor="@color/MainTextColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
 
+            <RadioGroup
+                android:layout_marginTop="@dimen/_5sdp"
+                android:id="@+id/Options"
+                android:layout_below="@id/Delivery_Options"
+                android:layout_marginStart="10dp"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
 
+            <!-- In RadioGroup create the 1 Radio Button-->
+            <!-- like this we will add some more Radio Button-->
+            <RadioButton
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/radia_id1"
+                android:text="@string/free_standard_delivery"
+                android:textSize="20sp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_marginStart="@dimen/_20sdp"
+                    android:textColor="@color/MainTextColor"
+                    android:text="@string/delivered_on_today_or_tomorrow"
+                    android:layout_height="wrap_content"/>
+            <RadioButton
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/radia_id2"
+                android:text="@string/_60_fast_delivery"
+                android:textSize="20sp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_marginStart="@dimen/_20sdp"
+                    android:textColor="@color/MainTextColor"
+                    android:text="@string/delivered_on_today_as_per_fast"
+                    android:layout_height="wrap_content"/>
+            </RadioGroup>
 
+            <TextView
+                android:id="@+id/view"
+                android:layout_below="@id/Options"
+                android:text="@string/select_a_payment_method"
+                android:textSize="@dimen/_15ssp"
+                android:layout_margin="@dimen/_15sdp"
+                android:textColor="@color/MainTextColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <RelativeLayout
+                    android:id="@+id/COD"
+                    android:layout_below="@id/view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                <TextView
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_margin="@dimen/_10sdp"
+                        android:textColor="@color/MainTextColor"
+                        android:textSize="@dimen/_20sdp"
+                        android:text="@string/cash_on_delivery_cod"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_margin="@dimen/_10sdp"
+                        android:textColor="@color/MainTextColor"
+                        android:textSize="@dimen/_20sdp"
+                        android:text="@string/go_next"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:ignore="RelativeOverlap" />
+                </RelativeLayout>
+            <RelativeLayout
+                    android:layout_marginTop="@dimen/_15sdp"
+                    android:layout_below="@id/COD"
+                    android:id="@+id/OnlinePay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_margin="@dimen/_10sdp"
+                        android:textColor="@color/MainTextColor"
+                        android:textSize="@dimen/_20sdp"
+                        android:text="@string/select_a_payment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_margin="@dimen/_10sdp"
+                        android:textColor="@color/MainTextColor"
+                        android:textSize="@dimen/_20sdp"
+                        android:text="@string/go_next"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:ignore="RelativeOverlap" />
+                </RelativeLayout>
 
+            <ProgressBar
+                android:layout_centerInParent="true"
+                android:id="@+id/progressCircular"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </RelativeLayout>
 
-
-
-
+    </ScrollView>
 </RelativeLayout>
