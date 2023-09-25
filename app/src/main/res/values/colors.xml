@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="Link">#027ebc</color>
+    <color name="black">#FF000000</color>
+    <color name="PintButtonStart">#D200FF</color>
+    <color name="PintButtonBotten">#900091</color>
+    <color name="PintButtonEnd">#E87FFF</color>
+    <color name="white">#ffffff</color>
+    <color name="green">#005c4b</color>
+    <color name="green_text">#24ba87</color>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#D5A5A3A3</color>
+    <color name="colorAccent">#E95345</color>
+    <color name="trueBlack">#000000</color>
+    <color name="otp_editext_color">#DAE2DFDF</color>
+
+    <!--Main Background Color -->
+    <color name="MainQuntityColor">#E6E6E6</color>
+    <color name="MainBackgroundColor">#ffff</color>
+    <color name="MainTextColor">#000000</color>
+    <color name="MainHintColor">#757575</color>
+    <color name="orange">#FF5722</color>
+
+    <color name="FixBlack">#000000</color>
+    <!-- AboutActivity Colors    -->
+
+    <!--    <color name="StoryTextColor">#000000</color>-->
+
+    <!--SeeUserProfile-->
+
+    <!-- Login    -->
+    <color name="PlanText">#CACACA</color>
+    <!--Color of StoryTextColors  -->
+    <!--    SignupDetails -->
+    <!--    User_Profile -->
+    <!--User list of Chat Layout Color -->
+    <!--FixColor  -->
+    <color name="FixColorSaveTextColor">#94abdc</color>
+    <color name="FixColorCancelTextColor">#ccdcf6</color>
+
+    <!--    -->
+
+
+    <color name="green_primary">#4CAF50</color>
+    <color name="green_primary_variant">#388E3C</color>
+
+    <color name="orange_secondary">#FFA726</color>
+    <color name="orange_secondary_variant">#FF7043</color>
+    <color name="FixRed">#b63756</color>
+    <color name="fixBlue">#82b8c6</color>
+    <color name="FixBlue_Box">#96b9d1</color>
+
+
+</resources>

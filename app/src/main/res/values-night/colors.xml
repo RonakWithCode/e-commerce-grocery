@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="MainHintColor">#D6CECE</color>
+    <color name="MainBackgroundColor">#202124</color>
+    <color name="MainQuntityColor">#333030</color>
+    <color name="MainTextColor">#ffff</color>
+    <!--SeeUserProfile-->
+
+    <!-- Login    -->
+    <color name="PlanText">#171717</color>
+    <color name="Link">#027ebc</color>
+    <!--    SignupDetails   -->
+    <!--    User_Profile -->
+    <!--    Fix Color  -->
+
+    <!--User list of Chat Layout Color -->
+
+</resources>

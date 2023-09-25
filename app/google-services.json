@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "24117533764",
+    "firebase_url": "https://e-commerce-11d7d-default-rtdb.firebaseio.com",
+    "project_id": "e-commerce-11d7d",
+    "storage_bucket": "e-commerce-11d7d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:24117533764:android:e43cd2ba52999b9fb97011",
+        "android_client_info": {
+          "package_name": "com.crazyostudio.e_commerce_grocery_admin_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjqPOXVmKyL9ETPSTxJB7mQfuFlXNqQq8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:24117533764:android:2296ff462b0f3170b97011",
+        "android_client_info": {
+          "package_name": "com.crazyostudio.ecommercegrocery"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjqPOXVmKyL9ETPSTxJB7mQfuFlXNqQq8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

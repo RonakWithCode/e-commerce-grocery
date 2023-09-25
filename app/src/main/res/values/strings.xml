@@ -1,0 +1,70 @@
+<resources>
+    <string name="app_name">E Commerce Grocery</string>
+    <string name="create_account">Create a new Account</string>
+
+    <string name="name">Name</string>
+    <string name="mail">Mail</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="accept_terms_and_conditions">Accept Terms and Conditions</string>
+    <string name="read_more"><a href="https://crazy-studio-website.web.app/PrivacyPolicy.html">Read More</a></string>
+    <string name="icon">Icon</string>
+    <string name="otp">OTP</string>
+
+
+    <string name="otp_title">Please enter the 6 digit verification code</string>
+    <string name="otp_button_text">VERIFY</string>
+    <string name="resend_msg">Didn’t receive the OTP?</string>
+    <string name="resend_again_msg">Resend again</string>
+    <string name="change">Change</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="sent_to">Sent to</string>
+    <string name="home">Home</string>
+    <string name="shopping_carts">Shopping Carts</string>
+    <string name="more">More</string>
+    <string name="title_activity_home_main">HomeMainActivity</string>
+    <!-- Strings used for fragments for navigation -->
+
+    <string name="tap_to_search">Tap to Search</string>
+    <string name="tap_to_add_new_product">Tap To add new Product</string>
+    <string name="add_a_new_item">Add a new Item</string>
+    <string name="quantity">Quantity</string>
+    <string name="product_price">Product Price</string>
+    <string name="discount">Discount</string>
+    <string name="product_mrp">Product MRP</string>
+    <string name="product_stock">Product Stock</string>
+    <string name="product_description">Product Description</string>
+    <string name="product_name">Product name</string>
+    <string name="tap_to_add_a_new_image">Tap to add a new Image</string>
+    <string name="tap_to_save">Tap to Save</string>
+    <string name="add_a_new_category">Add a new Category</string>
+    <string name="input_category">Input Category</string>
+    <string name="ss" />
+    <string name="in_stock">In Stock</string>
+    <string name="add_to_wish_list">Add to Wish List</string>
+    <string name="fast_shipping">Fast Shipping</string>
+    <string name="net_quantity">Net Quantity</string>
+    <string name="number_of_item">Number of Item</string>
+    <string name="diet_type">Diet Type</string>
+    <string name="category">Category</string>
+    <string name="product_image">Product Image</string>
+    <string name="product_details">Product Details</string>
+    <string name="tap_to_view">Tap to view</string>
+    <string name="shopping_cart">Shopping Cart</string>
+    <string name="buy_it_again">Buy it Again</string>
+    <string name="tap_to_remove">Tap to remove</string>
+    <string name="tap_to_add_new_address">Tap to add new Address</string>
+    <string name="current_location">Current location</string>
+    <string name="address">Address</string>
+    <string name="save_address">Save Address</string>
+    <string name="deliver_to_this_address">Deliver to this address</string>
+    <string name="edit_address">Edit Address</string>
+    <string name="user_name">User Name</string>
+    <string name="tap_to_show_menu">Tap to show menu</string>
+    <string name="edit">Edit</string>
+    <string name="remove">remove</string>
+    <string name="add_address">+ Add Address</string>
+    <string name="select_a_payment_method">Select a payment method</string>
+
+</resources>

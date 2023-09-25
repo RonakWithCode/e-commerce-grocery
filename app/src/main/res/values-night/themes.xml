@@ -1,0 +1,33 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.ECommerceGrocery" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/green_primary</item>
+        <item name="colorPrimaryVariant">@color/green_primary_variant</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/orange_secondary</item>
+        <item name="colorSecondaryVariant">@color/orange_secondary_variant</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+
+        <!-- Customize your theme here. -->
+    </style>
+    <style name="MaterialSearchBarLight" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="mt_searchBarColor">@color/searchBarPrimaryColorDark</item>
+        <item name="mt_dividerColor">@color/searchBarDividerColorDark</item>
+        <item name="mt_navIconTint">@color/searchBarNavIconTintColorDark</item>
+        <item name="mt_searchIconTint">@color/searchBarSearchIconTintColorDark</item>
+        <item name="mt_clearIconTint">@color/searchBarClearIconTintColorDark</item>
+        <item name="mt_menuIconTint">@color/searchBarMenuIconTintColorDark</item>
+        <item name="mt_backIconTint">@color/searchBarBackIconTintColorDark</item>
+        <item name="mt_textCursorTint">@color/colorAccent</item>
+        <item name="mt_textColor">@color/searchBarTextColorDark</item>
+        <item name="mt_hintColor">@color/searchBarHintColorDark</item>
+        <item name="mt_placeholderColor">@color/searchBarPlaceholderColorDark</item>
+        <item name="mt_highlightedTextColor">@color/searchBarTextHighlightColorDark</item>
+    </style>
+</resources>

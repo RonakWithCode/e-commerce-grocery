@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_marginTop="@dimen/_5sdp"
+    android:layout_marginBottom="@dimen/_5sdp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/MainBackgroundColor"
+    android:layout_height="@dimen/_40sdp">
+
+    <androidx.cardview.widget.CardView
+        android:padding="@dimen/_10sdp"
+        android:outlineSpotShadowColor="@color/MainTextColor"
+        app:cardPreventCornerOverlap="true"
+        app:cardBackgroundColor="@color/MainBackgroundColor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:targetApi="p">
+    <TextView
+        android:id="@+id/address"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_width="wrap_content"
+        android:layout_gravity="top"
+        android:layout_marginEnd="@dimen/_25sdp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/MainTextColor"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginStart="@dimen/_15sdp"
+        android:maxLines="2"
+        android:text="@string/address"/>
+        <ImageButton
+            android:id="@+id/edit"
+            android:layout_width="20dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_dots"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginEnd="@dimen/_2sdp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:layout_gravity="end"
+            android:background="@null"
+            android:contentDescription="@string/tap_to_show_menu" />
+    </androidx.cardview.widget.CardView>
+
+
+
+
+
+</RelativeLayout>
