@@ -107,6 +107,7 @@ public class AddressFragment extends Fragment implements AddressInterface {
         Fragment fragment = new PaymentScreenFragment();
         Bundle bundle = new Bundle();
         bundle.putString("adders",adders);
+        bundle.putString("BuyType",adders);
         fragment.setArguments(bundle);
         transaction.replace(R.id.fragment_container,fragment,"PaymentScreen");
         transaction.addToBackStack("PaymentScreen");
@@ -120,6 +121,7 @@ public class AddressFragment extends Fragment implements AddressInterface {
         adderes.remove(pos);
         userInfo.setAddress(adderes);
         firebaseDatabase.getReference().child("UserInfo").child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid())).setValue(userInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
