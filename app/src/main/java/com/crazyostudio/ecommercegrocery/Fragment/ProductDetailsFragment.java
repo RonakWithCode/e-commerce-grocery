@@ -42,6 +42,8 @@ import org.imaginativeworld.whynotimagecarousel.model.CarouselItem;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import me.ibrahimsn.lib.SmoothBottomBar;
+
 public class ProductDetailsFragment extends Fragment implements onClickProductAdapter {
     private FragmentProductDetailsBinding binding;
     private ProductModel productModel;
@@ -93,10 +95,9 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
 
     @SuppressLint({"SetTextI18n", "ResourceAsColor", "NotifyDataSetChanged"})
     private void initValue() {
-        String userId = FirebaseAuth.getInstance().getUid();
-        if (FirebaseAuth.getInstance().getCurrentUser() ==null) {
-            startActivity(new Intent(getContext(), AuthMangerActivity.class));
-        }else {
+        if (FirebaseAuth.getInstance().getCurrentUser() !=null) {
+
+            String userId = FirebaseAuth.getInstance().getUid();
             assert userId != null;
             DatabaseReference productsRef = FirebaseDatabase.getInstance().getReference().child("Cart").child(userId);
             String productNameToFind = productModel.getId();
@@ -106,6 +107,7 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
                         binding.AddTOCart.setText("Go to Cart");
+                        binding.quantityBox.setVisibility(INVISIBLE);
                     }
                 }
                 @Override
@@ -130,13 +132,13 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
             binding.OutOfStockBuyOptions.setVisibility(VISIBLE);
             binding.quantity.setText("0");
             binding.TextInStock.setText("Out of Stock");
+            binding.quantityBox.setVisibility(INVISIBLE);
             binding.TextInStock.setTextColor(R.color.FixRed);
             binding.AddTOCart.setVisibility(INVISIBLE);
             binding.BuyNow.setVisibility(INVISIBLE);
         }
         binding.categoryType.setText(productModel.getCategory());
         binding.categoryType.setText(productModel.getQuantity()+productModel.getItemUnit());
-
         binding.dietType.setText("veg");
 //        binding.MRP.setText("M.R.P.: ₹"+productModel.getMRP());
 //        ArrayList<String>
@@ -179,6 +181,7 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
 
     public void buyNow() {
 
+
     }
     public void AddTOCart() {
         if (FirebaseAuth.getInstance().getCurrentUser()!=null){
@@ -189,28 +192,30 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
-                        Toast.makeText(requireContext(), "Go to Cart wait", Toast.LENGTH_SHORT).show();
+                        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.loader,new ShoppingCartsFragment(),"ShoppingCartsFragment");
+                        transaction.addToBackStack("ShoppingCartsFragment");
+                        transaction.commit();
+                        SmoothBottomBar smoothBottomBar = requireActivity().findViewById(R.id.bottomBar);
+                        smoothBottomBar.setItemActiveIndex(1);
                     }else {
-                        productsRef.child(productModel.getId()).setValue(productModel).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @SuppressLint("SetTextI18n")
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    binding.AddTOCart.setText("Go to Cart");
-                                }
+                        productsRef.child(productModel.getId()).setValue(productModel).addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                binding.AddTOCart.setText("Go to Cart");
                             }
                         }).addOnFailureListener(error -> basicFun.AlertDialog(requireContext(),error.toString()));
                     }
                 }
                 @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
                         // Handle the error in case of a database error.
                         Toast.makeText(getContext(), "Database error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
-            else {
-            startActivity(new Intent(getContext(),ActivityAuthMangerBinding.class));
+        else {
+            basicFun.AlertDialog(requireContext(),"Please Sign up for add to cart");
+            startActivity(new Intent(getContext(),AuthMangerActivity.class));
         }
 
     }

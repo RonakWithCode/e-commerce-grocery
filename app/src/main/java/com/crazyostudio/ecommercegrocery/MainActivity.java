@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
         catch (NullPointerException ignored) {
             String errorMessage = ignored.toString();
             FirebaseDatabase.getInstance().getReference().child("Error").setValue(errorMessage);
+
         }
         binding.bottomBar.setOnItemSelectedListener((OnItemSelectedListener) i -> {
             switch (i) {

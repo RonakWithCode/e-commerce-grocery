@@ -3,24 +3,243 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/MainBackgroundColor"
     tools:context=".Fragment.PaymentScreenFragment">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="UselessParent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ProgressBar
+                android:layout_centerInParent="true"
+                android:id="@+id/progressCircular"
+                android:visibility="invisible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
 
-    <TextView
-        android:id="@+id/view"
-        android:text="@string/select_a_payment_method"
-        android:textSize="@dimen/_15ssp"
-        android:layout_margin="@dimen/_15sdp"
-        android:textColor="@color/MainTextColor"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/view_chockOut"
+                android:text="@string/checkout"
+                android:textSize="@dimen/_15ssp"
+                android:layout_margin="@dimen/_15sdp"
+                android:textColor="@color/MainTextColor"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/view_Delivery"
+                android:textSize="@dimen/_15ssp"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_width="wrap_content"
+                android:layout_below="@id/view_chockOut"
+                android:textColor="@color/MainTextColor"
+                android:text="@string/delivery_address"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:layout_alignParentEnd="true"
+                android:id="@+id/Change"
+                android:textColor="@color/orange_secondary"
+                android:layout_marginEnd="@dimen/_25sdp"
+                android:text="@string/change"
+                android:layout_below="@id/view_chockOut"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/DeliveryAddress"
+                android:textSize="@dimen/_15ssp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_width="wrap_content"
+                android:layout_below="@id/view_Delivery"
+                android:textColor="@color/MainTextColor"
+                android:maxLines="3"
+                android:layout_height="wrap_content"/>
+
+
+            <TextView
+                android:id="@+id/Delivery_Options"
+                android:layout_below="@id/DeliveryAddress"
+                android:text="@string/delivery_options"
+                android:textSize="@dimen/_15ssp"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:textColor="@color/MainTextColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <RadioGroup
+                android:layout_marginTop="@dimen/_5sdp"
+                android:id="@+id/Options"
+                android:layout_below="@id/Delivery_Options"
+                android:layout_marginStart="10dp"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <!-- In RadioGroup create the 1 Radio Button-->
+                <!-- like this we will add some more Radio Button-->
+                <RadioButton
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/radia_id1"
+                    android:text="@string/free_standard_delivery"
+                    android:textSize="20sp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_marginStart="@dimen/_20sdp"
+                    android:textColor="@color/MainTextColor"
+                    android:text="@string/delivered_on_today_or_tomorrow"
+                    android:layout_height="wrap_content"/>
+                <RadioButton
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/radia_id2"
+                    android:text="@string/_60_fast_delivery"
+                    android:textSize="20sp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_marginStart="@dimen/_20sdp"
+                    android:textColor="@color/MainTextColor"
+                    android:text="@string/delivered_on_today_as_per_fast"
+                    android:layout_height="wrap_content"/>
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/view"
+                android:layout_below="@id/Options"
+                android:text="@string/select_a_payment_method"
+                android:textSize="@dimen/_15ssp"
+                android:layout_margin="@dimen/_15sdp"
+                android:textColor="@color/MainTextColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
 
 
 
 
+            <RadioGroup
+                android:id="@+id/payment"
+                android:layout_below="@id/view"
+                android:layout_marginStart="10dp"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <!-- In RadioGroup create the 1 Radio Button-->
+                <!-- like this we will add some more Radio Button-->
+                <RadioButton
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/COD"
+                    android:text="@string/cash_on_delivery_cod"
+                    android:textSize="20sp"/>
+                <RadioButton
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/OnlinePay"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:text="@string/select_a_payment"
+                    android:textSize="20sp"/>
+            </RadioGroup>
+            <RelativeLayout
+                android:layout_below="@id/payment"
+                android:layout_width="match_parent"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_15sdp"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_height="wrap_content">
+                
+                <TextView
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentStart="true"
+                    android:textSize="@dimen/_19ssp"
+                    android:textColor="@color/MainTextColor"
+                    android:text="Subtotal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:layout_alignParentTop="true"
+                    android:textSize="@dimen/_19ssp"
+                    android:textColor="@color/MainTextColor"
+                    android:id="@+id/SubTotal_Price"
+                    android:text="0"
+                    android:layout_alignParentEnd="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:layout_below="@id/SubTotal_Price"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:textSize="@dimen/_19ssp"
+                    android:textColor="@color/MainTextColor"
+                    android:text="@string/shipping"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_below="@id/SubTotal_Price"
+                    android:textSize="@dimen/_19ssp"
+                    android:textColor="@color/MainTextColor"
+                    android:id="@+id/Shipping_Price"
+                    android:text="0"
+                    android:layout_alignParentEnd="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:textSize="@dimen/_19ssp"
+                    android:textAlignment="center"
+                    android:textColor="@color/MainTextColor"
+                    android:text="@string/all_tax_are_included"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_below="@id/Shipping_Price"
+                    android:id="@+id/all_tax"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:layout_below="@id/all_tax"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:textSize="@dimen/_19ssp"
+                    android:textColor="@color/MainTextColor"
+                    android:text="@string/total"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_below="@id/all_tax"
+                    android:textSize="@dimen/_19ssp"
+                    android:textColor="@color/MainTextColor"
+                    android:id="@+id/Total_Price"
+                    android:text="0"
+                    android:layout_alignParentEnd="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+
+                <Button
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:textSize="@dimen/_18ssp"
+                    android:id="@+id/make_payment"
+                    android:text="@string/make_payment"
+                    android:layout_below="@id/Total_Price"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+            </RelativeLayout>
 
 
 
+        </RelativeLayout>
 
-
-
+    </ScrollView>
 </RelativeLayout>

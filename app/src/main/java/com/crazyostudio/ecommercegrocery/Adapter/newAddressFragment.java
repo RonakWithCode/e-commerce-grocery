@@ -88,7 +88,6 @@ public class newAddressFragment extends Fragment {
         binding.save.setOnClickListener(save->{
             binding.progressCircular.setVisibility(View.VISIBLE);
 //            userinfoModels.getValue(UserinfoModels.class);
-
             FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
 
             firebaseDatabase.getReference().child("UserInfo").child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid())).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -99,8 +98,11 @@ public class newAddressFragment extends Fragment {
                         UserinfoModels userInfo = snapshot.getValue(UserinfoModels.class);
                         ArrayList<String> adderes = new ArrayList<>();
                         adderes.add(binding.address.getText().toString()+"\n"+binding.house.getText().toString());
+                        if (snapshot.child("address").exists()) {
+                            assert userInfo != null;
+                            adderes.addAll(userInfo.getAddress());
+                        }
                         assert userInfo != null;
-                        adderes.addAll(userInfo.getAddress());
                         userInfo.setAddress(adderes);
                         firebaseDatabase.getReference().child("UserInfo").child(FirebaseAuth.getInstance().getUid()).setValue(userInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override

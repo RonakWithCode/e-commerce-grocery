@@ -1,5 +1,6 @@
 package com.crazyostudio.ecommercegrocery.Fragment;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -60,15 +61,26 @@ public class AddressFragment extends Fragment implements AddressInterface {
         binding.UserAddress.setLayoutManager(layoutManager);
         binding.UserAddress.setAdapter(addressAdapter);
         firebaseDatabase.getReference().child("UserInfo").child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid())).addListenerForSingleValueEvent(new ValueEventListener() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
+                    binding.progressCircular.setVisibility(View.INVISIBLE);
                     // Data exists, create a UserInfoModel instance and populate it
-                    userInfo = snapshot.getValue(UserinfoModels.class);
-                    assert userInfo != null;
-                    adderes.addAll(userInfo.getAddress());
-                    addressAdapter.notifyDataSetChanged();
-                }
+                    if (snapshot.child("address").exists()) {
+                        userInfo = snapshot.getValue(UserinfoModels.class);
+                        assert userInfo != null;
+                        adderes.addAll(userInfo.getAddress());
+                        binding.NotFoundText.setVisibility(View.INVISIBLE);
+                        binding.UserAddress.setVisibility(View.VISIBLE);
+
+                    }else {
+                        binding.NotFoundText.setVisibility(View.VISIBLE);
+                        binding.UserAddress.setVisibility(View.INVISIBLE);
+                    }
+                    }
+
+                addressAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -112,8 +124,8 @@ public class AddressFragment extends Fragment implements AddressInterface {
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
                     binding.progressCircular.setVisibility(View.INVISIBLE);
-                    addressAdapter.notifyDataSetChanged();
                 }
+                addressAdapter.notifyDataSetChanged();
             }
         }).addOnFailureListener(e -> basicFun.AlertDialog(requireContext(),e.toString()));
     }

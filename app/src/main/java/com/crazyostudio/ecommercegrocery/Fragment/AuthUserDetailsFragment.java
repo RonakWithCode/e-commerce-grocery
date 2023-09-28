@@ -78,7 +78,6 @@ public class AuthUserDetailsFragment extends Fragment {
                 p.show();
                 UserinfoModels UserinfoModels;
                 if (IsUseImage){
-//                        public UserinfoModels(String userId, String username, String emailAddress, String profilePictureUrl, String phoneNumber, boolean isActive) {
                     UserinfoModels = new UserinfoModels(FirebaseAuth.getInstance().getUid(), binding.Name.getText().toString(),binding.Mail.getText().toString(),userImage.toString(),number,true);
                     db.getReference().child("UserInfo").child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid())).setValue(UserinfoModels).addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
@@ -87,19 +86,18 @@ public class AuthUserDetailsFragment extends Fragment {
                                     .setDisplayName(binding.Name.getText().toString()).setPhotoUri(userImage)
                                     .build();
                             assert user != null;
-                            user.updateProfile(profileUpdates).addOnCompleteListener(task12 -> user.updateEmail(binding.Mail.getText().toString())
-                                    .addOnCompleteListener(task1 -> {
+                            user.updateProfile(profileUpdates).addOnCompleteListener(task1 -> {
                                         if (task1.isSuccessful()) {
 //                                            navController.navigate(R.id.action_authOTP_to_authUserDetailsFragment);
                                             if (p.isShowing()){
                                                 p.dismiss();
+                                                startActivity(new Intent(requireContext(), MainActivity.class));
                                             }
-                                            startActivity(new Intent(requireContext(), MainActivity.class));
 //                                            ////////////
                                         }else {
-                                            basicFun.AlertDialog(requireContext(), task12.toString());
+                                            basicFun.AlertDialog(requireContext(), task1.toString());
                                         }
-                                    }).addOnFailureListener(e -> basicFun.AlertDialog(requireContext(),e.toString()))).addOnFailureListener(e -> basicFun.AlertDialog(requireContext(),e.toString()));
+                                    }).addOnFailureListener(e -> basicFun.AlertDialog(requireContext(),e.toString()));
 
                         }else {
                             basicFun.AlertDialog(requireContext(),task.toString());
@@ -108,18 +106,30 @@ public class AuthUserDetailsFragment extends Fragment {
                 }else {
                     UserinfoModels = new UserinfoModels(FirebaseAuth.getInstance().getUid(), binding.Name.getText().toString(),binding.Mail.getText().toString(),number,true);
                     db.getReference().child("UserInfo").child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid())).setValue(UserinfoModels).addOnCompleteListener(task -> {
+
                         if (task.isSuccessful()) {
                             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                             UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                    .setDisplayName(binding.Name.getText().toString())
-                                    .build();
+                                    .setDisplayName(binding.Name.getText().toString()).build();
                             assert user != null;
-                            user.updateProfile(profileUpdates).addOnFailureListener(e -> basicFun.AlertDialog(requireContext(),task.toString()));
+                            user.updateProfile(profileUpdates).addOnCompleteListener(task1 -> {
+                                if (task1.isSuccessful()) {
+//                                            navController.navigate(R.id.action_authOTP_to_authUserDetailsFragment);
+                                    if (p.isShowing()){
+                                        p.dismiss();
+                                        startActivity(new Intent(requireContext(), MainActivity.class));
+                                    }
+//                                            ////////////
+                                }else {
+                                    basicFun.AlertDialog(requireContext(), task1.toString());
+                                }
+                            }).addOnFailureListener(e -> basicFun.AlertDialog(requireContext(),e.toString()));
+
                         }else {
                             basicFun.AlertDialog(requireContext(),task.toString());
                         }
-                    }).addOnFailureListener(e -> basicFun.AlertDialog(requireContext(),e.toString()));
 
+                    }).addOnFailureListener(e -> basicFun.AlertDialog(requireContext(),e.toString()));
                 }
             }
         });

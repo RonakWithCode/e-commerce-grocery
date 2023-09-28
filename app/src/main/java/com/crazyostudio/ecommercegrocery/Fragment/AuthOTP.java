@@ -5,6 +5,7 @@ import static android.content.Context.VIBRATOR_SERVICE;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -25,6 +26,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.crazyostudio.ecommercegrocery.MainActivity;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentAuthOTPBinding;
 import com.google.firebase.FirebaseException;
@@ -254,10 +256,10 @@ public class AuthOTP extends Fragment {
 
                             }
                             else {
-                            if (dialog.isShowing()) {
-                                dialog.dismiss();
-//                                Intent intent = new Intent(SignUpOTP.this, LockMangerActivity.class);
-//                                startActivity(intent);
+                                if (dialog.isShowing()) {
+                                    dialog.dismiss();
+                                Intent intent = new Intent(requireContext(), MainActivity.class);
+                                startActivity(intent);
 //                                navController.navigate(R.id.action_authOTP_to_homeMainActivity2);
 
                             }

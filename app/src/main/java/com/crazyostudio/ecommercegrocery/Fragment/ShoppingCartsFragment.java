@@ -3,64 +3,65 @@ package com.crazyostudio.ecommercegrocery.Fragment;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.HasDefaultViewModelProviderFactory;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 
-import com.bumptech.glide.Glide;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.crazyostudio.ecommercegrocery.Activity.OderActivity;
 import com.crazyostudio.ecommercegrocery.Adapter.ShoppingCartsAdapter;
-import com.crazyostudio.ecommercegrocery.Model.ProductModel;
-import com.crazyostudio.ecommercegrocery.R;
+import com.crazyostudio.ecommercegrocery.Model.ShoppingCartsProductModel;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentShoppingCartsBinding;
 import com.crazyostudio.ecommercegrocery.interfaceClass.ShoppingCartsInterface;
 import com.crazyostudio.ecommercegrocery.javaClasses.basicFun;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.hishd.tinycart.model.Cart;
+import com.hishd.tinycart.util.TinyCartHelper;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Objects;
-
 public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInterface {
     FragmentShoppingCartsBinding binding;
     ShoppingCartsAdapter cartsAdapter;
     FirebaseDatabase firebaseDatabase;
-    boolean IsChatsProgressBar = false;
-    ArrayList<ProductModel> models;
+    Cart cart;
+
+    ArrayList<ShoppingCartsProductModel> models;
     public ShoppingCartsFragment() {
         // Required empty public constructor
     }
+    @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentShoppingCartsBinding.inflate(inflater,container,false);
         firebaseDatabase =  FirebaseDatabase.getInstance();
+        cart = TinyCartHelper.getCart();
 
-        if (!IsChatsProgressBar){
-            binding.progressCircular.setVisibility(View.VISIBLE);
-        }
 
         binding.Buy.setOnClickListener(Buy->{
             startActivity(new Intent(requireContext(), OderActivity.class));
         });
-
         init();
+
         return binding.getRoot();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        cart.clearCart();
     }
 
     @SuppressLint("SetTextI18n")
@@ -75,14 +76,18 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot snapshot1 : snapshot.getChildren()) {
-                    ProductModel productModel = snapshot1.getValue(ProductModel.class);
+                    ShoppingCartsProductModel productModel = snapshot1.getValue(ShoppingCartsProductModel.class);
                     if (productModel != null) {
                         models.add(productModel);
-                        IsChatsProgressBar = true;
+                        cart.addItem(productModel,productModel.getSelectProductQuantity());
                         binding.progressCircular.setVisibility(View.GONE);
                     }
+
+
                 }
                 cartsAdapter.notifyDataSetChanged();
+                BigDecimal totalPrice = cart.getTotalPrice();
+                binding.SubTotal.setText("SubTotal ₹"+totalPrice);
             }
 
             @Override
@@ -97,6 +102,7 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
     @SuppressLint("NotifyDataSetChanged")
     @Override
     public void remove(int pos,String id) {
+      // cart.removeItem(models.get(pos));
         models.remove(pos);
         binding.progressCircular.setVisibility(View.VISIBLE);
         firebaseDatabase.getReference().child("Cart").child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid())).child(id).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -113,13 +119,13 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
         cartsAdapter.notifyDataSetChanged();
     }
     @Override
-    public void TotalPrice(int pos,ArrayList<ProductModel> productModels){
-        double totalPrice = 0;
-
-        for (int i = 0; i < productModels.size(); i++) {
-            Log.i("Price", "init: "+productModels.get(i).getPrice());
-            totalPrice += productModels.get(i).getPrice();
-            binding.SubTotal.setText("SubTotal ₹"+totalPrice);
-        }
+    public void TotalPrice(int pos,ArrayList<ShoppingCartsProductModel> productModels){
+//        double totalPrice = 0;
+//
+//        for (int i = 0; i < productModels.size(); i++) {
+//            Log.i("Price", "init: "+productModels.get(i).getPrice());
+//            totalPrice += productModels.get(i).getPrice();
+//            binding.SubTotal.setText("SubTotal ₹"+totalPrice);
+//        }
     }
 }
