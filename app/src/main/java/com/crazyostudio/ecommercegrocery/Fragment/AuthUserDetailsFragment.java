@@ -117,7 +117,8 @@ public class AuthUserDetailsFragment extends Fragment {
 //                                            navController.navigate(R.id.action_authOTP_to_authUserDetailsFragment);
                                     if (p.isShowing()){
                                         p.dismiss();
-                                        startActivity(new Intent(requireContext(), MainActivity.class));
+//                                        startActivity(new Intent(requireContext(), MainActivity.class));
+                                        getActivity().finish();
                                     }
 //                                            ////////////
                                 }else {

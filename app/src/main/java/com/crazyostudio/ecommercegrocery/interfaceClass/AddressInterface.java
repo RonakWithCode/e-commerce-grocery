@@ -1,7 +1,8 @@
 package com.crazyostudio.ecommercegrocery.interfaceClass;
 
+import com.crazyostudio.ecommercegrocery.Model.AddressModel;
+
 public interface AddressInterface {
-    void Edit(String adders,int pos);
-    void addersSelect(String adders);
-    void remove(String adders,int pos);
+    void addersSelect(AddressModel adders);
+    void remove(AddressModel adders,int pos);
 }

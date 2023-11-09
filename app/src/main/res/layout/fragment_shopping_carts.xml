@@ -25,19 +25,26 @@
                 android:id="@+id/SubTotal"
                 android:layout_marginTop="@dimen/_7sdp"
                 android:layout_marginStart="@dimen/_15sdp"
-                android:text="Subtotal 500^^"
                 android:layout_width="wrap_content"
+                android:text="Subtotal 00.0"
                 android:layout_height="wrap_content"/>
 
             <Button
                 android:id="@+id/Buy"
                 android:textSize="@dimen/_18ssp"
-                android:text="Buy Now "
+                android:text="@string/buy_now"
                 android:layout_width="match_parent"
                 android:layout_marginStart="@dimen/_25sdp"
                 android:layout_marginEnd="@dimen/_25sdp"
                 android:background="@drawable/round_button"
                 android:layout_height="wrap_content"/>
+            <View
+                android:layout_marginTop="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:id="@id/line2"
+                android:background="@color/MainBorderColor"
+                android:alpha="0.9"/>
 
             <TextView
                 android:id="@+id/text132"
@@ -54,6 +61,15 @@
                 android:layout_margin="@dimen/_3sdp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
+
+
+            <View
+                android:layout_marginTop="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:id="@id/line1"
+                android:background="@color/MainBorderColor"
+                android:alpha="0.9"/>
 
             <TextView
                 android:id="@+id/BuyItAgain"

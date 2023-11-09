@@ -13,50 +13,52 @@
         app:layout_constraintEnd_toEndOf="parent"
         style="@style/MaterialSearchBarLight"
         app:mt_speechMode="true"
-        app:mt_hint="Search"
-
+        app:mt_hint="Search Product"
+        android:tooltipText="@string/billing_details"
         app:mt_maxSuggestionsCount="10"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/searchBar" />
-
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:id="@+id/line"
+        app:layout_constraintTop_toBottomOf="@+id/searchBar"
+         android:layout_height="1dp"
+        android:layout_marginTop="2dp"
+        app:dividerColor="@color/secondary" />
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchBar">
+        app:layout_constraintTop_toBottomOf="@+id/line">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card_Slider"
-                app:cardBackgroundColor="@color/green_primary"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentEnd="true"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_200sdp">
-                <org.imaginativeworld.whynotimagecarousel.ImageCarousel
-                    android:id="@+id/carousel"
-                    android:layout_width="match_parent"
-                    android:layout_height="256dp" />
-            </androidx.cardview.widget.CardView>
-
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/category"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
-
-                android:layout_below="@id/card_Slider"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginBottom="@dimen/_5sdp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/coupon_code_box_divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/category"
+                android:layout_marginTop="2dp"
+                app:dividerColor="@color/secondary" />
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/products_list"
+                android:layout_below="@id/category"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
-                android:layout_below="@id/category"
+                android:layout_marginTop="@dimen/_5sdp"
                 android:layout_width="match_parent"
                 android:layout_alignParentBottom="true"
                 android:layout_height="wrap_content"/>

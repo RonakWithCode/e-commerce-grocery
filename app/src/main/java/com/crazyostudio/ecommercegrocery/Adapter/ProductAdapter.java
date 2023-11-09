@@ -1,14 +1,13 @@
 package com.crazyostudio.ecommercegrocery.Adapter;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -25,8 +24,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
     Context context;
     String layout;
     //    productboxview
-
-
 
     public ProductAdapter(ArrayList<ProductModel> productModels, com.crazyostudio.ecommercegrocery.interfaceClass.onClickProductAdapter onClickProductAdapter, Context context,String layout) {
         this.productModels = productModels;
@@ -46,16 +43,19 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
     @Override
     public void onBindViewHolder(@NonNull ProductAdapter.ProductAdapterViewHolder holder, int position) {
         ProductModel product = productModels.get(position);
+        if (layout.equals("Main")) {
+//            holder.binding.getRoot().setMaxWidth(match_parent ConstraintLayout);
+            ViewGroup.LayoutParams params =  holder.binding.getRoot().getLayoutParams();
+            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            holder.binding.getRoot().setLayoutParams(params);
+        }
         Glide.with(context)
                 .load(product.getProductImages().get(0))
                 .into(holder.binding.ProductImage);
         holder.binding.label.setText(product.getItemName());
-        holder.binding.price.setText("INR " + product.getPrice());
-
-        holder.binding.getRoot().setOnClickListener(onclick->{
-            onClickProductAdapter.onClick(product);
-        });
-
+        holder.binding.price.setText("₹" + product.getPrice());
+        holder.binding.getRoot().setOnClickListener(onclick-> onClickProductAdapter.onClick(product));
     }
 
     @Override

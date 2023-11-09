@@ -1,8 +1,11 @@
 package com.crazyostudio.ecommercegrocery.Model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 
-public class UserinfoModels {
+public class UserinfoModels implements Parcelable {
     private String userId;
     private String username;
     private String emailAddress;
@@ -10,14 +13,14 @@ public class UserinfoModels {
     private String profilePictureUrl;
     private String dateOfBirth;
     private String gender;
-    private ArrayList<String> address;
+    private ArrayList<AddressModel> address;
     private String city;
     private String state;
     private String phoneNumber;
     private boolean isActive;
 
     public UserinfoModels(){}
-    public UserinfoModels(String userId, String username, String emailAddress, String fullName, String profilePictureUrl, String dateOfBirth, String gender, ArrayList<String> address, String city, String state, String phoneNumber, boolean isActive) {
+    public UserinfoModels(String userId, String username, String emailAddress, String fullName, String profilePictureUrl, String dateOfBirth, String gender, ArrayList<AddressModel> address, String city, String state, String phoneNumber, boolean isActive) {
         this.userId = userId;
         this.username = username;
         this.emailAddress = emailAddress;
@@ -48,8 +51,65 @@ public class UserinfoModels {
         this.isActive = isActive;
     }
 
+    public UserinfoModels(String userId, String username, String emailAddress, String profilePictureUrl, String gender, ArrayList<AddressModel> address, String phoneNumber, boolean isActive) {
+        this.userId = userId;
+        this.username = username;
+        this.emailAddress = emailAddress;
+        this.profilePictureUrl = profilePictureUrl;
+        this.gender = gender;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.isActive = isActive;
+    }
+    // Constructor for reading data from a Parcel
+    protected UserinfoModels(Parcel in) {
+        userId = in.readString();
+        username = in.readString();
+        emailAddress = in.readString();
+        fullName = in.readString();
+        profilePictureUrl = in.readString();
+        dateOfBirth = in.readString();
+        gender = in.readString();
+        address = in.createTypedArrayList(AddressModel.CREATOR);
+        city = in.readString();
+        state = in.readString();
+        phoneNumber = in.readString();
+        isActive = in.readByte() != 0;
+    }
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(userId);
+        dest.writeString(username);
+        dest.writeString(emailAddress);
+        dest.writeString(fullName);
+        dest.writeString(profilePictureUrl);
+        dest.writeString(dateOfBirth);
+        dest.writeString(gender);
+        dest.writeTypedList(address);
+        dest.writeString(city);
+        dest.writeString(state);
+        dest.writeString(phoneNumber);
+        dest.writeByte((byte) (isActive ? 1 : 0));
+    }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    // Parcelable CREATOR field
+    public static final Parcelable.Creator<UserinfoModels> CREATOR = new Parcelable.Creator<UserinfoModels>() {
+        @Override
+        public UserinfoModels createFromParcel(Parcel in) {
+            return new UserinfoModels(in);
+        }
+
+        @Override
+        public UserinfoModels[] newArray(int size) {
+            return new UserinfoModels[size];
+        }
+    };
     public String getUserId() {
         return userId;
     }
@@ -106,11 +166,11 @@ public class UserinfoModels {
         this.gender = gender;
     }
 
-    public ArrayList<String> getAddress() {
+    public ArrayList<AddressModel> getAddress() {
         return address;
     }
 
-    public void setAddress(ArrayList<String> address) {
+    public void setAddress(ArrayList<AddressModel> address) {
         this.address = address;
     }
 

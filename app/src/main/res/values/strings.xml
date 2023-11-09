@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">E Commerce Grocery</string>
+    <string name="app_name">ASHOK E Commerce Grocery</string>
     <string name="create_account">Create a new Account</string>
 
     <string name="name">Name</string>
@@ -81,5 +81,39 @@
     <string name="all_tax_are_included">All Tax are included</string>
     <string name="total">Total</string>
     <string name="make_payment">Make Payment</string>
+    <string name="buy_now">Buy Now</string>
+    <string name="account">Account</string>
+    <string name="check_order">Check Order</string>
+    <string name="set_up_fast_pickup">Set Up fast Pickup</string>
+    <string name="settings">Settings</string>
+    <string name="continue_shipping">Continue Shipping</string>
+    <string name="you_want_to_sign_up">you want to Sign-up</string>
+    <string name="please_make_a_account_or_sign_up">Please make a account or Sign-Up</string>
+    <string name="e_mail">E-mail</string>
+    <string name="phone_no">Phone No</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="data_of_both">Data of Both</string>
+    <string name="order_details">Order Details</string>
+    <string name="dummy_txt">~~~~~~~</string>
+    <string name="payment">Payment</string>
+    <string name="dummy_shipping_to">Shipping to</string>
+    <string name="shipping_method">Shipping Method</string>
+    <string name="dummy_shipping_method">DHL</string>
+    <string name="billing_details">Billing Details</string>
+    <string name="billing_details_shipping_details">Billing Details || Shipping details</string>
+    <string name="continue_shopping">Continue Shopping</string>
+    <string name="order_delivery">Order delivery</string>
+    <string name="order">Order</string>
+    <string name="you_save_upto">you save Upto</string>
+    <string name="tap_back">Tap back</string>
+
+    <string-array name="typesSpinnerArray">
+        <item>all</item>
+        <item>in padding</item>
+        <item>delivery</item>
+        <item>cancel</item>
+        <item>successful</item>
+    </string-array>
 
 </resources>

@@ -14,6 +14,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Objects;
 
+import me.ibrahimsn.lib.OnItemReselectedListener;
 import me.ibrahimsn.lib.OnItemSelectedListener;
 
 public class MainActivity extends AppCompatActivity {
@@ -25,34 +26,47 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         loader(new HomeFragment(),"null");
-        try {
-            Objects.requireNonNull(this.getSupportActionBar()).hide();
-        }
-        // catch block to handle NullPointerException
-        catch (NullPointerException ignored) {
-            String errorMessage = ignored.toString();
-            FirebaseDatabase.getInstance().getReference().child("Error").setValue(errorMessage);
-
-        }
+//        try {
+//            Objects.requireNonNull(this.getSupportActionBar()).hide();
+//        }
+//        // catch block to handle NullPointerException
+//        catch (NullPointerException ignored) {
+//            String errorMessage = ignored.toString();
+//            FirebaseDatabase.getInstance().getReference().child("Error").setValue(errorMessage);
+//
+//        }
         binding.bottomBar.setOnItemSelectedListener((OnItemSelectedListener) i -> {
             switch (i) {
                 case 0:
                     loader(new HomeFragment(),"HomeFragment");
-                    return true;
+                    System.out.println("Item selected: " + i);
+                    return (true);
 
                 case 1:
                     loader(new ShoppingCartsFragment(),"ShoppingCartsFragment");
+                    System.out.println("Item selected: " + i);
                     return (true);
-
                 case 2:
                     loader(new MoreFragment(),"MoreFragment");
+                    System.out.println("Item selected: " + i);
                     return (true);
             }
             return true;
         });
+        binding.bottomBar.setOnItemReselectedListener(itemId -> {
+            switch (itemId) {
+                case 0:
+                    loader(new HomeFragment(),"HomeFragment");
+                    break;
+                case 1:
+                    loader(new ShoppingCartsFragment(),"ShoppingCartsFragment");
+                    break;
 
-
-
+                case 2:
+                    loader(new MoreFragment(),"MoreFragment");
+                    break;
+            }
+        });
     }
 
 

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -13,11 +14,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.crazyostudio.ecommercegrocery.Activity.OderActivity;
 import com.crazyostudio.ecommercegrocery.Adapter.ShoppingCartsAdapter;
+import com.crazyostudio.ecommercegrocery.Model.ProductModel;
 import com.crazyostudio.ecommercegrocery.Model.ShoppingCartsProductModel;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentShoppingCartsBinding;
 import com.crazyostudio.ecommercegrocery.interfaceClass.ShoppingCartsInterface;
 import com.crazyostudio.ecommercegrocery.javaClasses.basicFun;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -35,7 +38,7 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
     ShoppingCartsAdapter cartsAdapter;
     FirebaseDatabase firebaseDatabase;
     Cart cart;
-
+    ProductModel model;
     ArrayList<ShoppingCartsProductModel> models;
     public ShoppingCartsFragment() {
         // Required empty public constructor
@@ -48,25 +51,29 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
         binding = FragmentShoppingCartsBinding.inflate(inflater,container,false);
         firebaseDatabase =  FirebaseDatabase.getInstance();
         cart = TinyCartHelper.getCart();
-
-
         binding.Buy.setOnClickListener(Buy->{
-            startActivity(new Intent(requireContext(), OderActivity.class));
+            Intent intent = new Intent(requireContext(), OderActivity.class);
+            intent.putExtra("BuyType","Cart");
+            intent.putExtra("productModel",model);
+            startActivity(intent);
         });
-        init();
-
         return binding.getRoot();
     }
 
     @Override
     public void onResume() {
+        models = new ArrayList<>();
         super.onResume();
-        cart.clearCart();
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            models.clear();
+            cart.clearCart();
+            init();
+
+        }
     }
 
     @SuppressLint("SetTextI18n")
     private void init() {
-        models = new ArrayList<>();
         cartsAdapter = new ShoppingCartsAdapter(models,this,requireContext());
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,false);
         binding.ProductCart.setLayoutManager(layoutManager);
@@ -97,20 +104,18 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
         });
 
     }
-
-
+    /// --------------------------------- ///
+    /// --------------------------------- ///
     @SuppressLint("NotifyDataSetChanged")
     @Override
     public void remove(int pos,String id) {
       // cart.removeItem(models.get(pos));
         models.remove(pos);
         binding.progressCircular.setVisibility(View.VISIBLE);
-        firebaseDatabase.getReference().child("Cart").child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid())).child(id).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()){
-                    binding.progressCircular.setVisibility(View.GONE);
-                }
+        firebaseDatabase.getReference().child("Cart").child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid())).child(id).removeValue().addOnCompleteListener(task -> {
+            if (task.isSuccessful()){
+                binding.progressCircular.setVisibility(View.GONE);
+                onResume();
             }
         }).addOnFailureListener(e -> {
             binding.progressCircular.setVisibility(View.GONE);
@@ -118,14 +123,26 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
         });
         cartsAdapter.notifyDataSetChanged();
     }
+
     @Override
-    public void TotalPrice(int pos,ArrayList<ShoppingCartsProductModel> productModels){
-//        double totalPrice = 0;
-//
-//        for (int i = 0; i < productModels.size(); i++) {
-//            Log.i("Price", "init: "+productModels.get(i).getPrice());
-//            totalPrice += productModels.get(i).getPrice();
-//            binding.SubTotal.setText("SubTotal ₹"+totalPrice);
-//        }
+    public void UpdateQuantity(ShoppingCartsProductModel UpdateModel, String id) {
+        binding.progressCircular.setVisibility(View.VISIBLE);
+//                public ShoppingCartsProductModel(String Id ,String itemName, String itemDescription, String itemUnit, double stock, double price, double MRP, double discount, double quantity, String layout, String tag, String category, ArrayList<String> productImages, boolean isLive, int tapOn, long editDate, int sellerOfItem,int selectProductQuantity) {
+//                             public ProductModel(String Id ,String itemName, String itemDescription, String itemUnit, double stock, double price, double MRP, double discount, double quantity, String layout, String tag, String category, ArrayList<String> productImages, boolean isLive, int tapOn, long editDate, int sellerOfItem,int selectProductQuantity) {
+
+        ProductModel productModel = new ProductModel(UpdateModel.getId(),UpdateModel.getItemName(),UpdateModel.getItemDescription(), UpdateModel.getItemUnit(), UpdateModel.getStock(),UpdateModel.getPrice(),UpdateModel.getMRP(),UpdateModel.getDiscount(),UpdateModel.getQuantity(), UpdateModel.getLayout(), UpdateModel.getTag(), UpdateModel.getCategory(), UpdateModel.getProductImages(),UpdateModel.isLive(),UpdateModel.getTapOn(),UpdateModel.getEditDate(),UpdateModel.getSellerOfItem(),UpdateModel.getSelectProductQuantity());
+        firebaseDatabase.getReference().child("Cart").child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid())).child(id).setValue(productModel).addOnCompleteListener(task -> {
+            if (task.isSuccessful()){
+                binding.progressCircular.setVisibility(View.GONE);
+                models.clear();
+//              binding.ProductCart.removeAllViews();
+                onResume();
+            }
+        }).addOnFailureListener(e -> {
+            binding.progressCircular.setVisibility(View.GONE);
+            basicFun.AlertDialog(requireContext(),e.toString());
+            models.clear();
+            onResume();
+        });
     }
 }

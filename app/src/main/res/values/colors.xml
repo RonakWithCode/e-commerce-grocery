@@ -49,6 +49,12 @@
     <color name="FixRed">#b63756</color>
     <color name="fixBlue">#82b8c6</color>
     <color name="FixBlue_Box">#96b9d1</color>
+    <color name="MainBorderColor">#eeeeee</color>
+    <color name="MainRoundButtonColor">#3C3B3B</color>
+    <color name="BorderMainRoundButtonColor">#fafafa</color>
 
+    <color name="secondary">#A4A4A4</color>
+
+    <color name="highlighted">#F44336</color>
 
 </resources>

@@ -4,28 +4,21 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.StringDef;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.crazyostudio.ecommercegrocery.Model.ProductModel;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+
+import com.crazyostudio.ecommercegrocery.Model.AddressModel;
 import com.crazyostudio.ecommercegrocery.Model.UserinfoModels;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentNewAddressBinding;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -52,34 +45,31 @@ public class newAddressFragment extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentNewAddressBinding.inflate(inflater,container,false);
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext());
-
-        binding.currentLocation.setOnClickListener(currentLocation->{
+        binding.backButton.setOnClickListener(back->requireActivity().onBackPressed());
+        binding.house.setEndIconOnClickListener(currentLocation->{
             if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // Permission is not granted, so request it
                 requestLocationPermission();
             } else {
                 fusedLocationProviderClient.getLastLocation()
-                        .addOnSuccessListener(new OnSuccessListener<Location>() {
-                            @Override
-                            public void onSuccess(Location location) {
+                        .addOnSuccessListener(location -> {
 
-                                if (location != null){
-                                    try {
-                                        Geocoder geocoder = new Geocoder(requireContext(), Locale.getDefault());
-                                        List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                            if (location != null){
+                                try {
+                                    Geocoder geocoder = new Geocoder(requireContext(), Locale.getDefault());
+                                    List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
 //                                        binding.address.setText("Latitude: "+addresses.get(0).getLatitude());
 //                                        binding.house.setText("Longitude: "+addresses.get(0).getLongitude());
-                                        binding.address.setText(addresses.get(0).getAddressLine(0));
+                                    binding.address.setText(addresses.get(0).getAddressLine(0));
 //                                        bind.setText("City: "+addresses.get(0).getLocality());
 //                                        country.setText("Country: "+addresses.get(0).getCountryName());
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-
-
+                                } catch (IOException e) {
+                                    e.printStackTrace();
                                 }
 
+
                             }
+
                         });
             }
         });
@@ -96,22 +86,20 @@ public class newAddressFragment extends Fragment {
                     if (snapshot.exists()) {
                         // Data exists, create a UserInfoModel instance and populate it
                         UserinfoModels userInfo = snapshot.getValue(UserinfoModels.class);
-                        ArrayList<String> adderes = new ArrayList<>();
-                        adderes.add(binding.address.getText().toString()+"\n"+binding.house.getText().toString());
+                        ArrayList<AddressModel> adderes = new ArrayList<>();
+                        AddressModel model = new AddressModel(binding.Name.getText().toString(),binding.Phone.getText().toString(),binding.address.getText().toString());
+                        adderes.add(model);
                         if (snapshot.child("address").exists()) {
                             assert userInfo != null;
                             adderes.addAll(userInfo.getAddress());
                         }
                         assert userInfo != null;
                         userInfo.setAddress(adderes);
-                        firebaseDatabase.getReference().child("UserInfo").child(FirebaseAuth.getInstance().getUid()).setValue(userInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful())
-                                {
-                                    binding.progressCircular.setVisibility(View.INVISIBLE);
-                                    Objects.requireNonNull(getActivity()).onBackPressed();
-                                }
+                        firebaseDatabase.getReference().child("UserInfo").child(FirebaseAuth.getInstance().getUid()).setValue(userInfo).addOnCompleteListener(task -> {
+                            if (task.isSuccessful())
+                            {
+                                binding.progressCircular.setVisibility(View.INVISIBLE);
+                                Objects.requireNonNull(getActivity()).onBackPressed();
                             }
                         });
                     }

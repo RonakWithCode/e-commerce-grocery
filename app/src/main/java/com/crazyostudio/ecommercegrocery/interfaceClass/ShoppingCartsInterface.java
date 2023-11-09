@@ -7,5 +7,5 @@ import java.util.ArrayList;
 
 public interface ShoppingCartsInterface {
     void remove(int pos,String id);
-    void TotalPrice(int pos, ArrayList<ShoppingCartsProductModel> models);
+    void UpdateQuantity(ShoppingCartsProductModel model,String id);
 }

@@ -1,78 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="10dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginRight="10dp">
 
-    <LinearLayout
-        android:id="@+id/Linear_box_cart"
+    <ImageView
+        android:id="@+id/product_image"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:paddingEnd="10dp"
+        android:src="@drawable/ic_baseline_arrow_back_24" />
+
+    <TextView
+        android:id="@+id/product_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@id/product_image"
+        android:text="Product title"
+        android:textColor="@color/green_primary"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:id="@+id/product_pricing_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/product_name"
+        android:layout_toEndOf="@id/product_image"
         android:orientation="horizontal"
-        tools:ignore="UselessParent">
-        <ImageView
-            android:id="@+id/image"
-            android:layout_width="42dp"
-            android:layout_height="42dp"
-            android:scaleType="fitCenter"
-            app:srcCompat="@drawable/placeholder" />
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:weightSum="2">
+
+        <TextView
+            android:id="@+id/product_price"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="112.50 INR"
+            android:textColor="@color/MainTextColor"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/product_qty_layout"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginStart="10dp"
-            android:orientation="vertical">
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:weightSum="3">
+
+            <ImageView
+                android:id="@+id/product_qty_down"
+                android:layout_width="0dp"
+                android:layout_height="25dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_baseline_remove_circle_outline_24"
+                tools:ignore="NestedWeights" />
 
             <TextView
-                android:id="@+id/name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="Product Name"
-                android:textSize="15sp" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
+                android:id="@+id/product_qty"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="15"
+                android:textColor="@color/secondary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/quantity"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:drawablePadding="5dp"
-                    android:text="2 item(s)"
-                    android:textSize="11sp"
-                    app:drawableStartCompat="@drawable/ic_folder" />
-
-                <TextView
-                    android:id="@+id/price"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="end"
-                    android:text="INR 100.0"
-                    android:textColor="#4CAF50"
-                    android:textStyle="bold" />
-                <ImageView
-                    android:src="@drawable/ic_baseline_delete_24"
-                    android:id="@+id/remove"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="@string/tap_to_remove" />
-            </LinearLayout>
-
+            <ImageView
+                android:id="@+id/product_qty_up"
+                android:layout_width="0dp"
+                android:layout_height="25dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_baseline_add_circle_outline_24"
+                tools:ignore="NestedWeights" />
         </LinearLayout>
-
     </LinearLayout>
 
+    <ImageView
+        android:src="@drawable/ic_baseline_delete_24"
+        android:id="@+id/remove"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/product_pricing_box"
+        android:layout_toEndOf="@id/product_image" />
+
+    <View
+        android:layout_below="@+id/remove"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:id="@+id/line2"
+        android:background="@color/MainBorderColor"
+        android:alpha="0.9"/>
 </RelativeLayout>

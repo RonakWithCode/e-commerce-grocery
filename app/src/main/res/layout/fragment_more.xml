@@ -1,14 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/MainBackgroundColor"
     tools:context=".Fragment.MoreFragment">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        tools:ignore="UselessParent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-</FrameLayout>
+            <RelativeLayout
+                android:id="@+id/mainLayout"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:layout_width="@dimen/_40sdp"
+                    android:id="@+id/userImage"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentStart="true"
+                    android:src="@drawable/userimage"
+                    app:riv_oval="true"
+                    android:layout_height="@dimen/_40sdp"/>
+
+                <TextView
+                    android:id="@+id/Username"
+                    android:textColor="@color/MainTextColor"
+                    android:layout_marginTop="@dimen/_17sdp"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:text="Full User Name "
+                    android:layout_toEndOf="@+id/userImage" />
+
+                <LinearLayout
+                    android:id="@+id/container_btu"
+                    android:paddingBottom="@dimen/_5sdp"
+                    android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    android:layout_below="@id/userImage"
+                    android:layout_height="match_parent">
+
+                    <Button
+                        android:id="@+id/account"
+                        style="@style/MoreButtonLight"
+                        android:padding="@dimen/_1sdp"
+                        android:text="@string/account"
+                        />
+                    <Button style="@style/MoreButtonLight"
+                        android:padding="@dimen/_1sdp"
+                        android:id="@+id/order"
+                        android:text="@string/check_order"
+                        />
+                    <Button style="@style/MoreButtonLight"
+                        android:padding="@dimen/_1sdp"
+                        android:id="@+id/address"
+                        android:text="@string/address"
+                        />
+                    <Button style="@style/MoreButtonLight"
+                        android:id="@+id/setPickup"
+                        android:padding="@dimen/_1sdp"
+                        android:text="@string/set_up_fast_pickup"
+                        />
+                    <Button style="@style/MoreButtonLight"
+                        android:id="@+id/settings"
+                        android:padding="@dimen/_1sdp"
+                        android:text="@string/settings"
+                        />
+
+                    <Button style="@style/MoreButtonLight"
+                        android:padding="@dimen/_1sdp"
+                        android:id="@+id/continue_shipping"
+                        android:text="@string/continue_shipping"
+                        />
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:visibility="gone"
+                android:id="@+id/relative_not_auth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/view"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/_25ssp"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="@color/MainTextColor"
+                    android:text="@string/please_make_a_account_or_sign_up"
+                    android:layout_marginStart="@dimen/_25sdp"
+                    android:layout_marginTop="@dimen/_25sdp"
+                    android:layout_marginEnd="@dimen/_25sdp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <Button style="@style/MoreButtonLight"
+                    android:padding="@dimen/_1sdp"
+                    android:id="@+id/siginUp"
+                    android:layout_below="@id/view"
+                    android:text="SIGN-UP"
+                    />
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+
+
+    </ScrollView>
+
+
+
+</RelativeLayout>

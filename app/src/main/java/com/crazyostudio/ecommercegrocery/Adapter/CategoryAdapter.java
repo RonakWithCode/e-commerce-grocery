@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide;
 import com.crazyostudio.ecommercegrocery.Model.ProductCategoryModel;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.databinding.CategorylayoutBinding;
+import com.crazyostudio.ecommercegrocery.interfaceClass.CategoryAdapterInterface;
 
 import java.util.ArrayList;
 
@@ -19,10 +20,12 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
 
     ArrayList<ProductCategoryModel> categoryModel;
     Context context;
+    CategoryAdapterInterface onclick;
 
-    public CategoryAdapter(ArrayList<ProductCategoryModel> categoryModel, Context context) {
+    public CategoryAdapter(ArrayList<ProductCategoryModel> categoryModel, Context context,CategoryAdapterInterface Onclick) {
         this.categoryModel = categoryModel;
         this.context = context;
+        this.onclick = Onclick;
     }
 
     @NonNull
@@ -42,7 +45,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
                 .load(model.getImageUri())
                 .placeholder(R.drawable.spinner_gif)
                 .into(holder.binding.CategoryImage);
-
+        holder.binding.getRoot().setOnClickListener(view -> onclick.onClick(model));
     }
 
     @Override

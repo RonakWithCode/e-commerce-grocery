@@ -258,8 +258,7 @@ public class AuthOTP extends Fragment {
                             else {
                                 if (dialog.isShowing()) {
                                     dialog.dismiss();
-                                Intent intent = new Intent(requireContext(), MainActivity.class);
-                                startActivity(intent);
+                                    getActivity().finish();
 //                                navController.navigate(R.id.action_authOTP_to_homeMainActivity2);
 
                             }

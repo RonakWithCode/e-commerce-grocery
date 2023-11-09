@@ -3,9 +3,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Fragment.AddressFragment">
-
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:layout_width="wrap_content"
+        android:id="@+id/backButton"
+        android:layout_marginTop="@dimen/_15sdp"
+        android:layout_marginStart="@dimen/_15sdp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:src="@drawable/ic_baseline_arrow_back_24"
+        app:riv_oval="true"
+        android:layout_height="wrap_content"/>
     <TextView
+        android:layout_below="@id/backButton"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="@dimen/_5sdp"
         android:id="@+id/Address"
         android:textSize="@dimen/_19ssp"
         android:layout_margin="@dimen/_10sdp"
@@ -22,11 +36,19 @@
         android:id="@+id/Add_Address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+    <View
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:id="@id/line1"
+        android:layout_below="@id/Add_Address"
+        android:background="@color/MainBorderColor"
+        android:alpha="0.9"/>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/UserAddress"
         android:layout_marginEnd="@dimen/_10sdp"
         android:layout_marginStart="@dimen/_10sdp"
-        android:layout_below="@id/Add_Address"
+        android:layout_below="@id/line1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

@@ -21,6 +21,8 @@ public class ShoppingCartsProductModel implements Parcelable, Item, Serializable
         private int SellerOfItem;
         private int SelectProductQuantity;
 
+
+
         public ShoppingCartsProductModel() {} // For Firebase
 
         public ShoppingCartsProductModel(String Id ,String itemName, String itemDescription, String itemUnit, double stock, double price, double MRP, double discount, double quantity, String layout, String tag, String category, ArrayList<String> productImages, boolean isLive, int tapOn, long editDate, int sellerOfItem,int selectProductQuantity) {
