@@ -72,6 +72,7 @@
                     android:id="@+id/tv_phone_no"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_2sdp"
                     android:layout_marginTop="@dimen/_8sdp"
                     android:text="@string/change"
                     android:textColor="@color/Link"
@@ -242,6 +243,19 @@
                 app:layout_constraintStart_toStartOf="parent"
                 android:src="@drawable/pin"
                 android:contentDescription="@string/icon" />
+
+
+            <ProgressBar
+                android:id="@+id/ProgressBar"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>

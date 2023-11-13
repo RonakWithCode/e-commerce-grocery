@@ -136,14 +136,6 @@ public class AllOrderActivity extends AppCompatActivity implements OrderInterfac
 
             }
         });
-
-
-
-
-
-
-
-
         Intent i = new Intent(this, OrderDetailsActivity.class);
         i.putExtra("Type","seeOrder");
         i.putExtra("userModel",userInfo);

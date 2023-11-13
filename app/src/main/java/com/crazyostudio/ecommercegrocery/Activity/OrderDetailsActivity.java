@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.renderscript.ScriptGroup;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.crazyostudio.ecommercegrocery.Adapter.OrderProductAdapter;
@@ -48,13 +49,39 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
         if (getIntent().getStringExtra("Type").equals("placeOrder")) {
             orderModel = getIntent().getParcelableExtra("orderModel");
             userModel = getIntent().getParcelableExtra("userModel");
+            getData();
+
         }
         else if (getIntent().getStringExtra("Type").equals("seeOrder")) {
             orderModel = getIntent().getParcelableExtra("orderModel");
             userModel = getIntent().getParcelableExtra("userModel");
-        }else {
+            getData();
+
+        }
+        else if (getIntent().getStringExtra("Type").equals("seeOrderNotification")){
+            binding.progressCircular.setVisibility(View.INVISIBLE);
+            database.getReference().child("Order").child(auth.getUid()).child(getIntent().getStringExtra("orderId")).addListenerForSingleValueEvent(new ValueEventListener() {
+                @SuppressLint("NotifyDataSetChanged")
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        orderModel = snapshot.getValue(OrderModel.class);
+                        binding.progressCircular.setVisibility(View.GONE);
+                        getData();
+
+                    }
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
+        else {
             orderModel = getIntent().getParcelableExtra("orderModel");
             userModel = getIntent().getParcelableExtra("userModel");
+            getData();
+
         }
 
         binding.orderDateBox.setOnClickListener(onclick->{
@@ -69,7 +96,6 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
                 Toast.makeText(this, "Order place on " + formattedDateTime, Toast.LENGTH_SHORT).show();
             }
         });
-        getData();
     }
 
     @SuppressLint({"SetTextI18n", "NotifyDataSetChanged"})
@@ -81,6 +107,7 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
             emailAddress[0] = userModel.getEmailAddress();
         }
         else {
+            binding.progressCircular.setVisibility(View.VISIBLE);
             FirebaseDatabase.getInstance().getReference()
                     .child("UserInfo")
                     .child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
@@ -91,6 +118,7 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
                             if (dataSnapshot.exists()) {
                                 emailAddress[0] = dataSnapshot.getValue(String.class);
                                 // Now, you can use the emailAddress value
+                                binding.progressCircular.setVisibility(View.GONE);
 
                             }
                         }

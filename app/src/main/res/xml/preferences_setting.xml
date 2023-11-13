@@ -56,5 +56,4 @@
         android:title="About"
         android:summary="Learn more about the app and its version."
         android:key="about" />
-
 </PreferenceScreen>

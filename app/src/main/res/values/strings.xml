@@ -108,6 +108,9 @@
     <string name="you_save_upto">you save Upto</string>
     <string name="tap_back">Tap back</string>
 
+    <string name="cancel">Cancel</string>
+    <string name="tap_to_open_photo_gallery">Tap to open photo gallery</string>
+    <string name="tap_to_open_camera">Tap to open Camera</string>
     <string-array name="typesSpinnerArray">
         <item>all</item>
         <item>in padding</item>

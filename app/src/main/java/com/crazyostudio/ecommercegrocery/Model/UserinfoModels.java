@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 public class UserinfoModels implements Parcelable {
     private String userId;
+    private String token;
     private String username;
     private String emailAddress;
     private String fullName;
@@ -18,6 +19,10 @@ public class UserinfoModels implements Parcelable {
     private String state;
     private String phoneNumber;
     private boolean isActive;
+    private boolean isPrivacy_modeBool;
+    private boolean isDeal_notificationBool;
+    private boolean isAccount_shipping_notificationBool;
+//    private boolean isActive;
 
     public UserinfoModels(){}
     public UserinfoModels(String userId, String username, String emailAddress, String fullName, String profilePictureUrl, String dateOfBirth, String gender, ArrayList<AddressModel> address, String city, String state, String phoneNumber, boolean isActive) {
@@ -33,25 +38,37 @@ public class UserinfoModels implements Parcelable {
         this.state = state;
         this.phoneNumber = phoneNumber;
         this.isActive = isActive;
+        isPrivacy_modeBool = true;
+        isDeal_notificationBool = true;
+        isAccount_shipping_notificationBool = true;
     }
 
-    public UserinfoModels(String userId, String username, String emailAddress, String profilePictureUrl, String phoneNumber, boolean isActive) {
+    public UserinfoModels(String token,String userId, String username, String emailAddress, String profilePictureUrl, String phoneNumber, boolean isActive) {
+        this.token = token;
         this.userId = userId;
         this.username = username;
         this.emailAddress = emailAddress;
         this.profilePictureUrl = profilePictureUrl;
         this.phoneNumber = phoneNumber;
         this.isActive = isActive;
+        isPrivacy_modeBool = true;
+        isDeal_notificationBool = true;
+        isAccount_shipping_notificationBool = true;
     }
-    public UserinfoModels(String userId, String username, String emailAddress, String phoneNumber, boolean isActive) {
+    public UserinfoModels(String token,String userId, String username, String emailAddress, String phoneNumber, boolean isActive) {
+        this.token = token;
         this.userId = userId;
         this.username = username;
         this.emailAddress = emailAddress;
         this.phoneNumber = phoneNumber;
         this.isActive = isActive;
+        isPrivacy_modeBool = true;
+        isDeal_notificationBool = true;
+        isAccount_shipping_notificationBool = true;
     }
 
-    public UserinfoModels(String userId, String username, String emailAddress, String profilePictureUrl, String gender, ArrayList<AddressModel> address, String phoneNumber, boolean isActive) {
+    public UserinfoModels(String token,String userId, String username, String emailAddress, String profilePictureUrl, String gender, ArrayList<AddressModel> address, String phoneNumber, boolean isActive) {
+        this.token = token;
         this.userId = userId;
         this.username = username;
         this.emailAddress = emailAddress;
@@ -60,9 +77,13 @@ public class UserinfoModels implements Parcelable {
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.isActive = isActive;
+        isPrivacy_modeBool = true;
+        isDeal_notificationBool = true;
+        isAccount_shipping_notificationBool = true;
     }
     // Constructor for reading data from a Parcel
     protected UserinfoModels(Parcel in) {
+        token = in.readString();
         userId = in.readString();
         username = in.readString();
         emailAddress = in.readString();
@@ -75,10 +96,14 @@ public class UserinfoModels implements Parcelable {
         state = in.readString();
         phoneNumber = in.readString();
         isActive = in.readByte() != 0;
+        isPrivacy_modeBool = in.readByte() != 0;
+        isDeal_notificationBool = in.readByte() != 0;
+        isAccount_shipping_notificationBool = in.readByte() != 0;
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(token);
         dest.writeString(userId);
         dest.writeString(username);
         dest.writeString(emailAddress);
@@ -91,6 +116,9 @@ public class UserinfoModels implements Parcelable {
         dest.writeString(state);
         dest.writeString(phoneNumber);
         dest.writeByte((byte) (isActive ? 1 : 0));
+        dest.writeByte((byte) (isPrivacy_modeBool ? 1 : 0));
+        dest.writeByte((byte) (isDeal_notificationBool ? 1 : 0));
+        dest.writeByte((byte) (isAccount_shipping_notificationBool ? 1 : 0));
     }
 
     @Override
@@ -110,6 +138,15 @@ public class UserinfoModels implements Parcelable {
             return new UserinfoModels[size];
         }
     };
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
     public String getUserId() {
         return userId;
     }
@@ -204,5 +241,29 @@ public class UserinfoModels implements Parcelable {
 
     public void setActive(boolean active) {
         isActive = active;
+    }
+
+    public boolean isPrivacy_modeBool() {
+        return isPrivacy_modeBool;
+    }
+
+    public void setPrivacy_modeBool(boolean privacy_modeBool) {
+        isPrivacy_modeBool = privacy_modeBool;
+    }
+
+    public boolean isDeal_notificationBool() {
+        return isDeal_notificationBool;
+    }
+
+    public void setDeal_notificationBool(boolean deal_notificationBool) {
+        isDeal_notificationBool = deal_notificationBool;
+    }
+
+    public boolean isAccount_shipping_notificationBool() {
+        return isAccount_shipping_notificationBool;
+    }
+
+    public void setAccount_shipping_notificationBool(boolean account_shipping_notificationBool) {
+        isAccount_shipping_notificationBool = account_shipping_notificationBool;
     }
 }

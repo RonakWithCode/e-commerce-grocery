@@ -31,6 +31,9 @@
             <argument
                 android:name="number"
                 app:argType="string" />
+            <argument
+                android:name="token"
+                app:argType="string" />
         </action>
     </fragment>
     <fragment

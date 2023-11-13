@@ -18,11 +18,12 @@ public class OrderModel implements Parcelable {
     private String PaymentType;
     private long OrderTime;
     private String UserId;
+    private String token;
 
 
     public OrderModel(){}
 
-    public OrderModel(String Name, String orderId,String shipping ,ArrayList<com.crazyostudio.ecommercegrocery.Model.ProductModel> productModel, String orderStatus, String adders, String phoneNumber, double subTotal, double shippingFee, double total, String paymentStatus, String paymentType, long orderTime, String userId,double discount,double save) {
+    public OrderModel(String Name, String orderId,String shipping ,ArrayList<com.crazyostudio.ecommercegrocery.Model.ProductModel> productModel, String orderStatus, String adders, String phoneNumber, double subTotal, double shippingFee, double total, String paymentStatus, String paymentType, long orderTime, String userId,String token,double discount,double save) {
         name = Name;
         OrderId = orderId;
         this.shipping = shipping;
@@ -37,6 +38,7 @@ public class OrderModel implements Parcelable {
         PaymentType = paymentType;
         OrderTime = orderTime;
         UserId = userId;
+        this.token = token;
         this.discount = discount;
         this.save = save;
     }
@@ -60,6 +62,7 @@ public class OrderModel implements Parcelable {
         PaymentType = in.readString();
         OrderTime = in.readLong();
         UserId = in.readString();
+        token = in.readString();
         this.discount = in.readDouble();
         this.save = in.readDouble();
     }
@@ -80,6 +83,7 @@ public class OrderModel implements Parcelable {
         dest.writeString(PaymentType);
         dest.writeLong(OrderTime);
         dest.writeString(UserId);
+        dest.writeString(token);
         dest.writeDouble(discount);
         dest.writeDouble(save);
     }
@@ -102,6 +106,13 @@ public class OrderModel implements Parcelable {
         }
     };
 
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
 
     public String getShipping() {
         return shipping;

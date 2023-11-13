@@ -191,7 +191,7 @@ public class PaymentScreenFragment extends Fragment {
                         if (models.size()==cart.getAllItemsWithQty().size()) {
                             double userSave = Double.parseDouble(String.valueOf(save)) - Subtotal;
 
-                            OrderModel orderModel = new OrderModel(adders.getName(),orderId,addersMode,models,"in padding",adders.getAddress(),adders.getPhone(),Subtotal,ShippingFee,total,"Padding",PaymentMode,time,FirebaseAuth.getInstance().getUid(),0,userSave);
+                            OrderModel orderModel = new OrderModel(adders.getName(),orderId,addersMode,models,"in padding",adders.getAddress(),adders.getPhone(),Subtotal,ShippingFee,total,"Padding",PaymentMode,time,FirebaseAuth.getInstance().getUid(),userinfoModels.getToken(),0,userSave);
                             firebaseDatabase.getReference().child("Order").child(FirebaseAuth.getInstance().getUid()).child(orderId).setValue(orderModel).addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
                                     if (progressDialog.isShowing()) {
@@ -232,7 +232,7 @@ public class PaymentScreenFragment extends Fragment {
                 OrderModel orderModel = new OrderModel(
                         adders.getName(),orderId,
                         addersMode,models,"in padding",adders.getAddress(),
-                        adders.getPhone(),Subtotal,ShippingFee,total,"Padding",PaymentMode,time,FirebaseAuth.getInstance().getUid(),0,userSave);
+                        adders.getPhone(),Subtotal,ShippingFee,total,"Padding",PaymentMode,time,FirebaseAuth.getInstance().getUid(),userinfoModels.getToken(),0,userSave);
                 firebaseDatabase.getReference().child("Order").child(FirebaseAuth.getInstance().getUid()).child(orderId).setValue(orderModel).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         if (progressDialog.isShowing()) {

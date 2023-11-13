@@ -5,15 +5,8 @@ import static android.content.Context.VIBRATOR_SERVICE;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.text.Editable;
@@ -26,22 +19,27 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.crazyostudio.ecommercegrocery.MainActivity;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentAuthOTPBinding;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link AuthOTP#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class AuthOTP extends Fragment {
     FragmentAuthOTPBinding binding;
     ProgressDialog dialog;
@@ -51,31 +49,11 @@ public class AuthOTP extends Fragment {
     private Context context;
     @SuppressLint("SetTextI18n")
     NavController navController;
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_NUMBER = "number";
-
-    // TODO: Rename and change types of parameters
     private String number;
 
     public AuthOTP() {
         // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param Number Parameter 2.
-     * @return A new instance of fragment AuthOTP.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static AuthOTP newInstance(String Number) {
-        AuthOTP fragment = new AuthOTP();
-        Bundle args = new Bundle();
-        args.putString("Number", Number);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -94,6 +72,7 @@ public class AuthOTP extends Fragment {
         binding = FragmentAuthOTPBinding.inflate(inflater,container,false);
         context = getContext();
         navController = Navigation.findNavController(requireActivity(),R.id.nav_host_fragment );
+        assert getArguments() != null;
         if (getArguments().getString(ARG_NUMBER)==null){
             navController.popBackStack();
         }
@@ -198,11 +177,6 @@ public class AuthOTP extends Fragment {
         @Override
         public void onVerificationCompleted(@NonNull PhoneAuthCredential credential) {
             signInWithPhoneAuthCredential(credential);
-//            final String code = credential.getSmsCode();
-//            if (code!=null)
-//            {
-////                verifycode(code);
-//            }
             Toast.makeText(context, "on Verification Completed", Toast.LENGTH_SHORT).show();
         }
 
@@ -211,7 +185,8 @@ public class AuthOTP extends Fragment {
 //            Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
             Log.e("TAG", "onVerificationFailed: ", e);
             Toast.makeText(context, "Error"+e, Toast.LENGTH_SHORT).show();
-
+            binding.ProgressBar.setVisibility(View.GONE);
+            requireActivity().onBackPressed();
         }
 
         @Override
@@ -220,6 +195,8 @@ public class AuthOTP extends Fragment {
             super.onCodeSent(s,token);
             verificationId = s;
             Toast.makeText(context, "Sent OTP", Toast.LENGTH_SHORT).show();
+            binding.ProgressBar.setVisibility(View.GONE);
+
 //            tokens = token;
         }
     };
@@ -232,51 +209,71 @@ public class AuthOTP extends Fragment {
                 ((Vibrator) context.getSystemService(VIBRATOR_SERVICE)).vibrate(150);
             }
         }else {
-//            if (UserOtp.equals(verificationId)) {
             PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId,UserOtp);
             signInWithPhoneAuthCredential(credential);
-//            }
-
         }
     }
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
-        dialog.setTitle("Waiting We are Try to Login ");
-        dialog.show();
+        binding.ProgressBar.setVisibility(View.VISIBLE);
         firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(requireActivity(), task -> {
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
-                        if(firebaseAuth.getCurrentUser() !=null) {
-                            dialog.setTitle("User is Successful Sign In we are check some information");
-                            if (dialog.isShowing()) {dialog.dismiss();}
-                            if (firebaseAuth.getCurrentUser().getDisplayName() == null) {
-                                Bundle bundle = new Bundle();
-                                bundle.putString("number", number);
-                                navController.navigate(R.id.action_authOTP_to_authUserDetailsFragment,bundle);
-
-                            }
-                            else {
-                                if (dialog.isShowing()) {
-                                    dialog.dismiss();
-                                    getActivity().finish();
-//                                navController.navigate(R.id.action_authOTP_to_homeMainActivity2);
-
-                            }
-
-                            }
-                        }
+                        Sigin();
                     }
 
                     else {
-                        if (dialog.isShowing()) {
-                            dialog.dismiss();
-                        }
-                        Toast.makeText(context, "Retry after some time ", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Error to login try again", Toast.LENGTH_SHORT).show();
+                        binding.ProgressBar.setVisibility(View.GONE);
                         // Sign in failed, display a message and update the UI
                     }
-
                 });
 
+
+    }
+
+    private void Sigin() {
+        Bundle bundle = new Bundle();
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task_id -> {
+            if (task_id.isSuccessful()) {
+                String token = task_id.getResult();
+                binding.ProgressBar.setVisibility(View.GONE);
+                if (Objects.requireNonNull(firebaseAuth.getCurrentUser()).getDisplayName() == null) {
+                    bundle.putString("token", token);
+                    bundle.putString("number", number);
+                    navController.navigate(R.id.action_authOTP_to_authUserDetailsFragment, bundle);
+                }
+                else {
+                    UpdateToken(token,0);
+                }
+            }
+            else {
+                binding.ProgressBar.setVisibility(View.GONE);
+                firebaseAuth.signOut();
+                Toast.makeText(context, "Token is not generate try again", Toast.LENGTH_SHORT).show();
+                Log.e("TASK_token", "Token retrieval failed: " + task_id.getException());
+            }
+        });
+
+    }
+
+    private void UpdateToken(String token,int time) {
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        firebaseDatabase.getReference().child("UserInfo").child(firebaseAuth.getUid()).child("token").setValue(token).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                binding.ProgressBar.setVisibility(View.GONE);
+                requireActivity().finish();
+            }else {
+                if (time == 0) {
+                    binding.ProgressBar.setVisibility(View.GONE);
+                    UpdateToken(token, 1);
+                }
+                else {
+                    firebaseAuth.signOut();
+                    binding.ProgressBar.setVisibility(View.GONE);
+                }
+            }
+        });
 
     }
 

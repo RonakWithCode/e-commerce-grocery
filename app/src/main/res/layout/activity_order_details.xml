@@ -459,6 +459,12 @@
                 android:textAllCaps="true"
                 android:textSize="18sp" />
         </RelativeLayout>
+        <ProgressBar
+            android:layout_centerInParent="true"
+            android:id="@+id/progressCircular"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
     </RelativeLayout>
 
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

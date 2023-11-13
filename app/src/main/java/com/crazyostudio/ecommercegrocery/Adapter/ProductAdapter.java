@@ -24,7 +24,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
     Context context;
     String layout;
     //    productboxview
-
+    public void setFilerList(ArrayList<ProductModel> FilterModels){
+        this.productModels = FilterModels;
+        notifyDataSetChanged();
+    }
     public ProductAdapter(ArrayList<ProductModel> productModels, com.crazyostudio.ecommercegrocery.interfaceClass.onClickProductAdapter onClickProductAdapter, Context context,String layout) {
         this.productModels = productModels;
         this.onClickProductAdapter = onClickProductAdapter;

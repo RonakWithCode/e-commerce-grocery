@@ -23,6 +23,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -92,6 +93,7 @@ public class newAddressFragment extends Fragment {
                         if (snapshot.child("address").exists()) {
                             assert userInfo != null;
                             adderes.addAll(userInfo.getAddress());
+
                         }
                         assert userInfo != null;
                         userInfo.setAddress(adderes);
