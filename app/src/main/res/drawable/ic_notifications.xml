@@ -1,0 +1,11 @@
+<!-- ic_notifications.xml in res/drawable/ -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24.0"
+    android:viewportHeight="24.0"
+    android:tint="?attr/colorControlNormal">
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M3,11h18v2h-18v-2zM14,15v4h-4v-4h-4l5,-5 5,5h-4z"/>
+</vector>

@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide;
 import com.crazyostudio.ecommercegrocery.Activity.AllOrderActivity;
 import com.crazyostudio.ecommercegrocery.Activity.AuthMangerActivity;
 import com.crazyostudio.ecommercegrocery.Activity.FragmentLoader;
+import com.crazyostudio.ecommercegrocery.Activity.SettingsActivity;
 import com.crazyostudio.ecommercegrocery.MainActivity;
 import com.crazyostudio.ecommercegrocery.Model.UserinfoModels;
 import com.crazyostudio.ecommercegrocery.R;
@@ -69,8 +70,8 @@ public class MoreFragment extends Fragment {
         });
         binding.setPickup.setOnClickListener(view -> {});
         binding.settings.setOnClickListener(view -> {
-            Intent intent = new Intent(requireContext(), FragmentLoader.class);
-            intent.putExtra("LoadID","SettingsFragment");
+            Intent intent = new Intent(requireContext(), SettingsActivity.class);
+//            intent.putExtra("LoadID","SettingsFragment");
 //            intent.putExtra("LoadID","MoreAddress");
             startActivity(intent);
 

@@ -22,11 +22,15 @@ import com.crazyostudio.ecommercegrocery.Adapter.CategoryAdapter;
 import com.crazyostudio.ecommercegrocery.Adapter.ProductAdapter;
 import com.crazyostudio.ecommercegrocery.Model.ProductCategoryModel;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
+import com.crazyostudio.ecommercegrocery.Model.RecentLoginsModels;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentHomeBinding;
 import com.crazyostudio.ecommercegrocery.interfaceClass.CategoryAdapterInterface;
 import com.crazyostudio.ecommercegrocery.interfaceClass.onClickProductAdapter;
+import com.crazyostudio.ecommercegrocery.javaClasses.GetPublicIpAddressTask;
+import com.crazyostudio.ecommercegrocery.javaClasses.IpGeolocationTask;
 import com.crazyostudio.ecommercegrocery.javaClasses.basicFun;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -36,6 +40,7 @@ import com.mancj.materialsearchbar.MaterialSearchBar;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class HomeFragment extends Fragment implements onClickProductAdapter, CategoryAdapterInterface {
     FragmentHomeBinding binding;
@@ -106,12 +111,13 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
             }
         });
 
-
-
         LoadCategory();
         LoadProduct();
         return binding.getRoot();
     }
+
+
+
 
     private void openVoiceRecognizer() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);

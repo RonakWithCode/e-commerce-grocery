@@ -24,18 +24,23 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.crazyostudio.ecommercegrocery.Model.RecentLoginsModels;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentAuthOTPBinding;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.crazyostudio.ecommercegrocery.javaClasses.GetPublicIpAddressTask;
+import com.crazyostudio.ecommercegrocery.javaClasses.IpGeolocationTask;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -51,7 +56,6 @@ public class AuthOTP extends Fragment {
     NavController navController;
     private static final String ARG_NUMBER = "number";
     private String number;
-
     public AuthOTP() {
         // Required empty public constructor
     }
@@ -218,8 +222,7 @@ public class AuthOTP extends Fragment {
         firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(requireActivity(), task -> {
                     if (task.isSuccessful()) {
-                        // Sign in success, update UI with the signed-in user's information
-                        Sigin();
+                        RecentLogins();
                     }
 
                     else {
@@ -232,6 +235,66 @@ public class AuthOTP extends Fragment {
 
     }
 
+    private void RecentLogins() {
+        ArrayList<String> time = new ArrayList<>();
+        ArrayList<String> device = new ArrayList<>();
+        ArrayList<String> IP_ARRAY = new ArrayList<>();
+        ArrayList<String> approximateLocation = new ArrayList<>();
+        RecentLoginsModels models = new RecentLoginsModels();
+        if (Objects.requireNonNull(firebaseAuth.getCurrentUser()).getDisplayName() != null) {
+            FirebaseDatabase.getInstance().getReference().child("RecentLogins").child(Objects.requireNonNull(firebaseAuth.getUid())).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    RecentLoginsModels models5 = snapshot.getValue(RecentLoginsModels.class);
+                    assert models5 != null;
+                    time.addAll(models5.getTime());
+                    approximateLocation.addAll(models5.getApproximateLocation());
+                    IP_ARRAY.addAll(models5.getIp());
+                    device.addAll(models5.getDevice());
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
+
+        String deviceName = Build.MANUFACTURER + " " + Build.MODEL;
+        device.add(deviceName);
+        time.add(String.valueOf(System.currentTimeMillis()));
+        final String[] ip = new String[1];
+        new GetPublicIpAddressTask(ipAddress -> {
+            if (ipAddress != null) {
+                ip[0] = ipAddress;
+                IP_ARRAY.add(ipAddress);
+            }
+        }).execute();
+
+        new IpGeolocationTask((city, country) -> {
+            if (city != null && country != null) {
+                approximateLocation.add("City: " + city + ", Country: " + country);
+                models.setIp(IP_ARRAY);
+                models.setDevice(device);
+                models.setTime(time);
+                models.setApproximateLocation(approximateLocation);
+                FirebaseDatabase.getInstance().getReference().child("RecentLogins").child(Objects.requireNonNull(firebaseAuth.getUid())).setValue(models).addOnCompleteListener(task->{
+                    if (task.isSuccessful()) {
+                        Sigin();
+                    }else {
+                        Toast.makeText(requireContext(), Objects.requireNonNull(task.getException()).toString(), Toast.LENGTH_SHORT).show();
+                        firebaseAuth.signOut();
+                    }
+                }).addOnFailureListener(fail->firebaseAuth.signOut());
+
+            } else {
+                firebaseAuth.signOut();
+            }
+        }).execute(ip); // Replace with the IP address you want to geolocate
+
+
+    }
     private void Sigin() {
         Bundle bundle = new Bundle();
         FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task_id -> {
@@ -256,10 +319,9 @@ public class AuthOTP extends Fragment {
         });
 
     }
-
     private void UpdateToken(String token,int time) {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        firebaseDatabase.getReference().child("UserInfo").child(firebaseAuth.getUid()).child("token").setValue(token).addOnCompleteListener(task -> {
+        firebaseDatabase.getReference().child("UserInfo").child(Objects.requireNonNull(firebaseAuth.getUid())).child("token").setValue(token).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 binding.ProgressBar.setVisibility(View.GONE);
                 requireActivity().finish();

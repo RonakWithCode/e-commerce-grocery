@@ -1,4 +1,5 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory
         android:title="User Profile"
@@ -36,23 +37,27 @@
 
 
     <Preference
+        app:fragment="com.crazyostudio.ecommercegrocery.Activity.SettingsActivity$PrivacyPolicyFragment"
         android:title="Privacy and Security:"
         android:summary="Configure your privacy and security settings."
         android:key="Privacy_Security" />
     <!-- Help and Support -->
     <Preference
+        app:fragment="com.crazyostudio.ecommercegrocery.Activity.SettingsActivity$HelpSupportFragment"
         android:title="Help and Support"
         android:summary="Get assistance and support for the app."
         android:key="help_support" />
 
     <!-- Terms and Conditions -->
     <Preference
+        app:fragment="com.crazyostudio.ecommercegrocery.Activity.SettingsActivity$TermsConditionsFragment"
         android:title="Terms and Conditions"
         android:summary="Read the terms and conditions of using the app."
         android:key="terms_conditions" />
 
     <!-- About -->
     <Preference
+        app:fragment="com.crazyostudio.ecommercegrocery.Activity.SettingsActivity$SettingAboutFragment"
         android:title="About"
         android:summary="Learn more about the app and its version."
         android:key="about" />

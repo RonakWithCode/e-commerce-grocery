@@ -1,0 +1,44 @@
+<PreferenceScreen
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto">
+    <Preference
+        android:icon="@drawable/ic_manage_app_permissions"
+        android:key="manage_permissions"
+        android:title="Manage App Permissions"
+        android:summary="Review and manage the permissions granted to the app, such as camera, location, contacts, etc."
+        app:fragment="com.crazyostudio.ecommercegrocery.Activity.SettingsActivity$ManagePermissionsFragment" />
+
+    <!-- Privacy Policy -->
+    <Preference
+        android:icon="@drawable/ic_privacy_policy"
+        android:key="privacy_policy"
+        android:title="Privacy Policy"
+        android:summary="Review the app's privacy policy." />
+
+
+    <Preference
+        android:key="review_recent_logins"
+        android:title="Review Recent Logins"
+        android:summary="View a history of recent login attempts and devices."
+        android:icon="@drawable/ic_review_recent_logins"
+        app:fragment="com.crazyostudio.ecommercegrocery.Activity.SettingsActivity$ReviewRecentLoginsFragment" />
+
+
+    <!-- Logout from All Devices -->
+    <Preference
+        android:icon="@drawable/ic_logout_all_devices"
+        android:key="logout_all_devices"
+        android:title="Logout from All Devices"
+        android:summary="Logout from the user's account on all devices for added security" />
+    <!-- Logout from All Devices -->
+<!--    <Preference-->
+<!--        android:icon="@drawable/ic_logout"-->
+<!--        android:key="logout_devices"-->
+<!--        android:title="Logout"-->
+<!--        android:summary="Logout from the user's account on this devices" />-->
+    <Preference
+        android:icon="@drawable/ic_baseline_delete_24"
+        android:key="delete"
+        android:title="Delete Account"
+        android:summary="Delete your account. This action will remove your account, but some data may still be retained for legal or system purposes. For a complete account deletion, consider contacting customer support."/>
+</PreferenceScreen>

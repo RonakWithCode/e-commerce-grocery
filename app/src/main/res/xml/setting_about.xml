@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <Preference
+        android:key="app_version"
+        android:title="App Version"
+        android:icon="@drawable/ic_manage_app_permissions"/>
+    <Preference
+        android:title="About US"
+        android:icon="@drawable/ic_review_recent_logins"
+        app:fragment="com.crazyostudio.ecommercegrocery.Activity.SettingsActivity$AboutFragment" />
+
+    <!-- Logout from All Devices -->
+    <Preference
+        android:icon="@drawable/item_license"
+        android:title="terms &amp; conditions"
+        app:fragment="com.crazyostudio.ecommercegrocery.Activity.SettingsActivity$TermsConditionsFragment"/>
+
+    <Preference
+        android:icon="@drawable/ic_baseline_policy_24"
+        android:title="Privacy policy"
+        app:fragment="com.crazyostudio.ecommercegrocery.Activity.SettingsActivity$PrivacyPolicyWebFragment"/>
+    <Preference
+        android:icon="@drawable/item_license"
+        android:title="Developer Information"/>
+    <Preference
+
+        android:icon="@drawable/ic_baseline_smartphone_24"
+        android:title="Open Source Licenses"
+        app:fragment="com.crazyostudio.ecommercegrocery.Activity.SettingsActivity$OpenSourceLicenses" />
+
+
+</PreferenceScreen>

@@ -4,12 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.app.FragmentManager;
 import android.os.Bundle;
 
 import com.crazyostudio.ecommercegrocery.Fragment.AddressFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.ProductDetailsFragment;
-import com.crazyostudio.ecommercegrocery.Fragment.SettingsFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.UserAccountFragment;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.databinding.ActivityFragmentLoaderBinding;
@@ -32,17 +30,6 @@ public class FragmentLoader extends AppCompatActivity {
             Bundle bundle = new Bundle();
             bundle.putString("LoadID",id);
             bundle.putString("BuyType","viewAddress");
-            fragment.setArguments(bundle);
-            transaction.replace(R.id.fragment_container,fragment,id);
-            transaction.addToBackStack(id);
-            transaction.commit();
-        }
-        else if (id.equals("SettingsFragment")){
-//            android.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            android.app.FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            android.app.Fragment fragment = new SettingsFragment();
-            Bundle bundle = new Bundle();
-            bundle.putString("LoadID",id);
             fragment.setArguments(bundle);
             transaction.replace(R.id.fragment_container,fragment,id);
             transaction.addToBackStack(id);

@@ -56,5 +56,6 @@
     <color name="secondary">#A4A4A4</color>
 
     <color name="highlighted">#F44336</color>
+    <color name="newTaskCancelTextColor">#ccdcf6</color>
 
 </resources>

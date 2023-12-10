@@ -55,7 +55,6 @@ public class UserAccountFragment extends Fragment implements AddressInterface {
     private FragmentUserAccountBinding binding;
     private FirebaseDatabase firebaseDatabase;
     private AddressAdapter addressAdapter;
-    private StorageReference reference;
     private Uri UriDP;
     private UserinfoModels userInfo;
     private ArrayList<AddressModel> adderes;
@@ -73,7 +72,6 @@ public class UserAccountFragment extends Fragment implements AddressInterface {
         binding = FragmentUserAccountBinding.inflate(inflater,container,false);
         firebaseDatabase = FirebaseDatabase.getInstance();
         auth = FirebaseAuth.getInstance();
-        reference = FirebaseStorage.getInstance().getReference("DP");
         binding.userImage.setOnClickListener(view ->{
             ShowDialog();
 //            Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -101,19 +99,16 @@ public class UserAccountFragment extends Fragment implements AddressInterface {
     private void ShowDialog() {
 
         ImgaepickerBinding imgaepickerBinding = ImgaepickerBinding.inflate(getLayoutInflater());
-        Dialog imgaepickerBox = new Dialog(getContext());
-        imgaepickerBox.setContentView(imgaepickerBinding.getRoot());
+        Dialog dialog = new Dialog(getContext());
+        dialog.setContentView(imgaepickerBinding.getRoot());
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawableResource(R.drawable.newcategoryboxbg);
+        dialog.setCancelable(true);
+        dialog.getWindow().getAttributes().windowAnimations = R.style.Animationboy;
+        dialog.show();
 
-// Set the layout parameters to center the layout
-        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
-        layoutParams.copyFrom(imgaepickerBox.getWindow().getAttributes());
-        layoutParams.gravity = Gravity.CENTER; // Center the dialog
-        imgaepickerBox.getWindow().setAttributes(layoutParams);
+        imgaepickerBinding.cancel.setOnClickListener(view -> dialog.dismiss());
 
-        imgaepickerBox.getWindow().setBackgroundDrawableResource(R.drawable.createsubjectsboxbg);
-        imgaepickerBox.setCancelable(true);
-        imgaepickerBox.getWindow().getAttributes().windowAnimations = R.style.Animationboy;
-        imgaepickerBox.show();
         imgaepickerBinding.camera.setOnClickListener(view -> {
             // Check if the camera permission is already granted.
             if (isCameraPermissionGranted()) {
@@ -132,9 +127,9 @@ public class UserAccountFragment extends Fragment implements AddressInterface {
             intent.setType("image/*");
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
             startActivityForResult(intent, IMAGE_REQUEST_CODE);
-            imgaepickerBox.dismiss();
+            dialog.dismiss();
         });
-        imgaepickerBinding.CANCEL.setOnClickListener(view -> imgaepickerBox.dismiss());
+        imgaepickerBinding.cancel.setOnClickListener(view -> dialog.dismiss());
 
     }
 
@@ -226,30 +221,52 @@ public class UserAccountFragment extends Fragment implements AddressInterface {
             }
         }
     }
-
-
-    void back(){
-        if (basicFun.CheckField(binding.UserName)&&basicFun.CheckField(binding.UserMail)){
+    void back() {
+        if (basicFun.CheckField(binding.UserName) && basicFun.CheckField(binding.UserMail)) {
             binding.progressCircular.setVisibility(View.VISIBLE);
             long Time = System.currentTimeMillis();
-            StorageReference file = reference.child(Time + "." + getFileExtensionFromUri(UriDP));
-            file.putFile(UriDP).addOnSuccessListener(taskSnapshot -> file.getDownloadUrl().addOnSuccessListener(uri -> UriDP = uri)).addOnFailureListener(e ->
-                    UriDP = Uri.parse(userInfo.getProfilePictureUrl()));
-            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                    .setDisplayName(binding.UserName.getText().toString()).setPhotoUri(UriDP)
-                    .build();
-            UserinfoModels models = new UserinfoModels(userInfo.getToken(),auth.getUid(), binding.UserName.getText().toString(),binding.UserMail.getText().toString(),UriDP.toString(),Gander,adderes, Objects.requireNonNull(auth.getCurrentUser()).getPhoneNumber(),true);
-            Objects.requireNonNull(auth.getCurrentUser()).updateProfile(profileUpdates).addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    firebaseDatabase.getReference().child("UserInfo").child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid())).setValue(models).addOnCompleteListener(task1 -> {
-                        if (task1.isSuccessful()) {
-                            requireActivity().finish();
-                            binding.progressCircular.setVisibility(View.GONE);
-                        }
-                    }).addOnFailureListener(e -> basicFun.AlertDialog(requireContext(),e.toString()));
-                }
-            }).addOnFailureListener(e -> basicFun.AlertDialog(requireContext(),e.toString()));
+            if (!UriDP.equals("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/UserImage%2Fperson.png?alt=media&token=599cbe56-3620-4d52-9e51-58e57b936596")) {
+                FirebaseStorage storage = FirebaseStorage.getInstance();
+                StorageReference storageRef = storage.getReference("UserImage");
+                StorageReference imageRef = storageRef.child(Time + getFileExtensionFromUri(UriDP));
+                Uri imageUri = UriDP;
+                imageRef.putFile(imageUri)
+                        .addOnSuccessListener(taskSnapshot -> imageRef.getDownloadUrl()
+                                .addOnSuccessListener(uri -> {
+                                    // URI of the uploaded image
+                                    UriDP = uri;
+                                    setupUser();
+                                    // Use the download URL as needed (e.g., save it in your database)
+                                    // Now, you have the download URL of the uploaded image.
+                                })
+                                .addOnFailureListener(exception -> {
+                                    UriDP = Uri.parse("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/UserImage%2Fperson.png?alt=media&token=599cbe56-3620-4d52-9e51-58e57b936596");
+                                    setupUser();
+                                }))
+                        .addOnFailureListener(exception -> {
+                            UriDP = Uri.parse("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/UserImage%2Fperson.png?alt=media&token=599cbe56-3620-4d52-9e51-58e57b936596");
+                            setupUser();
+                        });
+
+
+            }
         }
+    }
+    private void setupUser() {
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setDisplayName(binding.UserName.getText().toString()).setPhotoUri(UriDP)
+                .build();
+        UserinfoModels models = new UserinfoModels(userInfo.getToken(),auth.getUid(), binding.UserName.getText().toString(),binding.UserMail.getText().toString(),UriDP.toString(),Gander,adderes, Objects.requireNonNull(auth.getCurrentUser()).getPhoneNumber(),true);
+        Objects.requireNonNull(auth.getCurrentUser()).updateProfile(profileUpdates).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                firebaseDatabase.getReference().child("UserInfo").child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid())).setValue(models).addOnCompleteListener(task1 -> {
+                    if (task1.isSuccessful()) {
+                        requireActivity().finish();
+                        binding.progressCircular.setVisibility(View.GONE);
+                    }
+                }).addOnFailureListener(e -> basicFun.AlertDialog(requireContext(),e.toString()));
+            }
+        }).addOnFailureListener(e -> basicFun.AlertDialog(requireContext(),e.toString()));
         binding.progressCircular.setVisibility(View.GONE);
     }
     @Override

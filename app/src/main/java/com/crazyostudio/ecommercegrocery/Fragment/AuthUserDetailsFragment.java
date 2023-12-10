@@ -9,11 +9,9 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
@@ -46,9 +44,9 @@ public class AuthUserDetailsFragment extends Fragment {
     FirebaseDatabase db;
     private String number;
     NavController navController;
-    private Uri userImage;
     private String token;
     private final int IMAGE_REQUEST_CODE = 123;
+    private Uri userImage;
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
 
     public AuthUserDetailsFragment() {
@@ -148,19 +146,14 @@ public class AuthUserDetailsFragment extends Fragment {
     private void ShowDialog() {
 
         ImgaepickerBinding imgaepickerBinding = ImgaepickerBinding.inflate(getLayoutInflater());
-        Dialog imgaepickerBox = new Dialog(getContext());
-        imgaepickerBox.setContentView(imgaepickerBinding.getRoot());
-
+        Dialog dialog = new Dialog(getContext());
 // Set the layout parameters to center the layout
-        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
-        layoutParams.copyFrom(imgaepickerBox.getWindow().getAttributes());
-        layoutParams.gravity = Gravity.CENTER; // Center the dialog
-        imgaepickerBox.getWindow().setAttributes(layoutParams);
-
-        imgaepickerBox.getWindow().setBackgroundDrawableResource(R.drawable.createsubjectsboxbg);
-        imgaepickerBox.setCancelable(true);
-        imgaepickerBox.getWindow().getAttributes().windowAnimations = R.style.Animationboy;
-        imgaepickerBox.show();
+        dialog.setContentView(imgaepickerBinding.getRoot());
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawableResource(R.drawable.newcategoryboxbg);
+        dialog.setCancelable(true);
+        dialog.getWindow().getAttributes().windowAnimations = R.style.Animationboy;
+        dialog.show();
         imgaepickerBinding.camera.setOnClickListener(view -> {
             // Check if the camera permission is already granted.
             if (isCameraPermissionGranted()) {
@@ -179,9 +172,9 @@ public class AuthUserDetailsFragment extends Fragment {
             intent.setType("image/*");
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
             startActivityForResult(intent, IMAGE_REQUEST_CODE);
-            imgaepickerBox.dismiss();
+            dialog.dismiss();
         });
-        imgaepickerBinding.CANCEL.setOnClickListener(view -> imgaepickerBox.dismiss());
+        imgaepickerBinding.cancel.setOnClickListener(view -> dialog.dismiss());
 
     }
 

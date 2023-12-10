@@ -1,0 +1,11 @@
+<!-- ic_storage.xml in res/drawable/ -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24.0"
+    android:viewportHeight="24.0"
+    android:tint="?attr/colorControlNormal">
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M3,5v14h18v-14h-18zM20,7v12h-16v-12h16zM13,9h-2v2h2v-2zM13,12h-2v2h2v-2zM13,15h-2v2h2v-2zM9,9h-2v2h2v-2zM9,12h-2v2h2v-2zM9,15h-2v2h2v-2z"/>
+</vector>

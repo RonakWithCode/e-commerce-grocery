@@ -1,0 +1,13 @@
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Other preferences go here -->
+
+    <!-- Permissions category -->
+    <PreferenceCategory
+        android:key="permissions_category"
+        android:title="App Permissions">
+    </PreferenceCategory>
+
+</PreferenceScreen>
