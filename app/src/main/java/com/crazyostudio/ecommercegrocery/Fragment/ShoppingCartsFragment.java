@@ -17,33 +17,31 @@ import com.crazyostudio.ecommercegrocery.Activity.OderActivity;
 import com.crazyostudio.ecommercegrocery.Adapter.ShoppingCartsAdapter;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
 import com.crazyostudio.ecommercegrocery.Model.ShoppingCartsProductModel;
+import com.crazyostudio.ecommercegrocery.Services.AuthService;
+import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentShoppingCartsBinding;
 import com.crazyostudio.ecommercegrocery.interfaceClass.ShoppingCartsInterface;
 import com.crazyostudio.ecommercegrocery.javaClasses.basicFun;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.hishd.tinycart.model.Cart;
 import com.hishd.tinycart.util.TinyCartHelper;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInterface {
     FragmentShoppingCartsBinding binding;
     ShoppingCartsAdapter cartsAdapter;
-    FirebaseDatabase firebaseDatabase;
     Cart cart;
     ProductModel model;
+    DatabaseService service;
     ArrayList<ShoppingCartsProductModel> models;
+    AuthService authService;
+    String uid;
     public ShoppingCartsFragment() {
         // Required empty public constructor
+
+
+
     }
     @SuppressLint("SetTextI18n")
     @Override
@@ -51,23 +49,30 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentShoppingCartsBinding.inflate(inflater,container,false);
-        firebaseDatabase =  FirebaseDatabase.getInstance();
+        authService = new AuthService();
+
+        service = new DatabaseService();
+        uid  = authService.getUserId();
         models = new ArrayList<>();
         cart = TinyCartHelper.getCart();
         binding.siginUp.setOnClickListener(view -> startActivity(new Intent(requireContext(), AuthMangerActivity.class)));
         binding.Buy.setOnClickListener(Buy->{
-            Intent intent = new Intent(requireContext(), OderActivity.class);
-            intent.putExtra("BuyType","Cart");
-            intent.putExtra("productModel",model);
-            startActivity(intent);
+            if (cart.isCartEmpty()){
+                Toast.makeText(requireContext(), "Select Product", Toast.LENGTH_SHORT).show();
+            }else {
+                Intent intent = new Intent(requireContext(), OderActivity.class);
+                intent.putExtra("BuyType", "Cart");
+                intent.putExtra("productModel", model);
+                startActivity(intent);
+            }
         });
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+
+        if (authService.IsLogin()) {
             binding.relativeNotAuth.setVisibility(View.VISIBLE);
             binding.main.setVisibility(View.GONE);
             binding.progressCircular.setVisibility(View.GONE);
-        }else {
+        }  else {
             init();
-
         }
         return binding.getRoot();
     }
@@ -80,73 +85,108 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,false);
         binding.ProductCart.setLayoutManager(layoutManager);
         binding.ProductCart.setAdapter(cartsAdapter);
-        firebaseDatabase.getReference().child("Cart").child(FirebaseAuth.getInstance().getUid()).addValueEventListener(new ValueEventListener() {
-            @SuppressLint("NotifyDataSetChanged")
+        service.getUserCartById(uid, new DatabaseService.GetUserCartByIdCallback() {
+
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+            public void onSuccess(ArrayList<ShoppingCartsProductModel> cartsProductModels) {
                 models.clear();
                 cart.clearCart();
-                for (DataSnapshot snapshot1 : snapshot.getChildren()) {
-                    ShoppingCartsProductModel productModel = snapshot1.getValue(ShoppingCartsProductModel.class);
-                    if (productModel != null) {
-                        models.add(productModel);
-                        cart.addItem(productModel,productModel.getSelectProductQuantity());
-                        binding.progressCircular.setVisibility(View.GONE);
-                        cartsAdapter.notifyDataSetChanged();
-                        BigDecimal totalPrice = cart.getTotalPrice();
-                        binding.SubTotal.setText("SubTotal ₹"+totalPrice);
-                    }
-
+                for (int i = 0; i < cartsProductModels.size(); i++) {
+                    cart.addItem(cartsProductModels.get(i),cartsProductModels.get(i).getSelectProductQuantity());
 
                 }
-
+                models.addAll(cartsProductModels);
+                binding.progressCircular.setVisibility(View.GONE);
+                cartsAdapter.notifyDataSetChanged();
+                BigDecimal totalPrice = cart.getTotalPrice();
+                binding.SubTotal.setText("SubTotal ₹"+totalPrice);
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                basicFun.AlertDialog(requireContext(),error.toString());
+            public void onError(String errorMessage) {
+                basicFun.AlertDialog(requireContext(), errorMessage);
+
             }
         });
 
     }
-    /// --------------------------------- ///
-    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///
+    /// --------------------------------- ///    /// --------------------------------- ///    /// --------------------------------- ///
     @SuppressLint("NotifyDataSetChanged")
     @Override
     public void remove(int pos,String id) {
       // cart.removeItem(models.get(pos));
         binding.progressCircular.setVisibility(View.VISIBLE);
-        firebaseDatabase.getReference().child("Cart").child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid())).child(id).removeValue().addOnCompleteListener(task -> {
-            if (task.isSuccessful()){
-                binding.progressCircular.setVisibility(View.GONE);
-                if (cart.isCartEmpty()){
-                    binding.SubTotal.setText("SubTotal ₹0");
-                }
-            }
-        }).addOnFailureListener(e -> {
-            binding.progressCircular.setVisibility(View.GONE);
-            basicFun.AlertDialog(requireContext(),e.toString());
-        });
+        service
+                .removeCartItemById(uid,id);
         cartsAdapter.notifyDataSetChanged();
+        binding.progressCircular.setVisibility(View.GONE);
     }
 
     @Override
     public void UpdateQuantity(ShoppingCartsProductModel UpdateModel, String id) {
         binding.progressCircular.setVisibility(View.VISIBLE);
-//                public ShoppingCartsProductModel(String Id ,String itemName, String itemDescription, String itemUnit, double stock, double price, double MRP, double discount, double quantity, String layout, String tag, String category, ArrayList<String> productImages, boolean isLive, int tapOn, long editDate, int sellerOfItem,int selectProductQuantity) {
-//                             public ProductModel(String Id ,String itemName, String itemDescription, String itemUnit, double stock, double price, double MRP, double discount, double quantity, String layout, String tag, String category, ArrayList<String> productImages, boolean isLive, int tapOn, long editDate, int sellerOfItem,int selectProductQuantity) {
-
-        ProductModel productModel = new ProductModel(UpdateModel.getId(),UpdateModel.getItemName(),UpdateModel.getItemDescription(), UpdateModel.getItemUnit(), UpdateModel.getStock(),UpdateModel.getPrice(),UpdateModel.getMRP(),UpdateModel.getDiscount(),UpdateModel.getQuantity(), UpdateModel.getLayout(), UpdateModel.getTag(), UpdateModel.getCategory(), UpdateModel.getProductImages(),UpdateModel.isLive(),UpdateModel.getTapOn(),UpdateModel.getEditDate(),UpdateModel.getSellerOfItem(),UpdateModel.getSelectProductQuantity());
-        firebaseDatabase.getReference().child("Cart").child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid())).child(id).setValue(productModel).addOnCompleteListener(task -> {
-            if (task.isSuccessful()){
-                binding.progressCircular.setVisibility(View.GONE);
-            }
-        }).addOnFailureListener(e -> {
-            binding.progressCircular.setVisibility(View.GONE);
-            basicFun.AlertDialog(requireContext(),e.toString());
-            models.clear();
-            onResume();
-        });
+        service.UpdateCartQuantityById(uid,id,UpdateModel.getSelectProductQuantity());
     }
-
 }

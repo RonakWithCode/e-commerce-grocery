@@ -2,9 +2,11 @@ package com.crazyostudio.ecommercegrocery.Fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
@@ -14,14 +16,13 @@ import com.crazyostudio.ecommercegrocery.Activity.AuthMangerActivity;
 import com.crazyostudio.ecommercegrocery.Activity.FragmentLoader;
 import com.crazyostudio.ecommercegrocery.Activity.SettingsActivity;
 import com.crazyostudio.ecommercegrocery.MainActivity;
-import com.crazyostudio.ecommercegrocery.Model.UserinfoModels;
 import com.crazyostudio.ecommercegrocery.R;
+import com.crazyostudio.ecommercegrocery.Services.AuthService;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentMoreBinding;
-import com.google.firebase.auth.FirebaseAuth;
+
 public class MoreFragment extends Fragment {
     FragmentMoreBinding binding;
-    FirebaseAuth auth;
-
+    AuthService authService;
 
 
     public MoreFragment() {
@@ -33,14 +34,17 @@ public class MoreFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentMoreBinding.inflate(inflater,container,false);
-        auth = FirebaseAuth.getInstance();
-        if (auth.getCurrentUser()==null) {
+
+
+        authService = new AuthService();
+        if (authService.IsLogin()) {
             binding.relativeNotAuth.setVisibility(View.VISIBLE);
         }else {
             binding.mainLayout.setVisibility(View.VISIBLE);
-            binding.Username.setText(auth.getCurrentUser().getDisplayName());
-            if (auth.getCurrentUser().getPhotoUrl()!=null) {
-                Glide.with(requireContext()).load(auth.getCurrentUser().getPhotoUrl()).placeholder(R.drawable.placeholder).into(binding.userImage);
+            binding.Username.setText(authService.getUserName());
+            binding.Email.setText(authService.getUserEmail());
+            if (authService.getUserUrl()!=null) {
+                Glide.with(requireContext()).load(authService.getUserUrl()).placeholder(R.drawable.cashondelivery).into(binding.userImage);
             }
         }
 
@@ -63,6 +67,7 @@ public class MoreFragment extends Fragment {
 //            intent.putExtra("LoadID","MoreAddress");
             startActivity(intent);
         });
+
         binding.continueShipping.setOnClickListener(view -> {
             requireActivity().finish();
             startActivity(new Intent(requireContext(), MainActivity.class));

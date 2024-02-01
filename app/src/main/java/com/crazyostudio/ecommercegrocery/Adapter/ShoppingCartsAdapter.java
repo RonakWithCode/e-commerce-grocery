@@ -57,7 +57,6 @@ public class ShoppingCartsAdapter extends RecyclerView.Adapter<ShoppingCartsAdap
             quantity++;
             if(quantity>model.getStock()) {
                 Toast.makeText(context, "Max stock available: "+ model.getStock(), Toast.LENGTH_SHORT).show();
-                return;
             } else {
                 model.setSelectProductQuantity(quantity);
                 shoppingCartsInterface.UpdateQuantity(model, model.getId());

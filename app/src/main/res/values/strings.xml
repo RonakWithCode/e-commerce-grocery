@@ -146,6 +146,12 @@
     <string name="very_long_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
     <string name="short_text">"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ornare lacinia magna, sed eleifend dui aliquet sed."</string>
     <string name="very_short_text">Lorem Ipsum dolor sit amet</string>
+    <string name="click_to_save_info">Click to Save Info</string>
+    <string name="password">Password</string>
+    <string name="verify_the_email">Verify the Email</string>
+    <string name="enter_the_email">Enter the Email</string>
+    <string name="save">SAVE</string>
+    <string name="cancel_big">CANCEL</string>
 
 
 </resources>

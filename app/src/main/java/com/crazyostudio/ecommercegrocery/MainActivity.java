@@ -1,10 +1,16 @@
 package com.crazyostudio.ecommercegrocery;
 
 import android.Manifest;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -29,16 +35,16 @@ public class MainActivity extends AppCompatActivity {
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
                     // Permission granted, you can show notifications
-                    showDummyNotification();
+//                    showDummyNotification();
                 } else {
                     // Permission denied, handle accordingly
                     // You can show a message to the user or request the permission again
                 }
             });
 
-    private void showDummyNotification() {
-
-    }
+//    private void showDummyNotification() {
+//
+//    }
 
 
     @Override
@@ -52,26 +58,21 @@ public class MainActivity extends AppCompatActivity {
                 i.putExtra("Type","seeOrderNotification");
                 i.putExtra("orderId",getIntent().getStringExtra("orderId"));
                 startActivity(i);
-
             }
         }
         loader(new HomeFragment(),"null");
         requestNotificationPermission();
-
         binding.bottomBar.setOnItemSelectedListener((OnItemSelectedListener) i -> {
             switch (i) {
                 case 0:
                     loader(new HomeFragment(),"HomeFragment");
-                    System.out.println("Item selected: " + i);
                     return (true);
 
                 case 1:
                     loader(new ShoppingCartsFragment(),"ShoppingCartsFragment");
-                    System.out.println("Item selected: " + i);
                     return (true);
                 case 2:
                     loader(new MoreFragment(),"MoreFragment");
-                    System.out.println("Item selected: " + i);
                     return (true);
             }
             return true;
@@ -99,13 +100,13 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void requestNotificationPermission() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
             // Permission is already granted, you can show notifications
-            showDummyNotification();
+//            showDummyNotification();
         } else {
             // Permission is not granted, request it
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                pushNotificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+                pushNotificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS);
             }
         }
     }

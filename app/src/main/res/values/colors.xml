@@ -58,4 +58,7 @@
     <color name="highlighted">#F44336</color>
     <color name="newTaskCancelTextColor">#ccdcf6</color>
 
+
+    <color name="SaveTextColor">#94abdc</color>
+    <color name="CancelTextColor">#ccdcf6</color>
 </resources>

@@ -27,19 +27,24 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
 import org.imaginativeworld.whynotimagecarousel.model.CarouselItem;
+
 import java.util.ArrayList;
 import java.util.Objects;
+
 import me.ibrahimsn.lib.SmoothBottomBar;
+
+
 @SuppressLint({"ResourceAsColor", "NotifyDataSetChanged", "SetTextI18n"})
 public class ProductDetailsFragment extends Fragment implements onClickProductAdapter {
     private FragmentProductDetailsBinding binding;
     private ProductModel productModel;
     private int BACK;
-
     private FragmentTransaction transaction;
     private boolean IsChatsProgressBar = false;
     public ProductDetailsFragment() {}
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,13 +52,11 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
             productModel = getArguments().getParcelable("productDetails");
             String BACK_KEY = "backButton";
             BACK = getArguments().getInt(BACK_KEY,1);
-
         }
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentProductDetailsBinding.inflate(inflater,container,false);
         transaction = requireActivity().getSupportFragmentManager().beginTransaction();
@@ -63,9 +66,7 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
         if (IsChatsProgressBar){
             binding.recyclerViewProgressBar.setVisibility(View.GONE);
         }
-        binding.viewBack.setOnClickListener(back->{
-            requireActivity().onBackPressed();
-        });
+        binding.viewBack.setOnClickListener(back-> requireActivity().onBackPressed());
         initValue();
         binding.AddTOCart.setOnClickListener(view -> AddTOCart());
         binding.plusBtn.setOnClickListener(view -> {
@@ -87,6 +88,7 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
 
         });
         binding.BuyNow.setOnClickListener(btu-> buyNow());
+        
         return binding.getRoot();
     }
 
@@ -178,16 +180,18 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
             }
         });
     }
-
     public void buyNow() {
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            Intent intent = new Intent(requireContext(), OderActivity.class);
-            intent.putExtra("BuyType","Now");
-            intent.putExtra("productModel",productModel);
-            startActivity(intent);
+                GoToBuy();
         }else {
             startActivity(new Intent(getContext(),AuthMangerActivity.class));
         }
+    }
+    public void GoToBuy(){
+        Intent intent = new Intent(requireContext(), OderActivity.class);
+        intent.putExtra("BuyType","Now");
+        intent.putExtra("productModel",productModel);
+        startActivity(intent);
     }
     public void AddTOCart() {
         if (FirebaseAuth.getInstance().getCurrentUser()!=null){

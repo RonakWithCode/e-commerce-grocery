@@ -124,7 +124,7 @@ public class AddressFragment extends Fragment implements AddressInterface {
             if (Now.equals("Now")) {
                 bundle.putParcelable("productModel",productModel);
             }
-            bundle.putParcelable("productModel",productModel);
+//            bundle.putParcelable("productModel",productModel);
             fragment.setArguments(bundle);
             transaction.replace(R.id.fragment_container,fragment,"PaymentScreen");
             transaction.addToBackStack("PaymentScreen");

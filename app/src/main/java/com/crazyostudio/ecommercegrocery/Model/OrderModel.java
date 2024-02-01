@@ -19,11 +19,12 @@ public class OrderModel implements Parcelable {
     private long OrderTime;
     private String UserId;
     private String token;
+    private String Email;
 
 
     public OrderModel(){}
 
-    public OrderModel(String Name, String orderId,String shipping ,ArrayList<com.crazyostudio.ecommercegrocery.Model.ProductModel> productModel, String orderStatus, String adders, String phoneNumber, double subTotal, double shippingFee, double total, String paymentStatus, String paymentType, long orderTime, String userId,String token,double discount,double save) {
+    public OrderModel(String Name, String orderId,String shipping ,ArrayList<com.crazyostudio.ecommercegrocery.Model.ProductModel> productModel, String orderStatus, String adders, String phoneNumber, double subTotal, double shippingFee, double total, String paymentStatus, String paymentType, long orderTime, String userId,String token,double discount,double save,String email) {
         name = Name;
         OrderId = orderId;
         this.shipping = shipping;
@@ -41,6 +42,7 @@ public class OrderModel implements Parcelable {
         this.token = token;
         this.discount = discount;
         this.save = save;
+        this.Email = email;
     }
 
 
@@ -65,6 +67,7 @@ public class OrderModel implements Parcelable {
         token = in.readString();
         this.discount = in.readDouble();
         this.save = in.readDouble();
+        this.Email = in.readString();
     }
 
     @Override
@@ -86,6 +89,7 @@ public class OrderModel implements Parcelable {
         dest.writeString(token);
         dest.writeDouble(discount);
         dest.writeDouble(save);
+        dest.writeString(Email);
     }
 
     @Override
@@ -132,6 +136,14 @@ public class OrderModel implements Parcelable {
 
     public String getAdders() {
         return Adders;
+    }
+
+    public String getEmail() {
+        return Email;
+    }
+
+    public void setEmail(String email) {
+        Email = email;
     }
 
     public void setAdders(String adders) {

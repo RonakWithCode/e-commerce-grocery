@@ -3,7 +3,8 @@ package com.crazyostudio.ecommercegrocery.Fragment;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.ContentResolver;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -12,11 +13,9 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -26,28 +25,31 @@ import androidx.navigation.Navigation;
 import com.bumptech.glide.Glide;
 import com.crazyostudio.ecommercegrocery.Model.UserinfoModels;
 import com.crazyostudio.ecommercegrocery.R;
+import com.crazyostudio.ecommercegrocery.Services.AuthService;
+import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
+import com.crazyostudio.ecommercegrocery.Services.FileService;
+import com.crazyostudio.ecommercegrocery.Services.StorageDatabaseService;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentAuthUserDetailsBinding;
 import com.crazyostudio.ecommercegrocery.databinding.ImgaepickerBinding;
 import com.crazyostudio.ecommercegrocery.javaClasses.basicFun;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-
-import java.util.Objects;
 
 
 public class AuthUserDetailsFragment extends Fragment {
     FragmentAuthUserDetailsBinding binding;
-    FirebaseDatabase db;
     private String number;
     NavController navController;
     private String token;
-    private final int IMAGE_REQUEST_CODE = 123;
+    private final static int IMAGE_REQUEST_CODE = 123;
     private Uri userImage;
+    private boolean IsImageSelect;
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
+    DatabaseService service;
+    AuthService authService;
+    String uid;
 
     public AuthUserDetailsFragment() {
         // Required empty public constructor
@@ -71,80 +73,87 @@ public class AuthUserDetailsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentAuthUserDetailsBinding.inflate(inflater,container,false);
-        db  = FirebaseDatabase.getInstance();
         navController = Navigation.findNavController(requireActivity(),R.id.nav_host_fragment);
-        binding.number.setText(number);
-
-
+        service = new DatabaseService();
+        authService = new AuthService();
+        uid = authService.getUserId();
 
         binding.userImage.setOnClickListener(view -> ShowDialog());
-
-
-
-
-
         binding.signup.setOnClickListener(onclick->{
             if (basicFun.CheckField(binding.Mail)&& basicFun.CheckField(binding.Name)) {
+                long time = System.currentTimeMillis();
                 binding.ProgressBar.setVisibility(View.VISIBLE);
-                if (userImage == null) {
-                    userImage = Uri.parse("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/UserImage%2Fperson.png?alt=media&token=599cbe56-3620-4d52-9e51-58e57b936596");
-                    setupUser();
-                } else {
-                    FirebaseStorage storage = FirebaseStorage.getInstance();
-                    StorageReference storageRef = storage.getReference("UserImage");
-                    StorageReference imageRef = storageRef.child(System.currentTimeMillis() + filletExtension(userImage.toString()));
-                    Uri imageUri = userImage;
-                    imageRef.putFile(imageUri)
-                            .addOnSuccessListener(taskSnapshot -> imageRef.getDownloadUrl()
-                                    .addOnSuccessListener(uri -> {
-                                        // URI of the uploaded image
-                                        userImage = uri;
-                                        setupUser();
-                                        // Use the download URL as needed (e.g., save it in your database)
-                                        // Now, you have the download URL of the uploaded image.
-                                    })
-                                    .addOnFailureListener(exception -> {
-                                        userImage = Uri.parse("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/UserImage%2Fperson.png?alt=media&token=599cbe56-3620-4d52-9e51-58e57b936596");
-                                        setupUser();
-                                    }))
-                            .addOnFailureListener(exception -> {
-                                userImage = Uri.parse("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/UserImage%2Fperson.png?alt=media&token=599cbe56-3620-4d52-9e51-58e57b936596");
-                                setupUser();
-                            });
+                if (!IsImageSelect) {
+                    setupUser("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/default%20images%2Fuser.png?alt=media&token=7c97004c-7632-42de-8649-ce674f139893");
+                }
+                else {
+                    String Child = time + "."+ new FileService().filletExtension(userImage.toString(),requireContext());
+                    new StorageDatabaseService().UploadImage(uid, Child, userImage, new StorageDatabaseService.UploadImageCallback() {
+                        @Override
+                        public void onSuccess(Uri Images) {
+                            setupUser(Images.toString());
+                        }
+
+                        @Override
+                        public void onError(Exception errorMessage) {
+                            basicFun.AlertDialog(requireContext(),errorMessage.toString());
+                            binding.ProgressBar.setVisibility(View.GONE);
+                        }
+                    });
                 }
             }
         });
         return binding.getRoot();
     }
 
-    void setupUser(){
-        UserinfoModels UserinfoModels = new UserinfoModels(token,FirebaseAuth.getInstance().getUid(), binding.Name.getText().toString(),binding.Mail.getText().toString(),String.valueOf(userImage),number,true);
-        db.getReference().child("UserInfo").child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid())).setValue(UserinfoModels).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setPhotoUri(userImage)
-                        .setDisplayName(binding.Name.getText().toString()).build();
-                assert user != null;
-                user.updateProfile(profileUpdates).addOnCompleteListener(task1 -> {
-                    if (task1.isSuccessful()) {
+    void setupUser(String imageUrl){
+        UserinfoModels UserinfoModels = new UserinfoModels(token,uid, binding.Name.getText().toString(),binding.Mail.getText().toString(),imageUrl,number,true);
+        service.setUserInfo(UserinfoModels, new DatabaseService.SetUserInfoCallback() {
+            @Override
+            public void onSuccess(Task<Void> task) {
+                authService.linkEmailCredential(UserinfoModels.getUsername(),UserinfoModels.getProfilePictureUrl(), UserinfoModels.getEmailAddress(), binding.password.getText().toString(), new AuthService.LinkEmailCallback() {
+                    @Override
+                    public void onSuccess() {
+//                        ProgressBar/
+                        ProgressDialog progressDialog = new ProgressDialog(requireContext());
+                        progressDialog.setTitle("Verify Email");
+                        progressDialog.setMessage("Check the Email box \n if it take a long time close the app then open ");
+                        progressDialog.setCancelable(false);
+                        progressDialog.setButton("Verified", (dialog, which) -> {
+                            // Retry sending email verification when the button is clicked
+                            if (authService.checkEmailVerificationStatus()){
+                                progressDialog.dismiss();
+                                requireActivity().finish();
+                            }else {
+                                Toast.makeText(requireContext(), "Verify the email.", Toast.LENGTH_SHORT).show();
+                                if (!progressDialog.isShowing()) {
+                                    progressDialog.show();
+                                }
+                            }
+                        });
+
                         binding.ProgressBar.setVisibility(View.GONE);
-                        requireActivity().finish();
-                    }else {
-                        basicFun.AlertDialog(requireContext(),"Error in Setup Profile");
+                        progressDialog.show();
+
+
                     }
-                }).addOnFailureListener(e -> basicFun.AlertDialog(requireContext(),e.toString()));
 
-
-            }else {
-                basicFun.AlertDialog(requireContext(),task.toString());
+                    @Override
+                    public void onError(Exception errorMessage) {
+                        basicFun.AlertDialog(requireContext(),errorMessage.toString());
+                    }
+                });
             }
 
-        }).addOnFailureListener(e -> basicFun.AlertDialog(requireContext(),e.toString()));
+            @Override
+            public void onError(String errorMessage) {
+                basicFun.AlertDialog(requireContext(),errorMessage);
+            }
+        });
     }
 
 
     private void ShowDialog() {
-
         ImgaepickerBinding imgaepickerBinding = ImgaepickerBinding.inflate(getLayoutInflater());
         Dialog dialog = new Dialog(getContext());
 // Set the layout parameters to center the layout
@@ -192,42 +201,26 @@ public class AuthUserDetailsFragment extends Fragment {
         if (requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Camera permission granted. You can use the camera here.
-            } else {
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(requireContext().getPackageManager()) != null) {
+                    startActivityForResult(takePictureIntent, IMAGE_REQUEST_CODE);
+                }
+                } else {
                 // Camera permission denied. Handle it accordingly (e.g., show a message to the user).
                 Toast.makeText(requireContext(), "Camera permission denied", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    @Nullable
-    private String filletExtension(String uri) {
-        ContentResolver contentResolver = requireContext().getContentResolver();
-        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
 
-        // Get the file extension based on the Uri's MIME type
-        String extension = mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(Uri.parse(uri)));
-
-        if (extension == null) {
-            // If the MIME type doesn't provide an extension, try to extract from the Uri's path
-
-            if (uri != null) {
-                int extensionStartIndex = uri.lastIndexOf('.');
-                if (extensionStartIndex != -1) {
-                    extension = uri.substring(extensionStartIndex + 1);
-                }
-            }
-        }
-
-        return extension;
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
-            Uri selectedImage = data.getData();
-            Glide.with(requireContext()).load(selectedImage).into(binding.userImage);
-            userImage = selectedImage;
+            userImage = data.getData();
+            IsImageSelect = true;
+            Glide.with(requireContext()).load(userImage).into(binding.userImage);
         }
     }
 

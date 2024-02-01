@@ -181,16 +181,16 @@ public class AuthOTP extends Fragment {
         @Override
         public void onVerificationCompleted(@NonNull PhoneAuthCredential credential) {
             signInWithPhoneAuthCredential(credential);
-            Toast.makeText(context, "on Verification Completed", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Wait", Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onVerificationFailed(@NonNull FirebaseException e) {
 //            Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-            Log.e("TAG", "onVerificationFailed: ", e);
-            Toast.makeText(context, "Error"+e, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Error:: "+e, Toast.LENGTH_SHORT).show();
             binding.ProgressBar.setVisibility(View.GONE);
             requireActivity().onBackPressed();
+
         }
 
         @Override
@@ -291,9 +291,7 @@ public class AuthOTP extends Fragment {
             } else {
                 firebaseAuth.signOut();
             }
-        }).execute(ip); // Replace with the IP address you want to geolocate
-
-
+        }).execute(ip);
     }
     private void Sigin() {
         Bundle bundle = new Bundle();
@@ -325,11 +323,13 @@ public class AuthOTP extends Fragment {
             if (task.isSuccessful()) {
                 binding.ProgressBar.setVisibility(View.GONE);
                 requireActivity().finish();
-            }else {
+            }
+            else {
                 if (time == 0) {
                     binding.ProgressBar.setVisibility(View.GONE);
                     UpdateToken(token, 1);
                 }
+
                 else {
                     firebaseAuth.signOut();
                     binding.ProgressBar.setVisibility(View.GONE);

@@ -24,6 +24,7 @@ import com.crazyostudio.ecommercegrocery.Model.ProductCategoryModel;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
 import com.crazyostudio.ecommercegrocery.Model.RecentLoginsModels;
 import com.crazyostudio.ecommercegrocery.R;
+import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentHomeBinding;
 import com.crazyostudio.ecommercegrocery.interfaceClass.CategoryAdapterInterface;
 import com.crazyostudio.ecommercegrocery.interfaceClass.onClickProductAdapter;
@@ -47,9 +48,11 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
     ProductAdapter productAdapter;
     CategoryAdapter categoryAdapter;
     ArrayList<ProductModel> model;
-    FirebaseDatabase firebaseDatabase;
-    boolean IsChatsProgressBar = false;
+
+    DatabaseService databaseService;
     private static final int SPEECH_REQUEST_CODE = 0;
+
+
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -58,36 +61,10 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentHomeBinding.inflate(inflater, container, false);
-        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseService = new DatabaseService();
 
-        if (!IsChatsProgressBar) {
-            binding.ChatsProgressBar.setVisibility(View.VISIBLE);
-            IsChatsProgressBar = true;
-        }
-        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task_id -> {
-            if (task_id.isSuccessful()) {
-                String token = task_id.getResult();
-                Log.i("sTASK_token", "onComplete: " + token);
-            }});
-//        binding.searchBar.addTextChangeListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//                filterList(String.valueOf(charSequence));
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable editable) {
-//
-//            }
-//        });
+
         binding.searchBar.setSpeechMode(true); // Enable voice search
-
-
         binding.searchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
             @Override
             public void onSearchStateChanged(boolean enabled) {
@@ -110,7 +87,6 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
                 }
             }
         });
-
         LoadCategory();
         LoadProduct();
         return binding.getRoot();
@@ -198,28 +174,32 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
         GridLayoutManager layoutManager = new GridLayoutManager(requireContext(), 2);
         binding.productsList.setAdapter(productAdapter);
         binding.productsList.setLayoutManager(layoutManager);
-        firebaseDatabase.getReference().child("Product").addValueEventListener(new ValueEventListener() {
+        databaseService.getAllProducts(new DatabaseService.GetAllProductsCallback() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                model.clear();
-                for (DataSnapshot snapshot1 : snapshot.getChildren()) {
-                    ProductModel productModel = snapshot1.getValue(ProductModel.class);
-                    if (productModel != null && productModel.isLive()) {
-                        model.add(productModel);
-                        if (IsChatsProgressBar) {
-                            binding.ChatsProgressBar.setVisibility(View.GONE);
-                        }
-                    }
-                }
+            public void onSuccess(ArrayList<ProductModel> products) {
+                model.addAll(products);
                 productAdapter.notifyDataSetChanged();
+                if (binding.ChatsProgressBar.getVisibility() == View.VISIBLE) {
+                    binding.ChatsProgressBar.setVisibility(View.GONE);
+                }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                basicFun.AlertDialog(requireContext(), error.toString());
+            public void onError(String errorMessage) {
+                // Handle the error her
+                basicFun.AlertDialog(requireContext(),errorMessage);
             }
         });
+
+
+
+
+
+
+
+
+
     }
 
     void LoadCategory() {
@@ -228,26 +208,19 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         binding.category.setLayoutManager(layoutManager);
         binding.category.setAdapter(categoryAdapter);
-        firebaseDatabase.getReference().child("Category").addValueEventListener(new ValueEventListener() {
+        databaseService.getAllCategory(new DatabaseService.GetAllCategoryCallback() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                categoryModels.clear();
-                for (DataSnapshot snapshot1 : snapshot.getChildren()) {
-                    ProductCategoryModel categoryModel = snapshot1.getValue(ProductCategoryModel.class);
-                    if (categoryModel != null) {
-                        categoryModels.add(categoryModel);
-                        categoryAdapter.notifyDataSetChanged();
-                    }
-                }
+            public void onSuccess(ArrayList<ProductCategoryModel> category) {
+                categoryModels.addAll(category);
+                categoryAdapter.notifyDataSetChanged();
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                basicFun.AlertDialog(requireContext(), error.toString());
+            public void onError(String errorMessage) {
+
             }
         });
-
     }
 
     @Override

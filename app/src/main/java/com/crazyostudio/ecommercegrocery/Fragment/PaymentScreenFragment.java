@@ -19,6 +19,7 @@ import com.crazyostudio.ecommercegrocery.Model.OrderModel;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
 import com.crazyostudio.ecommercegrocery.Model.UserinfoModels;
 import com.crazyostudio.ecommercegrocery.R;
+import com.crazyostudio.ecommercegrocery.Services.AuthService;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentPaymentScreenBinding;
 import com.crazyostudio.ecommercegrocery.javaClasses.basicFun;
 import com.google.firebase.auth.FirebaseAuth;
@@ -162,6 +163,7 @@ public class PaymentScreenFragment extends Fragment {
             }
             else if (PaymentMode.equals("Online")){
 //                Write a Code for Hindering Online Payments
+                Toast.makeText(requireContext(), "Sorry we are not hindering Online payment now ", Toast.LENGTH_SHORT).show();
             }
             else {
                 Toast.makeText(requireContext(), "Select a Payment Method", Toast.LENGTH_SHORT).show();
@@ -190,8 +192,12 @@ public class PaymentScreenFragment extends Fragment {
 
                         if (models.size()==cart.getAllItemsWithQty().size()) {
                             double userSave = Double.parseDouble(String.valueOf(save)) - Subtotal;
+                            String email = new AuthService().getUserEmail();
+                            if (email.isEmpty()) {
+                                email = "Email is found or Valid";
+                            }
 
-                            OrderModel orderModel = new OrderModel(adders.getName(),orderId,addersMode,models,"in padding",adders.getAddress(),adders.getPhone(),Subtotal,ShippingFee,total,"Padding",PaymentMode,time,FirebaseAuth.getInstance().getUid(),userinfoModels.getToken(),0,userSave);
+                            OrderModel orderModel = new OrderModel(adders.getName(),orderId,addersMode,models,"in padding",adders.getAddress(),adders.getPhone(),Subtotal,ShippingFee,total,"Padding",PaymentMode,time,FirebaseAuth.getInstance().getUid(),userinfoModels.getToken(),0,userSave,email);
                             firebaseDatabase.getReference().child("Order").child(FirebaseAuth.getInstance().getUid()).child(orderId).setValue(orderModel).addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
                                     if (progressDialog.isShowing()) {
@@ -225,6 +231,10 @@ public class PaymentScreenFragment extends Fragment {
         });
         }
         else if (BuyType.equals("Now")){
+            String email = new AuthService().getUserEmail();
+            if (email.isEmpty()) {
+                email = "Email is found or Valid";
+            }
             models.add(productModel);
             BigDecimal save = BigDecimal.ZERO;
             save = save.add(BigDecimal.valueOf(productModel.getMRP()).multiply(BigDecimal.valueOf(productModel.getSelectProductQuantity())));
@@ -232,7 +242,7 @@ public class PaymentScreenFragment extends Fragment {
                 OrderModel orderModel = new OrderModel(
                         adders.getName(),orderId,
                         addersMode,models,"in padding",adders.getAddress(),
-                        adders.getPhone(),Subtotal,ShippingFee,total,"Padding",PaymentMode,time,FirebaseAuth.getInstance().getUid(),userinfoModels.getToken(),0,userSave);
+                        adders.getPhone(),Subtotal,ShippingFee,total,"Padding",PaymentMode,time,FirebaseAuth.getInstance().getUid(),userinfoModels.getToken(),0,userSave,email);
                 firebaseDatabase.getReference().child("Order").child(FirebaseAuth.getInstance().getUid()).child(orderId).setValue(orderModel).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         if (progressDialog.isShowing()) {
