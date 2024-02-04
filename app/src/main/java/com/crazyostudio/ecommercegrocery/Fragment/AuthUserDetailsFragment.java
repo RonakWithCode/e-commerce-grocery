@@ -1,10 +1,8 @@
 package com.crazyostudio.ecommercegrocery.Fragment;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -15,6 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -33,9 +34,6 @@ import com.crazyostudio.ecommercegrocery.databinding.FragmentAuthUserDetailsBind
 import com.crazyostudio.ecommercegrocery.databinding.ImgaepickerBinding;
 import com.crazyostudio.ecommercegrocery.javaClasses.basicFun;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
 
 
 public class AuthUserDetailsFragment extends Fragment {
@@ -77,7 +75,6 @@ public class AuthUserDetailsFragment extends Fragment {
         service = new DatabaseService();
         authService = new AuthService();
         uid = authService.getUserId();
-
         binding.userImage.setOnClickListener(view -> ShowDialog());
         binding.signup.setOnClickListener(onclick->{
             if (basicFun.CheckField(binding.Mail)&& basicFun.CheckField(binding.Name)) {
@@ -144,14 +141,12 @@ public class AuthUserDetailsFragment extends Fragment {
                     }
                 });
             }
-
             @Override
             public void onError(String errorMessage) {
                 basicFun.AlertDialog(requireContext(),errorMessage);
             }
         });
     }
-
 
     private void ShowDialog() {
         ImgaepickerBinding imgaepickerBinding = ImgaepickerBinding.inflate(getLayoutInflater());
@@ -163,31 +158,46 @@ public class AuthUserDetailsFragment extends Fragment {
         dialog.setCancelable(true);
         dialog.getWindow().getAttributes().windowAnimations = R.style.Animationboy;
         dialog.show();
-        imgaepickerBinding.camera.setOnClickListener(view -> {
-            // Check if the camera permission is already granted.
-            if (isCameraPermissionGranted()) {
-                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (takePictureIntent.resolveActivity(requireContext().getPackageManager()) != null) {
-                    startActivityForResult(takePictureIntent, IMAGE_REQUEST_CODE);
-                }
-            } else {
-                // Camera permission is not granted. Request permission from the user.
-                requestCameraPermission();
-            }
-
-        });
+//        imgaepickerBinding.camera.setOnClickListener(view -> {
+//            // Check if the camera permission is already granted.
+//            if (isCameraPermissionGranted()) {
+//                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                if (takePictureIntent.resolveActivity(requireContext().getPackageManager()) != null) {
+//                    startActivityForResult(takePictureIntent, IMAGE_REQUEST_CODE);
+//                }
+//            } else {
+//                // Camera permission is not granted. Request permission from the user.
+//                requestCameraPermission();
+//            }
+//
+//        });
         imgaepickerBinding.photo.setOnClickListener(view -> {
-            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setType("image/*");
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-            startActivityForResult(intent, IMAGE_REQUEST_CODE);
+//            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+//            intent.setType("image/*");
+//            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+//            startActivityForResult(intent, IMAGE_REQUEST_CODE);
+            pickMedia.launch(new PickVisualMediaRequest.Builder()
+                    .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                    .build());
             dialog.dismiss();
         });
         imgaepickerBinding.cancel.setOnClickListener(view -> dialog.dismiss());
 
     }
 
+    ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
+            registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+                // Callback is invoked after the user selects a media item or closes the
+                // photo picker.
+                if (uri != null) {
+                    userImage = uri;
+                    Glide.with(requireContext()).load(userImage).into(binding.userImage);
+                    IsImageSelect = true;
 
+                } else {
+                    IsImageSelect = false;
+                }
+            });
     private boolean isCameraPermissionGranted() {
         return ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
     }
@@ -214,14 +224,14 @@ public class AuthUserDetailsFragment extends Fragment {
 
 
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
-            userImage = data.getData();
-            IsImageSelect = true;
-            Glide.with(requireContext()).load(userImage).into(binding.userImage);
-        }
-    }
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+////        if (requestCode == IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
+////            userImage = data.getData();
+////            Glide.with(requireContext()).load(userImage).into(binding.userImage);
+////            IsImageSelect = true;
+////        }
+//    }
 
 }

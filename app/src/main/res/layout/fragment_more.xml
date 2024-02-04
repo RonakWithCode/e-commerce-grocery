@@ -22,6 +22,7 @@
 
                 <com.makeramen.roundedimageview.RoundedImageView
                     android:layout_width="@dimen/_50sdp"
+                    android:scaleType="fitXY"
                     android:id="@+id/userImage"
                     android:layout_marginTop="@dimen/_10sdp"
                     android:layout_marginStart="@dimen/_15sdp"

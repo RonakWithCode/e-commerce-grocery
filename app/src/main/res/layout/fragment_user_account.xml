@@ -25,14 +25,15 @@
                 android:layout_alignParentStart="true"
                 app:riv_corner_radius="30dip"
                 app:riv_oval="true" />
+
             <com.makeramen.roundedimageview.RoundedImageView
                 android:id="@+id/userImage"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_marginTop="15dp"
-                android:scaleType="fitCenter"
-                android:adjustViewBounds="true"
+                android:layout_width="141dp"
+                android:layout_height="145dp"
                 android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
                 app:riv_border_color="#333333"
                 app:riv_border_width="2dip"
                 app:riv_corner_radius="30dip"
@@ -58,12 +59,44 @@
                     android:autofillHints="username"
                     style="@style/EditTextLight"
                     />
-                <EditText
-                    android:id="@+id/UserMail"
-                    android:autofillHints="emailAddress"
-                    android:hint="@string/e_mail"
-                    android:inputType="textEmailAddress"
-                    style="@style/EditTextLight"/>
+                <RelativeLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/UserMail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_20sdp"
+                        android:layout_marginTop="@dimen/_20sdp"
+                        android:layout_marginEnd="@dimen/_5sdp"
+                        android:layout_toStartOf="@+id/email_Stable"
+                        android:autofillHints="emailAddress"
+                        android:background="@drawable/round_text"
+                        android:enabled="false"
+                        android:hint="@string/e_mail"
+                        android:inputType="textEmailAddress"
+                        android:padding="15dp"
+                        android:textColor="@color/MainTextColor"
+                        android:textColorHint="@color/MainTextColor" />
+                    <com.makeramen.roundedimageview.RoundedImageView
+                        android:id="@+id/email_Stable"
+                        android:layout_width="@dimen/_40sdp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="@dimen/_20sdp"
+                        android:layout_height="@dimen/_40sdp"
+                        android:layout_marginTop="@dimen/_20sdp"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/check"
+                        android:adjustViewBounds="true"
+                        app:riv_border_color="#333333"
+                        app:riv_border_width="2dip"
+                        app:riv_corner_radius="30dip"
+                        app:riv_oval="true" />
+                </RelativeLayout>
+
+
                 <TextView
                     android:id="@+id/Usernumber"
                     android:hint="@string/phone_no"
@@ -150,11 +183,12 @@
                 android:layout_below="@id/Add_Address"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
+
             <ProgressBar
                 android:id="@+id/progressCircular"
-                android:layout_centerInParent="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_width="69dp"
+                android:layout_height="86dp"
+                android:layout_centerInParent="true" />
         </RelativeLayout>
 
     </ScrollView>

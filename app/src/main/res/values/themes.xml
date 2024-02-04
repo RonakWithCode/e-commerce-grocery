@@ -55,6 +55,7 @@
         <item name="mt_highlightedTextColor">@color/searchBarTextHighlightColor</item>
     </style>
     <style name="Animationboy">
+        <item name="android:animateLayoutChanges">true</item>
         <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
         <item name="android:windowExitAnimation">@android:anim/fade_out</item>
     </style>

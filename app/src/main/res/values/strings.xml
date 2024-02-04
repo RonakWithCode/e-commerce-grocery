@@ -113,9 +113,9 @@
     <string name="tap_to_open_camera">Tap to open Camera</string>
     <string-array name="typesSpinnerArray">
         <item>all</item>
-        <item>in padding</item>
-        <item>delivery</item>
-        <item>cancel</item>
+        <item>on the way</item>
+        <item>shipped</item>
+        <item>canceled</item>
         <item>successful</item>
     </string-array>
     <!-- Preference Titles -->

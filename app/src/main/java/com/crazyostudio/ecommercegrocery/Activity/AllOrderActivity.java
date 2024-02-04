@@ -1,27 +1,22 @@
 package com.crazyostudio.ecommercegrocery.Activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.renderscript.ScriptGroup;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
-import com.crazyostudio.ecommercegrocery.Adapter.OrderProductAdapter;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.crazyostudio.ecommercegrocery.Adapter.ViewOrderProductAdapter;
 import com.crazyostudio.ecommercegrocery.Model.OrderModel;
-import com.crazyostudio.ecommercegrocery.Model.ProductModel;
 import com.crazyostudio.ecommercegrocery.Model.UserinfoModels;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.databinding.ActivityAllOrderBinding;
 import com.crazyostudio.ecommercegrocery.interfaceClass.OrderInterface;
-import com.crazyostudio.ecommercegrocery.interfaceClass.OrderProductInterface;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -44,7 +39,7 @@ public class AllOrderActivity extends AppCompatActivity implements OrderInterfac
         setContentView(binding.getRoot());
         database = FirebaseDatabase.getInstance();
 
-
+        binding.orderDetailsViewBack.setOnClickListener(view->onBackPressed());
         getOrders();
 
 // Create an ArrayAdapter using the string array and a default spinner layout.
@@ -61,7 +56,7 @@ public class AllOrderActivity extends AppCompatActivity implements OrderInterfac
         binding.typesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                Log.i("LOG", "onItemSelected: "+adapter.getItem(i).toString());
+//                Log.i("LOG", "onItemSelected: "+adapter.getItem(i).toString());
                 orderProductAdapter.getFilter().filter(adapter.getItem(i).toString());
             }
 
@@ -95,7 +90,6 @@ public class AllOrderActivity extends AppCompatActivity implements OrderInterfac
                         orderProductAdapter.notifyDataSetChanged();
                         binding.progressCircular.setVisibility(View.INVISIBLE);
                         orderProductAdapter.getFilter().filter("all");
-
 //                        productModels.addAll(model.getProductModel());
                     }
 

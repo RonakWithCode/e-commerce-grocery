@@ -39,6 +39,7 @@ public class FCMService extends FirebaseMessagingService {
             // Create an intent to open an activity when the notification is clicked
             Intent intent = new Intent(this, MainActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 int importance = NotificationManager.IMPORTANCE_HIGH;
                 NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Shipping Notification", importance);
