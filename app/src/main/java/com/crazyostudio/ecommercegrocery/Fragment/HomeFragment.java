@@ -108,7 +108,7 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
     private void filterList(String valueOf) {
         ArrayList<ProductModel> filter = new ArrayList<>();
         for (ProductModel productModel : model) {
-            if (productModel.getItemName().toLowerCase().contains(valueOf.toLowerCase())) {
+            if (productModel.getProductName().toLowerCase().contains(valueOf.toLowerCase())) {
                 filter.add(productModel);
             } else if (productModel.getCategory().toLowerCase().contains(valueOf.toLowerCase())) {
                 filter.add(productModel);

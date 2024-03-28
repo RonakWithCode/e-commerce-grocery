@@ -92,7 +92,7 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
                 models.clear();
                 cart.clearCart();
                 for (int i = 0; i < cartsProductModels.size(); i++) {
-                    cart.addItem(cartsProductModels.get(i),cartsProductModels.get(i).getSelectProductQuantity());
+                    cart.addItem(cartsProductModels.get(i),cartsProductModels.get(i).getDefaultQuantity());
 
                 }
                 models.addAll(cartsProductModels);
@@ -187,6 +187,6 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
     @Override
     public void UpdateQuantity(ShoppingCartsProductModel UpdateModel, String id) {
         binding.progressCircular.setVisibility(View.VISIBLE);
-        service.UpdateCartQuantityById(uid,id,UpdateModel.getSelectProductQuantity());
+        service.UpdateCartQuantityById(uid,id,UpdateModel.getDefaultQuantity());
     }
 }

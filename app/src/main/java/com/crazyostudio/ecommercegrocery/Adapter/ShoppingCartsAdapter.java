@@ -46,32 +46,34 @@ public class ShoppingCartsAdapter extends RecyclerView.Adapter<ShoppingCartsAdap
     public void onBindViewHolder(@NonNull ShoppingCartsAdapter.ShoppingCartsAdapterViewHolder holder, int position) {
         ShoppingCartsProductModel model  = productModels.get(position);
         holder.binding.productName.setText(model.getItemName());
-        Glide.with(context).load(model.getProductImages().get(0)).into(holder.binding.productImage);
-        holder.binding.productQty.setText(model.getSelectProductQuantity()+"");
+        Glide.with(context).load(model.getImageURL().get(0)).into(holder.binding.productImage);
+        holder.binding.productQty.setText(model.getDefaultQuantity()+"");
         holder.binding.productPrice.setText("₹"+model.getPrice());
-        holder.binding.remove.setOnClickListener(view -> {
-            shoppingCartsInterface.remove(position,model.getId());
-        });
+
+        holder.binding.remove.setOnClickListener(view -> shoppingCartsInterface.remove(position,model.getProductId()));
         holder.binding.productQtyUp.setOnClickListener(up->{
-            int quantity = model.getSelectProductQuantity();
+            int quantity = model.getDefaultQuantity();
             quantity++;
-            if(quantity>model.getStock()) {
-                Toast.makeText(context, "Max stock available: "+ model.getStock(), Toast.LENGTH_SHORT).show();
+            if(quantity>model.getQuantity()) {
+                Toast.makeText(context, "Max stock available: "+ model.getQuantity(), Toast.LENGTH_SHORT).show();
             } else {
-                model.setSelectProductQuantity(quantity);
-                shoppingCartsInterface.UpdateQuantity(model, model.getId());
+                model.setDefaultQuantity(quantity);
+                shoppingCartsInterface.UpdateQuantity(model, model.getProductId());
+                holder.binding.productPrice.setText("₹"+model.getPrice());
             }
         });
         holder.binding.productQtyDown.setOnClickListener(Down->{
-            int quantity = model.getSelectProductQuantity();
+            int quantity = model.getDefaultQuantity();
             if(quantity > 1) {
                 quantity--;
-                model.setSelectProductQuantity(quantity);
-                shoppingCartsInterface.UpdateQuantity(model, model.getId());
+                model.setDefaultQuantity(quantity);
+                shoppingCartsInterface.UpdateQuantity(model, model.getProductId());
+                holder.binding.productPrice.setText("₹"+model.getPrice());
             }else {
                 Toast.makeText(context, "min 1 :", Toast.LENGTH_SHORT).show();
             }
         });
+
 
 
     }

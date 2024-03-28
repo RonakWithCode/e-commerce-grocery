@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="@dimen/_15sdp">
         <ImageView
             android:id="@+id/order_details_view_back"
             android:layout_width="25dp"
@@ -38,9 +38,10 @@
         android:layout_below="@+id/order_details_layout_top"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="5dp"
+        android:layout_marginEnd="5dp"
+        android:id="@+id/ScrollView"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_marginStart="1dp"
         tools:ignore="UselessParent">
         <RelativeLayout
             android:layout_width="match_parent"
@@ -55,7 +56,7 @@
 
             <TextView
                 android:id="@+id/view_Delivery"
-                android:textSize="@dimen/_15ssp"
+                android:textSize="@dimen/_13ssp"
                 android:layout_marginStart="@dimen/_15sdp"
                 android:layout_width="wrap_content"
                 android:textColor="@color/green_primary"
@@ -63,11 +64,12 @@
                 android:layout_height="wrap_content"/>
 
             <TextView
-                android:layout_alignParentEnd="true"
+                android:layout_toEndOf="@id/view_Delivery"
                 android:id="@+id/Change"
                 android:textColor="@color/orange_secondary"
-                android:layout_marginEnd="@dimen/_25sdp"
+                android:layout_marginStart="@dimen/_15sdp"
                 android:text="@string/change"
+                android:textSize="@dimen/_13ssp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:ignore="RelativeOverlap" />
@@ -133,7 +135,7 @@
                 android:id="@+id/Delivery_Options"
                 android:layout_below="@id/line1"
                 android:text="@string/delivery_options"
-                android:textSize="@dimen/_15ssp"
+                android:textSize="@dimen/_13ssp"
                 android:layout_marginTop="@dimen/_10sdp"
                 android:layout_marginStart="@dimen/_15sdp"
                 android:textColor="@color/green_primary"
@@ -187,7 +189,7 @@
                 android:id="@+id/view"
                 android:layout_below="@id/line2"
                 android:text="@string/select_a_payment_method"
-                android:textSize="@dimen/_15ssp"
+                android:textSize="@dimen/_13ssp"
                 android:layout_marginTop="@dimen/_10sdp"
                 android:layout_marginStart="@dimen/_15sdp"
                 android:textColor="@color/green_primary"
@@ -224,44 +226,57 @@
                 android:layout_height="1dp"
                 android:layout_marginTop="2dp"
                 app:dividerColor="@color/secondary" />
+
+
         </RelativeLayout>
 
 
     </ScrollView>
 
-
-
-    <RelativeLayout
+    <ScrollView
         android:id="@+id/order_details_overview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/ScrollView"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:paddingTop="20dp">
+        android:layout_alignParentEnd="true">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:id="@+id/coupon_code_box"
-            android:visibility="invisible"
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/coupon_code"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/dummy_txt"
-                android:textColor="@color/highlighted"
-                android:textSize="14sp" />
-            <com.google.android.material.divider.MaterialDivider
-                android:id="@+id/coupon_code_box_divider"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="2dp"
-                app:dividerColor="@color/secondary" />
+                android:hint="@string/coupon_code">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:background="@color/MainBackgroundColor"
+                    android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    />
+
+
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+
+                android:id="@+id/coupon_code_apply_btn"
+                android:layout_width="@dimen/_80sdp"
+                android:layout_height="wrap_content"
+                android:text="apply"/>
 
         </LinearLayout>
 
@@ -328,6 +343,7 @@
         </LinearLayout>
 
         <LinearLayout
+
             android:id="@+id/payment_fee_box"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -431,5 +447,6 @@
             android:textAllCaps="false"
             android:textSize="18sp" />
     </RelativeLayout>
+    </ScrollView>
 
 </RelativeLayout>

@@ -66,7 +66,7 @@ public class DatabaseService {
                 for (DataSnapshot productSnapshot : snapshot.getChildren()) {
                     // Assuming ProductModel has a constructor that takes a DataSnapshot
                     ProductModel product = productSnapshot.getValue(ProductModel.class);
-                    if (product != null && product.isLive()) {
+                    if (product != null && product.isAvailable()) {
                         products.add(product);
                     }
                 }
@@ -138,7 +138,7 @@ public class DatabaseService {
     }
 
     public void UpdateCartQuantityById(String uid,String itemId,int Quantity){
-        database.getReference().child("Cart").child(uid).child(itemId).child("selectProductQuantity").setValue(Quantity);
+            database.getReference().child("Cart").child(uid).child(itemId).child("defaultQuantity").setValue(Quantity);
     }
 
 

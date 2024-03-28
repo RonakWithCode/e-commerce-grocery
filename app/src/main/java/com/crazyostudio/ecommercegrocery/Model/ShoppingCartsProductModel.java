@@ -9,252 +9,242 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
+//Hey change
 public class ShoppingCartsProductModel implements Parcelable, Item, Serializable {
-        private String id;
-        private String ItemName,ItemDescription,ItemUnit;
-        private double stock,price,MRP,Discount,Quantity;
-        private String Layout,Tag,Category;
-        private ArrayList<String> ProductImages;
-        private boolean isLive;
-        private int TapOn;
-        private long EditDate;
-        private int SellerOfItem;
-        private int SelectProductQuantity;
+//        //////////////////////////////////////////
 
+    private String productId;
+    private String productName;
+    private String productDescription;
+    private String category;
+    private double price;
+    private double mrp;
+    private String unit;
+    private String SubUnit; // Unit of measurement (e.g., kg, gram, litre, pack)
+    private String ProductType; // Unit of measurement (e.g., kg, gram, litre, pack)
+    private int DefaultQuantity; // Quantity available
+    private int quantity;
+    private ArrayList<String> imageURL; // URL of the product image
+    private boolean isAvailable; // Indicates whether the product is available or not
+    // Sales data
+    private int totalSales;
+    private String EditDate;
+    private String whoEdit;
 
+    public ShoppingCartsProductModel() {
+    }
 
-        public ShoppingCartsProductModel() {} // For Firebase
+    public ShoppingCartsProductModel(String productId, String productName, String productDescription, String category, double price, double mrp, String unit, String subUnit, String productType, int defaultQuantity, int quantity, ArrayList<String> imageURL, boolean isAvailable, int totalSales, String editDate, String whoEdit) {
+        this.productId = productId;
+        this.productName = productName;
+        this.productDescription = productDescription;
+        this.category = category;
+        this.price = price;
+        this.mrp = mrp;
+        this.unit = unit;
+        SubUnit = subUnit;
+        ProductType = productType;
+        DefaultQuantity = defaultQuantity;
+        this.quantity = quantity;
+        this.imageURL = imageURL;
+        this.isAvailable = isAvailable;
+        this.totalSales = totalSales;
+        EditDate = editDate;
+        this.whoEdit = whoEdit;
+    }
 
-        public ShoppingCartsProductModel(String Id ,String itemName, String itemDescription, String itemUnit, double stock, double price, double MRP, double discount, double quantity, String layout, String tag, String category, ArrayList<String> productImages, boolean isLive, int tapOn, long editDate, int sellerOfItem,int selectProductQuantity) {
-            id = Id;
-            ItemName = itemName;
-            ItemDescription = itemDescription;
-            ItemUnit = itemUnit;
-            this.stock = stock;
-            this.price = price;
-            this.MRP = MRP;
-            Discount = discount;
-            Quantity = quantity;
-            Layout = layout;
-            Tag = tag;
-            Category = category;
-            ProductImages = productImages;
-            this.isLive = isLive;
-            TapOn = tapOn;
-            EditDate = editDate;
-            SellerOfItem = sellerOfItem;
-            SelectProductQuantity = selectProductQuantity;
-        }
+    protected ShoppingCartsProductModel(Parcel in) {
+        productId = in.readString();
+        productName = in.readString();
+        productDescription = in.readString();
+        category = in.readString();
+        price = in.readDouble();
+        mrp = in.readDouble();
+        unit = in.readString();
+        SubUnit = in.readString();
+        ProductType = in.readString();
+        DefaultQuantity = in.readInt();
+        quantity = in.readInt();
+        imageURL = in.createStringArrayList();
+        isAvailable = in.readByte() != 0;
+        totalSales = in.readInt();
+        EditDate = in.readString();
+        whoEdit = in.readString();
+    }
 
-        protected ShoppingCartsProductModel(Parcel in) {
-            id = in.readString();
-            ItemName = in.readString();
-            ItemDescription = in.readString();
-            ItemUnit = in.readString();
-            stock = in.readDouble();
-            price = in.readDouble();
-            MRP = in.readDouble();
-            Discount = in.readDouble();
-            Quantity = in.readDouble();
-            Layout = in.readString();
-            Tag = in.readString();
-            Category = in.readString();
-            ProductImages = in.createStringArrayList();
-            isLive = in.readByte() != 0;
-            TapOn = in.readInt();
-            EditDate = in.readLong();
-            SellerOfItem = in.readInt();
-            SelectProductQuantity = in.readInt();
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(productId);
+        dest.writeString(productName);
+        dest.writeString(productDescription);
+        dest.writeString(category);
+        dest.writeDouble(price);
+        dest.writeDouble(mrp);
+        dest.writeString(unit);
+        dest.writeString(SubUnit);
+        dest.writeString(ProductType);
+        dest.writeInt(DefaultQuantity);
+        dest.writeInt(quantity);
+        dest.writeStringList(imageURL);
+        dest.writeByte((byte) (isAvailable ? 1 : 0));
+        dest.writeInt(totalSales);
+        dest.writeString(EditDate);
+        dest.writeString(whoEdit);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<ShoppingCartsProductModel> CREATOR = new Creator<ShoppingCartsProductModel>() {
+        @Override
+        public ShoppingCartsProductModel createFromParcel(Parcel in) {
+            return new ShoppingCartsProductModel(in);
         }
 
         @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeString(id);
-            dest.writeString(ItemName);
-            dest.writeString(ItemDescription);
-            dest.writeString(ItemUnit);
-            dest.writeDouble(stock);
-            dest.writeDouble(price);
-            dest.writeDouble(MRP);
-            dest.writeDouble(Discount);
-            dest.writeDouble(Quantity);
-            dest.writeString(Layout);
-            dest.writeString(Tag);
-            dest.writeString(Category);
-            dest.writeStringList(ProductImages);
-            dest.writeByte((byte) (isLive ? 1 : 0));
-            dest.writeInt(TapOn);
-            dest.writeLong(EditDate);
-            dest.writeInt(SellerOfItem);
-            dest.writeInt(SelectProductQuantity);
+        public ShoppingCartsProductModel[] newArray(int size) {
+            return new ShoppingCartsProductModel[size];
         }
+    };
 
-        @Override
-        public int describeContents() {
-            return 0;
-        }
+    public String getProductId() {
+        return productId;
+    }
 
-        public static final Creator<ShoppingCartsProductModel> CREATOR = new Creator<ShoppingCartsProductModel>() {
-            @Override
-            public ShoppingCartsProductModel createFromParcel(Parcel in) {
-                return new ShoppingCartsProductModel(in);
-            }
+    public void setProductId(String productId) {
+        this.productId = productId;
+    }
 
-            @Override
-            public ShoppingCartsProductModel[] newArray(int size) {
-                return new ShoppingCartsProductModel[size];
-            }
-        };
+    public String getProductName() {
+        return productName;
+    }
 
-        public String getId() {
-            return id;
-        }
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
 
-        public void setId(String id) {
-            this.id = id;
-        }
+    public String getProductDescription() {
+        return productDescription;
+    }
 
-        public int getSelectProductQuantity() {
-            return SelectProductQuantity;
-        }
+    public void setProductDescription(String productDescription) {
+        this.productDescription = productDescription;
+    }
 
-        public void setSelectProductQuantity(int selectProductQuantity) {
-            SelectProductQuantity = selectProductQuantity;
-        }
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public double getMrp() {
+        return mrp;
+    }
+
+    public void setMrp(double mrp) {
+        this.mrp = mrp;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    public String getSubUnit() {
+        return SubUnit;
+    }
+
+    public void setSubUnit(String subUnit) {
+        SubUnit = subUnit;
+    }
+
+    public String getProductType() {
+        return ProductType;
+    }
+
+    public void setProductType(String productType) {
+        ProductType = productType;
+    }
+
+    public int getDefaultQuantity() {
+        return DefaultQuantity;
+    }
+
+    public void setDefaultQuantity(int defaultQuantity) {
+        DefaultQuantity = defaultQuantity;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public ArrayList<String> getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(ArrayList<String> imageURL) {
+        this.imageURL = imageURL;
+    }
+
+    public boolean isAvailable() {
+        return isAvailable;
+    }
+
+    public void setAvailable(boolean available) {
+        isAvailable = available;
+    }
+
+    public int getTotalSales() {
+        return totalSales;
+    }
+
+    public void setTotalSales(int totalSales) {
+        this.totalSales = totalSales;
+    }
+
+    public String getEditDate() {
+        return EditDate;
+    }
+
+    public void setEditDate(String editDate) {
+        EditDate = editDate;
+    }
+
+    public String getWhoEdit() {
+        return whoEdit;
+    }
+
+    public void setWhoEdit(String whoEdit) {
+        this.whoEdit = whoEdit;
+    }
 
     @Override
     public BigDecimal getItemPrice() {
         return BigDecimal.valueOf(price);
     }
 
+
+    @Override
     public String getItemName() {
-            return ItemName;
-        }
-
-        public void setItemName(String itemName) {
-            ItemName = itemName;
-        }
-
-        public String getItemDescription() {
-            return ItemDescription;
-        }
-
-        public void setItemDescription(String itemDescription) {
-            ItemDescription = itemDescription;
-        }
-
-        public String getItemUnit() {
-            return ItemUnit;
-        }
-
-        public void setItemUnit(String itemUnit) {
-            ItemUnit = itemUnit;
-        }
-
-        public double getStock() {
-            return stock;
-        }
-
-        public void setStock(double stock) {
-            this.stock = stock;
-        }
-
-        public double getPrice() {
-            return price;
-        }
-
-        public void setPrice(double price) {
-            this.price = price;
-        }
-
-        public double getMRP() {
-            return MRP;
-        }
-
-        public void setMRP(double MRP) {
-            this.MRP = MRP;
-        }
-
-        public double getDiscount() {
-            return Discount;
-        }
-
-        public void setDiscount(double discount) {
-            Discount = discount;
-        }
-
-        public double getQuantity() {
-            return Quantity;
-        }
-
-        public void setQuantity(double quantity) {
-            Quantity = quantity;
-        }
-
-        public String getLayout() {
-            return Layout;
-        }
-
-        public void setLayout(String layout) {
-            Layout = layout;
-        }
-
-        public String getTag() {
-            return Tag;
-        }
-
-        public void setTag(String tag) {
-            Tag = tag;
-        }
-
-        public String getCategory() {
-            return Category;
-        }
-
-        public void setCategory(String category) {
-            Category = category;
-        }
-
-        public ArrayList<String> getProductImages() {
-            return ProductImages;
-        }
-
-        public void setProductImages(ArrayList<String> productImages) {
-            ProductImages = productImages;
-        }
-
-        public boolean isLive() {
-            return isLive;
-        }
-
-        public void setLive(boolean live) {
-            isLive = live;
-        }
-
-        public int getTapOn() {
-            return TapOn;
-        }
-
-        public void setTapOn(int tapOn) {
-            TapOn = tapOn;
-        }
-
-        public long getEditDate() {
-            return EditDate;
-        }
-
-        public void setEditDate(long editDate) {
-            EditDate = editDate;
-        }
-
-        public int getSellerOfItem() {
-            return SellerOfItem;
-        }
-
-        public void setSellerOfItem(int sellerOfItem) {
-            SellerOfItem = sellerOfItem;
-        }
-
-
-
+        return productName;
     }
+}

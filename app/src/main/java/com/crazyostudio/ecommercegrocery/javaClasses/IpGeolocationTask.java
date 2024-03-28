@@ -14,21 +14,16 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class IpGeolocationTask extends AsyncTask<String, Void, String> {
-
-    private static final String API_KEY = "3936bf9a40da22e787a370aecf4908cd\n"; // Replace with your ipstack API key
+    private static final String API_KEY = "3936bf9a40da22e787a370aecf4908cd";
     private static final String API_URL = "http://api.ipstack.com/";
-
     private IpGeolocationListener listener;
-
     public IpGeolocationTask(IpGeolocationListener listener) {
         this.listener = listener;
     }
-
     @Override
     protected String doInBackground(String... params) {
         String ipAddress = params[0];
         String urlString = API_URL + ipAddress + "?access_key=" + API_KEY;
-
         try {
             URL url = new URL(urlString);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();

@@ -49,7 +49,7 @@ public class ViewOrderProductAdapter  extends RecyclerView.Adapter<ViewOrderProd
 
         holder.binding.productName.setText(model.getName());
         holder.binding.quantity.setVisibility(View.GONE);
-        holder.binding.productPrice.setText("₹"+model.getTotal());
+        holder.binding.TotalProductPrice.setText("₹"+model.getTotal());
         holder.binding.getRoot().setOnClickListener(onclickRoot->{
                     orderProductInterface.onOrder(model);
                 });

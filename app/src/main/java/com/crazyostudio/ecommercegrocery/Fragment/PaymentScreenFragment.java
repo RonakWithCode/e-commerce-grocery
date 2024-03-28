@@ -42,6 +42,7 @@ public class PaymentScreenFragment extends Fragment {
     private String addersMode;
     private String id;
     private String BuyType;
+    private String CouponCode;
     Cart cart;
     private FirebaseDatabase firebaseDatabase;
     boolean isShippingCost = false;
@@ -50,8 +51,11 @@ public class PaymentScreenFragment extends Fragment {
     private double total;
     private ProductModel productModel;
     BigDecimal getTotalPrice;
+    double newCouponValue = 0; // Variable to hold the applied coupon value
+    private boolean CouponValueIsApply = false;
     public PaymentScreenFragment(){}
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,9 +67,12 @@ public class PaymentScreenFragment extends Fragment {
             if (BuyType.equals("Now")) {
                 productModel = getArguments().getParcelable("productModel");
             }
-        }else {
+        }
+        else {
             requireActivity().onBackPressed();
         }
+
+
     }
 
     @SuppressLint("SetTextI18n")
@@ -79,13 +86,42 @@ public class PaymentScreenFragment extends Fragment {
         firebaseDatabase = FirebaseDatabase.getInstance();
         getTotalPrice = BigDecimal.ZERO;
         if (BuyType.equals("Now")) {
-            getTotalPrice = BigDecimal.valueOf(productModel.getPrice() * productModel.getSelectProductQuantity());
-        }else if (BuyType.equals("Cart"))
-        {
+            getTotalPrice = BigDecimal.valueOf(productModel.getPrice() * productModel.getDefaultQuantity());
+        }
+        else if (BuyType.equals("Cart")) {
             cart = TinyCartHelper.getCart();
             getTotalPrice = cart.getTotalPrice();
         }
 
+        binding.couponCodeApplyBtn.setOnClickListener(view->{
+            if (!CouponValueIsApply) {
+                CouponCode = binding.couponCode.getEditText().getText().toString();
+                if (CouponCode.equals("hello")) {
+//                 Apply coupon value if coupon code is valid
+                    CouponValueIsApply = true;
+                    newCouponValue = 50; // Example coupon value
+                    binding.couponCodeApplyBtn.setText("remove");
+                    binding.couponCode.setEnabled(!CouponValueIsApply);
+                }
+                else {
+                    CouponValueIsApply = false;
+                    newCouponValue = 0; // No coupon applied
+                    binding.couponCodeApplyBtn.setText("Apply");
+                    binding.couponCode.setEnabled(!CouponValueIsApply);
+                }
+                total = total - newCouponValue;
+                binding.TotalPrice.setText("₹" + total);
+            }
+            else {
+                total = total + newCouponValue;
+                binding.TotalPrice.setText("₹" + total);
+                newCouponValue = 0; // No coupon applied
+                CouponValueIsApply = false;
+                binding.couponCodeApplyBtn.setText("Apply");
+                binding.couponCode.setEnabled(!CouponValueIsApply);
+            }
+
+        });
         Subtotal = Double.parseDouble(getTotalPrice.toString());
         BigDecimal threshold = new BigDecimal("150.0"); // Define the threshold as a BigDecimal
         int comparisonResult = getTotalPrice.compareTo(threshold);
@@ -96,7 +132,7 @@ public class PaymentScreenFragment extends Fragment {
             binding.ShippingPrice.setText("₹50");
             ShippingFee = 50;
             addersMode = "Standard delivery";
-            total = Double.parseDouble(getTotalPrice.toString())+ShippingFee;
+            total = Double.parseDouble(getTotalPrice.toString())+ShippingFee-newCouponValue;
             binding.TotalPrice.setText("₹"+total);
             // totalPrice is less than 150
             // Add your logic here
@@ -105,7 +141,7 @@ public class PaymentScreenFragment extends Fragment {
             binding.ShippingPrice.setText("0");
             ShippingFee = 0;
             addersMode = "Standard delivery";
-            total = Double.parseDouble(getTotalPrice.toString());
+            total = Double.parseDouble(getTotalPrice.toString())-newCouponValue;
             binding.TotalPrice.setText("₹"+total);
 
         }
@@ -127,7 +163,7 @@ public class PaymentScreenFragment extends Fragment {
                     binding.ShippingPrice.setText("₹50");
                     ShippingFee = 50;
                     addersMode = "Standard delivery";
-                    total = Double.parseDouble(String.valueOf(getTotalPrice))+ShippingFee;
+                    total = Double.parseDouble(String.valueOf(getTotalPrice))+ShippingFee-newCouponValue;
                     binding.TotalPrice.setText("₹"+total);
 
                 }else {
@@ -135,7 +171,7 @@ public class PaymentScreenFragment extends Fragment {
                     binding.ShippingPrice.setText("₹0");
                     ShippingFee = 0;
                     addersMode = "Standard delivery";
-                    total = Double.parseDouble(getTotalPrice.toString());
+                    total = Double.parseDouble(getTotalPrice.toString())-newCouponValue;
                     binding.TotalPrice.setText("₹"+total);
                 }
             }
@@ -144,7 +180,7 @@ public class PaymentScreenFragment extends Fragment {
                 binding.ShippingPrice.setText("₹60");
                 addersMode = " Fast delivery";
                 ShippingFee = 60;
-                total = Double.parseDouble(String.valueOf(getTotalPrice))+60;
+                total = Double.parseDouble(String.valueOf(getTotalPrice))+ShippingFee - newCouponValue;
                 binding.TotalPrice.setText("₹"+total);
             }
         });
@@ -180,55 +216,55 @@ public class PaymentScreenFragment extends Fragment {
         ArrayList<ProductModel> models = new ArrayList<>();
         if (BuyType.equals("Cart")) {
             firebaseDatabase.getReference().child("Cart").child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid())).addValueEventListener(new ValueEventListener() {
-            @SuppressLint("NotifyDataSetChanged")
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                BigDecimal save = BigDecimal.ZERO;
-                for (DataSnapshot snapshot1 : snapshot.getChildren()) {
-                    ProductModel productModel = snapshot1.getValue(ProductModel.class);
-                    if (productModel != null) {
-                        models.add(productModel);
-                        save = save.add(BigDecimal.valueOf(productModel.getMRP()).multiply(BigDecimal.valueOf(productModel.getSelectProductQuantity())));
+                @SuppressLint("NotifyDataSetChanged")
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    BigDecimal save = BigDecimal.ZERO;
+                    for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+                        ProductModel productModel = snapshot1.getValue(ProductModel.class);
+                        if (productModel != null) {
+                            models.add(productModel);
+                            save = save.add(BigDecimal.valueOf(productModel.getMrp()).multiply(BigDecimal.valueOf(productModel.getDefaultQuantity())));
 
-                        if (models.size()==cart.getAllItemsWithQty().size()) {
-                            double userSave = Double.parseDouble(String.valueOf(save)) - Subtotal;
-                            String email = new AuthService().getUserEmail();
-                            if (email.isEmpty()) {
-                                email = "Email is found or Valid";
-                            }
+                            if (models.size()==cart.getAllItemsWithQty().size()) {
+                                double userSave = Double.parseDouble(String.valueOf(save)) - Subtotal;
+                                String email = new AuthService().getUserEmail();
+                                if (email.isEmpty()) {
+                                    email = "Email is found or Valid";
+                                }
 
-                            OrderModel orderModel = new OrderModel(adders.getName(),orderId,addersMode,models,"shipped",adders.getAddress(),adders.getPhone(),Subtotal,ShippingFee,total,"Padding",PaymentMode,time,FirebaseAuth.getInstance().getUid(),userinfoModels.getToken(),0,userSave,email);
-                            firebaseDatabase.getReference().child("Order").child(FirebaseAuth.getInstance().getUid()).child(orderId).setValue(orderModel).addOnCompleteListener(task -> {
-                                if (task.isSuccessful()) {
+                                OrderModel orderModel = new OrderModel(adders.getName(),orderId,addersMode,models,"shipped",adders.getAddress(),adders.getPhone(),Subtotal,ShippingFee,total,"Padding",PaymentMode,time,FirebaseAuth.getInstance().getUid(),userinfoModels.getToken(),0,userSave,email);
+                                firebaseDatabase.getReference().child("Order").child(FirebaseAuth.getInstance().getUid()).child(orderId).setValue(orderModel).addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        if (progressDialog.isShowing()) {
+                                            progressDialog.dismiss();
+                                        }
+                                        cart.clearCart();
+                                        Intent i = new Intent(requireContext(), OrderDetailsActivity.class);
+                                        i.putExtra("Type","placeOrder");
+                                        i.putExtra("userModel",userinfoModels);
+                                        i.putExtra("orderModel",orderModel);
+                                        requireActivity().finish();
+                                        startActivity(i);
+                                    }
+                                }).addOnFailureListener(e -> {
                                     if (progressDialog.isShowing()) {
                                         progressDialog.dismiss();
                                     }
-                                    cart.clearCart();
-                                    Intent i = new Intent(requireContext(), OrderDetailsActivity.class);
-                                    i.putExtra("Type","placeOrder");
-                                    i.putExtra("userModel",userinfoModels);
-                                    i.putExtra("orderModel",orderModel);
-                                    requireActivity().finish();
-                                    startActivity(i);
-                                }
-                            }).addOnFailureListener(e -> {
-                                if (progressDialog.isShowing()) {
-                                    progressDialog.dismiss();
-                                }
-                                basicFun.AlertDialog(requireContext(),e.toString());
-                               });
+                                    basicFun.AlertDialog(requireContext(),e.toString());
+                                });
+                            }
                         }
                     }
                 }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                basicFun.AlertDialog(requireContext(),error.toString());
-                if (progressDialog.isShowing()) {
-                    progressDialog.dismiss();
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    basicFun.AlertDialog(requireContext(),error.toString());
+                    if (progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
                 }
-            }
-        });
+            });
         }
         else if (BuyType.equals("Now")){
             String email = new AuthService().getUserEmail();
@@ -237,28 +273,28 @@ public class PaymentScreenFragment extends Fragment {
             }
             models.add(productModel);
             BigDecimal save = BigDecimal.ZERO;
-            save = save.add(BigDecimal.valueOf(productModel.getMRP()).multiply(BigDecimal.valueOf(productModel.getSelectProductQuantity())));
-             double userSave = Double.parseDouble(String.valueOf(save)) - Subtotal;
-                OrderModel orderModel = new OrderModel(
-                        adders.getName(),orderId,
-                        addersMode,models,"shipped",adders.getAddress(),
-                        adders.getPhone(),Subtotal,ShippingFee,total,"Padding",PaymentMode,time,FirebaseAuth.getInstance().getUid(),userinfoModels.getToken(),0,userSave,email);
-                firebaseDatabase.getReference().child("Order").child(FirebaseAuth.getInstance().getUid()).child(orderId).setValue(orderModel).addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        if (progressDialog.isShowing()) {
-                            progressDialog.dismiss();
-                        }
-                        Intent i = new Intent(requireContext(), OrderDetailsActivity.class);
-                        i.putExtra("Type","placeOrder");
-                        i.putExtra("userModel",userinfoModels);
-                        i.putExtra("orderModel",orderModel);
-                        requireActivity().finish();
-                        startActivity(i);
+            save = save.add(BigDecimal.valueOf(productModel.getMrp()).multiply(BigDecimal.valueOf(productModel.getDefaultQuantity())));
+            double userSave = Double.parseDouble(String.valueOf(save)) - Subtotal;
+            OrderModel orderModel = new OrderModel(
+                    adders.getName(),orderId,
+                    addersMode,models,"shipped",adders.getAddress(),
+                    adders.getPhone(),Subtotal,ShippingFee,total,"Padding",PaymentMode,time,FirebaseAuth.getInstance().getUid(),userinfoModels.getToken(),0,userSave,email);
+            firebaseDatabase.getReference().child("Order").child(FirebaseAuth.getInstance().getUid()).child(orderId).setValue(orderModel).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    if (progressDialog.isShowing()) {
+                        progressDialog.dismiss();
                     }
-                }).addOnFailureListener(e -> {
-                    if (progressDialog.isShowing())progressDialog.dismiss();
-                    basicFun.AlertDialog(requireContext(),e.toString());
-                });
+                    Intent i = new Intent(requireContext(), OrderDetailsActivity.class);
+                    i.putExtra("Type","placeOrder");
+                    i.putExtra("userModel",userinfoModels);
+                    i.putExtra("orderModel",orderModel);
+                    requireActivity().finish();
+                    startActivity(i);
+                }
+            }).addOnFailureListener(e -> {
+                if (progressDialog.isShowing())progressDialog.dismiss();
+                basicFun.AlertDialog(requireContext(),e.toString());
+            });
         }
 
     }

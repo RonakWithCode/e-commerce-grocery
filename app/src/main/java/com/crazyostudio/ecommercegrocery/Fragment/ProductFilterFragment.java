@@ -68,7 +68,7 @@ public class ProductFilterFragment extends Fragment implements onClickProductAda
                 model.clear();
                 for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                     ProductModel productModel = snapshot1.getValue(ProductModel.class);
-                    if (productModel != null && productModel.isLive()&&productModel.getCategory().equals(category)) {
+                    if (productModel != null && productModel.isAvailable()&&productModel.getCategory().equals(category)) {
                         model.add(productModel);
                         binding.progressCircular.setVisibility(View.GONE);
                         productAdapter.notifyDataSetChanged();

@@ -21,7 +21,6 @@ public class OrderProductAdapter extends RecyclerView.Adapter<OrderProductAdapte
     ArrayList<ProductModel> productModels;
     Context context;
     OrderProductInterface orderProductInterface;
-
     public OrderProductAdapter(ArrayList<ProductModel> productModels, Context context, OrderProductInterface orderProductInterface) {
         this.productModels = productModels;
         this.context = context;
@@ -38,10 +37,10 @@ public class OrderProductAdapter extends RecyclerView.Adapter<OrderProductAdapte
     @Override
     public void onBindViewHolder(@NonNull OrderProductAdapter.OrderProductAdapterViewHolder holder, int position) {
         ProductModel productModel = productModels.get(position);
-        Glide.with(context).load(productModel.getProductImages().get(0)).into(holder.binding.productImage);
-        holder.binding.productName.setText(productModel.getItemName());
-        holder.binding.quantity.setText(productModel.getSelectProductQuantity()+" '(item)");
-        holder.binding.productPrice.setText("₹"+productModel.getPrice()*productModel.getSelectProductQuantity());
+        Glide.with(context).load(productModel.getImageURL().get(0)).into(holder.binding.productImage);
+        holder.binding.productName.setText(productModel.getProductName());
+        holder.binding.quantity.setText(productModel.getDefaultQuantity()+" '(item) * ₹" + productModel.getPrice()+" =");
+        holder.binding.TotalProductPrice.setText("₹"+productModel.getPrice()*productModel.getDefaultQuantity());
         holder.binding.getRoot().setOnClickListener(view -> orderProductInterface.onOrder(productModel));
     }
 

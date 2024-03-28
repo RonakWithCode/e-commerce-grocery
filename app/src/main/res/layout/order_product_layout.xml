@@ -48,21 +48,24 @@
 
                 <TextView
                     android:id="@+id/quantity"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:text="Quantity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_2sdp"
+                    android:text="50(Item)' "
                     android:textColor="@color/MainTextColor"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
+
+
                 <TextView
-                    android:id="@+id/product_price"
+                    android:id="@+id/Total_Product_price"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="112.50 INR"
-                    android:layout_marginStart="@dimen/_5sdp"
+                    android:gravity="end"
+                    android:text="112.50"
+                    android:layout_marginStart="@dimen/_15sdp"
                     android:textColor="@color/MainTextColor"
                     android:textSize="14sp"
                     android:textStyle="bold" />

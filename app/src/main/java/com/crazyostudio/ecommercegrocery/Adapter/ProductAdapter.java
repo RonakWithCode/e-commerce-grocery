@@ -54,9 +54,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
             holder.binding.getRoot().setLayoutParams(params);
         }
         Glide.with(context)
-                .load(product.getProductImages().get(0))
+                .load(product.getImageURL().get(0))
                 .into(holder.binding.ProductImage);
-        holder.binding.label.setText(product.getItemName());
+        holder.binding.label.setText(product.getProductName());
         holder.binding.price.setText("₹" + product.getPrice());
         holder.binding.getRoot().setOnClickListener(onclick-> onClickProductAdapter.onClick(product));
     }

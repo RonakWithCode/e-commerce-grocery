@@ -89,7 +89,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/product_pricing_box"
         android:layout_toEndOf="@id/product_image" />
-
     <View
         android:layout_below="@+id/remove"
         android:layout_width="match_parent"

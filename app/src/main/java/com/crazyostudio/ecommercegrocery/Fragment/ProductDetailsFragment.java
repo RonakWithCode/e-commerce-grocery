@@ -70,20 +70,20 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
         initValue();
         binding.AddTOCart.setOnClickListener(view -> AddTOCart());
         binding.plusBtn.setOnClickListener(view -> {
-            int quantity = productModel.getSelectProductQuantity();
+            int quantity = productModel.getDefaultQuantity();
             quantity++;
-            if(quantity>productModel.getStock()) {
-                Toast.makeText(requireContext(), "Max stock available: "+ productModel.getStock(), Toast.LENGTH_SHORT).show();
+            if(quantity>productModel.getQuantity()) {
+                Toast.makeText(requireContext(), "Max stock available: "+ productModel.getQuantity(), Toast.LENGTH_SHORT).show();
             } else {
-                productModel.setSelectProductQuantity(quantity);
+                productModel.setDefaultQuantity(quantity);
                 binding.quantity.setText(String.valueOf(quantity));
             }
         });
         binding.minusBtn.setOnClickListener(view -> {
-            int quantity = productModel.getSelectProductQuantity();
+            int quantity = productModel.getDefaultQuantity();
             if(quantity > 1)
                 quantity--;
-            productModel.setSelectProductQuantity(quantity);
+            productModel.setDefaultQuantity(quantity);
             binding.quantity.setText(String.valueOf(quantity));
 
         });
@@ -97,7 +97,7 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
             String userId = FirebaseAuth.getInstance().getUid();
             assert userId != null;
             DatabaseReference productsRef = FirebaseDatabase.getInstance().getReference().child("Cart").child(userId);
-            String productNameToFind = productModel.getId();
+            String productNameToFind = productModel.getProductId();
             Query query = productsRef.orderByKey().equalTo(productNameToFind);
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -116,11 +116,11 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
         }
 
         binding.category.setText(productModel.getCategory());
-        binding.ProductTitle.setText(productModel.getItemName());
-        for (int i = 0; i < productModel.getProductImages().size(); i++) {
-            binding.productsImages.addData(new CarouselItem(productModel.getProductImages().get(i)));
+        binding.ProductTitle.setText(productModel.getProductName());
+        for (int i = 0; i < productModel.getImageURL().size(); i++) {
+            binding.productsImages.addData(new CarouselItem(productModel.getImageURL().get(i)));
         }
-        double mrp = productModel.getMRP(); // Replace with the actual MRP
+        double mrp = productModel.getMrp(); // Replace with the actual MRP
         double sellingPrice =productModel.getPrice(); // Replace with the actual selling price
 //
         double discountPercentage = mrp - sellingPrice;
@@ -128,9 +128,9 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
 //        float percentageSaved = (float) (((productModel.getMRP() - productModel.getPrice()) / productModel.getMRP()) * 100f);
         binding.Save.setText("-"+discountPercentage);
         binding.Price.setText("₹"+productModel.getPrice());
-        binding.PricePerUnit.setText("(₹"+productModel.getPrice()+" / "+ productModel.getQuantity()+productModel.getItemUnit()+")");
-        binding.MRP.setText("M.R.P.: ₹"+productModel.getMRP());
-        if (productModel.getStock()==0){
+        binding.PricePerUnit.setText("(₹"+productModel.getPrice()+" / "+ productModel.getQuantity()+productModel.getUnit()+")");
+        binding.MRP.setText("M.R.P.: ₹"+productModel.getMrp());
+        if (productModel.getQuantity()==0){
             binding.OutOfStockBuyOptions.setVisibility(View.VISIBLE);
             binding.quantity.setText("0");
             binding.TextInStock.setText("Out of Stock");
@@ -140,11 +140,13 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
             binding.BuyNow.setVisibility(View.INVISIBLE);
         }
         binding.categoryType.setText(productModel.getCategory());
-        binding.categoryType.setText(productModel.getQuantity()+productModel.getItemUnit());
-        binding.dietType.setText("veg");
-//        binding.MRP.setText("M.R.P.: ₹"+productModel.getMRP());
-//        ArrayList<String>
-        ProductDisplayImagesAdapter productDisplayImagesAdapter = new ProductDisplayImagesAdapter(productModel.getProductImages(),getContext());
+//        binding.categoryType.setText(productModel.getQuantity()+productModel.getItemUnit());
+        String diet;
+        if (productModel.getProductType().equals("FoodVeg")) diet = "Veg";
+        else if (productModel.getProductType().equals("FoodNonVeg")) diet = "NonVeg";
+        else diet = "";
+        binding.dietType.setText(diet);
+        ProductDisplayImagesAdapter productDisplayImagesAdapter = new ProductDisplayImagesAdapter(productModel.getImageURL(),getContext());
         LinearLayoutManager manager = new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false);
         binding.ProductItemImage.setLayoutManager(manager);
         binding.ProductItemImage.setAdapter(productDisplayImagesAdapter);
@@ -165,7 +167,7 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
                 model.clear();
                 for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                     ProductModel productModel = snapshot1.getValue(ProductModel.class);
-                    if (productModel != null && productModel.isLive()) {
+                    if (productModel != null && productModel.isAvailable()) {
                         model.add(productModel);
                         IsChatsProgressBar = true;
                         binding.recyclerViewProgressBar.setVisibility(View.GONE);
@@ -196,7 +198,7 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
     public void AddTOCart() {
         if (FirebaseAuth.getInstance().getCurrentUser()!=null){
             DatabaseReference productsRef = FirebaseDatabase.getInstance().getReference().child("Cart").child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
-            String productNameToFind = productModel.getId();
+            String productNameToFind = productModel.getProductId();
             Query query = productsRef.orderByKey().equalTo(productNameToFind);
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @SuppressLint("SetTextI18n")
@@ -210,7 +212,7 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
                         SmoothBottomBar smoothBottomBar = requireActivity().findViewById(R.id.bottomBar);
                         smoothBottomBar.setItemActiveIndex(1);
                     }else {
-                        productsRef.child(productModel.getId()).setValue(productModel).addOnCompleteListener(task -> {
+                        productsRef.child(productModel.getProductId()).setValue(productModel).addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
                                 binding.AddTOCart.setText("Go to Cart");
                             }

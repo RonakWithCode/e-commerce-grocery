@@ -95,7 +95,7 @@
     <string name="female">Female</string>
     <string name="data_of_both">Data of Both</string>
     <string name="order_details">Order Details</string>
-    <string name="dummy_txt">~~~~~~~</string>
+    <string name="dummy_txt">coupon code not found</string>
     <string name="payment">Payment</string>
     <string name="dummy_shipping_to">Shipping to</string>
     <string name="shipping_method">Shipping Method</string>
@@ -152,6 +152,7 @@
     <string name="enter_the_email">Enter the Email</string>
     <string name="save">SAVE</string>
     <string name="cancel_big">CANCEL</string>
+    <string name="coupon_code">coupon code</string>
 
 
 </resources>
