@@ -7,6 +7,8 @@
     android:background="@color/MainBackgroundColor"
     tools:context=".Adapter.newAddressFragment">
 
+
+
     <com.makeramen.roundedimageview.RoundedImageView
         android:layout_width="wrap_content"
         android:id="@+id/backButton"
@@ -18,15 +20,42 @@
         android:layout_height="wrap_content"/>
 
 
+    <TextView
+        android:layout_marginStart="@dimen/_25sdp"
+        android:layout_marginEnd="@dimen/_25sdp"
+        android:layout_marginTop="@dimen/_1sdp"
+        android:textColor="@color/MainTextColor"
+        android:text="@string/create_new_address"
+        android:textAlignment="center"
+        android:layout_below="@id/backButton"
+        android:textSize="@dimen/_25ssp"
+        android:layout_width="match_parent"
+        android:id="@+id/ViewText"
+        android:layout_height="wrap_content"/>
+
+
+    <TextView
+        android:textColor="@color/HintMainTextColor"
+        android:text="@string/give_some_basic_information"
+        android:textAlignment="center"
+        android:textSize="@dimen/_15ssp"
+        android:layout_below="@id/ViewText"
+        android:id="@+id/hintView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
 
     <LinearLayout
+
         android:orientation="vertical"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/backButton"
+        android:layout_below="@id/hintView"
         android:layout_marginTop="@dimen/_15sdp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+
+
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

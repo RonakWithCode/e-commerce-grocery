@@ -4,11 +4,15 @@
     <color name="MainBackgroundColor">#202124</color>
     <color name="MainQuntityColor">#333030</color>
     <color name="MainTextColor">#ffff</color>
+    <color name="HintMainTextColor">#FFB6B6</color>
+
     <!--SeeUserProfile-->
 
     <!-- Login    -->
     <color name="PlanText">#171717</color>
     <color name="Link">#027ebc</color>
+<!--    <color name="highlight_color">#AAE9FF00</color>-->
+
     <!--    SignupDetails   -->
     <!--    User_Profile -->
     <!--    Fix Color  -->

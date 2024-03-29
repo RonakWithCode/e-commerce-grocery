@@ -62,6 +62,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="@dimen/_8sdp"
+                    android:layout_marginStart="1dp"
                     android:text="1234567890"
                     android:textColor="@color/MainTextColor"
                     android:textSize="@dimen/subtitle"
@@ -127,16 +128,6 @@
                     android:textColor="@color/colorAccent"
                     android:textSize="@dimen/_15ssp"
                     android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tv_timer"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:textColor="@color/MainTextColor"
-                    android:visibility="gone" />
             </LinearLayout>
 
             <LinearLayout
@@ -150,7 +141,6 @@
                 tools:layout_editor_absoluteX="8dp">
 
                 <EditText
-
                     android:id="@+id/otp_edit_text1"
                     android:layout_width="@dimen/et_otp_width"
                     android:layout_height="@dimen/et_otp_height"

@@ -25,6 +25,7 @@ import com.crazyostudio.ecommercegrocery.Fragment.HomeFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.MoreFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.ShoppingCartsFragment;
 import com.crazyostudio.ecommercegrocery.databinding.ActivityMainBinding;
+import com.google.firebase.auth.FirebaseAuth;
 
 import me.ibrahimsn.lib.OnItemSelectedListener;
 
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
                     // You can show a message to the user or request the permission again
                 }
             });
+
 
 //    private void showDummyNotification() {
 //

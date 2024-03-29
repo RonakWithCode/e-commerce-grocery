@@ -1,38 +1,21 @@
 package com.crazyostudio.ecommercegrocery.Services;
 
-import android.annotation.SuppressLint;
-import android.net.Uri;
-
-import androidx.annotation.NonNull;
-
+import com.crazyostudio.ecommercegrocery.Model.AddressModel;
 import com.crazyostudio.ecommercegrocery.Model.ProductCategoryModel;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
 import com.crazyostudio.ecommercegrocery.Model.ShoppingCartsProductModel;
 import com.crazyostudio.ecommercegrocery.Model.UserinfoModels;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class DatabaseService {
-//    StorageDatabaseService storage = FirebaseStorage.getInstance();
-
-    private final FirebaseDatabase database = FirebaseDatabase.getInstance();
-//    private final Context context;
-//
-//    public DatabaseService(Context context) {
-//        this.context = context;
-//    }TODO:  CHANGING This INFO this Type case
+    private final FirebaseFirestore database = FirebaseFirestore.getInstance();
 
     public interface GetAllProductsCallback {
         void onSuccess(ArrayList<ProductModel> products);
@@ -51,110 +34,164 @@ public class DatabaseService {
 
         void onError(String errorMessage);
     }
+
     public interface SetUserInfoCallback {
         void onSuccess(Task<Void> suc);
 
         void onError(String errorMessage);
     }
+    public interface getUserInfoCallback {
+        void onSuccess(UserinfoModels user);
 
+        void onError(String errorMessage);
+    }
+    public interface getUserInfoDocumentSnapshotCallback {
+        void onSuccess(DocumentSnapshot user);
+
+        void onError(String errorMessage);
+    }
+    public interface SetAddersCallback {
+        void onSuccess();
+        void onError(String errorMessage);
+    }
     public void getAllProducts(GetAllProductsCallback callback) {
-        database.getReference().child("Product").addValueEventListener(new ValueEventListener() {
-            @SuppressLint("NotifyDataSetChanged")
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+        database.collection("Product").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
                 ArrayList<ProductModel> products = new ArrayList<>();
-                for (DataSnapshot productSnapshot : snapshot.getChildren()) {
-                    // Assuming ProductModel has a constructor that takes a DataSnapshot
-                    ProductModel product = productSnapshot.getValue(ProductModel.class);
+                for (DocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                    ProductModel product = document.toObject(ProductModel.class);
                     if (product != null && product.isAvailable()) {
                         products.add(product);
                     }
                 }
-                // Notify the callback about the successful retrieval
                 callback.onSuccess(products);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // Notify the callback about the error
-                callback.onError(error.toString());
+            } else {
+                callback.onError(Objects.requireNonNull(task.getException()).toString());
             }
         });
     }
 
     public void getAllCategory(GetAllCategoryCallback callback) {
-        database.getReference().child("Category")
-                .addValueEventListener(new ValueEventListener() {
-                    @SuppressLint("NotifyDataSetChanged")
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        ArrayList<ProductCategoryModel> categoryModels = new ArrayList<>();
-                        for (DataSnapshot snapshot1 : snapshot.getChildren()) {
-                            ProductCategoryModel categoryModel = snapshot1.getValue(ProductCategoryModel.class);
-                            if (categoryModel != null) {
-                                categoryModels.add(categoryModel);
-                            }
-                        }
-                        callback.onSuccess(categoryModels);
+        database.collection("Category").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                ArrayList<ProductCategoryModel> categoryModels = new ArrayList<>();
+                for (DocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                    ProductCategoryModel categoryModel = document.toObject(ProductCategoryModel.class);
+                    if (categoryModel != null) {
+                        categoryModels.add(categoryModel);
                     }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        callback.onError(error.toString());
-                    }
-                });
-
-
+                }
+                callback.onSuccess(categoryModels);
+            } else {
+                callback.onError(Objects.requireNonNull(task.getException()).toString());
+            }
+        });
     }
 
-
     public void getUserCartById(String id, GetUserCartByIdCallback callback) {
-
-        database.getReference().child("Cart").child(id).addValueEventListener(new ValueEventListener() {
-            @SuppressLint("NotifyDataSetChanged")
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+        database.collection("Cart").document(id).collection("items").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
                 ArrayList<ShoppingCartsProductModel> models = new ArrayList<>();
-                for (DataSnapshot snapshot1 : snapshot.getChildren()) {
-                    ShoppingCartsProductModel productModel = snapshot1.getValue(ShoppingCartsProductModel.class);
+                for (DocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                    ShoppingCartsProductModel productModel = document.toObject(ShoppingCartsProductModel.class);
                     if (productModel != null) {
                         models.add(productModel);
                     }
                 }
                 callback.onSuccess(models);
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                callback.onError(error.toString());
+            } else {
+                callback.onError(Objects.requireNonNull(task.getException()).toString());
             }
         });
     }
 
-
     public void removeCartItemById(String uid, String itemId) {
-        database.getReference().child("Cart").child(Objects.requireNonNull(uid)).child(itemId).removeValue();
+        database.collection("Cart").document(uid).collection("items").document(itemId).delete();
     }
 
-    public void UpdateCartQuantityById(String uid,String itemId,int Quantity){
-            database.getReference().child("Cart").child(uid).child(itemId).child("defaultQuantity").setValue(Quantity);
+    public void UpdateCartQuantityById(String uid, String itemId, int quantity) {
+        database.collection("Cart").document(uid).collection("items").document(itemId).update("defaultQuantity", quantity);
     }
 
-
-
-
-    public void setUserInfo(UserinfoModels userInfo,SetUserInfoCallback callback){
-        database.getReference().child("UserInfo").child(userInfo.getUserId()).setValue(userInfo).addOnCompleteListener(task -> {
+    public void setUserInfo(UserinfoModels userInfo, SetUserInfoCallback callback) {
+        database.collection("UserInfo").document(userInfo.getUserId()).set(userInfo).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 callback.onSuccess(task);
             }
-        }).addOnFailureListener(e -> callback.onError(e.toString()) );
+        }).addOnFailureListener(e -> callback.onError(e.toString()));
     }
 
 
+    public void getUserInfo(String userId, getUserInfoCallback callback) {
+        database.collection("UserInfo").document(userId).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    UserinfoModels userInfo = document.toObject(UserinfoModels.class);
+                    callback.onSuccess(userInfo);
+                } else {
+                    // User document does not exist
+                    callback.onError("User document does not exist");
+                }
+            } else {
+                // Error getting document
+                callback.onError(Objects.requireNonNull(task.getException()).toString());
+            }
+        });
+    }
 
+    public void getUserInfoByDocumentSnapshot(String userId, getUserInfoDocumentSnapshotCallback callback) {
+        database.collection("UserInfo").document(userId)
+                .addSnapshotListener((documentSnapshot, error) -> {
+                    if (error != null) {
+                        // Error occurred
+                        callback.onError(error.getMessage());
+                        return;
+                    }
 
+                    if (documentSnapshot != null && documentSnapshot.exists()) {
+                        // Document exists
+                        callback.onSuccess(documentSnapshot);
+                    } else {
+                        // User document does not exist
+                        callback.onError("User document does not exist");
+                    }
+                });
+    }
+
+    public void setAdders(AddressModel newAddress,String userId ,SetAddersCallback callback) {
+        database.collection("UserInfo").document(userId).get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            UserinfoModels userInfo = document.toObject(UserinfoModels.class);
+                            if (userInfo != null) {
+                                ArrayList<AddressModel> addresses = userInfo.getAddress();
+                                if (addresses == null) {
+                                    addresses = new ArrayList<>();
+                                }
+                                addresses.add(newAddress);
+                                userInfo.setAddress(addresses);
+
+                                database.collection("UserInfo").document(userId)
+                                        .set(userInfo, SetOptions.merge())
+                                        .addOnCompleteListener(task1 -> {
+                                            if (task1.isSuccessful()) {
+                                                callback.onSuccess();
+                                            } else {
+                                                callback.onError("Failed to save address.");
+                                            }
+                                        });
+                            }
+                        } else {
+                            callback.onError("User info document doesn't exist.");
+                        }
+                    } else {
+                        callback.onError("Failed to retrieve user info.");
+                    }
+                });
+    }
 
 
 }

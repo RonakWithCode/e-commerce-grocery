@@ -3,6 +3,7 @@ package com.crazyostudio.ecommercegrocery.Fragment;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -67,12 +68,14 @@ public class SiginFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentSiginBinding.inflate(inflater,container,false);
+//        ((AppCompatActivity) getActivity()).getSupportActionBar().hide(); // For Activity with AppCompatActivity
 
 
         NavController navController = Navigation.findNavController(requireActivity(),R.id.nav_host_fragment );
 
 //        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-//
+//                                                  state_focused
+//        binding.Number.setOnClickListener(v -> binding.indan.);
 //        }
 
         binding.button.setOnClickListener(sigin->{

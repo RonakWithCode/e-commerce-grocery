@@ -5,14 +5,14 @@
     android:background="@color/MainBackgroundColor"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".Fragment.AuthUserDetailsFragment">
+    tools:context=".Fragment.AuthNameFragment">
 
     <TextView
         android:layout_marginStart="@dimen/_25sdp"
         android:layout_marginEnd="@dimen/_25sdp"
         android:layout_marginTop="@dimen/_25sdp"
         android:textColor="@color/MainTextColor"
-        android:text="@string/information"
+        android:text="@string/chose_username"
         android:textAlignment="center"
         android:textSize="@dimen/_25ssp"
         android:layout_width="match_parent"
@@ -22,7 +22,7 @@
 
     <TextView
         android:textColor="@color/HintMainTextColor"
-        android:text="@string/give_some_basic_information"
+        android:text="@string/you_can_change_latter"
         android:textAlignment="center"
         android:textSize="@dimen/_15ssp"
         android:layout_below="@id/ViewText"
@@ -97,16 +97,7 @@
                 android:textColorHint="@color/MainTextColor" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.button.MaterialButton
-            android:layout_marginTop="@dimen/_15sdp"
-            android:text="@string/continue_text"
-            android:textSize="@dimen/_13ssp"
-            android:enabled="true"
-            android:id="@+id/next_btn"
-            android:textColor="@color/FixColorWhite"
-            android:backgroundTint="@color/green_primary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+
     </LinearLayout>
 
 </RelativeLayout>

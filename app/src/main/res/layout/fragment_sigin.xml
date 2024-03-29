@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:background="@color/MainBackgroundColor"
     android:layout_height="match_parent"
     tools:context=".Fragment.SiginFragment">
+
     <ImageView
         android:id="@+id/loginIcon"
         android:src="@drawable/adduser"
@@ -32,23 +34,24 @@
 
     <EditText
         android:id="@+id/Number"
-        android:layout_width="match_parent"
+        android:layout_width="@dimen/_180sdp"
         android:layout_height="60dp"
         android:layout_below="@id/loginIcon"
         android:layout_marginStart="10dp"
         android:layout_marginTop="25dp"
-        android:layout_marginEnd="50dp"
+        android:paddingLeft="@dimen/_5sdp"
+        android:paddingRight="@dimen/_5sdp"
         android:layout_toEndOf="@+id/indan"
-        android:autofillHints=""
+        android:autofillHints="phone"
         android:background="@drawable/number"
         android:hint="123 456 7890"
-        android:inputType="phone"
+        android:inputType="number"
         android:maxLength="10"
         android:paddingStart="12dp"
         android:textColor="@color/MainTextColor"
         android:textColorHint="@color/MainTextColor"
         android:textSize="32sp"
-        tools:ignore="RtlSymmetry" />
+        tools:ignore="RtlSymmetry,TextFields" />
 
     <CheckBox
         android:id="@+id/checkBox"
@@ -59,7 +62,7 @@
         android:layout_marginTop="19dp"
         android:autoLink="web"
         android:text="@string/accept_terms_and_conditions"
-        android:textColor="@color/MainTextColor" />
+        android:textColor="@color/MainTextColor"/>
 
     <TextView
         android:id="@+id/link"

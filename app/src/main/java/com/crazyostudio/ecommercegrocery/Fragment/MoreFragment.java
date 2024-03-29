@@ -23,8 +23,6 @@ import com.crazyostudio.ecommercegrocery.databinding.FragmentMoreBinding;
 public class MoreFragment extends Fragment {
     FragmentMoreBinding binding;
     AuthService authService;
-
-
     public MoreFragment() {
         // Required empty public constructor
     }
@@ -43,8 +41,10 @@ public class MoreFragment extends Fragment {
             binding.mainLayout.setVisibility(View.VISIBLE);
             binding.Username.setText(authService.getUserName());
             binding.Email.setText(authService.getUserEmail());
+
             if (authService.getUserUrl()!=null) {
-                Glide.with(requireContext()).load(authService.getUserUrl()).placeholder(R.drawable.cashondelivery).into(binding.userImage);
+
+                Glide.with(requireContext()).load(R.drawable.adduser).into(binding.userImage);
             }
         }
 
@@ -67,7 +67,6 @@ public class MoreFragment extends Fragment {
 //            intent.putExtra("LoadID","MoreAddress");
             startActivity(intent);
         });
-
         binding.continueShipping.setOnClickListener(view -> {
             requireActivity().finish();
             startActivity(new Intent(requireContext(), MainActivity.class));

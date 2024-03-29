@@ -2,6 +2,6 @@
 <resources>
     <dimen name="et_otp_width">@dimen/_40sdp</dimen>
     <dimen name="et_otp_height">@dimen/_40sdp</dimen>
-    <dimen name="margin_right_otp">@dimen/_15sdp</dimen>
+    <dimen name="margin_right_otp">@dimen/_5sdp</dimen>
     <dimen name="subtitle">@dimen/_15ssp</dimen>
 </resources>

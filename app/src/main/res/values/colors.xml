@@ -13,7 +13,9 @@
     <color name="colorAccent">#E95345</color>
     <color name="trueBlack">#000000</color>
     <color name="otp_editext_color">#DAE2DFDF</color>
-
+    <color name="india_saffron">#FF9933</color>
+    <color name="india_white">#FFFFFF</color>
+    <color name="india_green">#17A2B8</color>
     <!--Main Background Color -->
     <color name="MainQuntityColor">#E6E6E6</color>
     <color name="MainBackgroundColor">#ffff</color>
@@ -61,4 +63,8 @@
 
     <color name="SaveTextColor">#94abdc</color>
     <color name="CancelTextColor">#ccdcf6</color>
+    <color name="light_grey">#E0E0E0</color>
+    <color name="highlight_color">#8CACACA0</color>
+    <color name="HintMainTextColor">#666666</color>
+    <color name="FixColorWhite">#ffff</color>
 </resources>

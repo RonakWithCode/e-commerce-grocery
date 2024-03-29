@@ -1,196 +1,154 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Fragment.UserAccountFragment">
 
-    <ScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:ignore="UselessParent">
+        android:layout_height="wrap_content">
 
-        <RelativeLayout
+        <TextView
+            android:layout_marginStart="@dimen/_25sdp"
+            android:layout_marginEnd="@dimen/_25sdp"
+            android:layout_marginTop="@dimen/_25sdp"
+            android:textColor="@color/MainTextColor"
+            android:text="@string/information"
+            android:textAlignment="center"
+            android:textSize="@dimen/_25ssp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <com.makeramen.roundedimageview.RoundedImageView
-                android:id="@+id/backButton"
-                android:layout_width="@dimen/_35sdp"
-                android:layout_height="@dimen/_35sdp"
-                android:layout_marginTop="15dp"
-                android:scaleType="fitCenter"
-                android:adjustViewBounds="true"
-                android:src="@drawable/ic_baseline_arrow_back_24"
-                android:layout_alignParentStart="true"
-                app:riv_corner_radius="30dip"
-                app:riv_oval="true" />
+            android:id="@+id/ViewText"
+            android:layout_height="wrap_content"/>
 
-            <com.makeramen.roundedimageview.RoundedImageView
-                android:id="@+id/userImage"
-                android:layout_width="141dp"
-                android:layout_height="145dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="15dp"
-                android:adjustViewBounds="true"
-                android:scaleType="fitXY"
-                app:riv_border_color="#333333"
-                app:riv_border_width="2dip"
-                app:riv_corner_radius="30dip"
-                app:riv_oval="true" />
-            <View
-                android:layout_marginTop="5dp"
+
+        <TextView
+            android:textColor="@color/HintMainTextColor"
+            android:text="@string/give_some_basic_information"
+            android:textAlignment="center"
+            android:textSize="@dimen/_15ssp"
+            android:layout_below="@id/ViewText"
+            android:id="@+id/hintView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <LinearLayout
+            android:id="@+id/Field"
+            android:layout_marginTop="@dimen/_18sdp"
+            android:layout_below="@id/hintView"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_25sdp"
+            android:layout_marginEnd="@dimen/_25sdp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/NameField"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:id="@id/line2"
-                android:layout_below="@id/userImage"
-                android:background="@color/MainBorderColor"
-                android:alpha="0.9"/>
-            <LinearLayout
-                android:orientation="vertical"
-                android:id="@+id/Linear__"
-                android:layout_below="@id/line2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <EditText
-                    android:inputType="textPersonName"
-                    android:id="@+id/UserName"
-                    android:hint="@string/name"
+                android:layout_height="wrap_content"
+                android:hint="@string/name"
+                app:hintTextColor="@color/HintMainTextColor">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/Name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:autofillHints="username"
-                    style="@style/EditTextLight"
-                    />
-                <RelativeLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:inputType="textPersonName"
+                    android:background="@drawable/number"
+                    android:textColor="@color/MainTextColor"
+                    android:textColorHint="@color/MainTextColor" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-                    <EditText
-                        android:id="@+id/UserMail"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_20sdp"
-                        android:layout_marginTop="@dimen/_20sdp"
-                        android:layout_marginEnd="@dimen/_5sdp"
-                        android:layout_toStartOf="@+id/email_Stable"
-                        android:autofillHints="emailAddress"
-                        android:background="@drawable/round_text"
-                        android:enabled="false"
-                        android:hint="@string/e_mail"
-                        android:inputType="textEmailAddress"
-                        android:padding="15dp"
-                        android:textColor="@color/MainTextColor"
-                        android:textColorHint="@color/MainTextColor" />
-                    <com.makeramen.roundedimageview.RoundedImageView
-                        android:id="@+id/email_Stable"
-                        android:layout_width="@dimen/_40sdp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginEnd="@dimen/_20sdp"
-                        android:layout_height="@dimen/_40sdp"
-                        android:layout_marginTop="@dimen/_20sdp"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/check"
-                        android:adjustViewBounds="true"
-                        app:riv_border_color="#333333"
-                        app:riv_border_width="2dip"
-                        app:riv_corner_radius="30dip"
-                        app:riv_oval="true" />
-                </RelativeLayout>
-
-
-                <TextView
-                    android:id="@+id/Usernumber"
-                    android:hint="@string/phone_no"
-                    style="@style/EditTextLight"/>
-
-
-                <RadioGroup
-                    android:id="@+id/radiogrp"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:orientation="horizontal"
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_height="wrap_content">
-                    <RadioButton
-                        android:id="@+id/radiomale"
-                        android:padding="@dimen/_5sdp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/male" />
-                    <RadioButton
-                        android:padding="@dimen/_5sdp"
-                        android:id="@+id/radiofemale"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/female" />
-
-                </RadioGroup>
-                <View
-                    android:layout_marginTop="5dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:id="@id/line3"
-                    android:background="@color/MainBorderColor"
-                    android:alpha="0.9"/>
-            </LinearLayout>
-            <TextView
-                android:layout_below="@id/Linear__"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentStart="true"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/emailField"
                 android:layout_marginTop="@dimen/_5sdp"
-                android:id="@+id/Address"
-                android:textSize="@dimen/_19ssp"
-                android:layout_margin="@dimen/_10sdp"
-                android:textColor="@color/MainTextColor"
-                android:text="@string/address"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:layout_below="@id/Address"
-                android:text="@string/add_address"
-                android:layout_marginStart="@dimen/_10sdp"
-                android:textSize="@dimen/_19ssp"
-                android:textColor="@color/green_primary"
-                android:id="@+id/Add_Address"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <View
-                android:layout_marginTop="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:id="@id/line1"
-                android:layout_below="@id/Add_Address"
-                android:background="@color/MainBorderColor"
-                android:alpha="0.9"/>
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/UserAddress"
-                android:layout_marginEnd="@dimen/_10sdp"
-                android:layout_marginStart="@dimen/_10sdp"
-                android:layout_below="@id/line1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:hint="@string/e_mail"
+                app:hintTextColor="@color/HintMainTextColor">
 
-            <TextView
-                android:layout_marginEnd="@dimen/_10sdp"
-                android:layout_marginStart="@dimen/_10sdp"
-                android:layout_marginTop="@dimen/_20sdp"
-                android:id="@+id/NotFoundText"
-                android:visibility="invisible"
-                android:textSize="@dimen/_22ssp"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentStart="true"
-                android:text="@string/address_not_found_please_a_add_new_address"
-                android:textAlignment="center"
-                android:layout_below="@id/Add_Address"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autofillHints="emailAddress"
+                    android:inputType="textPersonName"
+                    android:background="@drawable/number"
+                    android:textColor="@color/MainTextColor"
+                    android:textColorHint="@color/MainTextColor" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <ProgressBar
-                android:id="@+id/progressCircular"
-                android:layout_width="69dp"
-                android:layout_height="86dp"
-                android:layout_centerInParent="true" />
-        </RelativeLayout>
 
-    </ScrollView>
 
-</RelativeLayout>
+        </LinearLayout>
+        <View
+            android:layout_below="@id/Field"
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:id="@id/line3"
+            android:background="@color/MainBorderColor"
+            android:alpha="0.9"/>
+
+        <TextView
+            android:layout_below="@id/line3"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:id="@+id/Address"
+            android:textSize="@dimen/_19ssp"
+            android:layout_margin="@dimen/_10sdp"
+            android:textColor="@color/MainTextColor"
+            android:text="@string/address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_below="@id/Address"
+            android:text="@string/add_address"
+            android:layout_marginStart="@dimen/_25sdp"
+            android:textSize="@dimen/_19ssp"
+            android:textColor="@color/green_primary"
+            android:id="@+id/Add_Address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <View
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:id="@id/line1"
+            android:layout_below="@id/Add_Address"
+            android:background="@color/MainBorderColor"
+            android:alpha="0.9"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/UserAddress"
+            android:layout_marginEnd="@dimen/_25sdp"
+            android:layout_marginStart="@dimen/_25sdp"
+            android:layout_below="@id/line1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:id="@+id/NotFoundText"
+            android:layout_marginStart="@dimen/_25sdp"
+            android:visibility="invisible"
+            android:textSize="@dimen/_22ssp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentStart="true"
+            android:text="@string/address_not_found_please_a_add_new_address"
+            android:textAlignment="center"
+            android:layout_below="@id/Add_Address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <ProgressBar
+            android:id="@+id/progressCircular"
+            android:layout_width="69dp"
+            android:layout_height="86dp"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
+
+</ScrollView>

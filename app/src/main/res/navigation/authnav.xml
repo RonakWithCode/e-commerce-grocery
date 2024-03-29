@@ -26,17 +26,9 @@
         tools:layout="@layout/fragment_auth_o_t_p" >
         <action
             android:id="@+id/action_authOTP_to_authUserDetailsFragment"
-            app:destination="@id/authUserDetailsFragment" >
-
-            <argument
-                android:name="number"
-                app:argType="string" />
-            <argument
-                android:name="token"
-                app:argType="string" />
-        </action>
+            app:destination="@id/authUserDetailsFragment" />
     </fragment>
-    <fragment
+    '<fragment
         android:id="@+id/authUserDetailsFragment"
         android:name="com.crazyostudio.ecommercegrocery.Fragment.AuthUserDetailsFragment"
         android:label="fragment_auth_user_details"
