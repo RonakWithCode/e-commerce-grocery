@@ -76,7 +76,7 @@
     <string name="free_standard_delivery">Free Standard delivery</string>
     <string name="delivered_on_today_as_per_fast">Delivered on Today as per fast</string>
     <string name="delivered_on_today_or_tomorrow">Delivered on Today or Tomorrow</string>
-    <string name="_60_fast_delivery">₹60 Fast delivery</string>
+    <string name="_60_fast_delivery">₹30 Fast delivery</string>
     <string name="shipping">Shipping</string>
     <string name="all_tax_are_included">All Tax are included</string>
     <string name="total">Total</string>
@@ -153,6 +153,7 @@
     <string name="save">SAVE</string>
     <string name="cancel_big">CANCEL</string>
     <string name="coupon_code">coupon code</string>
+    <string name="product_info">Product Info</string>
 
 
 </resources>

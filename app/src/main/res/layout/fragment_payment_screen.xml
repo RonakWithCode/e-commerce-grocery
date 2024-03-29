@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,445 +8,469 @@
     tools:context=".Fragment.PaymentScreenFragment">
 
     <RelativeLayout
-        android:id="@+id/order_details_layout_top"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="@dimen/_15sdp">
-        <ImageView
-            android:id="@+id/order_details_view_back"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="20dp"
-            android:src="@drawable/ic_baseline_arrow_back_24" />
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:id="@+id/order_details_layout_top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="@dimen/_15sdp">
+            <ImageView
+                android:id="@+id/order_details_view_back"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="20dp"
+                android:src="@drawable/ic_baseline_arrow_back_24" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_toEndOf="@id/order_details_view_back"
+                android:gravity="center"
+                android:paddingEnd="25dp"
+                android:text="@string/order_details"
+                android:textColor="@color/MainTextColor"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                tools:ignore="RtlSymmetry" />
+        </RelativeLayout>
+        <ScrollView
+            android:layout_below="@+id/order_details_layout_top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:id="@+id/ScrollView"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginStart="1dp"
+            tools:ignore="UselessParent">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ProgressBar
+                    android:layout_centerInParent="true"
+                    android:id="@+id/progressCircular"
+                    android:visibility="invisible"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+
+                <TextView
+                    android:id="@+id/view_Delivery"
+                    android:textSize="@dimen/_13ssp"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:layout_width="wrap_content"
+                    android:textColor="@color/green_primary"
+                    android:text="@string/billing_details_shipping_details"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:layout_toEndOf="@id/view_Delivery"
+                    android:id="@+id/Change"
+                    android:textColor="@color/orange_secondary"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:text="@string/change"
+                    android:textSize="@dimen/_13ssp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:ignore="RelativeOverlap" />
+
+
+                <LinearLayout
+                    android:id="@+id/DeliveryAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/view_Delivery"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:layout_marginEnd="@dimen/_15sdp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/order_contact_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:text="Ronak jain"
+                        android:textColor="@color/MainTextColor"
+                        android:textSize="@dimen/_14sdp" />
+
+                    <TextView
+                        android:id="@+id/order_contact_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:text="ronakjaing0@gmail.com"
+                        android:textColor="@color/MainTextColor"
+                        android:textSize="@dimen/_14sdp" />
+
+                    <TextView
+                        android:id="@+id/order_contact_phone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:text="7023941072"
+                        android:textColor="@color/MainTextColor"
+                        android:textSize="@dimen/_14sdp" />
+
+                    <TextView
+                        android:id="@+id/order_shipping_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:text="Sysystem poer alwar hai tu kya kar raha h Sysystem poer alwar hai tu kya kar raha hSysystem poer alwar hai tu kya kar raha h"
+                        android:textColor="@color/MainTextColor"
+                        android:textSize="@dimen/_14sdp" />
+                </LinearLayout>
+
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:id="@id/line1"
+                    android:layout_below="@+id/DeliveryAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="1dp"
+                    app:dividerColor="@color/secondary" />
+                <TextView
+                    android:id="@+id/Delivery_Options"
+                    android:layout_below="@id/line1"
+                    android:text="@string/delivery_options"
+                    android:textSize="@dimen/_13ssp"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:textColor="@color/green_primary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <RadioGroup
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:id="@+id/Options"
+                    android:layout_below="@id/Delivery_Options"
+                    android:layout_marginStart="10dp"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
+
+                    <!-- In RadioGroup create the 1 Radio Button-->
+                    <!-- like this we will add some more Radio Button-->
+                    <RadioButton
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/radia_id1"
+                        android:text="@string/free_standard_delivery"
+                        android:textSize="20sp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_marginStart="@dimen/_20sdp"
+                        android:textColor="@color/MainTextColor"
+                        android:text="@string/delivered_on_today_or_tomorrow"
+                        android:layout_height="wrap_content"/>
+                    <RadioButton
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/radia_id2"
+                        android:text="@string/_60_fast_delivery"
+                        android:textSize="20sp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_marginStart="@dimen/_20sdp"
+                        android:textColor="@color/MainTextColor"
+                        android:layout_marginBottom="@dimen/_5sdp"
+                        android:text="@string/delivered_on_today_as_per_fast"
+                        android:layout_height="wrap_content"/>
+                </RadioGroup>
+                <com.google.android.material.divider.MaterialDivider
+                    android:id="@+id/line2"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@id/Options"
+                    android:layout_marginTop="1dp"
+                    app:dividerColor="@color/secondary" />
+                <TextView
+                    android:id="@+id/view"
+                    android:layout_below="@id/line2"
+                    android:text="@string/select_a_payment_method"
+                    android:textSize="@dimen/_13ssp"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:textColor="@color/green_primary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <RadioGroup
+                    android:id="@+id/payment"
+                    android:layout_below="@id/view"
+                    android:layout_marginStart="10dp"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content">
+
+                    <!-- In RadioGroup create the 1 Radio Button-->
+                    <!-- like this we will add some more Radio Button-->
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/COD"
+                        android:text="@string/cash_on_delivery_cod"
+                        android:textSize="20sp"/>
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/OnlinePay"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:text="@string/select_a_payment"
+                        android:textSize="20sp"/>
+                </RadioGroup>
+                <com.google.android.material.divider.MaterialDivider
+                    android:id="@+id/line3"
+                    android:layout_below="@id/payment"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="2dp"
+                    app:dividerColor="@color/secondary" />
+
+
+            </RelativeLayout>
+
+
+        </ScrollView>
+        <ScrollView
+            android:id="@+id/order_details_overview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ScrollView"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true">
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/coupon_code_box"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/coupon_code"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="@string/coupon_code">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:background="@color/MainBackgroundColor"
+                            android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            />
+
+
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <Button
+
+                        android:id="@+id/coupon_code_apply_btn"
+                        android:layout_width="@dimen/_80sdp"
+                        android:layout_height="wrap_content"
+                        android:text="apply"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/subtotal_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/coupon_code_box"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="10dp">
+
+                    <TextView
+                        android:id="@+id/subtotal_hint"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:text="Subtotal"
+                        android:textColor="@color/orange"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/SubTotalPrice"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="00.00 INR"
+                        android:textColor="@color/MainTextColor"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/shipping_fee_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/subtotal_box"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="10dp">
+
+                    <TextView
+                        android:id="@+id/shipping_fee_hint"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:text="Shipping Fee"
+                        android:textColor="@color/orange"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/ShippingPrice"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="00.00 INR"
+                        android:textColor="@color/MainTextColor"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+
+                    android:id="@+id/payment_fee_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/shipping_fee_box"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="10dp">
+
+                    <TextView
+                        android:id="@+id/payment_fee_hint"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:text="Payment Processing Fee"
+                        android:textColor="@color/orange"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/payment_fee"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="00.00 INR"
+                        android:textColor="@color/MainTextColor"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/discount_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/payment_fee_box"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="10dp">
+
+                    <TextView
+                        android:id="@+id/discount_hint"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:text="Discount"
+                        android:textColor="@color/orange"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/discount"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="00.00 INR"
+                        android:textColor="@color/MainTextColor"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/grand_total_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/discount_box"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="10dp">
+
+                    <TextView
+                        android:id="@+id/grand_total_hint"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:text="Total"
+                        android:textColor="@color/green_primary"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/TotalPrice"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="00.00 INR"
+                        android:textColor="@color/MainTextColor"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/order_details_pay_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_below="@+id/grand_total_box"
+                    android:text="Pay Now"
+                    android:textAllCaps="false"
+                    android:textSize="18sp" />
+            </RelativeLayout>
+        </ScrollView>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
+            android:layout_below="@+id/order_details_overview"
             android:layout_marginRight="10dp"
-            android:layout_toEndOf="@id/order_details_view_back"
-            android:gravity="center"
+            android:id="@+id/product_Info"
             android:paddingEnd="25dp"
             android:text="@string/order_details"
             android:textColor="@color/MainTextColor"
-            android:textSize="24sp"
+            android:textSize="@dimen/_24sdp"
             android:textStyle="bold"
             tools:ignore="RtlSymmetry" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/ProductView"
+            android:layout_below="@id/product_Info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     </RelativeLayout>
-    <ScrollView
-        android:layout_below="@+id/order_details_layout_top"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="5dp"
-        android:id="@+id/ScrollView"
-        android:layout_marginTop="@dimen/_5sdp"
-        android:layout_marginStart="1dp"
-        tools:ignore="UselessParent">
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <ProgressBar
-                android:layout_centerInParent="true"
-                android:id="@+id/progressCircular"
-                android:visibility="invisible"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-
-            <TextView
-                android:id="@+id/view_Delivery"
-                android:textSize="@dimen/_13ssp"
-                android:layout_marginStart="@dimen/_15sdp"
-                android:layout_width="wrap_content"
-                android:textColor="@color/green_primary"
-                android:text="@string/billing_details_shipping_details"
-                android:layout_height="wrap_content"/>
-
-            <TextView
-                android:layout_toEndOf="@id/view_Delivery"
-                android:id="@+id/Change"
-                android:textColor="@color/orange_secondary"
-                android:layout_marginStart="@dimen/_15sdp"
-                android:text="@string/change"
-                android:textSize="@dimen/_13ssp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:ignore="RelativeOverlap" />
-
-
-            <LinearLayout
-                android:id="@+id/DeliveryAddress"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/view_Delivery"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="@dimen/_15sdp"
-                android:layout_marginEnd="@dimen/_15sdp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/order_contact_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="start"
-                    android:text="Ronak jain"
-                    android:textColor="@color/MainTextColor"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/order_contact_email"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="start"
-                    android:text="ronakjaing0@gmail.com"
-                    android:textColor="@color/MainTextColor"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/order_contact_phone"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="start"
-                    android:text="7023941072"
-                    android:textColor="@color/MainTextColor"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/order_shipping_address"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="start"
-                    android:text="Sysystem poer alwar hai tu kya kar raha h Sysystem poer alwar hai tu kya kar raha hSysystem poer alwar hai tu kya kar raha h"
-                    android:textColor="@color/MainTextColor"
-                    android:textSize="14sp" />
-            </LinearLayout>
-
-
-            <com.google.android.material.divider.MaterialDivider
-                android:id="@id/line1"
-                android:layout_below="@+id/DeliveryAddress"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="1dp"
-                app:dividerColor="@color/secondary" />
-            <TextView
-                android:id="@+id/Delivery_Options"
-                android:layout_below="@id/line1"
-                android:text="@string/delivery_options"
-                android:textSize="@dimen/_13ssp"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:layout_marginStart="@dimen/_15sdp"
-                android:textColor="@color/green_primary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-            <RadioGroup
-                android:layout_marginTop="@dimen/_5sdp"
-                android:id="@+id/Options"
-                android:layout_below="@id/Delivery_Options"
-                android:layout_marginStart="10dp"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-
-                <!-- In RadioGroup create the 1 Radio Button-->
-                <!-- like this we will add some more Radio Button-->
-                <RadioButton
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/radia_id1"
-                    android:text="@string/free_standard_delivery"
-                    android:textSize="20sp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_marginStart="@dimen/_20sdp"
-                    android:textColor="@color/MainTextColor"
-                    android:text="@string/delivered_on_today_or_tomorrow"
-                    android:layout_height="wrap_content"/>
-                <RadioButton
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/radia_id2"
-                    android:text="@string/_60_fast_delivery"
-                    android:textSize="20sp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_marginStart="@dimen/_20sdp"
-                    android:textColor="@color/MainTextColor"
-                    android:layout_marginBottom="@dimen/_5sdp"
-                    android:text="@string/delivered_on_today_as_per_fast"
-                    android:layout_height="wrap_content"/>
-            </RadioGroup>
-            <com.google.android.material.divider.MaterialDivider
-                android:id="@+id/line2"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_below="@id/Options"
-                android:layout_marginTop="1dp"
-                app:dividerColor="@color/secondary" />
-            <TextView
-                android:id="@+id/view"
-                android:layout_below="@id/line2"
-                android:text="@string/select_a_payment_method"
-                android:textSize="@dimen/_13ssp"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:layout_marginStart="@dimen/_15sdp"
-                android:textColor="@color/green_primary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-            <RadioGroup
-                android:id="@+id/payment"
-                android:layout_below="@id/view"
-                android:layout_marginStart="10dp"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-
-                <!-- In RadioGroup create the 1 Radio Button-->
-                <!-- like this we will add some more Radio Button-->
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/COD"
-                    android:text="@string/cash_on_delivery_cod"
-                    android:textSize="20sp"/>
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/OnlinePay"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:text="@string/select_a_payment"
-                    android:textSize="20sp"/>
-            </RadioGroup>
-            <com.google.android.material.divider.MaterialDivider
-                android:id="@+id/line3"
-                android:layout_below="@id/payment"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="2dp"
-                app:dividerColor="@color/secondary" />
-
-
-        </RelativeLayout>
-
-
-    </ScrollView>
-
-    <ScrollView
-        android:id="@+id/order_details_overview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/ScrollView"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true">
-
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:id="@+id/coupon_code_box"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/coupon_code"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="@string/coupon_code">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:background="@color/MainBackgroundColor"
-                    android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    />
 
 
 
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <Button
-
-                android:id="@+id/coupon_code_apply_btn"
-                android:layout_width="@dimen/_80sdp"
-                android:layout_height="wrap_content"
-                android:text="apply"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/subtotal_box"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/coupon_code_box"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp">
-
-            <TextView
-                android:id="@+id/subtotal_hint"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="start"
-                android:text="Subtotal"
-                android:textColor="@color/orange"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/SubTotalPrice"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:text="00.00 INR"
-                android:textColor="@color/MainTextColor"
-                android:textSize="14sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/shipping_fee_box"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/subtotal_box"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="10dp">
-
-            <TextView
-                android:id="@+id/shipping_fee_hint"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="start"
-                android:text="Shipping Fee"
-                android:textColor="@color/orange"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/ShippingPrice"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:text="00.00 INR"
-                android:textColor="@color/MainTextColor"
-                android:textSize="14sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-
-            android:id="@+id/payment_fee_box"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/shipping_fee_box"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="10dp">
-
-            <TextView
-                android:id="@+id/payment_fee_hint"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="start"
-                android:text="Payment Processing Fee"
-                android:textColor="@color/orange"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/payment_fee"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:text="00.00 INR"
-                android:textColor="@color/MainTextColor"
-                android:textSize="14sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/discount_box"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/payment_fee_box"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="10dp">
-
-            <TextView
-                android:id="@+id/discount_hint"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="start"
-                android:text="Discount"
-                android:textColor="@color/orange"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/discount"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:text="00.00 INR"
-                android:textColor="@color/MainTextColor"
-                android:textSize="14sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/grand_total_box"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/discount_box"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="10dp">
-
-            <TextView
-                android:id="@+id/grand_total_hint"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="start"
-                android:text="Grand Total"
-                android:textColor="@color/green_primary"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/TotalPrice"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:text="00.00 INR"
-                android:textColor="@color/MainTextColor"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/order_details_pay_btn"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_below="@+id/grand_total_box"
-            android:text="Pay Now"
-            android:textAllCaps="false"
-            android:textSize="18sp" />
-    </RelativeLayout>
-    </ScrollView>
-
-</RelativeLayout>
+</ScrollView>
