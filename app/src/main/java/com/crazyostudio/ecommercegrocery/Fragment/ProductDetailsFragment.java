@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -66,6 +67,7 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
         if (IsChatsProgressBar){
             binding.recyclerViewProgressBar.setVisibility(View.GONE);
         }
+//        ((AppCompatActivity) requireActivity()).getSupportActionBar().hide();
         binding.viewBack.setOnClickListener(back-> requireActivity().onBackPressed());
         initValue();
         binding.AddTOCart.setOnClickListener(view -> AddTOCart());
@@ -209,8 +211,8 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
                         transaction.replace(R.id.loader,new ShoppingCartsFragment(),"ShoppingCartsFragment");
                         transaction.addToBackStack("ShoppingCartsFragment");
                         transaction.commit();
-                        SmoothBottomBar smoothBottomBar = requireActivity().findViewById(R.id.bottomBar);
-                        smoothBottomBar.setItemActiveIndex(1);
+//                        SmoothBottomBar smoothBottomBar = requireActivity().findViewById(R.id.bottomBar);
+//                        smoothBottomBar.setItemActiveIndex(1);
                     }else {
                         productsRef.child(productModel.getProductId()).setValue(productModel).addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {

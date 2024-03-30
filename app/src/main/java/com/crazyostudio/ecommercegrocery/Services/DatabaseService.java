@@ -50,6 +50,11 @@ public class DatabaseService {
 
         void onError(String errorMessage);
     }
+    public interface UpdateUserInfoCallback {
+        void onSuccess();
+
+        void onError(String errorMessage);
+    }
     public interface SetAddersCallback {
         void onSuccess();
         void onError(String errorMessage);
@@ -87,6 +92,7 @@ public class DatabaseService {
             }
         });
     }
+
 
     public void getUserCartById(String id, GetUserCartByIdCallback callback) {
         database.collection("Cart").document(id).collection("items").get().addOnCompleteListener(task -> {
@@ -189,6 +195,28 @@ public class DatabaseService {
                         }
                     } else {
                         callback.onError("Failed to retrieve user info.");
+                    }
+                });
+    }
+
+
+
+   public void UpdateUserInfo(String userId,String name,String email,UpdateUserInfoCallback callback){
+        database.collection("UserInfo")
+                .document(userId)
+                .update(
+                        "username", name,
+                        "emailAddress", email
+                        // Add other fields as needed
+                )
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+//                        Toast.makeText(requireContext(), "User info saved successfully", Toast.LENGTH_SHORT).show();
+                        callback.onSuccess();
+                    } else {
+                        callback.onError("Failed to save user info");
+//                        Toast.makeText(requireContext(), "Failed to save user info", Toast.LENGTH_SHORT).show();
+                        // Handle task failure
                     }
                 });
     }

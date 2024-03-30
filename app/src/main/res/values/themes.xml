@@ -15,6 +15,26 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
 
     </style>
+
+
+    <style name="Theme.ECommerceGrocery.noToolbar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/green_primary</item>
+        <item name="colorPrimaryVariant">@color/green_primary_variant</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/orange_secondary</item>
+        <item name="colorSecondaryVariant">@color/orange_secondary_variant</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+
+    </style>
+
+
+
     <style name="MoreButtonLight" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -60,4 +80,11 @@
         <item name="android:windowExitAnimation">@android:anim/fade_out</item>
     </style>
 
+    <style name="FilledBoxStyle" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <!-- Customize other attributes here if needed -->
+        <item name="boxStrokeColor">@color/HintMainTextColor</item>
+        <item name="boxStrokeWidth">2dp</item>
+        <item name="backgroundColor">@color/MainBackgroundColor</item>
+        <!-- Add more customizations as needed -->
+    </style>
 </resources>

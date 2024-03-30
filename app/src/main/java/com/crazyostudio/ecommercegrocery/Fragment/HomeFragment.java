@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+
 public class HomeFragment extends Fragment implements onClickProductAdapter, CategoryAdapterInterface {
     FragmentHomeBinding binding;
     ProductAdapter productAdapter;
@@ -64,29 +65,29 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
         databaseService = new DatabaseService();
 
 
-        binding.searchBar.setSpeechMode(true); // Enable voice search
-        binding.searchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
-            @Override
-            public void onSearchStateChanged(boolean enabled) {
-                // Handle search state changes
-            }
-
-            @Override
-            public void onSearchConfirmed(CharSequence text) {
-                // Perform a search based on the entered text
-                String query = text.toString();
-                filterList(query);
-            }
-
-            @Override
-            public void onButtonClicked(int buttonCode) {
-                if (buttonCode == MaterialSearchBar.BUTTON_SPEECH) {
-                    Toast.makeText(getContext(), "BUTTON_SPEECH", Toast.LENGTH_SHORT).show();
-
-                    openVoiceRecognizer();
-                }
-            }
-        });
+//        binding.searchBar.setSpeechMode(true); // Enable voice search
+//        binding.searchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
+//            @Override
+//            public void onSearchStateChanged(boolean enabled) {
+//                // Handle search state changes
+//            }
+//
+//            @Override
+//            public void onSearchConfirmed(CharSequence text) {
+//                // Perform a search based on the entered text
+//                String query = text.toString();
+//                filterList(query);
+//            }
+//
+//            @Override
+//            public void onButtonClicked(int buttonCode) {
+//                if (buttonCode == MaterialSearchBar.BUTTON_SPEECH) {
+//                    Toast.makeText(getContext(), "BUTTON_SPEECH", Toast.LENGTH_SHORT).show();
+//
+//                    openVoiceRecognizer();
+//                }
+//            }
+//        });
         LoadCategory();
         LoadProduct();
         return binding.getRoot();
@@ -229,6 +230,7 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
         Bundle bundle = new Bundle();
         bundle.putParcelable("productDetails", productModel);
         bundle.putInt("backButton", 0);
+
         ProductDetailsFragment productDetailsFragment = new ProductDetailsFragment();
         productDetailsFragment.setArguments(bundle);
 //        productDetailsFragment.setArguments(bundle);
@@ -261,9 +263,9 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
                     RecognizerIntent.EXTRA_RESULTS);
             String spokenText = results.get(0);
             Log.d("spokenText", "onActivityResult: "+spokenText);
-            binding.searchBar.openSearch();
-            binding.searchBar.setText(spokenText);
-            filterList(binding.searchBar.getText().toString());
+//            binding.searchBar.openSearch();
+//            binding.searchBar.setText(spokenText);
+//            filterList(binding.searchBar.getText().toString());
             // Do something with spokenText.
         }
         super.onActivityResult(requestCode, resultCode, data);

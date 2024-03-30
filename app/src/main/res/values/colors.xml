@@ -67,4 +67,12 @@
     <color name="highlight_color">#8CACACA0</color>
     <color name="HintMainTextColor">#666666</color>
     <color name="FixColorWhite">#ffff</color>
+
+
+
+    <!-- bottom nav   -->
+    <color name="FixNavColor">#000000</color>
+
+
+
 </resources>

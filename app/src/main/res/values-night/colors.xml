@@ -18,5 +18,6 @@
     <!--    Fix Color  -->
 
     <!--User list of Chat Layout Color -->
+    <color name="FixNavColor">#ffff</color>
 
 </resources>
