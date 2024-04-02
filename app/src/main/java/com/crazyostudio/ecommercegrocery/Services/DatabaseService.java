@@ -59,6 +59,7 @@ public class DatabaseService {
         void onSuccess();
         void onError(String errorMessage);
     }
+
     public void getAllProducts(GetAllProductsCallback callback) {
         database.collection("Product").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -75,6 +76,28 @@ public class DatabaseService {
             }
         });
     }
+
+    public void getAllProductsByCategory(String id,String category, GetAllProductsCallback callback) {
+        database.collection("Product")
+                .whereEqualTo("category", category) // Filter by category
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        ArrayList<ProductModel> products = new ArrayList<>();
+                        for (DocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                            ProductModel product = document.toObject(ProductModel.class);
+                            if (product != null && !product.getProductId().equals(id) && product.isAvailable()) {
+                                products.add(product);
+                            }
+                        }
+                        callback.onSuccess(products);
+                    } else {
+                        callback.onError(Objects.requireNonNull(task.getException()).toString());
+                    }
+                });
+    }
+
+
 
     public void getAllCategory(GetAllCategoryCallback callback) {
         database.collection("Category").get().addOnCompleteListener(task -> {

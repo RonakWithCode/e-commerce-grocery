@@ -63,31 +63,6 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
         // Inflate the layout for this fragment
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         databaseService = new DatabaseService();
-
-
-//        binding.searchBar.setSpeechMode(true); // Enable voice search
-//        binding.searchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
-//            @Override
-//            public void onSearchStateChanged(boolean enabled) {
-//                // Handle search state changes
-//            }
-//
-//            @Override
-//            public void onSearchConfirmed(CharSequence text) {
-//                // Perform a search based on the entered text
-//                String query = text.toString();
-//                filterList(query);
-//            }
-//
-//            @Override
-//            public void onButtonClicked(int buttonCode) {
-//                if (buttonCode == MaterialSearchBar.BUTTON_SPEECH) {
-//                    Toast.makeText(getContext(), "BUTTON_SPEECH", Toast.LENGTH_SHORT).show();
-//
-//                    openVoiceRecognizer();
-//                }
-//            }
-//        });
         LoadCategory();
         LoadProduct();
         return binding.getRoot();
@@ -230,7 +205,6 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
         Bundle bundle = new Bundle();
         bundle.putParcelable("productDetails", productModel);
         bundle.putInt("backButton", 0);
-
         ProductDetailsFragment productDetailsFragment = new ProductDetailsFragment();
         productDetailsFragment.setArguments(bundle);
 //        productDetailsFragment.setArguments(bundle);
@@ -255,6 +229,7 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
     public void onDestroy() {
         super.onDestroy();
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode,
                                     Intent data) {

@@ -35,7 +35,6 @@ public class FragmentLoader extends AppCompatActivity {
             transaction.addToBackStack(id);
             transaction.commit();
         }
-
         else if (id.equals("UserAccountFragment")){
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             Fragment fragment = new UserAccountFragment();

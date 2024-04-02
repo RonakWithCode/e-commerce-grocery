@@ -22,6 +22,7 @@ import com.crazyostudio.ecommercegrocery.Adapter.SuggestionsAdapter;
 import com.crazyostudio.ecommercegrocery.Fragment.HomeFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.MoreFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.SearchFragment;
+import com.crazyostudio.ecommercegrocery.Fragment.SelectLanguageFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.ShoppingCartsFragment;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
 import com.crazyostudio.ecommercegrocery.databinding.ActivityMainBinding;
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         }
+
         loader(new HomeFragment(),"null");
         requestNotificationPermission();
 
@@ -82,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
         binding.bottomNavigationView.setOnItemSelectedListener(itemId -> {
             switch (itemId.getItemId()) {
                 case R.id.homeBtn:
+
                     loader(new HomeFragment(),"HomeFragment");
                     break;
                 case R.id.shoppingCartsBtn:

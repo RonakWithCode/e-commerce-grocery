@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@color/MainBackgroundColor"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    tools:context=".Fragment.SelectLanguageFragment">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_10sdp"
+        android:text="@string/choose_your_language"
+        android:textColor="@color/MainTextColor"
+        android:textSize="@dimen/_25ssp" />
+
+    <RadioGroup
+        android:id="@+id/languageRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:padding="@dimen/_2sdp"
+        android:orientation="vertical">
+
+        <!-- English RadioButton -->
+        <RadioButton
+            android:checked="true"
+            android:id="@+id/englishRadioButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_marginEnd="@dimen/_15sdp"
+            android:background="@drawable/radio_button_background"
+            android:padding="@dimen/_15sdp"
+            android:text="@string/english"
+            android:textColor="@color/MainTextColor"
+            android:textSize="@dimen/_25ssp"/>
+
+        <!-- Hindi RadioButton -->
+        <RadioButton
+            android:layout_marginTop="@dimen/_8sdp"
+            android:id="@+id/hindiRadioButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_marginEnd="@dimen/_15sdp"
+            android:background="@drawable/radio_button_background"
+            android:padding="@dimen/_15sdp"
+            android:text="@string/hindi"
+            android:textColor="@color/MainTextColor"
+            android:textSize="@dimen/_25ssp"
+            tools:ignore="RtlSymmetry" />
+
+    </RadioGroup>
+
+    <Button
+        android:padding="@dimen/_10sdp"
+        android:id="@+id/next"
+        android:text="@string/continue_text"
+        android:layout_margin="@dimen/_25sdp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>

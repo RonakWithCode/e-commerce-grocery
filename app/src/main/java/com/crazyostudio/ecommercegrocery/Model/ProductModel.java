@@ -2,15 +2,17 @@ package com.crazyostudio.ecommercegrocery.Model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import java.util.ArrayList;
 
+import java.util.ArrayList;
 
 public class ProductModel implements Parcelable {
     private String productId;
     private String productName;
     private String productDescription;
+    private String Brand;
     private String category;
     private double price;
     private double mrp;
@@ -26,9 +28,11 @@ public class ProductModel implements Parcelable {
     private String EditDate;
     private String whoEdit;
 
+    private ArrayList<String> keywords;
+
     public ProductModel() {}
 
-    public ProductModel(@Nullable String productId, String productName, String productDescription, String category, String ProductType, double price, double mrp, String unit, String subUnit, int defaultQuantity, int quantity, ArrayList<String> imageURL, boolean isAvailable, int totalSales, String EditDate, String whoEdit) {
+    public ProductModel(@Nullable String productId, String productName, String productDescription, String category, String ProductType, double price, double mrp, String unit, String subUnit, int defaultQuantity, int quantity, ArrayList<String> imageURL, boolean isAvailable, int totalSales, String EditDate, String whoEdit,ArrayList<String> keywords,String Brand) {
         this.productId = productId;
         this.productName = productName;
         this.productDescription = productDescription;
@@ -45,6 +49,8 @@ public class ProductModel implements Parcelable {
         this.totalSales = totalSales;
         this.EditDate = EditDate;
         this.whoEdit = whoEdit;
+        this.keywords = keywords;
+        this.Brand = Brand;
     }
 
     protected ProductModel(Parcel in) {
@@ -64,6 +70,8 @@ public class ProductModel implements Parcelable {
         totalSales = in.readInt();
         EditDate = in.readString();
         whoEdit = in.readString();
+        keywords = in.createStringArrayList();
+        Brand = in.readString();
     }
 
     public static final Creator<ProductModel> CREATOR = new Creator<ProductModel>() {
@@ -77,6 +85,14 @@ public class ProductModel implements Parcelable {
             return new ProductModel[size];
         }
     };
+
+    public ArrayList<String> getKeywords() {
+        return keywords;
+    }
+
+    public void setKeywords(ArrayList<String> keywords) {
+        this.keywords = keywords;
+    }
 
     public String getProductId() {
         return productId;
@@ -187,6 +203,14 @@ public class ProductModel implements Parcelable {
         return totalSales;
     }
 
+    public String getBrand() {
+        return Brand;
+    }
+
+    public void setBrand(String brand) {
+        Brand = brand;
+    }
+
     public void setTotalSales(int totalSales) {
         this.totalSales = totalSales;
     }
@@ -230,5 +254,7 @@ public class ProductModel implements Parcelable {
         dest.writeInt(totalSales);
         dest.writeString(EditDate);
         dest.writeString(whoEdit);
+        dest.writeStringList(keywords);
+        dest.writeString(Brand);
     }
 }

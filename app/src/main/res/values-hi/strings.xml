@@ -1,0 +1,164 @@
+<resources>
+    <string name="app_name">अशोक ई कॉमर्स किराना</string>
+    <string name="create_account">एक नया खाता बनाएं</string>
+
+    <string name="name">नाम</string>
+    <string name="mail">ईमेल</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="accept_terms_and_conditions">नियम और शर्तों को स्वीकार करें</string>
+    <string name="read_more"><a href="https://crazy-studio-website.web.app/PrivacyPolicy.html">और पढ़ें</a></string>
+    <string name="icon">आइकन</string>
+    <string name="otp">ओ.टी.पी</string>
+
+
+    <string name="otp_title">कृपया 6-अंकीय सत्यापन कोड दर्ज करें</string>
+    <string name="otp_button_text">सत्यापित करें</string>
+    <string name="resend_msg">ओटीपी प्राप्त नहीं हुआ?</string>
+    <string name="resend_again_msg">पुनः भेजें</string>
+    <string name="change">परिवर्तन</string>
+    <string name="phone_number">फ़ोन नंबर</string>
+    <string name="sent_to">को भेजा</string>
+    <string name="home">होम स्क्रीन</string>
+    <string name="shopping_carts">शौपिंग कार्ट</string>
+    <string name="more">अधिक</string>
+    <string name="title_activity_home_main">HomeMainActivity</string>
+    <!-- Strings used for fragments for navigation -->
+
+    <string name="tap_to_search">खोजने के लिए टैप करें</string>
+    <string name="add_a_new_item">एक नया आइटम जोड़ें</string>
+    <string name="quantity">मात्रा</string>
+    <string name="product_price">उत्पाद की कीमत</string>
+    <string name="discount">छूट</string>
+    <string name="product_mrp">उत्पाद एमआरपी</string>
+    <string name="product_stock">उत्पाद स्टॉक</string>
+    <string name="product_description">उत्पाद वर्णन</string>
+    <string name="product_name">प्रोडक्ट का नाम</string>
+    <string name="tap_to_add_a_new_image">नई छवि जोड़ने के लिए टैप करें</string>
+    <string name="tap_to_save">सहेजने के लिए टैप करें</string>
+    <string name="add_a_new_category">एक नई श्रेणी जोड़ें</string>
+    <string name="input_category">इनपुट श्रेणी</string>
+    <string name="ss" />
+    <string name="in_stock">स्टॉक में है</string>
+    <string name="add_to_wish_list">इच्छा सूची में जोड़ें</string>
+    <string name="fast_shipping">तेज  शिपिंग</string>
+    <string name="net_quantity">शुद्ध मात्रा</string>
+    <string name="number_of_item">सामान की संख्या</string>
+    <string name="diet_type">आहार का प्रकार</string>
+    <string name="category">केटेगरी</string>
+    <string name="product_image">उत्पाद का चित्र</string>
+    <string name="product_details">सामान का विवरण!</string>
+    <string name="tap_to_view">देखने के लिए टैप करें</string>
+    <string name="shopping_cart">शॉपिंग कार्ट</string>
+    <string name="buy_it_again">इसे दोबारा खरीदें</string>
+    <string name="tap_to_remove">हटाने के लिए टैप करें</string>
+    <string name="tap_to_add_new_address">नया पता जोड़ने के लिए टैप करें</string>
+    <string name="current_location">वर्तमान स्थान</string>
+    <string name="address">पता</string>
+    <string name="save_address">सेव पता</string>
+    <string name="deliver_to_this_address">इस पते पर पहुंचाएं हा</string>
+    <string name="edit_address">पता संपादित करें</string>
+    <string name="user_name">उपयोगकर्ता नाम</string>
+    <string name="tap_to_show_menu">मेनू दिखाने के लिए टैप करें</string>
+    <string name="edit">संपादन करना</string>
+    <string name="remove">निकालना</string>
+    <string name="add_address">+ पता जोड़ें</string>
+    <string name="select_a_payment_method">कोई भुगतान विधि चुनें</string>
+    <string name="address_not_found_please_a_add_new_address">पता नहीं मिला कृपया नया पता जोड़ें</string>
+    <string name="cash_on_delivery_cod">कैश ऑन डिलीवरी (सी.ओ.डी)</string>
+    <string name="go_next">-----)</string>
+    <string name="select_a_payment">एक भुगतान चुनें</string>
+    <string name="checkout">चेक आउट</string>
+    <string name="delivery_address">डिलिवरी का पता</string>
+    <string name="delivery_options">डिलिवरी विकल्प</string>
+    <string name="free_standard_delivery">मुक्त डिलिवरी</string>
+    <string name="delivered_on_today_as_per_fast">आज के अंदर डिलीवरी हो जाएगी।</string>
+    <string name="delivered_on_today_or_tomorrow">आज ना कल के अंदर डिलीवरी हो जाएगी।</string>
+    <string name="_60_fast_delivery">₹30 फास्ट डिलीवरी</string>
+    <string name="shipping">शिपिंग</string>
+    <string name="all_tax_are_included">सभी टैक्स शामिल हैं</string>
+    <string name="total">कुल कीमत</string>
+    <string name="make_payment">भुगतान करें</string>
+    <string name="buy_now">अभी खरीदें</string>
+    <string name="account">खाता</string>
+    <string name="check_order">आदेश की जाँच करें</string>
+    <string name="set_up_fast_pickup">तेज़ पिकअप सेट करें</string>
+    <string name="settings">सेटिंग</string>
+    <string name="continue_shipping">खरीदारी जारी रखें</string>
+    <string name="you_want_to_sign_up">आप साइन-अप करना चाहते हैं</string>
+    <string name="please_make_a_account_or_sign_up">कृपया एक खाता बनाएं या साइन-अप करें</string>
+    <string name="e_mail">ईमेल</string>
+    <string name="phone_no">फोन नंबर</string>
+    <string name="male">पुरुष</string>
+    <string name="female">महिला</string>
+    <string name="data_of_both">जन्म की तारीख</string>
+    <string name="order_details">ऑर्डर का विवरण</string>
+    <string name="dummy_txt">कूपन कोड नहीं मिला</string>
+    <string name="payment">भुगतान</string>
+    <string name="dummy_shipping_to">शिपिंग to</string>
+    <string name="shipping_method">शिपिंग का तरीका</string>
+    <string name="dummy_shipping_method">DHL</string>
+    <string name="billing_details">बिलिंग विवरण</string>
+    <string name="billing_details_shipping_details">बिलिंग की जानकारियां || शिपिंग की जानकारियां</string>
+    <string name="continue_shopping">खरीदारी जारी रखें</string>
+    <string name="order_delivery">वस्तु वितरण</string>
+    <string name="order">Order</string>
+    <string name="you_save_upto">तक आप बचा सकते हैं</string>
+    <string name="tap_back">वापस टैप करें</string>
+
+    <string name="cancel">रद्द करना</string>
+    <string name="tap_to_open_photo_gallery">फोटो गैलरी खोलने के लिए टैप करें</string>
+    <string name="tap_to_open_camera">कैमरा खोलने के लिए टैप करें</string>
+    <string-array name="typesSpinnerArray">
+        <item>all</item>
+        <item>on the way</item>
+        <item>shipped</item>
+        <item>canceled</item>
+        <item>successful</item>
+    </string-array>
+    <!-- Preference Titles -->
+    <string name="messages_header">संदेशों</string>
+    <string name="sync_header">साथ-साथ करना</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">आपका हस्ताक्षर</string>
+    <string name="reply_title">डिफ़ॉल्ट उत्तर क्रिया</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">ईमेल को समय-समय पर सिंक करें</string>
+    <string name="attachment_title">आने वाले अनुलग्नक डाउनलोड करें</string>
+    <string name="attachment_summary_on">आने वाले ईमेल के लिए स्वचालित रूप से अनुलग्नक डाउनलोड करें
+    </string>
+    <string name="attachment_summary_off">मैन्युअल रूप से अनुरोध किए जाने पर ही अनुलग्नक डाउनलोड करें</string>
+    <string name="title_activity_settings">सेटिंग्सगतिविधि</string>
+    <string name="subject">विषय</string>
+    <string name="message">संदेश</string>
+    <string name="sand_device_information">device उपकरण की जानकारी</string>
+
+
+    <string name="very_long_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
+    <string name="short_text">"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ornare lacinia magna, sed eleifend dui aliquet sed."</string>
+    <string name="very_short_text">Lorem Ipsum dolor sit amet</string>
+    <string name="click_to_save_info">जानकारी सहेजने के लिए क्लिक करें</string>
+    <string name="password">पासवर्ड</string>
+    <string name="verify_the_email">ईमेल सत्यापित करें</string>
+    <string name="enter_the_email">ईमेल दर्ज करें</string>
+    <string name="save">सेव!</string>
+    <string name="cancel_big">रद्द करना</string>
+    <string name="coupon_code">कूपन कोड</string>
+    <string name="product_info">उत्पाद की जानकारी</string>
+    <string name="give_some_basic_information">कुछ बुनियादी जानकारी दीजिए</string>
+    <string name="chose_username">उपयोक्तानाम चुना</string>
+    <string name="you_can_change_latter">आप बाद में बदलाव कर सकते हैं</string>
+    <string name="continue_text">जारी रखना</string>
+    <string name="information">जानकारी</string>
+    <string name="create_new_address">नया पता बनाएं</string>
+    <string name="choose_your_language">अपनी भाषा चुनें</string>
+    <string name="english">English</string>
+    <string name="hindi">हिंदी</string>
+    <string name="product_recommendations">उत्पाद सिफ़ारिशें</string>
+    <string name="expiry_date">Expiry Date</string>
+
+
+</resources>

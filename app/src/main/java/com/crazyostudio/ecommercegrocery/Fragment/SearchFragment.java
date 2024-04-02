@@ -1,11 +1,17 @@
 package com.crazyostudio.ecommercegrocery.Fragment;
 
+import static android.app.Activity.RESULT_OK;
+
+import android.content.Intent;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,8 +25,10 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.mancj.materialsearchbar.MaterialSearchBar;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,6 +40,7 @@ public class SearchFragment extends Fragment {
     private ActionBar actionBar;
 
     private SearchAdapter adapter;
+    private static final int SPEECH_REQUEST_CODE = 0;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -55,15 +64,29 @@ public class SearchFragment extends Fragment {
         binding.recyclerView.setAdapter(adapter);
 
 
+        binding.searchBar.setSpeechMode(true); // Enable voice search
+        binding.searchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
+            @Override
+            public void onSearchStateChanged(boolean enabled) {
+                // Handle search state changes
+            }
 
-//        // Find the search bar from the toolbar's custom view
-//        MaterialSearchBar searchBar = requireActivity().findViewById(R.id.toolbar).findViewById(R.id.searchBar);
-//        searchBar.requestFocus();
-//        InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-//        if (imm != null) {
-//            imm.showSoftInput(searchBar, InputMethodManager.SHOW_IMPLICIT);
-//        }
-//        // Listen for text changes in the search EditText
+            @Override
+            public void onSearchConfirmed(CharSequence text) {
+                // Perform a search based on the entered text
+
+            }
+
+            @Override
+            public void onButtonClicked(int buttonCode) {
+                if (buttonCode == MaterialSearchBar.BUTTON_SPEECH) {
+                    Toast.makeText(getContext(), "BUTTON_SPEECH", Toast.LENGTH_SHORT).show();
+
+                    openVoiceRecognizer();
+                }
+            }
+        });
+
         binding.searchBar.addTextChangeListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -73,7 +96,9 @@ public class SearchFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 // Trigger search when text changes
-                searchProductByName(s.toString());
+                String query = s.toString();
+                searchProductByName(query);
+
             }
 
             @Override
@@ -93,6 +118,8 @@ public class SearchFragment extends Fragment {
             actionBar.show();
         }
     }
+
+
     private void searchProductByName(String productName) {
         // Perform search only if product name is not empty
         if (!productName.isEmpty()) {
@@ -122,5 +149,36 @@ public class SearchFragment extends Fragment {
             // If product name is empty, do nothing or show a message
             System.out.println("Product name is empty");
         }
+    }
+
+    private void openVoiceRecognizer() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+// This starts the activity and populates the intent with the speech text.
+        startActivityForResult(intent, SPEECH_REQUEST_CODE);
+
+
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode,
+                                 Intent data) {
+        if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
+            List<String> results = data.getStringArrayListExtra(
+                    RecognizerIntent.EXTRA_RESULTS);
+            String spokenText = results.get(0);
+
+            binding.searchBar.setText(spokenText);
+
+            // Set cursor position to the end of the text
+//            binding.searchBar.setSelection(binding.searchBar.getText().length());
+            binding.searchBar.getSearchEditText().setSelection(spokenText.length());
+            // Request focus on the search bar
+            binding.searchBar.requestFocus();
+
+            // Open the search bar
+            binding.searchBar.openSearch();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

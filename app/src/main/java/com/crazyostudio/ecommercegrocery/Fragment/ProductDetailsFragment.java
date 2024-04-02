@@ -7,20 +7,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.crazyostudio.ecommercegrocery.Activity.AuthMangerActivity;
 import com.crazyostudio.ecommercegrocery.Activity.OderActivity;
 import com.crazyostudio.ecommercegrocery.Adapter.ProductAdapter;
 import com.crazyostudio.ecommercegrocery.Adapter.ProductDisplayImagesAdapter;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
 import com.crazyostudio.ecommercegrocery.R;
+import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentProductDetailsBinding;
 import com.crazyostudio.ecommercegrocery.interfaceClass.onClickProductAdapter;
 import com.crazyostudio.ecommercegrocery.javaClasses.basicFun;
+import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -28,13 +33,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.imaginativeworld.whynotimagecarousel.model.CarouselItem;
 
 import java.util.ArrayList;
 import java.util.Objects;
-
-import me.ibrahimsn.lib.SmoothBottomBar;
 
 
 @SuppressLint({"ResourceAsColor", "NotifyDataSetChanged", "SetTextI18n"})
@@ -44,7 +50,9 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
     private int BACK;
     private FragmentTransaction transaction;
     private boolean IsChatsProgressBar = false;
-    public ProductDetailsFragment() {}
+
+    public ProductDetailsFragment() {
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,30 +60,38 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
         if (getArguments() != null) {
             productModel = getArguments().getParcelable("productDetails");
             String BACK_KEY = "backButton";
-            BACK = getArguments().getInt(BACK_KEY,1);
+            BACK = getArguments().getInt(BACK_KEY, 1);
         }
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        binding = FragmentProductDetailsBinding.inflate(inflater,container,false);
+        binding = FragmentProductDetailsBinding.inflate(inflater, container, false);
         transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-        if (BACK == 0) {
-            binding.viewBack.setVisibility(View.VISIBLE);
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
         }
-        if (IsChatsProgressBar){
+        if (BACK == 0) {
+//            bindin.viewBack.setVisibility(View.VISIBLE);
+        }
+        if (IsChatsProgressBar) {
             binding.recyclerViewProgressBar.setVisibility(View.GONE);
         }
-//        ((AppCompatActivity) requireActivity()).getSupportActionBar().hide();
-        binding.viewBack.setOnClickListener(back-> requireActivity().onBackPressed());
+        BottomAppBar bottomAppBar = getActivity().findViewById(R.id.bottomAppBar);
+        if (bottomAppBar != null) {
+            bottomAppBar.setVisibility(View.GONE);
+        }
+        //        ((AppCompatActivity) requireActivity()).getSupportActionBar().hide();
+//        binding.viewBack.setOnClickListener(back-> requireActivity().onBackPressed());
         initValue();
         binding.AddTOCart.setOnClickListener(view -> AddTOCart());
         binding.plusBtn.setOnClickListener(view -> {
             int quantity = productModel.getDefaultQuantity();
             quantity++;
-            if(quantity>productModel.getQuantity()) {
-                Toast.makeText(requireContext(), "Max stock available: "+ productModel.getQuantity(), Toast.LENGTH_SHORT).show();
+            if (quantity > productModel.getQuantity()) {
+                Toast.makeText(requireContext(), "Max stock available: " + productModel.getQuantity(), Toast.LENGTH_SHORT).show();
             } else {
                 productModel.setDefaultQuantity(quantity);
                 binding.quantity.setText(String.valueOf(quantity));
@@ -83,36 +99,34 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
         });
         binding.minusBtn.setOnClickListener(view -> {
             int quantity = productModel.getDefaultQuantity();
-            if(quantity > 1)
+            if (quantity > 1)
                 quantity--;
             productModel.setDefaultQuantity(quantity);
             binding.quantity.setText(String.valueOf(quantity));
 
         });
-        binding.BuyNow.setOnClickListener(btu-> buyNow());
-        
+//        binding.BuyNow.setOnClickListener(btu-> buyNow());
+
         return binding.getRoot();
     }
 
     private void initValue() {
-        if (FirebaseAuth.getInstance().getCurrentUser() !=null) {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             String userId = FirebaseAuth.getInstance().getUid();
             assert userId != null;
-            DatabaseReference productsRef = FirebaseDatabase.getInstance().getReference().child("Cart").child(userId);
+            CollectionReference productsRef = FirebaseFirestore.getInstance().collection("Cart").document(userId).collection("Products");
             String productNameToFind = productModel.getProductId();
-            Query query = productsRef.orderByKey().equalTo(productNameToFind);
-            query.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
+            productsRef.document(productNameToFind).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot snapshot = task.getResult();
+                    if (snapshot.exists()) {
+                        // Product exists in the cart
                         binding.AddTOCart.setText("Go to Cart");
                         binding.quantityBox.setVisibility(View.VISIBLE);
                     }
-                }
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    // Handle the error in case of a database error.
-                    Toast.makeText(getContext(), "Database error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+                    // Handle errors
+                    Toast.makeText(getContext(), "Firestore error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -123,117 +137,131 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
             binding.productsImages.addData(new CarouselItem(productModel.getImageURL().get(i)));
         }
         double mrp = productModel.getMrp(); // Replace with the actual MRP
-        double sellingPrice =productModel.getPrice(); // Replace with the actual selling price
+        double sellingPrice = productModel.getPrice(); // Replace with the actual selling price
 //
         double discountPercentage = mrp - sellingPrice;
 
-//        float percentageSaved = (float) (((productModel.getMRP() - productModel.getPrice()) / productModel.getMRP()) * 100f);
-        binding.Save.setText("-"+discountPercentage);
-        binding.Price.setText("₹"+productModel.getPrice());
-        binding.PricePerUnit.setText("(₹"+productModel.getPrice()+" / "+ productModel.getQuantity()+productModel.getUnit()+")");
-        binding.MRP.setText("M.R.P.: ₹"+productModel.getMrp());
-        if (productModel.getQuantity()==0){
+//        float percentageSaved = (float) (((productModel.getMrp() - productModel.getPrice()) / productModel.getMrp()) * 100f);
+        binding.discount.setText("₹" + discountPercentage + "% off");
+        binding.Price.setText("₹" + productModel.getPrice());
+        binding.quantitySmail.setText("(₹" + productModel.getPrice() + " / " + productModel.getSubUnit() + productModel.getUnit() + ")");
+//        binding.MRP.setText("M.R.P.: ₹"+productModel.getMrp());
+        if (productModel.getQuantity() == 0) {
             binding.OutOfStockBuyOptions.setVisibility(View.VISIBLE);
             binding.quantity.setText("0");
             binding.TextInStock.setText("Out of Stock");
             binding.quantityBox.setVisibility(View.INVISIBLE);
             binding.TextInStock.setTextColor(R.color.FixRed);
             binding.AddTOCart.setVisibility(View.INVISIBLE);
-            binding.BuyNow.setVisibility(View.INVISIBLE);
+//            binding.BuyNow.setVisibility(View.INVISIBLE);
         }
         binding.categoryType.setText(productModel.getCategory());
+        binding.netQuantity.setText(productModel.getSubUnit() + productModel.getUnit());
 //        binding.categoryType.setText(productModel.getQuantity()+productModel.getItemUnit());
         String diet;
-        if (productModel.getProductType().equals("FoodVeg")) diet = "Veg";
-        else if (productModel.getProductType().equals("FoodNonVeg")) diet = "NonVeg";
-        else diet = "";
+        if (productModel.getProductType().equals("FoodVeg")) {
+            binding.ItemType.setImageResource(R.drawable.food_green);
+            diet = "Veg";
+        } else if (productModel.getProductType().equals("FoodNonVeg")) {
+            binding.ItemType.setImageResource(R.drawable.food_brown);
+            diet = "NonVeg";
+        } else {
+            diet = "not food item.";
+            binding.ItemType.setVisibility(View.GONE);
+            binding.dietType.setVisibility(View.GONE);
+            binding.diet.setVisibility(View.GONE);
+        }
+
         binding.dietType.setText(diet);
-        ProductDisplayImagesAdapter productDisplayImagesAdapter = new ProductDisplayImagesAdapter(productModel.getImageURL(),getContext());
-        LinearLayoutManager manager = new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false);
+        binding.ExpiryDate.setText(productModel.getEditDate());
+        ProductDisplayImagesAdapter productDisplayImagesAdapter = new ProductDisplayImagesAdapter(productModel.getImageURL(), getContext());
+        LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         binding.ProductItemImage.setLayoutManager(manager);
         binding.ProductItemImage.setAdapter(productDisplayImagesAdapter);
         productDisplayImagesAdapter.notifyDataSetChanged();
         LoadProduct();
     }
-    void LoadProduct(){
+
+    void LoadProduct() {
         ArrayList<ProductModel> model = new ArrayList<>();
-        ProductAdapter productAdapter = new ProductAdapter(model,this,requireContext(),"HORIZONTAL");
-        LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL,false);
+        ProductAdapter productAdapter = new ProductAdapter(model, this, requireContext(), "HORIZONTAL");
+        LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
         binding.itemCategory.setAdapter(productAdapter);
         binding.itemCategory.setLayoutManager(layoutManager);
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        firebaseDatabase.getReference().child("Product").addValueEventListener(new ValueEventListener() {
-            @SuppressLint("NotifyDataSetChanged")
+
+        new DatabaseService().getAllProductsByCategory(productModel.getProductId(), productModel.getCategory(), new DatabaseService.GetAllProductsCallback() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+            public void onSuccess(ArrayList<ProductModel> products) {
                 model.clear();
-                for (DataSnapshot snapshot1 : snapshot.getChildren()) {
-                    ProductModel productModel = snapshot1.getValue(ProductModel.class);
-                    if (productModel != null && productModel.isAvailable()) {
-                        model.add(productModel);
-                        IsChatsProgressBar = true;
-                        binding.recyclerViewProgressBar.setVisibility(View.GONE);
-                    }
-                }
+                model.addAll(products);
+                IsChatsProgressBar = true;
+                binding.recyclerViewProgressBar.setVisibility(View.GONE);
                 productAdapter.notifyDataSetChanged();
+
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                basicFun.AlertDialog(requireContext(),error.toString());
+            public void onError(String errorMessage) {
+                model.clear();
+                binding.product.setVisibility(View.GONE);
+                binding.itemCategory.setVisibility(View.GONE);
             }
         });
-    }
-    public void buyNow() {
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-                GoToBuy();
-        }else {
-            startActivity(new Intent(getContext(),AuthMangerActivity.class));
-        }
-    }
-    public void GoToBuy(){
-        Intent intent = new Intent(requireContext(), OderActivity.class);
-        intent.putExtra("BuyType","Now");
-        intent.putExtra("productModel",productModel);
-        startActivity(intent);
-    }
-    public void AddTOCart() {
-        if (FirebaseAuth.getInstance().getCurrentUser()!=null){
-            DatabaseReference productsRef = FirebaseDatabase.getInstance().getReference().child("Cart").child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
-            String productNameToFind = productModel.getProductId();
-            Query query = productsRef.orderByKey().equalTo(productNameToFind);
-            query.addListenerForSingleValueEvent(new ValueEventListener() {
-                @SuppressLint("SetTextI18n")
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-                        transaction.replace(R.id.loader,new ShoppingCartsFragment(),"ShoppingCartsFragment");
-                        transaction.addToBackStack("ShoppingCartsFragment");
-                        transaction.commit();
-//                        SmoothBottomBar smoothBottomBar = requireActivity().findViewById(R.id.bottomBar);
-//                        smoothBottomBar.setItemActiveIndex(1);
-                    }else {
-                        productsRef.child(productModel.getProductId()).setValue(productModel).addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                binding.AddTOCart.setText("Go to Cart");
-                            }
-                        }).addOnFailureListener(error -> basicFun.AlertDialog(requireContext(),error.toString()));
-                    }
-                }
-                @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        // Handle the error in case of a database error.
-                        Toast.makeText(getContext(), "Database error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        else {
-//            basicFun.AlertDialog(requireContext(),"Please Sign up for add to cart");
-            startActivity(new Intent(getContext(),AuthMangerActivity.class));
-        }
 
     }
+
+    public void buyNow() {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            GoToBuy();
+        } else {
+            startActivity(new Intent(getContext(), AuthMangerActivity.class));
+        }
+    }
+
+    public void GoToBuy() {
+        Intent intent = new Intent(requireContext(), OderActivity.class);
+        intent.putExtra("BuyType", "Now");
+        intent.putExtra("productModel", productModel);
+        startActivity(intent);
+    }
+
+    public void AddTOCart() {
+
+
+
+
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            String userId = FirebaseAuth.getInstance().getUid();
+            assert userId != null;
+            CollectionReference productsRef = FirebaseFirestore.getInstance().collection("Cart").document(userId).collection("Products");
+            String productNameToFind = productModel.getProductId();
+            productsRef.document(productNameToFind).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot snapshot = task.getResult();
+                    if (snapshot.exists()) {
+                        // Product already exists in the cart
+                        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+                        transaction.replace(R.id.loader, new ShoppingCartsFragment(), "ShoppingCartsFragment");
+                        transaction.addToBackStack("ShoppingCartsFragment");
+                        transaction.commit();
+                    } else {
+                        // Product doesn't exist in the cart, add it
+                        productsRef.document(productNameToFind).set(productModel).addOnCompleteListener(addTask -> {
+                            if (addTask.isSuccessful()) {
+                                binding.AddTOCart.setText("Go to Cart");
+                            }
+                        }).addOnFailureListener(error -> basicFun.AlertDialog(requireContext(), error.toString()));
+                    }
+                } else {
+                    // Handle errors
+                    Toast.makeText(getContext(), "Firestore error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            startActivity(new Intent(getContext(), AuthMangerActivity.class));
+        }
+    }
+
 
     @Override
     public void onClick(ProductModel productModel) {

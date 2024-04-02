@@ -72,6 +72,7 @@
 
     <!-- bottom nav   -->
     <color name="FixNavColor">#000000</color>
+    <color name="selectBg">#E0E0E0</color>
 
 
 

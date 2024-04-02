@@ -1,34 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/MainBackgroundColor"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Fragment.ProductDetailsFragment">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:layout_width="match_parent"
+        android:id="@+id/toolbar"
+        android:background="@color/green_primary"
+        android:layout_height="wrap_content">
+        
+        <com.google.android.material.appbar.MaterialToolbar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:src="@drawable/ic_baseline_arrow_back_24"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:contentDescription="@string/tap_to_open_photo_gallery" />
+                <ImageView
+                    android:src="@drawable/baseline_share_24"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="@dimen/_15sdp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/tap_to_open_photo_gallery" />
+
+            </RelativeLayout>
+            
+        </com.google.android.material.appbar.MaterialToolbar>
+        
+    </com.google.android.material.appbar.MaterialToolbar>
+    
+    
     <ScrollView
+        android:layout_below="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:ignore="UselessParent">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_Slider"
+                android:background="@color/MainBackgroundColor"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_200sdp"
+                android:minHeight="@dimen/_200sdp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true">
+
+                <org.imaginativeworld.whynotimagecarousel.ImageCarousel
+                    android:id="@+id/productsImages"
+                    android:background="@color/MainBackgroundColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:autoPlay="false"
+                    app:imageScaleType="fitCenter"
+                    app:showBottomShadow="true"
+                    app:showCaption="false"
+                    app:showTopShadow="false"
+                    app:showIndicator="true"
+                    app:showNavigationButtons="true" />
+
+            </androidx.cardview.widget.CardView>
+
             <ImageView
-                android:id="@+id/view_back"
-                android:layout_width="25dp"
-                android:visibility="invisible"
-                android:layout_marginTop="@dimen/_15sdp"
-                android:layout_marginStart="@dimen/_5sdp"
-                android:layout_height="25dp"
-                android:src="@drawable/ic_baseline_arrow_back_24"
-                android:contentDescription="@string/tap_back" />
+                android:id="@+id/ItemType"
+                android:scaleType="fitXY"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/card_Slider"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"/>
+
             <TextView
-                android:id="@+id/category_"
                 android:textStyle="normal"
-                android:layout_toEndOf="@id/view_back"
+                android:id="@+id/category"
+                android:layout_below="@id/card_Slider"
                 android:maxLines="1"
                 android:textColor="@color/green_primary"
-                android:layout_marginTop="@dimen/_15sdp"
+                android:layout_marginTop="@dimen/_2sdp"
                 android:layout_marginStart="@dimen/_5sdp"
                 android:textSize="@dimen/_15ssp"
                 android:layout_width="wrap_content"
@@ -36,318 +100,206 @@
             <TextView
                 android:textStyle="normal"
                 android:textColor="@color/MainTextColor"
-                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_1sdp"
                 android:layout_marginStart="@dimen/_8sdp"
                 android:textSize="@dimen/_15ssp"
                 android:id="@+id/ProductTitle"
+                android:layout_below="@id/category"
                 android:maxLength="90"
                 android:maxLines="2"
-                android:layout_below="@id/category_"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card_Slider"
+
+            <TextView
+                android:textStyle="normal"
+                android:textColor="@color/MainTextColor"
+                android:layout_marginTop="@dimen/_1sdp"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:textSize="@dimen/_10ssp"
+                android:id="@+id/quantity_smail"
                 android:layout_below="@id/ProductTitle"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentEnd="true"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_200sdp">
-        <org.imaginativeworld.whynotimagecarousel.ImageCarousel
-            android:id="@+id/productsImages"
-            app:showBottomShadow="false"
-            app:showCaption="false"
-            app:showIndicator="false"
-            app:showNavigationButtons="false"
-            android:background="@color/green_primary"
-            app:autoPlay="false"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_200sdp" />
-        </androidx.cardview.widget.CardView>
+                android:maxLength="20"
+                android:maxLines="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
             <LinearLayout
                 android:id="@+id/ProductPrice"
-                android:layout_below="@id/card_Slider"
-                android:orientation="horizontal"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_below="@id/quantity_smail"
+                android:orientation="horizontal">
                 <TextView
-                    android:id="@+id/Save"
-                    android:layout_marginStart="@dimen/_5sdp"
-                    android:layout_marginTop="@dimen/_10sdp"
-                    android:textColor="@color/FixRed"
-                    android:textSize="@dimen/_25ssp"
+                    android:id="@+id/TextViewMRP"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:text="MRP "
+                    android:textColor="@color/HintMainTextColor"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:textSize="@dimen/_20ssp" />
+                <TextView
+                    android:id="@+id/MRP"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="168"
+                    android:layout_marginStart="@dimen/_1sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:textColor="@color/HintMainTextColor"
+                    android:textSize="@dimen/_20ssp"/>
                 <TextView
                     android:id="@+id/Price"
-                    android:layout_marginStart="@dimen/_10sdp"
-                    android:layout_marginTop="@dimen/_10sdp"
-                    android:textColor="@color/MainTextColor"
-                    android:textSize="@dimen/_25ssp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-                <TextView
-                    android:id="@+id/PricePerUnit"
-                    android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_height="wrap_content"
+                    android:text="₹149"
+                    android:layout_marginStart="@dimen/_7sdp"
                     android:layout_marginTop="@dimen/_5sdp"
-                    android:textColor="@color/MainTextColor"
-                    android:textSize="@dimen/_13ssp"
+                    android:textColor="@color/HintMainTextColor"
+                    android:textSize="@dimen/_20ssp"/>
+
+                <TextView
+                    android:id="@+id/discount"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_7sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@color/green_primary"
+                    android:paddingStart="@dimen/_2sdp"
+                    android:paddingEnd="@dimen/_2sdp"
+                    android:text="₹149% off"
+                    android:textColor="@color/FixColorWhite"
+                    android:textSize="@dimen/_20ssp"
+                    tools:ignore="TextContrastCheck" />
 
             </LinearLayout>
             <TextView
-                android:layout_below="@id/ProductPrice"
-                android:id="@+id/MRP"
-                android:layout_marginStart="@dimen/_5sdp"
-                android:textColor="@color/MainHintColor"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <TextView
                 android:id="@+id/TextInStock"
-                android:layout_below="@id/MRP"
-                android:layout_marginTop="@dimen/_4sdp"
-                android:layout_marginStart="@dimen/_5sdp"
-                android:textColor="@color/green_primary"
-                android:text="@string/in_stock"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <LinearLayout
-                        android:layout_below="@id/TextInStock"
-                        android:id="@+id/quantityBox"
-                        android:layout_width="@dimen/_200sdp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:background="@color/MainQuntityColor"
-                        android:orientation="horizontal"
-                        android:padding="5dp"
-                        tools:ignore="UselessParent">
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ProductPrice"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:text="@string/in_stock"
+                android:textColor="@color/green_primary" />
 
-                        <Button
-                            android:id="@+id/minusBtn"
-                            android:layout_width="@dimen/_50sdp"
-                            android:layout_height="wrap_content"
-                            android:background="@color/orange"
-                            android:text="-"
-                            android:textSize="22sp" />
-
-                        <TextView
-                            android:id="@+id/quantity"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:text="1"
-                            android:textColor="@color/MainTextColor"
-                            android:textSize="22sp" />
-
-                        <Button
-                            android:id="@+id/plusBtn"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@color/orange"
-                            android:text="+"
-                            android:textSize="22sp" />
-                </LinearLayout>
-            <LinearLayout
-               android:layout_below="@id/quantityBox"
-               android:layout_width="match_parent"
-               android:orientation="vertical"
-               android:id="@+id/Buy_Options"
-               android:layout_marginTop="@dimen/_5ssp"
-               android:layout_height="wrap_content">
-
-               <Button
-                   android:id="@+id/AddTOCart"
-                   android:text="Add to Cart"
-                   android:layout_marginStart="@dimen/_15sdp"
-                   android:layout_marginEnd="@dimen/_15sdp"
-                   android:textSize="@dimen/_21ssp"
-                   android:background="@drawable/round_button"
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content"/>
-               <Button
-                   android:id="@+id/BuyNow"
-                   android:layout_marginStart="@dimen/_15sdp"
-                   android:layout_marginEnd="@dimen/_15sdp"
-                   android:text="Buy Now"
-                   android:layout_marginTop="@dimen/_5ssp"
-                   android:textSize="@dimen/_21ssp"
-                   android:background="@drawable/round_button"
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content"/>
-               <TextView
-                   android:id="@+id/wishList"
-                   android:layout_marginTop="@dimen/_10sdp"
-                   android:layout_marginStart="@dimen/_15sdp"
-                   android:textSize="@dimen/_15ssp"
-                   android:textColor="@color/fixBlue"
-                   android:text="@string/add_to_wish_list"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"/>
-           </LinearLayout>
-            <LinearLayout
-               android:layout_below="@id/quantityBox"
-               android:layout_width="match_parent"
-               android:orientation="vertical"
-                android:visibility="gone"
-               android:id="@+id/OutOfStockBuy_Options"
-               android:layout_marginTop="@dimen/_5ssp"
-               android:layout_height="wrap_content">
-
-               <TextView
-                   android:id="@+id/text"
-                   android:text="Out of Stock"
-                   android:layout_marginStart="@dimen/_15sdp"
-                   android:layout_marginEnd="@dimen/_15sdp"
-                   android:textSize="@dimen/_21ssp"
-                   android:textColor="@color/FixRed"
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content"/>
-           </LinearLayout>
-
-            <HorizontalScrollView
-                android:layout_below="@+id/Buy_Options"
-                android:layout_width="match_parent"
-                android:id="@+id/layout_h"
-                android:layout_height="wrap_content">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/quantityBox"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_width="@dimen/_200sdp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/TextInStock"
+                android:layout_marginTop="10dp"
+                android:background="@color/MainBackgroundColor"
+                android:orientation="horizontal"
+                android:padding="5dp"
+                tools:ignore="UselessParent">
 
                 <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_marginStart="@dimen/_10sdp"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <LinearLayout
-                        android:layout_marginStart="@dimen/_30sdp"
-                        android:orientation="vertical"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        tools:ignore="UselessParent">
 
-                    <com.makeramen.roundedimageview.RoundedImageView
-                        android:id="@+id/userImage"
-                        android:layout_gravity="center"
-                        android:layout_width="@dimen/_40sdp"
-                        android:layout_height="@dimen/_40sdp"
-                        android:adjustViewBounds="true"
-                        android:src="@drawable/fast_shipping"
-                        app:riv_mutate_background="true"
-                        android:background="#f6f6f6"
-                        app:riv_corner_radius="30dip"
-                        app:riv_oval="true" />
-                        <TextView
-                            android:textAlignment="center"
-                            android:textColor="@color/FixBlue_Box"
-                            android:text="@string/fast_shipping"
-                            android:layout_gravity="center"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
-                    </LinearLayout>
+                <Button
+                    android:id="@+id/minusBtn"
+                    android:layout_width="@dimen/_50sdp"
+                    android:layout_height="wrap_content"
+                    android:text="-"
+                    android:textSize="22sp" />
 
-                    <LinearLayout
-                        android:orientation="vertical"
-                        android:layout_marginStart="@dimen/_10sdp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        tools:ignore="UselessParent">
+                <TextView
+                    android:id="@+id/quantity"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="1"
+                    android:textColor="@color/MainTextColor"
+                    android:textSize="22sp" />
 
-                        <com.makeramen.roundedimageview.RoundedImageView
-                            android:layout_gravity="center"
-                            android:layout_width="@dimen/_40sdp"
-                            android:layout_height="@dimen/_40sdp"
-                            android:adjustViewBounds="true"
-                            android:src="@drawable/cashondelivery"
-                            app:riv_mutate_background="true"
-                            android:background="#f6f6f6"
-                            app:riv_corner_radius="30dip"
-                            app:riv_oval="true" />
-                        <TextView
-                            android:textAlignment="center"
-                            android:textColor="@color/FixBlue_Box"
-                            android:text="Pay on \n Delivery"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:orientation="vertical"
-                        android:layout_marginStart="@dimen/_7sdp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        tools:ignore="UselessParent">
-
-                        <com.makeramen.roundedimageview.RoundedImageView
-                            android:layout_gravity="center"
-                            android:layout_width="@dimen/_40sdp"
-                            android:layout_height="@dimen/_40sdp"
-                            android:adjustViewBounds="true"
-                            android:src="@drawable/non_returnable"
-                            app:riv_mutate_background="true"
-                            android:background="#f6f6f6"
-                            app:riv_corner_radius="30dip"
-                            app:riv_oval="true" />
-                        <TextView
-                            android:textAlignment="center"
-                            android:textColor="@color/FixBlue_Box"
-                            android:text="Non-\nreturnable"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:orientation="vertical"
-                        android:layout_marginStart="@dimen/_10sdp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        tools:ignore="UselessParent">
-
-                        <com.makeramen.roundedimageview.RoundedImageView
-                            android:layout_gravity="center"
-                            android:layout_width="@dimen/_40sdp"
-                            android:layout_height="@dimen/_40sdp"
-                            android:adjustViewBounds="true"
-                            android:src="@drawable/save_delivery"
-                            app:riv_mutate_background="true"
-                            android:background="#f6f6f6"
-                            android:scaleType="centerCrop"
-                            app:riv_corner_radius="30dip"
-                            app:riv_oval="true" />
-                        <TextView
-                            android:textAlignment="center"
-                            android:textColor="@color/FixBlue_Box"
-                            android:text="Save delivery"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
-                    </LinearLayout>
-
+                <Button
+                    android:id="@+id/plusBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="+"
+                    android:textSize="22sp" />
                 </LinearLayout>
-            </HorizontalScrollView>
+            </androidx.cardview.widget.CardView>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/item_category"
-                android:layout_below="@id/layout_h"
+            <LinearLayout
+                android:id="@+id/Buy_Options"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_below="@id/quantityBox"
+                android:layout_marginTop="@dimen/_5ssp"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/AddTOCart"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:layout_marginEnd="@dimen/_15sdp"
+                    android:background="@drawable/round_button"
+                    android:text="Add to Cart"
+                    android:textSize="@dimen/_21ssp" />
+
+
+                <TextView
+                    android:id="@+id/wishList"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:text="@string/add_to_wish_list"
+                    android:textColor="@color/fixBlue"
+                    android:textSize="@dimen/_15ssp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/OutOfStockBuy_Options"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/quantityBox"
+                android:layout_marginTop="@dimen/_5ssp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:layout_marginEnd="@dimen/_15sdp"
+                    android:text="Out of Stock"
+                    android:textColor="@color/FixRed"
+                    android:textSize="@dimen/_21ssp" />
+            </LinearLayout>
+
 
             <ProgressBar
                 android:id="@+id/recyclerView_progressBar"
                 android:layout_width="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
 
             <TextView
                 android:id="@+id/Product_d"
-                android:layout_below="@id/item_category"
-                android:text="@string/product_details"
-                android:textColor="@color/MainTextColor"
-                android:textSize="@dimen/_20ssp"
-                android:layout_marginStart="@dimen/_10sdp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_below="@id/Buy_Options"
+                android:text="@string/product_details"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:textColor="@color/MainTextColor"
+                android:textSize="@dimen/_20ssp" />
+
+
+
+
             <LinearLayout
                 android:layout_below="@id/Product_d"
                 android:layout_width="wrap_content"
                 android:orientation="vertical"
-                android:id="@id/Product_de"
+                android:id="@id/Product_details"
                 android:layout_marginStart="@dimen/_10sdp"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:layout_height="wrap_content">
@@ -368,12 +320,13 @@
                 <TextView
                     android:textSize="@dimen/_15ssp"
                     android:textColor="@color/MainTextColor"
-                    android:text="@string/number_of_item"
+                    android:text="@string/expiry_date"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
                 <TextView
                     android:textSize="@dimen/_15ssp"
+                    android:id="@+id/diet"
                     android:textColor="@color/MainTextColor"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:text="@string/diet_type"
@@ -389,7 +342,7 @@
                 android:layout_below="@id/Product_d"
                 android:layout_marginStart="@dimen/_10sdp"
                 android:layout_marginTop="@dimen/_5sdp"
-                android:layout_toEndOf="@+id/Product_de"
+                android:layout_toEndOf="@+id/Product_details"
                 android:orientation="vertical">
 
                 <TextView
@@ -411,7 +364,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_5sdp"
-                    android:id="@+id/number_of_item"
+                    android:id="@+id/ExpiryDate"
                     android:textColor="@color/MainTextColor"
                     android:textSize="@dimen/_15ssp" />
 
@@ -427,21 +380,54 @@
 
 
 
-            <TextView
-                android:id="@+id/Product_item_ImageTextView"
-                android:textSize="@dimen/_20ssp"
-                android:layout_below="@id/Product_de"
-                android:layout_width="match_parent"
-                android:textColor="@color/MainTextColor"
-                android:text="@string/product_image"
-                android:layout_height="wrap_content"/>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/Product_item_Image"
+            <LinearLayout
                 android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_below="@id/Product_details"
                 android:layout_width="match_parent"
-                android:layout_below="@+id/Product_item_ImageTextView"
-                android:layout_height="wrap_content"/>
+                android:orientation="vertical"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/product_"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/product_recommendations"
+                    android:layout_marginTop="@dimen/_15sdp"
+                    android:textColor="@color/MainTextColor"
+                    android:textSize="@dimen/_20ssp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/item_category"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+
+
+                <TextView
+                    android:id="@+id/Product_item_ImageTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    android:text="@string/product_image"
+                    android:textColor="@color/MainTextColor"
+                    android:textSize="@dimen/_20ssp" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/Product_item_Image"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp" />
+
+            </LinearLayout>
+
+
+
+
+
         </RelativeLayout>
     </ScrollView>
+
+
+
 </RelativeLayout>
