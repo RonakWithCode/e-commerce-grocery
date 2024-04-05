@@ -31,16 +31,23 @@
         <action
             android:id="@+id/action_authOTP_to_pinCodeFragment"
             app:destination="@id/pinCodeFragment" />
-        <action
-            android:id="@+id/action_authOTP_to_selectLanguageFragment"
-            app:destination="@id/selectLanguageFragment" />
+        <argument
+            android:name="number"
+            app:argType="string" />
     </fragment>
 
     <fragment
         android:id="@+id/authUserDetailsFragment"
         android:name="com.crazyostudio.ecommercegrocery.Fragment.AuthUserDetailsFragment"
         android:label="fragment_auth_user_details"
-        tools:layout="@layout/fragment_auth_user_details" />
+        tools:layout="@layout/fragment_auth_user_details" >
+        <argument
+            android:name="number"
+            app:argType="string" />
+        <argument
+            android:name="token"
+            app:argType="string" />
+    </fragment>
     <fragment
         android:id="@+id/pinCodeFragment"
         android:name="com.crazyostudio.ecommercegrocery.Fragment.PinCodeFragment"
@@ -60,6 +67,12 @@
                 android:name="token"
                 app:argType="string" />
         </action>
+        <argument
+            android:name="number"
+            app:argType="string" />
+        <argument
+            android:name="token"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/selectLanguageFragment"

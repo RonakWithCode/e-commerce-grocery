@@ -26,6 +26,7 @@ import androidx.navigation.Navigation;
 
 import com.crazyostudio.ecommercegrocery.Model.RecentLoginsModels;
 import com.crazyostudio.ecommercegrocery.R;
+import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentAuthOTPBinding;
 import com.crazyostudio.ecommercegrocery.javaClasses.GetPublicIpAddressTask;
 import com.crazyostudio.ecommercegrocery.javaClasses.IpGeolocationTask;
@@ -323,31 +324,25 @@ public class AuthOTP extends Fragment {
 
     private void Sigin() {
         Bundle bundle = new Bundle();
-        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                String token = task.getResult();
-                binding.ProgressBar.setVisibility(View.GONE);
-                if (token != null) {
-                    if (firebaseAuth.getCurrentUser() != null && firebaseAuth.getCurrentUser().getDisplayName() == null) {
-                        bundle.putString("token", token);
-                        bundle.putString("number", number);
-                        Log.i("TokenERROR", "Sigin: "+ token);
-                        navController.navigate(R.id.action_authOTP_to_pinCodeFragment, bundle);
-                    } else {
-                        UpdateToken(token, 0);
-                    }
-                } else {
-                    // Token is null
-                    Toast.makeText(context, "Token is null. Please try again.", Toast.LENGTH_SHORT).show();
+        new DatabaseService().CheckNotificationToken(new DatabaseService.UpdateTokenCallback() {
+            @Override
+            public void onSuccess(String token) {
+                if (firebaseAuth.getCurrentUser() != null && firebaseAuth.getCurrentUser().getDisplayName() != null) {
+                    UpdateToken(token,0);
+                }else {
+//                    bundle.putString("token", token);
+                    bundle.putString("number", number);
+                    navController.navigate(R.id.action_authOTP_to_pinCodeFragment, bundle);
                 }
-            } else {
-                // Task failed
-                binding.ProgressBar.setVisibility(View.GONE);
-                firebaseAuth.signOut();
-                Toast.makeText(context, "Failed to retrieve token. Please try again.", Toast.LENGTH_SHORT).show();
-                Log.e("TASK_token", "Token retrieval failed: " + task.getException());
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+
+                Log.i("TokenERROR", "onError: "+errorMessage);
             }
         });
+
     }
 
 

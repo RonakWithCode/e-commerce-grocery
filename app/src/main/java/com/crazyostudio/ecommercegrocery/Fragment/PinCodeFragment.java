@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +17,7 @@ import com.crazyostudio.ecommercegrocery.databinding.FragmentPinCodeBinding;
 
 public class PinCodeFragment extends Fragment {
 
-    String number,token;
+    String number;
     NavController navController;
 
 
@@ -25,7 +26,7 @@ public class PinCodeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             number = getArguments().getString("number");
-            token = getArguments().getString("token");
+
         }
     }
 
@@ -43,10 +44,7 @@ public class PinCodeFragment extends Fragment {
         binding.nextBtn.setOnClickListener(v -> {
             if (binding.pinCodeEditText.getText().toString().equals("301001")){
                 Bundle bundle = new Bundle();
-                bundle.putString("token",token);
                 bundle.putString("number",number);
-
-                bundle.putString("Pin_code",binding.pinCodeEditText.getText().toString());
                 navController.navigate(R.id.action_pinCodeFragment_to_authUserDetailsFragment);
             }else {
                 binding.error.setVisibility(View.VISIBLE);

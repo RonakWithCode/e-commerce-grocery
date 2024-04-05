@@ -29,6 +29,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.net.PortUnreachableException;
 import java.util.ArrayList;
@@ -90,6 +91,10 @@ public class DatabaseService {
     }
     public interface SetWishListCallback {
         void onSuccess();
+        void onError(String errorMessage);
+    }
+    public interface UpdateTokenCallback {
+        void onSuccess(String token);
         void onError(String errorMessage);
     }
     public interface GetWishListItemsCallback {
@@ -306,6 +311,23 @@ public class DatabaseService {
 
 
 //    TODO write code Update Token in this code //-->
+
+    public void CheckNotificationToken(UpdateTokenCallback callback){
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                if (task.isSuccessful()) {
+                    callback.onSuccess(task.getResult());
+                    Log.i("ThisMainActivityLog", "onComplete: " + task.getResult());
+                }else {
+                    callback.onError(Objects.requireNonNull(task.getException()).toString());
+                }
+            }
+        });
+    }
+
+
+
 //    public void UpdateToken(String token, int time){
 //        FirebaseFirestore db = FirebaseFirestore.getInstance();
 //        DocumentReference userRef = db.collection("UserInfo").document(Objects.requireNonNull(firebaseAuth.getUid()));
