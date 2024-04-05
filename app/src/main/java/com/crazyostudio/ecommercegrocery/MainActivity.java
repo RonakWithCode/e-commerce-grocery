@@ -21,6 +21,7 @@ import com.crazyostudio.ecommercegrocery.Adapter.SearchAdapter;
 import com.crazyostudio.ecommercegrocery.Adapter.SuggestionsAdapter;
 import com.crazyostudio.ecommercegrocery.Fragment.HomeFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.MoreFragment;
+import com.crazyostudio.ecommercegrocery.Fragment.PinCodeFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.SearchFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.SelectLanguageFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.ShoppingCartsFragment;
@@ -73,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+//        loader(new PinCodeFragment(),"null");
         loader(new HomeFragment(),"null");
         requestNotificationPermission();
 

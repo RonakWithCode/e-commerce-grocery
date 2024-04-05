@@ -40,12 +40,12 @@ public class MoreFragment extends Fragment {
         }else {
             binding.mainLayout.setVisibility(View.VISIBLE);
             binding.Username.setText(authService.getUserName());
-            binding.Email.setText(authService.getUserEmail());
+//            binding.Email.setText(authService.getUserEmail());
 
-            if (authService.getUserUrl()!=null) {
+//            if (authService.getUserUrl()!=null) {
 
                 Glide.with(requireContext()).load(R.drawable.adduser).into(binding.userImage);
-            }
+//            }
         }
 
 

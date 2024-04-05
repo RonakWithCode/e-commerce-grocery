@@ -29,37 +29,20 @@ public class OderActivity extends AppCompatActivity {
         }
         catch (NullPointerException ignored) {
             String errorMessage = ignored.toString();
-            FirebaseDatabase.getInstance().getReference().child("Error").setValue(errorMessage);
+            FirebaseDatabase.getInstance().getReference().child("Error").push().setValue(errorMessage);
         }
 
         String BuyMode = getIntent().getStringExtra("BuyType");
         ProductModel productModel = getIntent().getParcelableExtra("productModel");
-        if (BuyMode.equals("Cart")){
+//        if (BuyMode.equals("Cart")){
             Fragment fragment = new AddressFragment();
-            Bundle bundle = new Bundle();
-            bundle.putString("BuyType",BuyMode);
-            bundle.putString("LoadID","Nulll");
-            fragment.setArguments(bundle);
             transaction.replace(R.id.fragment_container,fragment,"Address");
             transaction.addToBackStack("Address");
             transaction.commit();
-        }
-        else if (BuyMode.equals("Now")){
-            //
-            Fragment fragment = new AddressFragment();
-            Bundle bundle = new Bundle();
-            bundle.putString("BuyType",BuyMode);
-//            productModel = getArguments().getParcelable("productModel");
-            bundle.putParcelable("productModel",productModel);
-            bundle.putString("LoadID","Nulll");
-            fragment.setArguments(bundle);
-            transaction.replace(R.id.fragment_container,fragment,"Address");
-            transaction.addToBackStack("Address");
-            transaction.commit();
-        }
-        else {
-            finish();
-        }
+//        }
+//        else {
+//            finish();
+//        }
 
 
 

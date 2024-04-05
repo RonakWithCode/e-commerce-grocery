@@ -25,17 +25,28 @@ public class UserinfoModels implements Parcelable {
 //    private boolean isActive;
 
     public UserinfoModels(){}
-    public UserinfoModels(String userId, String username, String emailAddress, String fullName, String profilePictureUrl, String dateOfBirth, String gender, ArrayList<AddressModel> address, String city, String state, String phoneNumber, boolean isActive) {
+//    public UserinfoModels(String userId, String username, String emailAddress, String fullName, String profilePictureUrl, String dateOfBirth, String gender, ArrayList<AddressModel> address, String city, String state, String phoneNumber, boolean isActive) {
+//        this.userId = userId;
+//        this.username = username;
+//        this.emailAddress = emailAddress;
+//        this.fullName = fullName;
+//        this.profilePictureUrl = profilePictureUrl;
+//        this.dateOfBirth = dateOfBirth;
+//        this.gender = gender;
+//        this.address = address;
+//        this.city = city;
+//        this.state = state;
+//        this.phoneNumber = phoneNumber;
+//        this.isActive = isActive;
+//        isPrivacy_modeBool = true;
+//        isDeal_notificationBool = true;
+//        isAccount_shipping_notificationBool = true;
+//    }
+
+    public UserinfoModels(String token,String userId, String username, String phoneNumber, boolean isActive) {
+        this.token = token;
         this.userId = userId;
         this.username = username;
-        this.emailAddress = emailAddress;
-        this.fullName = fullName;
-        this.profilePictureUrl = profilePictureUrl;
-        this.dateOfBirth = dateOfBirth;
-        this.gender = gender;
-        this.address = address;
-        this.city = city;
-        this.state = state;
         this.phoneNumber = phoneNumber;
         this.isActive = isActive;
         isPrivacy_modeBool = true;
@@ -43,44 +54,44 @@ public class UserinfoModels implements Parcelable {
         isAccount_shipping_notificationBool = true;
     }
 
-    public UserinfoModels(String token,String userId, String username, String emailAddress, String profilePictureUrl, String phoneNumber, boolean isActive) {
-        this.token = token;
-        this.userId = userId;
-        this.username = username;
-        this.emailAddress = emailAddress;
-        this.profilePictureUrl = profilePictureUrl;
-        this.phoneNumber = phoneNumber;
-        this.isActive = isActive;
-        isPrivacy_modeBool = true;
-        isDeal_notificationBool = true;
-        isAccount_shipping_notificationBool = true;
-    }
-    public UserinfoModels(String token,String userId, String username, String emailAddress, String phoneNumber, boolean isActive) {
-        this.token = token;
-        this.userId = userId;
-        this.username = username;
-        this.emailAddress = emailAddress;
-        this.phoneNumber = phoneNumber;
-        this.isActive = isActive;
-        isPrivacy_modeBool = true;
-        isDeal_notificationBool = true;
-        isAccount_shipping_notificationBool = true;
-    }
-
-    public UserinfoModels(String token,String userId, String username, String emailAddress, String profilePictureUrl, String gender, ArrayList<AddressModel> address, String phoneNumber, boolean isActive) {
-        this.token = token;
-        this.userId = userId;
-        this.username = username;
-        this.emailAddress = emailAddress;
-        this.profilePictureUrl = profilePictureUrl;
-        this.gender = gender;
-        this.address = address;
-        this.phoneNumber = phoneNumber;
-        this.isActive = isActive;
-        isPrivacy_modeBool = true;
-        isDeal_notificationBool = true;
-        isAccount_shipping_notificationBool = true;
-    }
+//    public UserinfoModels(String token,String userId, String username, String emailAddress, String profilePictureUrl, String phoneNumber, boolean isActive) {
+//        this.token = token;
+//        this.userId = userId;
+//        this.username = username;
+//        this.emailAddress = emailAddress;
+//        this.profilePictureUrl = profilePictureUrl;
+//        this.phoneNumber = phoneNumber;
+//        this.isActive = isActive;
+//        isPrivacy_modeBool = true;
+//        isDeal_notificationBool = true;
+//        isAccount_shipping_notificationBool = true;
+//    }
+//    public UserinfoModels(String token,String userId, String username, String emailAddress, String phoneNumber, boolean isActive) {
+//        this.token = token;
+//        this.userId = userId;
+//        this.username = username;
+//        this.emailAddress = emailAddress;
+//        this.phoneNumber = phoneNumber;
+//        this.isActive = isActive;
+//        isPrivacy_modeBool = true;
+//        isDeal_notificationBool = true;
+//        isAccount_shipping_notificationBool = true;
+//    }
+//
+//    public UserinfoModels(String token,String userId, String username, String emailAddress, String profilePictureUrl, String gender, ArrayList<AddressModel> address, String phoneNumber, boolean isActive) {
+//        this.token = token;
+//        this.userId = userId;
+//        this.username = username;
+//        this.emailAddress = emailAddress;
+//        this.profilePictureUrl = profilePictureUrl;
+//        this.gender = gender;
+//        this.address = address;
+//        this.phoneNumber = phoneNumber;
+//        this.isActive = isActive;
+//        isPrivacy_modeBool = true;
+//        isDeal_notificationBool = true;
+//        isAccount_shipping_notificationBool = true;
+//    }
     // Constructor for reading data from a Parcel
     protected UserinfoModels(Parcel in) {
         token = in.readString();

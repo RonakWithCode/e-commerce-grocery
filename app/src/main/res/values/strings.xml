@@ -156,10 +156,14 @@
     <string name="information">Information</string>
     <string name="create_new_address">Create new Address</string>
     <string name="choose_your_language">choose your language</string>
+    <string name="change_your_language">Change your language</string>
     <string name="english">English</string>
     <string name="hindi">हिंदी</string>
     <string name="product_recommendations">Product Recommendations</string>
     <string name="expiry_date">Expiry Date</string>
+    <string name="delivery_image">A delivery truck with parcels, subtly conveying the concept of delivery.\n</string>
+    <string name="enter_pin_code">Enter PIN code</string>
+    <string name="check_delivery_availability">Check Delivery Availability\t\t\t\t</string>
 
 
 </resources>

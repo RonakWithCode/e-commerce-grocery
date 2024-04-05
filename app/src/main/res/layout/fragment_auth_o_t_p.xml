@@ -83,7 +83,7 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_verify"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -246,7 +246,9 @@
                 android:layout_height="wrap_content"/>
 
 
+
         </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     </ScrollView>
 

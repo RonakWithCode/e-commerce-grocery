@@ -36,6 +36,27 @@
         private FirebaseAuth auth;
         DatabaseService databaseService;
         public UserAccountFragment(){}
+//                   <com.google.android.material.textfield.TextInputLayout
+//        android:id="@+id/emailField"
+//        android:layout_marginTop="@dimen/_5sdp"
+//        android:layout_width="match_parent"
+//        android:theme="@style/FilledBoxStyle"
+//        android:layout_height="wrap_content"
+//        android:hint="@string/e_mail"
+//        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+//        app:hintTextColor="@color/HintMainTextColor">
+//
+//                <com.google.android.material.textfield.TextInputEditText
+//        android:id="@+id/email"
+//        android:layout_width="match_parent"
+//        android:background="@color/MainBackgroundColor"
+//        android:layout_height="wrap_content"
+//        android:autofillHints="emailAddress"
+//        android:inputType="textPersonName"
+//        android:textColor="@color/MainTextColor"
+//        android:textColorHint="@color/MainTextColor" />
+//            </com.google.android.material.textfield.TextInputLayout>
+
 
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -78,7 +99,7 @@
                 public void onSuccess(DocumentSnapshot user) {
                     UserinfoModels models = user.toObject(UserinfoModels.class);
                     if (models != null) {
-                        binding.email.setText(models.getEmailAddress());
+//                        binding.email.setText(models.getEmailAddress());
                         binding.Name.setText(models.getUsername());
                         if (models.getAddress() != null && !models.getAddress().isEmpty()) {
                             adderes.clear();
@@ -108,7 +129,7 @@
         }
 
         private void save(){
-            new DatabaseService().UpdateUserInfo(auth.getUid(), binding.Name.getText().toString(), binding.email.getText().toString(), new DatabaseService.UpdateUserInfoCallback() {
+            new DatabaseService().UpdateUserInfo(auth.getUid(), binding.Name.getText().toString(), new DatabaseService.UpdateUserInfoCallback() {
                 @Override
                 public void onSuccess() {
                     requireActivity().finish();
@@ -129,27 +150,29 @@
         @Override
         public void remove(AddressModel address, int pos) {
             binding.progressCircular.setVisibility(View.VISIBLE);
-
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
             if (currentUser != null) {
-                FirebaseFirestore firestore = FirebaseFirestore.getInstance();
                 String userId = currentUser.getUid();
-                firestore.collection("UserInfo")
-                        .document(userId)
-                        .update("address", FieldValue.arrayRemove(address))
-                        .addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                binding.progressCircular.setVisibility(View.INVISIBLE);
-                                addressAdapter.notifyDataSetChanged();
-                            } else {
-                                // Handle task failure
-                                basicFun.AlertDialog(requireContext(), "Failed to remove address: " + task.getException().getMessage());
-                            }
-                        });
-            } else {
+                databaseService.removeAdders(userId, address, new DatabaseService.removeAddersCallback() {
+                    @Override
+                    public void onSuccess() {
+                        binding.progressCircular.setVisibility(View.INVISIBLE);
+                        addressAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onError(String errorMessage) {
+                        basicFun.AlertDialog(requireContext(), "Failed to remove address: " + errorMessage);
+
+                    }
+                });
+            }
+
+            else {
                 basicFun.AlertDialog(requireContext(), "User not authenticated.");
             }
         }
+
 
 
     }

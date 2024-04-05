@@ -87,26 +87,6 @@
                     android:textColorHint="@color/MainTextColor" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/emailField"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:layout_width="match_parent"
-                android:theme="@style/FilledBoxStyle"
-                android:layout_height="wrap_content"
-                android:hint="@string/e_mail"
-                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-                app:hintTextColor="@color/HintMainTextColor">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/email"
-                    android:layout_width="match_parent"
-                    android:background="@color/MainBackgroundColor"
-                android:layout_height="wrap_content"
-                android:autofillHints="emailAddress"
-                android:inputType="textPersonName"
-                android:textColor="@color/MainTextColor"
-                android:textColorHint="@color/MainTextColor" />
-            </com.google.android.material.textfield.TextInputLayout>
 
 
 

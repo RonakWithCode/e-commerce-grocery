@@ -38,6 +38,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
@@ -293,50 +295,87 @@ public class AuthOTP extends Fragment {
             }
         }).execute(ip);
     }
+//    private void Sigin() {
+//        Bundle bundle = new Bundle();
+//        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task_id -> {
+//            if (task_id.isSuccessful()) {
+//                String token = task_id.getResult();
+//                binding.ProgressBar.setVisibility(View.GONE);
+//                if (Objects.requireNonNull(firebaseAuth.getCurrentUser()).getDisplayName() == null) {
+//                    bundle.putString("token", token);
+//                    bundle.putString("number", number);
+//                    navController.navigate(R.id.action_authOTP_to_pinCodeFragment, bundle);
+//                }
+//                else {
+//                    UpdateToken(token,0);
+//                }
+//            }
+//            else {
+//                binding.ProgressBar.setVisibility(View.GONE);
+//                firebaseAuth.signOut();
+//                Toast.makeText(context, "Token is not generate try again", Toast.LENGTH_SHORT).show();
+//                Log.e("TASK_token", "Token retrieval failed: " + task_id.getException());
+//            }
+//        });
+//
+//    }
+
+
     private void Sigin() {
         Bundle bundle = new Bundle();
-        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task_id -> {
-            if (task_id.isSuccessful()) {
-                String token = task_id.getResult();
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                String token = task.getResult();
                 binding.ProgressBar.setVisibility(View.GONE);
-                if (Objects.requireNonNull(firebaseAuth.getCurrentUser()).getDisplayName() == null) {
-                    bundle.putString("token", token);
-                    bundle.putString("number", number);
-                    navController.navigate(R.id.action_authOTP_to_authUserDetailsFragment, bundle);
+                if (token != null) {
+                    if (firebaseAuth.getCurrentUser() != null && firebaseAuth.getCurrentUser().getDisplayName() == null) {
+                        bundle.putString("token", token);
+                        bundle.putString("number", number);
+                        Log.i("TokenERROR", "Sigin: "+ token);
+                        navController.navigate(R.id.action_authOTP_to_pinCodeFragment, bundle);
+                    } else {
+                        UpdateToken(token, 0);
+                    }
+                } else {
+                    // Token is null
+                    Toast.makeText(context, "Token is null. Please try again.", Toast.LENGTH_SHORT).show();
                 }
-                else {
-                    UpdateToken(token,0);
-                }
-            }
-            else {
+            } else {
+                // Task failed
                 binding.ProgressBar.setVisibility(View.GONE);
                 firebaseAuth.signOut();
-                Toast.makeText(context, "Token is not generate try again", Toast.LENGTH_SHORT).show();
-                Log.e("TASK_token", "Token retrieval failed: " + task_id.getException());
+                Toast.makeText(context, "Failed to retrieve token. Please try again.", Toast.LENGTH_SHORT).show();
+                Log.e("TASK_token", "Token retrieval failed: " + task.getException());
             }
         });
-
     }
-    private void UpdateToken(String token,int time) {
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        firebaseDatabase.getReference().child("UserInfo").child(Objects.requireNonNull(firebaseAuth.getUid())).child("token").setValue(token).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                binding.ProgressBar.setVisibility(View.GONE);
-                requireActivity().finish();
-            }
-            else {
-                if (time == 0) {
-                    binding.ProgressBar.setVisibility(View.GONE);
-                    UpdateToken(token, 1);
-                }
 
-                else {
-                    firebaseAuth.signOut();
-                    binding.ProgressBar.setVisibility(View.GONE);
-                }
-            }
-        });
 
+
+//    TODO below the not tested
+
+    private void UpdateToken(String token, int time) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference userRef = db.collection("UserInfo").document(Objects.requireNonNull(firebaseAuth.getUid()));
+        userRef.update("token", token)
+                .addOnSuccessListener(aVoid -> {
+                    // Token update successful
+                    binding.ProgressBar.setVisibility(View.GONE);
+                    requireActivity().finish();
+                })
+                .addOnFailureListener(e -> {
+                    // Token update failed
+                    if (time == 0) {
+                        // Retry once if update fails for the first time
+                        binding.ProgressBar.setVisibility(View.GONE);
+                        UpdateToken(token, 1);
+                    } else {
+                        // Sign out if update fails again
+                        firebaseAuth.signOut();
+                        binding.ProgressBar.setVisibility(View.GONE);
+                    }
+                });
     }
+
 
 }

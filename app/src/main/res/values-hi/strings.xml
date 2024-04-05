@@ -158,7 +158,11 @@
     <string name="english">English</string>
     <string name="hindi">हिंदी</string>
     <string name="product_recommendations">उत्पाद सिफ़ारिशें</string>
+    <string name="change_your_language">Change your language</string>
     <string name="expiry_date">Expiry Date</string>
+    <string name="delivery_image">A delivery truck with parcels, subtly conveying the concept of delivery.\n</string>
+    <string name="check_delivery_availability">Check Delivery Availability\t\t\t\t</string>
+    <string name="enter_pin_code">Enter PIN code</string>
 
 
 </resources>

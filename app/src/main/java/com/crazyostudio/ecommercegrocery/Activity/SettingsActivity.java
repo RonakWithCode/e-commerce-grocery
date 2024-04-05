@@ -44,8 +44,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class SettingsActivity extends AppCompatActivity implements
@@ -115,71 +120,69 @@ public class SettingsActivity extends AppCompatActivity implements
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.preferences_setting, rootKey);
+            FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-            FirebaseAuth firebaseAuth;
-            FirebaseDatabase firebaseDatabase;
-            firebaseAuth = FirebaseAuth.getInstance();
             Preference userNamePreference = findPreference("name");
-            firebaseDatabase = FirebaseDatabase.getInstance();
-            // Set the summary (user name) for the preference
             if (userNamePreference != null) {
                 if (firebaseAuth.getCurrentUser() != null) {
                     String userName = firebaseAuth.getCurrentUser().getDisplayName();
                     userNamePreference.setSummary(userName);
                 } else {
-                    userNamePreference.setSummary("Sorry we are not found name  this is a error");
+                    userNamePreference.setSummary("Sorry, we could not find your name. This is an error.");
                 }
             }
 
             SwitchPreference privacyModePreference = findPreference("privacy_mode");
-            SwitchPreference deal_notificationPreference = findPreference("deal_notification");
-            SwitchPreference account_shipping_notificationPreference = findPreference("account_shipping_notification");
+            SwitchPreference dealNotificationPreference = findPreference("deal_notification");
+            SwitchPreference accountShippingNotificationPreference = findPreference("account_shipping_notification");
+
             if (privacyModePreference != null) {
                 privacyModePreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                    // Save the boolean value in SharedPreferences
-                    firebaseDatabase.getReference().child("UserInfo").child(Objects.requireNonNull(firebaseAuth.getUid())).child("privacy_modeBool").setValue(newValue).addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(getContext(), "isSuccessful", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Log.d("ERROR_IS", "onComplete: " + task.getException());
-                        }
-                    });
-                    return true;
-                });
-            }
-            if (deal_notificationPreference != null) {
-                deal_notificationPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                    // Save the boolean value in SharedPreferences
-//                deal_notificationBool
-                    firebaseDatabase.getReference().child("UserInfo").child(Objects.requireNonNull(firebaseAuth.getUid())).child("deal_notificationBool").setValue(newValue).addOnCompleteListener(task -> {
-                        if (task.isSuccessful())
-                        {
-                            Toast.makeText(getContext(), "isSuccessful", Toast.LENGTH_SHORT).show();
-                        }else {
-                            Log.d("ERROR_IS", "onComplete: "+task.getException());
-                        }
-                    });
-                    return true;
-                });
-            }
-            if (account_shipping_notificationPreference != null) {
-                account_shipping_notificationPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                    firebaseDatabase.getReference().child("UserInfo").child(Objects.requireNonNull(firebaseAuth.getUid())).child("account_shipping_notificationBool").setValue(newValue).addOnCompleteListener(task -> {
-                        if (task.isSuccessful())
-                        {
-                            Toast.makeText(getContext(), "isSuccessful", Toast.LENGTH_SHORT).show();
-                        }else {
-                            Log.d("ERROR_IS", "onComplete: "+task.getException());
-                        }
-                    });
+                    // Save the boolean value in Firestore
+                    saveBooleanToFirestore(db, "privacy_modeBool", newValue);
                     return true;
                 });
             }
 
-
-
+            if (dealNotificationPreference != null) {
+                dealNotificationPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    // Save the boolean value in Firestore
+                    saveBooleanToFirestore(db, "deal_notificationBool", newValue);
+                    return true;
+                });
             }
+
+            if (accountShippingNotificationPreference != null) {
+                accountShippingNotificationPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    // Save the boolean value in Firestore
+                    saveBooleanToFirestore(db, "account_shipping_notificationBool", newValue);
+                    return true;
+                });
+            }
+        }
+
+        private void saveBooleanToFirestore(FirebaseFirestore db, String fieldName, Object value) {
+            FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+            if (firebaseAuth.getCurrentUser() != null) {
+                Map<String, Object> data = new HashMap<>();
+                data.put(fieldName, value);
+
+                // Reference to the user's document
+                DocumentReference userDocRef = db.collection("UserInfo").document(Objects.requireNonNull(firebaseAuth.getUid()));
+
+                // Update the field in Firestore
+                userDocRef.set(data, SetOptions.merge())
+                        .addOnSuccessListener(aVoid -> Toast.makeText(getContext(), "Success", Toast.LENGTH_SHORT).show())
+                        .addOnFailureListener(e -> Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+            }
+        }
     }
+
+
+
+
+
     public static class ManagePermissionsFragment extends PreferenceFragmentCompat {
         private PreferenceCategory permissionCategory;
         @Override
@@ -203,7 +206,7 @@ public class SettingsActivity extends AppCompatActivity implements
                 checkBoxPreference.setSummary(checkPermissionGranted(permission) ? "There is permission" : "There is no permission");
                 checkBoxPreference.setOnPreferenceClickListener(preference -> {
                     Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                    Uri uri = Uri.fromParts("package", Objects.requireNonNull(getActivity()).getPackageName(), null);
+                    Uri uri = Uri.fromParts("package", requireActivity().getPackageName(), null);
                     intent.setData(uri);
                     startActivity(intent);
                     return true;

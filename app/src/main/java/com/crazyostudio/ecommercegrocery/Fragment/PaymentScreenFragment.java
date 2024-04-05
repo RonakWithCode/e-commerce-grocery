@@ -44,7 +44,6 @@ public class PaymentScreenFragment extends Fragment implements OrderProductInter
     private String PaymentMode;
     private String addersMode;
 //    private String id;
-    private String BuyType;
     private String CouponCode;
     Cart cart;
     private FirebaseDatabase firebaseDatabase;
@@ -70,13 +69,9 @@ public class PaymentScreenFragment extends Fragment implements OrderProductInter
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            BuyType = getArguments().getString("BuyType");
 //            id = getArguments().getString("id");
             adders = getArguments().getParcelable("adders");
             userinfoModels = getArguments().getParcelable("user");
-            if (BuyType.equals("Now")) {
-                productModel = getArguments().getParcelable("productModel");
-            }
         }
         else {
             requireActivity().onBackPressed();
@@ -99,13 +94,9 @@ public class PaymentScreenFragment extends Fragment implements OrderProductInter
         getProduct();
         getTotalPrice = BigDecimal.ZERO;
 
-        if (BuyType.equals("Now")) {
-            getTotalPrice = BigDecimal.valueOf(productModel.getPrice() * productModel.getDefaultQuantity());
-        }
-        else if (BuyType.equals("Cart")) {
-            cart = TinyCartHelper.getCart();
-            getTotalPrice = cart.getTotalPrice();
-        }
+        cart = TinyCartHelper.getCart();
+        getTotalPrice = cart.getTotalPrice();
+
 
         binding.couponCodeApplyBtn.setOnClickListener(view->{
             if (!CouponValueIsApply) {
@@ -276,7 +267,7 @@ public class PaymentScreenFragment extends Fragment implements OrderProductInter
         progressDialog.show();
         String orderId = time + FirebaseAuth.getInstance().getUid();
         ArrayList<ProductModel> models = new ArrayList<>();
-        if (BuyType.equals("Cart")) {
+
             firebaseDatabase.getReference().child("Cart").child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid())).addValueEventListener(new ValueEventListener() {
                 @SuppressLint("NotifyDataSetChanged")
                 @Override
@@ -327,38 +318,6 @@ public class PaymentScreenFragment extends Fragment implements OrderProductInter
                     }
                 }
             });
-        }
-        else if (BuyType.equals("Now")){
-            String email = new AuthService().getUserEmail();
-            if (email.isEmpty()) {
-                email = "Email is found or Valid";
-            }
-            models.add(productModel);
-            BigDecimal save = BigDecimal.ZERO;
-            save = save.add(BigDecimal.valueOf(productModel.getMrp()).multiply(BigDecimal.valueOf(productModel.getDefaultQuantity())));
-            double userSave = Double.parseDouble(String.valueOf(save)) - Subtotal;
-            OrderModel orderModel = new OrderModel(
-                    adders.getName(),orderId,
-                    addersMode,models,"shipped",adders.getAddress(),
-                    adders.getPhone(),Subtotal,ShippingFee,total,"Padding",PaymentMode,time,FirebaseAuth.getInstance().getUid(),userinfoModels.getToken(),0,userSave,email);
-            firebaseDatabase.getReference().child("Order").child(FirebaseAuth.getInstance().getUid()).child(orderId).setValue(orderModel).addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    if (progressDialog.isShowing()) {
-                        progressDialog.dismiss();
-                    }
-                    Intent i = new Intent(requireContext(), OrderDetailsActivity.class);
-                    i.putExtra("Type","placeOrder");
-                    i.putExtra("userModel",userinfoModels);
-                    i.putExtra("orderModel",orderModel);
-                    requireActivity().finish();
-                    startActivity(i);
-                }
-            }).addOnFailureListener(e -> {
-                if (progressDialog.isShowing())progressDialog.dismiss();
-                basicFun.AlertDialog(requireContext(),e.toString());
-            });
-        }
-
     }
 
     @SuppressLint("NotifyDataSetChanged")

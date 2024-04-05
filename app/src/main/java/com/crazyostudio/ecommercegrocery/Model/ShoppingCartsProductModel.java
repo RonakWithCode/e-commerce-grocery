@@ -31,6 +31,7 @@ public class ShoppingCartsProductModel implements Parcelable, Item, Serializable
     private String EditDate;
     private String whoEdit;
 
+
     public ShoppingCartsProductModel() {
     }
 

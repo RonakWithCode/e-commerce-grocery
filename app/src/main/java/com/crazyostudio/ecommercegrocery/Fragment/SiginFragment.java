@@ -89,6 +89,8 @@ public class SiginFragment extends Fragment {
             }
         });
 
+        binding.changeLanguage.setOnClickListener(view-> navController.navigate(R.id.action_siginFragment_to_selectLanguageFragment));
+
 
         return binding.getRoot();
     }

@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +43,39 @@ public class newAddressFragment extends Fragment {
         binding = FragmentNewAddressBinding.inflate(inflater, container, false);
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext());
         binding.backButton.setOnClickListener(back -> requireActivity().onBackPressed());
-        binding.house.setEndIconOnClickListener(currentLocation -> getLocation());
+        binding.house.setEndIconOnClickListener(currentLocation -> {
+            if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                requestLocationPermission();
+            }else {
+            fusedLocationProviderClient.getLastLocation()
+                    .addOnSuccessListener(location -> {
+                        if (location != null) {
+                            try {
+                                Geocoder geocoder = new Geocoder(requireContext(), Locale.getDefault());
+                                List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+//                                        binding.address.setText("Latitude: "+addresses.get(0).getLatitude());
+//                                        binding.house.setText("Longitude: "+addresses.get(0).getLongitude());
+                                Log.i("addressesError", "onCreateView: "+ addresses.get(0).getAddressLine(0));
+                                Log.i("addressesError", "addresses: "+ addresses);
+                                binding.address.setText(addresses.get(0).getAddressLine(0));
+//                                        bind.setText("City: "+addresses.get(0).getLocality());
+//                                        country.setText("Country: "+addresses.get(0).getCountryName());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+
+                        }
+
+                    });
+
+        }});
 
 
         binding.save.setOnClickListener(save -> {

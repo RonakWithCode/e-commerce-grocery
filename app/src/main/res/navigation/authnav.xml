@@ -5,6 +5,7 @@
     android:id="@+id/authnav"
     app:startDestination="@id/siginFragment">
 
+
     <fragment
         android:id="@+id/siginFragment"
         android:name="com.crazyostudio.ecommercegrocery.Fragment.SiginFragment"
@@ -18,6 +19,9 @@
                 android:name="number"
                 app:argType="string" />
         </action>
+        <action
+            android:id="@+id/action_siginFragment_to_selectLanguageFragment"
+            app:destination="@id/selectLanguageFragment" />
     </fragment>
     <fragment
         android:id="@+id/authOTP"
@@ -25,12 +29,41 @@
         android:label="fragment_auth_o_t_p"
         tools:layout="@layout/fragment_auth_o_t_p" >
         <action
-            android:id="@+id/action_authOTP_to_authUserDetailsFragment"
-            app:destination="@id/authUserDetailsFragment" />
+            android:id="@+id/action_authOTP_to_pinCodeFragment"
+            app:destination="@id/pinCodeFragment" />
+        <action
+            android:id="@+id/action_authOTP_to_selectLanguageFragment"
+            app:destination="@id/selectLanguageFragment" />
     </fragment>
-    '<fragment
+
+    <fragment
         android:id="@+id/authUserDetailsFragment"
         android:name="com.crazyostudio.ecommercegrocery.Fragment.AuthUserDetailsFragment"
         android:label="fragment_auth_user_details"
         tools:layout="@layout/fragment_auth_user_details" />
+    <fragment
+        android:id="@+id/pinCodeFragment"
+        android:name="com.crazyostudio.ecommercegrocery.Fragment.PinCodeFragment"
+        android:label="fragment_pin_code"
+        tools:layout="@layout/fragment_pin_code" >
+        <action
+            android:id="@+id/action_pinCodeFragment_to_authUserDetailsFragment"
+            app:destination="@id/authUserDetailsFragment" >
+
+            <argument android:name="name"
+                app:argType="string"
+                />
+            <argument
+                android:name="number"
+                app:argType="string" />
+            <argument
+                android:name="token"
+                app:argType="string" />
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/selectLanguageFragment"
+        android:name="com.crazyostudio.ecommercegrocery.Fragment.SelectLanguageFragment"
+        android:label="fragment_select_language"
+        tools:layout="@layout/fragment_select_language" />
 </navigation>

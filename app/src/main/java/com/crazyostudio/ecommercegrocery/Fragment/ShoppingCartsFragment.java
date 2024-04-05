@@ -3,6 +3,7 @@ package com.crazyostudio.ecommercegrocery.Fragment;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,9 +40,6 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
     String uid;
     public ShoppingCartsFragment() {
         // Required empty public constructor
-
-
-
     }
     @SuppressLint("SetTextI18n")
     @Override
@@ -50,7 +48,6 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
         // Inflate the layout for this fragment
         binding = FragmentShoppingCartsBinding.inflate(inflater,container,false);
         authService = new AuthService();
-
         service = new DatabaseService();
         uid  = authService.getUserId();
         models = new ArrayList<>();
@@ -61,8 +58,6 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
                 Toast.makeText(requireContext(), "Select Product", Toast.LENGTH_SHORT).show();
             }else {
                 Intent intent = new Intent(requireContext(), OderActivity.class);
-                intent.putExtra("BuyType", "Cart");
-                intent.putExtra("productModel", model);
                 startActivity(intent);
             }
         });
@@ -86,7 +81,6 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
         binding.ProductCart.setLayoutManager(layoutManager);
         binding.ProductCart.setAdapter(cartsAdapter);
         service.getUserCartById(uid, new DatabaseService.GetUserCartByIdCallback() {
-
             @Override
             public void onSuccess(ArrayList<ShoppingCartsProductModel> cartsProductModels) {
                 models.clear();
@@ -105,7 +99,7 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
             @Override
             public void onError(String errorMessage) {
                 basicFun.AlertDialog(requireContext(), errorMessage);
-
+                Log.i("ERRORDATABASE", "onError: "+errorMessage);
             }
         });
 

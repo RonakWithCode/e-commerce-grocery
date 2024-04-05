@@ -1,16 +1,36 @@
 package com.crazyostudio.ecommercegrocery.Services;
 
+import android.annotation.SuppressLint;
+import android.net.Uri;
+import android.util.Log;
+import android.view.View;
+
+import androidx.annotation.NonNull;
+
 import com.crazyostudio.ecommercegrocery.Model.AddressModel;
 import com.crazyostudio.ecommercegrocery.Model.ProductCategoryModel;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
+import com.crazyostudio.ecommercegrocery.Model.ShoppingCartFirebaseModel;
 import com.crazyostudio.ecommercegrocery.Model.ShoppingCartsProductModel;
 import com.crazyostudio.ecommercegrocery.Model.UserinfoModels;
+import com.crazyostudio.ecommercegrocery.javaClasses.basicFun;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
+import java.net.PortUnreachableException;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -19,6 +39,11 @@ public class DatabaseService {
 
     public interface GetAllProductsCallback {
         void onSuccess(ArrayList<ProductModel> products);
+
+        void onError(String errorMessage);
+    }
+    public interface GetAllShoppingCartsProductModelCallback {
+        void onSuccess(ArrayList<ShoppingCartsProductModel> products);
 
         void onError(String errorMessage);
     }
@@ -57,6 +82,18 @@ public class DatabaseService {
     }
     public interface SetAddersCallback {
         void onSuccess();
+        void onError(String errorMessage);
+    }
+    public interface removeAddersCallback {
+        void onSuccess();
+        void onError(String errorMessage);
+    }
+    public interface SetWishListCallback {
+        void onSuccess();
+        void onError(String errorMessage);
+    }
+    public interface GetWishListItemsCallback {
+        void onSuccess(ArrayList<String> products);
         void onError(String errorMessage);
     }
 
@@ -118,38 +155,179 @@ public class DatabaseService {
 
 
     public void getUserCartById(String id, GetUserCartByIdCallback callback) {
-        database.collection("Cart").document(id).collection("items").get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                ArrayList<ShoppingCartsProductModel> models = new ArrayList<>();
-                for (DocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                    ShoppingCartsProductModel productModel = document.toObject(ShoppingCartsProductModel.class);
-                    if (productModel != null) {
-                        models.add(productModel);
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        firebaseDatabase.getReference().child("Cart").child(id).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    ArrayList<ShoppingCartFirebaseModel> list = new ArrayList<>();
+                    ArrayList<String> productIds = new ArrayList<>();
+
+                    for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+                        ShoppingCartFirebaseModel productModel = snapshot1.getValue(ShoppingCartFirebaseModel.class);
+                        if (productModel != null) {
+                            list.add(productModel);
+                            productIds.add(productModel.getProductId());
+                        }
                     }
+                    getProductsByModelId(productIds, new GetAllShoppingCartsProductModelCallback() {
+                        @Override
+                        public void onSuccess(ArrayList<ShoppingCartsProductModel> products) {
+                            ArrayList<ShoppingCartsProductModel> finalProduct = new ArrayList<>();
+                            for (ShoppingCartsProductModel product : products) {
+                                for (ShoppingCartFirebaseModel cartModel : list) {
+                                    if (product.getProductId().equals(cartModel.getProductId())) {
+                                        product.setDefaultQuantity(cartModel.getProductSelectQuantity());
+                                        finalProduct.add(product);
+                                    }
+                                }
+                            }
+                            // Log the products after all changes are made
+                            Log.i("DATABASE_ERROR", "List of changed products: " + finalProduct);
+                            callback.onSuccess(finalProduct);
+                        }
+
+                        @Override
+                        public void onError(String errorMessage) {
+                            Log.i("DATABASE_ERROR", "Error retrieving products: " + errorMessage);
+                            callback.onError(errorMessage);
+                        }
+                    });
+                } else {
+                    // Handle case where cart is empty or doesn't exist
+                    callback.onError("Cart is empty or doesn't exist for user ID: " + id);
                 }
-                callback.onSuccess(models);
-            } else {
-                callback.onError(Objects.requireNonNull(task.getException()).toString());
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.i("DATABASE_ERROR", "Error onCancelled: " + error);
+                callback.onError(error.toString());
             }
         });
+
     }
+
+    public void getProductsByModelId(ArrayList<String> modelIds, GetAllShoppingCartsProductModelCallback callback) {
+        database.collection("Product")
+                .whereIn("productId", modelIds)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        ArrayList<ShoppingCartsProductModel> products = new ArrayList<>();
+                        for (DocumentSnapshot document : task.getResult()) {
+                            ShoppingCartsProductModel product = document.toObject(ShoppingCartsProductModel.class);
+                            if (product != null && product.isAvailable()) {
+                                products.add(product);
+                            }
+                        }
+                        callback.onSuccess(products);
+                    } else {
+                        Log.i("DATABASE_ERROR", "Error retrieving products: " + task.getException());
+                        callback.onError(Objects.requireNonNull(task.getException()).toString());
+                    }
+                }).addOnFailureListener(e -> {
+                    Log.i("DATABASE_ERROR", "Error onFailure: " + e);
+                    callback.onError(e.toString());
+                });
+    }
+
+
+
 
     public void removeCartItemById(String uid, String itemId) {
-        database.collection("Cart").document(uid).collection("items").document(itemId).delete();
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        firebaseDatabase.getReference().child("Cart").child(Objects.requireNonNull(uid)).child(itemId).removeValue();
+
     }
 
-    public void UpdateCartQuantityById(String uid, String itemId, int quantity) {
-        database.collection("Cart").document(uid).collection("items").document(itemId).update("defaultQuantity", quantity);
+    public void UpdateCartQuantityById(String uid,String itemId,int Quantity){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        firebaseDatabase.getReference().child("Cart").child(uid).child(itemId).child("productSelectQuantity").setValue(Quantity);
     }
+
+
+
+//    TODO not test :
+    public void addItemToWishList(String uid, String productId, SetWishListCallback callback) {
+        DatabaseReference wishListRef = FirebaseDatabase.getInstance().getReference().child("wishList").child(uid);
+        wishListRef.setValue(productId)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        callback.onSuccess();
+                    } else {
+                        callback.onError(task.getException().getMessage());
+                    }
+                });
+    }
+
+    public void getWishListItems(String uid, GetWishListItemsCallback callback) {
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference wishListRef = firebaseDatabase.getReference().child("wishList").child(uid);
+        wishListRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    ArrayList<String> wishListItems = new ArrayList<>();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        String productId = snapshot.getValue(String.class);
+                        if (productId != null) {
+                            wishListItems.add(productId);
+                        }
+                    }
+                    callback.onSuccess(wishListItems);
+                } else {
+                    // Wishlist for this user is empty
+                    callback.onSuccess(new ArrayList<>());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                callback.onError(databaseError.getMessage());
+            }
+        });
+
+    }
+//    TODO end
 
     public void setUserInfo(UserinfoModels userInfo, SetUserInfoCallback callback) {
         database.collection("UserInfo").document(userInfo.getUserId()).set(userInfo).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
+                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                        .setDisplayName(userInfo.getUsername()).build();
+                Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).updateProfile(profileUpdates);
                 callback.onSuccess(task);
+
             }
         }).addOnFailureListener(e -> callback.onError(e.toString()));
     }
 
+
+//    TODO write code Update Token in this code //-->
+//    public void UpdateToken(String token, int time){
+//        FirebaseFirestore db = FirebaseFirestore.getInstance();
+//        DocumentReference userRef = db.collection("UserInfo").document(Objects.requireNonNull(firebaseAuth.getUid()));
+//        userRef.update("token", token)
+//                .addOnSuccessListener(aVoid -> {
+//                    // Token update successful
+//                    binding.ProgressBar.setVisibility(View.GONE);
+//                    requireActivity().finish();
+//                })
+//                .addOnFailureListener(e -> {
+//                    // Token update failed
+//                    if (time == 0) {
+//                        // Retry once if update fails for the first time
+//                        binding.ProgressBar.setVisibility(View.GONE);
+//                        UpdateToken(token, 1);
+//                    } else {
+//                        // Sign out if update fails again
+//                        firebaseAuth.signOut();
+//                        binding.ProgressBar.setVisibility(View.GONE);
+//                    }
+//                });
+//    }
 
     public void getUserInfo(String userId, getUserInfoCallback callback) {
         database.collection("UserInfo").document(userId).get().addOnCompleteListener(task -> {
@@ -221,19 +399,31 @@ public class DatabaseService {
                     }
                 });
     }
+    public void removeAdders(String uid,AddressModel address ,removeAddersCallback callback ){
+        database.collection("UserInfo")
+                .document(uid)
+                .update("address", FieldValue.arrayRemove(address))
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        callback.onSuccess();
+                    } else {
+                        // Handle task failure
+                        callback.onError("failure to remove a address " + task.getException().toString());
+                    }
+                });
 
+    }
 
-
-   public void UpdateUserInfo(String userId,String name,String email,UpdateUserInfoCallback callback){
+   public void UpdateUserInfo(String userId,String name,UpdateUserInfoCallback callback){
         database.collection("UserInfo")
                 .document(userId)
                 .update(
-                        "username", name,
-                        "emailAddress", email
-                        // Add other fields as needed
-                )
+                        "username", name)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
+                        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                .setDisplayName(name).build();
+                        Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).updateProfile(profileUpdates);
 //                        Toast.makeText(requireContext(), "User info saved successfully", Toast.LENGTH_SHORT).show();
                         callback.onSuccess();
                     } else {

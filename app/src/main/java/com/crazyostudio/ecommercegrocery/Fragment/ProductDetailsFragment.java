@@ -3,6 +3,7 @@ package com.crazyostudio.ecommercegrocery.Fragment;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import com.crazyostudio.ecommercegrocery.Activity.OderActivity;
 import com.crazyostudio.ecommercegrocery.Adapter.ProductAdapter;
 import com.crazyostudio.ecommercegrocery.Adapter.ProductDisplayImagesAdapter;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
+import com.crazyostudio.ecommercegrocery.Model.ShoppingCartFirebaseModel;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentProductDetailsBinding;
@@ -86,7 +88,7 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
         //        ((AppCompatActivity) requireActivity()).getSupportActionBar().hide();
 //        binding.viewBack.setOnClickListener(back-> requireActivity().onBackPressed());
         initValue();
-        binding.AddTOCart.setOnClickListener(view -> AddTOCart());
+        binding.AddTOCart.setOnClickListener(view -> addToCart());
         binding.plusBtn.setOnClickListener(view -> {
             int quantity = productModel.getDefaultQuantity();
             quantity++;
@@ -111,22 +113,24 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
     }
 
     private void initValue() {
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+        if (FirebaseAuth.getInstance().getCurrentUser() !=null) {
             String userId = FirebaseAuth.getInstance().getUid();
             assert userId != null;
-            CollectionReference productsRef = FirebaseFirestore.getInstance().collection("Cart").document(userId).collection("Products");
+            DatabaseReference productsRef = FirebaseDatabase.getInstance().getReference().child("Cart").child(userId);
             String productNameToFind = productModel.getProductId();
-            productsRef.document(productNameToFind).get().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot snapshot = task.getResult();
-                    if (snapshot.exists()) {
-                        // Product exists in the cart
+            Query query = productsRef.orderByKey().equalTo(productNameToFind);
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
                         binding.AddTOCart.setText("Go to Cart");
                         binding.quantityBox.setVisibility(View.VISIBLE);
                     }
-                } else {
-                    // Handle errors
-                    Toast.makeText(getContext(), "Firestore error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Handle the error in case of a database error.
+                    Toast.makeText(getContext(), "Database error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -225,43 +229,55 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
         startActivity(intent);
     }
 
-    public void AddTOCart() {
 
-
-
-
+    public void addToCart() {
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            String userId = FirebaseAuth.getInstance().getUid();
-            assert userId != null;
-            CollectionReference productsRef = FirebaseFirestore.getInstance().collection("Cart").document(userId).collection("Products");
+            ShoppingCartFirebaseModel shoppingCartFirebaseModel = new ShoppingCartFirebaseModel(productModel.getProductId(), productModel.getDefaultQuantity());
+            DatabaseReference productsRef = FirebaseDatabase.getInstance().getReference().child("Cart").child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
             String productNameToFind = productModel.getProductId();
-            productsRef.document(productNameToFind).get().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot snapshot = task.getResult();
-                    if (snapshot.exists()) {
+            Query query = productsRef.orderByKey().equalTo(productNameToFind);
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
                         // Product already exists in the cart
-                        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-                        transaction.replace(R.id.loader, new ShoppingCartsFragment(), "ShoppingCartsFragment");
-                        transaction.addToBackStack("ShoppingCartsFragment");
-                        transaction.commit();
+                        // Handle this scenario, e.g., navigate to the cart
+                        navigateToShoppingCartFragment();
                     } else {
                         // Product doesn't exist in the cart, add it
-                        productsRef.document(productNameToFind).set(productModel).addOnCompleteListener(addTask -> {
-                            if (addTask.isSuccessful()) {
-                                binding.AddTOCart.setText("Go to Cart");
-                            }
-                        }).addOnFailureListener(error -> basicFun.AlertDialog(requireContext(), error.toString()));
+                        addProductToCart(productsRef, shoppingCartFirebaseModel);
                     }
-                } else {
-                    // Handle errors
-                    Toast.makeText(getContext(), "Firestore error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Handle the error in case of a database error.
+                    Log.e("DatabaseError", "Database error: " + databaseError.getMessage());
+                    Toast.makeText(getContext(), "Database error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         } else {
+            // User not authenticated, navigate to authentication screen
             startActivity(new Intent(getContext(), AuthMangerActivity.class));
         }
     }
 
+    private void navigateToShoppingCartFragment() {
+        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.loader, new ShoppingCartsFragment(), "ShoppingCartsFragment");
+        transaction.addToBackStack("ShoppingCartsFragment");
+        transaction.commit();
+    }
+
+    private void addProductToCart(DatabaseReference productsRef, ShoppingCartFirebaseModel shoppingCartFirebaseModel) {
+        productsRef.child(productModel.getProductId()).setValue(shoppingCartFirebaseModel)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        binding.AddTOCart.setText("Go to Cart");
+                    }
+                })
+                .addOnFailureListener(error -> basicFun.AlertDialog(requireContext(), error.toString()));
+    }
 
     @Override
     public void onClick(ProductModel productModel) {
@@ -274,4 +290,12 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
         transaction.addToBackStack("productDetailsFragment").commit();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        BottomAppBar bottomAppBar = getActivity().findViewById(R.id.bottomAppBar);
+        if (bottomAppBar != null) {
+            bottomAppBar.setVisibility(View.VISIBLE);
+        }
+    }
 }
