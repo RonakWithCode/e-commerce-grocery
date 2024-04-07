@@ -7,6 +7,12 @@
         android:icon="@drawable/ic_baseline_home_24"/>
 
     <item
+        android:id="@+id/GoCategory"
+        android:title="@string/category"
+        android:icon="@drawable/category"/>
+
+
+    <item
         android:id="@+id/shoppingCartsBtn"
         android:title="@string/shopping_carts"
         android:icon="@drawable/ic_baseline_shopping_cart_24"/>

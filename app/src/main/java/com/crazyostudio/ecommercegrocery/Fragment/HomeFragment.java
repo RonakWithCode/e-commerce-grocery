@@ -1,11 +1,7 @@
 package com.crazyostudio.ecommercegrocery.Fragment;
 
-import static android.app.Activity.RESULT_OK;
-
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
-import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,35 +9,40 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.viewbinding.ViewBinding;
 
 import com.crazyostudio.ecommercegrocery.Adapter.CategoryAdapter;
 import com.crazyostudio.ecommercegrocery.Adapter.ProductAdapter;
+import com.crazyostudio.ecommercegrocery.MainActivity;
+import com.crazyostudio.ecommercegrocery.Model.BannerModels;
 import com.crazyostudio.ecommercegrocery.Model.ProductCategoryModel;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
-import com.crazyostudio.ecommercegrocery.Model.RecentLoginsModels;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentHomeBinding;
 import com.crazyostudio.ecommercegrocery.interfaceClass.CategoryAdapterInterface;
 import com.crazyostudio.ecommercegrocery.interfaceClass.onClickProductAdapter;
-import com.crazyostudio.ecommercegrocery.javaClasses.GetPublicIpAddressTask;
-import com.crazyostudio.ecommercegrocery.javaClasses.IpGeolocationTask;
 import com.crazyostudio.ecommercegrocery.javaClasses.basicFun;
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.android.material.bottomappbar.BottomAppBar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.mancj.materialsearchbar.MaterialSearchBar;
+
+import org.imaginativeworld.whynotimagecarousel.ImageCarousel;
+import org.imaginativeworld.whynotimagecarousel.listener.CarouselListener;
+import org.imaginativeworld.whynotimagecarousel.model.CarouselItem;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class HomeFragment extends Fragment implements onClickProductAdapter, CategoryAdapterInterface {
@@ -51,7 +52,7 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
     ArrayList<ProductModel> model;
 
     DatabaseService databaseService;
-    private static final int SPEECH_REQUEST_CODE = 0;
+//    private static final int SPEECH_REQUEST_CODE = 0;
 
 
     public HomeFragment() {
@@ -63,86 +64,102 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
         // Inflate the layout for this fragment
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         databaseService = new DatabaseService();
+        LoadCarousel();
         LoadCategory();
         LoadProduct();
+        binding.categorySeeMore.setOnClickListener(view->{
+            BottomNavigationView bottomAppBar = getActivity().findViewById(R.id.bottomNavigationView);
+//            View secondElement = bottomAppBar.getChildAt(1);
+            bottomAppBar.setSelectedItemId(R.id.GoCategory);
+            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.loader,new CategoryFragment(),"CategoryFragment");
+            transaction.addToBackStack("CategoryFragment");
+            transaction.commit();
+        });
         return binding.getRoot();
     }
 
 
 
 
-    private void openVoiceRecognizer() {
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-// This starts the activity and populates the intent with the speech text.
-        startActivityForResult(intent, SPEECH_REQUEST_CODE);
+//    private void openVoiceRecognizer() {
+//        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+//        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+//                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+//// This starts the activity and populates the intent with the speech text.
+//        startActivityForResult(intent, SPEECH_REQUEST_CODE);
+//
+//
+//    }
+//
+//    private void filterList(String valueOf) {
+//        ArrayList<ProductModel> filter = new ArrayList<>();
+//        for (ProductModel productModel : model) {
+//            if (productModel.getProductName().toLowerCase().contains(valueOf.toLowerCase())) {
+//                filter.add(productModel);
+//            } else if (productModel.getCategory().toLowerCase().contains(valueOf.toLowerCase())) {
+//                filter.add(productModel);
+//            }
+//
+//        }
+//        if (filter.isEmpty()) {
+////            Toast.makeText(getContext(), "No data found", Toast.LENGTH_SHORT).show();
+//        } else {
+//            productAdapter.setFilerList(filter);
+//        }
+//    }
+
+     void LoadCarousel() {
+        ArrayList<BannerModels> models = new ArrayList<>();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference bannerRef = database.getReference().child("Banner");
+        ImageCarousel Image_Carousel = this.binding.carousel;
+         bannerRef.addValueEventListener(new ValueEventListener() {
+             @Override
+             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                     BannerModels banner = snapshot.getValue(BannerModels.class);
+                     models.add(banner);
+                     assert banner != null;
+                     CarouselItem carouselItem = new CarouselItem(banner.getBannerUrl());
+                     Image_Carousel.addData(carouselItem);
+                 }
+             }
+
+             @Override
+             public void onCancelled(@NonNull DatabaseError databaseError) {
+                 // Handle potential errors
+                 Log.e("TAG", "Error fetching data", databaseError.toException());
+             }
+         });
 
 
-    }
-
-    private void filterList(String valueOf) {
-        ArrayList<ProductModel> filter = new ArrayList<>();
-        for (ProductModel productModel : model) {
-            if (productModel.getProductName().toLowerCase().contains(valueOf.toLowerCase())) {
-                filter.add(productModel);
-            } else if (productModel.getCategory().toLowerCase().contains(valueOf.toLowerCase())) {
-                filter.add(productModel);
+        Image_Carousel.setCarouselListener(new CarouselListener() {
+            @Nullable
+            @Override
+            public ViewBinding onCreateViewHolder(@NonNull LayoutInflater layoutInflater, @NonNull ViewGroup viewGroup) {
+                return null;
             }
 
-        }
-        if (filter.isEmpty()) {
-//            Toast.makeText(getContext(), "No data found", Toast.LENGTH_SHORT).show();
-        } else {
-            productAdapter.setFilerList(filter);
-        }
-    }
+            @Override
+            public void onBindViewHolder(@NonNull ViewBinding viewBinding, @NonNull CarouselItem carouselItem, int i) {
+            }
 
-//     void LoadCarousel() {
-//        ArrayList<Integer> carousel = new ArrayList<>();
-//        firebaseDatabase.getReference().child("carousel").addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                Integer i = snapshot.getValue(Integer.class);
-//                carousel.add(i);
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//            }
-//        });
-//        ImageCarousel Image_Carousel = this.binding.carousel;
-//         for (int i = 0; i < carousel.size(); i++) {
-//             CarouselItem carouselItem = new CarouselItem(carousel.get(i));
-//             Image_Carousel.addData(carouselItem);
-//         }
-//
-//        Image_Carousel.setCarouselListener(new CarouselListener() {
-//            @Nullable
-//            @Override
-//            public ViewBinding onCreateViewHolder(@NonNull LayoutInflater layoutInflater, @NonNull ViewGroup viewGroup) {
-//                return null;
-//            }
-//
-//            @Override
-//            public void onBindViewHolder(@NonNull ViewBinding viewBinding, @NonNull CarouselItem carouselItem, int i) {
-//            }
-//
-//            @Override
-//            public void onClick(int position, @NonNull CarouselItem carouselItem) {
-//                Log.i("position_ImageCarousel", "position : "+position);
-//                Log.i("position_ImageCarousel", " ArrayList<String>  : "+carousel.get(position));
-//                Toast.makeText(getContext(), "", Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onLongClick(int position, @NonNull CarouselItem carouselItem) {
-//
-//            }
-//        });
-//
-////         carousel.carouselListener
-//     }
+            @Override
+            public void onClick(int position, @NonNull CarouselItem carouselItem) {
+                Log.i("position_ImageCarousel", "position : "+position);
+                Log.i("position_ImageCarousel", " ArrayList<String>  : "+models.get(position).getBannerGoto());
+                Toast.makeText(getContext(), "", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onLongClick(int position, @NonNull CarouselItem carouselItem) {
+
+            }
+        });
+
+//         carousel.carouselListener
+     }
 
     void LoadProduct() {
         model = new ArrayList<>();
@@ -168,14 +185,6 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
             }
         });
 
-
-
-
-
-
-
-
-
     }
 
     void LoadCategory() {
@@ -190,6 +199,7 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
             public void onSuccess(ArrayList<ProductCategoryModel> category) {
                 categoryModels.addAll(category);
                 categoryAdapter.notifyDataSetChanged();
+
             }
 
             @Override
@@ -230,19 +240,20 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
         super.onDestroy();
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode,
-                                    Intent data) {
-        if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
-            List<String> results = data.getStringArrayListExtra(
-                    RecognizerIntent.EXTRA_RESULTS);
-            String spokenText = results.get(0);
-            Log.d("spokenText", "onActivityResult: "+spokenText);
-//            binding.searchBar.openSearch();
-//            binding.searchBar.setText(spokenText);
-//            filterList(binding.searchBar.getText().toString());
-            // Do something with spokenText.
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode,
+//                                    Intent data) {
+//        if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
+//            List<String> results = data.getStringArrayListExtra(
+//                    RecognizerIntent.EXTRA_RESULTS);
+//            String spokenText = results.get(0);
+//            Log.d("spokenText", "onActivityResult: "+spokenText);
+////            binding.searchBar.openSearch();
+////            binding.searchBar.setText(spokenText);
+////            filterList(binding.searchBar.getText().toString());
+//            // Do something with spokenText.
+//        }
+//        super.onActivityResult(requestCode, resultCode, data);
+//    }
+//
 }

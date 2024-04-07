@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.crazyostudio.ecommercegrocery.Activity.OrderDetailsActivity;
+import com.crazyostudio.ecommercegrocery.Fragment.CategoryFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.HomeFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.MoreFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.SearchFragment;
@@ -30,7 +31,6 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
-    // Initialize the permission launcher
     private final ActivityResultLauncher<String> pushNotificationPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
@@ -41,12 +41,6 @@ public class MainActivity extends AppCompatActivity {
                     // You can show a message to the user or request the permission again
                 }
             });
-
-
-//    private void showDummyNotification() {
-//
-//    }
-
 
     @SuppressLint("NonConstantResourceId")
     @Override
@@ -77,6 +71,9 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.homeBtn:
                     loader(new HomeFragment(),"HomeFragment");
                     break;
+                case R.id.GoCategory:
+                    loader(new CategoryFragment(),"CategoryFragment");
+                    break;
                 case R.id.shoppingCartsBtn:
                     loader(new ShoppingCartsFragment(),"ShoppingCartsFragment");
                     break;
@@ -88,19 +85,6 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
     }
-
-
-
-//    private void CheckNotificationToken(){
-//        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
-//            @Override
-//            public void onComplete(@NonNull Task<String> task) {
-//                Log.i("ThisMainActivityLog", "onComplete: "+task.getResult());
-//            }
-//        });
-//    }
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolba_rmenu_main, menu);
@@ -137,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
-    private void loader(Fragment fragment,String tag){
+    public void loader(Fragment fragment,String tag){
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.loader,fragment,tag);
         transaction.addToBackStack(tag);
@@ -149,4 +133,6 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
     }
+
+
 }

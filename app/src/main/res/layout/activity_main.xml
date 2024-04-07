@@ -10,8 +10,6 @@
     tools:context=".MainActivity"
     app:menu="@menu/toolba_rmenu_main">
 
-
-
     <!-- Other views or layouts -->
     <FrameLayout
         android:id="@+id/loader"

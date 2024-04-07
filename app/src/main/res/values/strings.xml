@@ -164,6 +164,9 @@
     <string name="delivery_image">A delivery truck with parcels, subtly conveying the concept of delivery.\n</string>
     <string name="enter_pin_code">Enter PIN code</string>
     <string name="check_delivery_availability">Check Delivery Availability\t\t\t\t</string>
+    <string name="top_category">Top Category</string>
+    <string name="good_morning">Good morning</string>
+    <string name="see_more">see more</string>
 
 
 </resources>

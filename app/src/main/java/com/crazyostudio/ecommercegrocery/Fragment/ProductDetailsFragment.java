@@ -297,5 +297,9 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
         if (bottomAppBar != null) {
             bottomAppBar.setVisibility(View.VISIBLE);
         }
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.show();
+        }
     }
 }

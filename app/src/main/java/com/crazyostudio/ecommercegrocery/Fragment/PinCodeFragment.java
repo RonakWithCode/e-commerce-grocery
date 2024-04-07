@@ -1,19 +1,20 @@
 package com.crazyostudio.ecommercegrocery.Fragment;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentPinCodeBinding;
+
+import java.util.Objects;
 
 public class PinCodeFragment extends Fragment {
 
@@ -34,6 +35,7 @@ public class PinCodeFragment extends Fragment {
 
 
     FragmentPinCodeBinding binding;
+    @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -42,7 +44,7 @@ public class PinCodeFragment extends Fragment {
         navController = Navigation.findNavController(requireActivity(),R.id.nav_host_fragment);
 
         binding.nextBtn.setOnClickListener(v -> {
-            if (binding.pinCodeEditText.getText().toString().equals("301001")){
+            if (Objects.requireNonNull(binding.pinCodeEditText.getText()).toString().equals("301001")){
                 Bundle bundle = new Bundle();
                 bundle.putString("number",number);
                 navController.navigate(R.id.action_pinCodeFragment_to_authUserDetailsFragment);
