@@ -166,6 +166,9 @@
     <string name="shop_by_top_category">Shop By Top Category</string>
     <string name="good_morning">Good morning</string>
     <string name="see_more">see more</string>
+    <string name="search">Search</string>
+    <string name="cart_is_enity">Cart is Enity</string>
+    <string name="cart_is_empty">Cart is empty</string>
 
 
 </resources>

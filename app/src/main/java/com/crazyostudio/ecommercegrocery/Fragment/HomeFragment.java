@@ -77,6 +77,7 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
             transaction.commit();
         });
         return binding.getRoot();
+
     }
 
 
@@ -150,6 +151,15 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
                 Log.i("position_ImageCarousel", "position : "+position);
                 Log.i("position_ImageCarousel", " ArrayList<String>  : "+models.get(position).getBannerGoto());
                 Toast.makeText(getContext(), "", Toast.LENGTH_SHORT).show();
+                FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+                Bundle bundle = new Bundle();
+                bundle.putString("filter",models.get(position).getBannerGoto());
+                ProductFilterFragment fragment = new ProductFilterFragment();
+                fragment.setArguments(bundle);
+                transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
+                transaction.addToBackStack("ProductFilterFragment");
+                transaction.commit();
+
             }
 
             @Override
@@ -230,9 +240,10 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
         bundle.putString("filter", productModel.getTag());
         ProductFilterFragment fragment = new ProductFilterFragment();
         fragment.setArguments(bundle);
-        transaction.replace(R.id.loader, fragment, "HomeFragment");
-        transaction.addToBackStack("HomeFragment");
+        transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
+        transaction.addToBackStack("ProductFilterFragment");
         transaction.commit();
+
     }
 
     @Override

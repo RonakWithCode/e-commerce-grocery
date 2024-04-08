@@ -18,9 +18,11 @@
     <color name="india_green">#17A2B8</color>
     <!--Main Background Color -->
     <color name="MainQuntityColor">#E6E6E6</color>
-    <color name="MainBackgroundColor">#ffff</color>
+    <color name="MainBackgroundColor">#FFFFFF</color>
     <color name="MainTextColor">#000000</color>
     <color name="MainHintColor">#757575</color>
+    <color name="MainBannerColor">#f3f5f7</color>
+    <color name="MainProductColor">#f3f5f7</color>
     <color name="orange">#FF5722</color>
 
     <color name="FixBlack">#000000</color>

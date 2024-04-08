@@ -16,6 +16,11 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+            <RelativeLayout
+                android:id="@+id/Category_RelativeLayout"
+                android:layout_width="match_parent"
+                android:background="@color/MainBannerColor"
+                android:layout_height="wrap_content">
 
             <org.imaginativeworld.whynotimagecarousel.ImageCarousel
                 android:id="@+id/carousel"
@@ -76,12 +81,14 @@
                 android:layout_below="@id/category"
                 android:layout_marginTop="2dp"
                 app:dividerColor="@color/secondary" />
+            </RelativeLayout>
+
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/products_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/category"
+                android:layout_below="@id/Category_RelativeLayout"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"

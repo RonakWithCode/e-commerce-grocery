@@ -17,7 +17,6 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.crazyostudio.ecommercegrocery.Activity.AuthMangerActivity;
-import com.crazyostudio.ecommercegrocery.Activity.OderActivity;
 import com.crazyostudio.ecommercegrocery.Adapter.ProductAdapter;
 import com.crazyostudio.ecommercegrocery.Adapter.ProductDisplayImagesAdapter;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
@@ -35,9 +34,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.imaginativeworld.whynotimagecarousel.model.CarouselItem;
 
@@ -49,9 +45,7 @@ import java.util.Objects;
 public class ProductDetailsFragment extends Fragment implements onClickProductAdapter {
     private FragmentProductDetailsBinding binding;
     private ProductModel productModel;
-    private int BACK;
     private FragmentTransaction transaction;
-    private boolean IsChatsProgressBar = false;
 
     public ProductDetailsFragment() {
     }
@@ -61,8 +55,6 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             productModel = getArguments().getParcelable("productDetails");
-            String BACK_KEY = "backButton";
-            BACK = getArguments().getInt(BACK_KEY, 1);
         }
     }
 
@@ -71,17 +63,16 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
         // Inflate the layout for this fragment
         binding = FragmentProductDetailsBinding.inflate(inflater, container, false);
         transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
         }
-        if (BACK == 0) {
-//            bindin.viewBack.setVisibility(View.VISIBLE);
-        }
-        if (IsChatsProgressBar) {
-            binding.recyclerViewProgressBar.setVisibility(View.GONE);
-        }
-        BottomAppBar bottomAppBar = getActivity().findViewById(R.id.bottomAppBar);
+//        if (BACK == 0) {
+////            bindin.viewBack.setVisibility(View.VISIBLE);
+//        }
+
+        binding.recyclerViewProgressBar.setVisibility(View.GONE);
+        BottomAppBar bottomAppBar = requireActivity().findViewById(R.id.bottomAppBar);
         if (bottomAppBar != null) {
             bottomAppBar.setVisibility(View.GONE);
         }
@@ -108,6 +99,13 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
 
         });
 //        binding.BuyNow.setOnClickListener(btu-> buyNow());
+
+        binding.search.setOnClickListener(view ->{
+            requireActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.loader, new SearchFragment())
+                    .addToBackStack("ProductDetailsFragment")
+                    .commit();
+        });
 
         return binding.getRoot();
     }
@@ -198,7 +196,6 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
             public void onSuccess(ArrayList<ProductModel> products) {
                 model.clear();
                 model.addAll(products);
-                IsChatsProgressBar = true;
                 binding.recyclerViewProgressBar.setVisibility(View.GONE);
                 productAdapter.notifyDataSetChanged();
 
@@ -214,20 +211,20 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
 
     }
 
-    public void buyNow() {
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            GoToBuy();
-        } else {
-            startActivity(new Intent(getContext(), AuthMangerActivity.class));
-        }
-    }
+//    public void buyNow() {
+//        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+//            GoToBuy();
+//        } else {
+//            startActivity(new Intent(getContext(), AuthMangerActivity.class));
+//        }
+//    }
 
-    public void GoToBuy() {
-        Intent intent = new Intent(requireContext(), OderActivity.class);
-        intent.putExtra("BuyType", "Now");
-        intent.putExtra("productModel", productModel);
-        startActivity(intent);
-    }
+//    public void GoToBuy() {
+//        Intent intent = new Intent(requireContext(), OderActivity.class);
+//        intent.putExtra("BuyType", "Now");
+//        intent.putExtra("productModel", productModel);
+//        startActivity(intent);
+//    }
 
 
     public void addToCart() {
@@ -263,6 +260,14 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
     }
 
     private void navigateToShoppingCartFragment() {
+        BottomAppBar bottomAppBar = requireActivity().findViewById(R.id.bottomAppBar);
+        if (bottomAppBar != null) {
+            bottomAppBar.setVisibility(View.VISIBLE);
+        }
+        ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.show();
+        }
         FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.loader, new ShoppingCartsFragment(), "ShoppingCartsFragment");
         transaction.addToBackStack("ShoppingCartsFragment");
@@ -293,13 +298,14 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
     @Override
     public void onDestroy() {
         super.onDestroy();
-        BottomAppBar bottomAppBar = getActivity().findViewById(R.id.bottomAppBar);
+        BottomAppBar bottomAppBar = requireActivity().findViewById(R.id.bottomAppBar);
         if (bottomAppBar != null) {
             bottomAppBar.setVisibility(View.VISIBLE);
         }
-        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
         if (actionBar != null) {
             actionBar.show();
         }
     }
+
 }

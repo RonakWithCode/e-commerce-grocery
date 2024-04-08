@@ -94,11 +94,17 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
                 cartsAdapter.notifyDataSetChanged();
                 BigDecimal totalPrice = cart.getTotalPrice();
                 binding.SubTotal.setText("SubTotal ₹"+totalPrice);
+                binding.main.setVisibility(View.VISIBLE);
+                binding.IsEnity.setVisibility(View.GONE);
             }
 
             @Override
             public void onError(String errorMessage) {
-                basicFun.AlertDialog(requireContext(), errorMessage);
+                if (errorMessage.equals("Cart is empty")) {
+                    binding.main.setVisibility(View.GONE);
+                    binding.IsEnity.setVisibility(View.VISIBLE);
+                }
+//                basicFun.AlertDialog(requireContext(), errorMessage);
                 Log.i("ERRORDATABASE", "onError: "+errorMessage);
             }
         });

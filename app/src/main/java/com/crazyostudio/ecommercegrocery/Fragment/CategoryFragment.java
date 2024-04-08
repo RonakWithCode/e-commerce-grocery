@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.view.LayoutInflater;
@@ -42,7 +43,14 @@ public class CategoryFragment extends Fragment implements CategoryAdapterInterfa
 
     @Override
     public void onClick(ProductCategoryModel productModel) {
-
+        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+        Bundle bundle = new Bundle();
+        bundle.putString("filter", productModel.getTag());
+        ProductFilterFragment fragment = new ProductFilterFragment();
+        fragment.setArguments(bundle);
+        transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
+        transaction.addToBackStack("ProductFilterFragment");
+        transaction.commit();
     }
 
 

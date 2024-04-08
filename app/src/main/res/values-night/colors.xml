@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="MainHintColor">#D6CECE</color>
-    <color name="MainBackgroundColor">#202124</color>
+    <color name="MainBackgroundColor">#0d1f29</color>
     <color name="MainQuntityColor">#333030</color>
-    <color name="MainTextColor">#ffff</color>
+    <color name="MainTextColor">#FFFFFF</color>
     <color name="HintMainTextColor">#FFB6B6</color>
+    <color name="MainBannerColor">#1a3848</color>
 
     <!--SeeUserProfile-->
 

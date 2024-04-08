@@ -200,7 +200,8 @@ public class DatabaseService {
                     });
                 } else {
                     // Handle case where cart is empty or doesn't exist
-                    callback.onError("Cart is empty or doesn't exist for user ID: " + id);
+                    callback.onError("Cart is empty");
+
                 }
 
             }

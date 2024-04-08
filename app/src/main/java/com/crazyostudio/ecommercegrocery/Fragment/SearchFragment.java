@@ -16,10 +16,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.crazyostudio.ecommercegrocery.Adapter.SearchAdapter;
+import com.crazyostudio.ecommercegrocery.Adapter.SearchAdapterInterface;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
+import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentSearchBinding;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -32,10 +35,11 @@ import java.util.List;
 import java.util.Objects;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-public class SearchFragment extends Fragment {
+
+public class SearchFragment extends Fragment implements SearchAdapterInterface {
     private FragmentSearchBinding binding;
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference productsRef = db.collection("Product");
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final CollectionReference productsRef = db.collection("Product");
 
     private ActionBar actionBar;
 
@@ -46,10 +50,7 @@ public class SearchFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentSearchBinding.inflate(inflater, container, false);
-//        View view = binding.getRoot();
 
-//        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar())
-//                .hide();
 
         actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
         if (actionBar != null) {
@@ -58,7 +59,7 @@ public class SearchFragment extends Fragment {
         }
 
 
-        adapter = new SearchAdapter(requireContext());
+        adapter = new SearchAdapter(requireContext(),this);
 //
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.recyclerView.setAdapter(adapter);
@@ -112,8 +113,6 @@ public class SearchFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-
-        // Show the ActionBar when the fragment is destroyed (when navigating back)
         if (actionBar != null) {
             actionBar.show();
         }
@@ -145,7 +144,8 @@ public class SearchFragment extends Fragment {
                 // Handle query failure
                 System.err.println("Error searching for products: " + e.getMessage());
             });
-        } else {
+        }
+        else {
             // If product name is empty, do nothing or show a message
             System.out.println("Product name is empty");
         }
@@ -180,5 +180,16 @@ public class SearchFragment extends Fragment {
             binding.searchBar.openSearch();
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onclick(ProductModel productModel) {
+        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("productDetails", productModel);
+        ProductDetailsFragment productDetailsFragment = new ProductDetailsFragment();
+        productDetailsFragment.setArguments(bundle);
+        transaction.replace(R.id.loader,productDetailsFragment,"productDetailsFragment");
+        transaction.addToBackStack("productDetailsFragment").commit();
     }
 }
