@@ -3,15 +3,11 @@ package com.crazyostudio.ecommercegrocery.Model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.hishd.tinycart.model.Item;
+import androidx.annotation.NonNull;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 
-//Hey change
-//ShoppingCartsProductFirebaseModel
-public class ShoppingCartsProductModel implements Parcelable, Item, Serializable {
+public class ShoppingCartsProductFirebaseModel implements Parcelable {
     private String productId;
     private String productName;
     private String productDescription;
@@ -30,11 +26,10 @@ public class ShoppingCartsProductModel implements Parcelable, Item, Serializable
     private String EditDate;
     private String whoEdit;
 
-
-    public ShoppingCartsProductModel() {
+    public ShoppingCartsProductFirebaseModel() {
     }
 
-    public ShoppingCartsProductModel(String productId, String productName, String productDescription, String category, double price, double mrp, String unit, String subUnit, String productType, int defaultQuantity, int quantity, ArrayList<String> imageURL, boolean isAvailable, int totalSales, String editDate, String whoEdit) {
+    public ShoppingCartsProductFirebaseModel(String productId, String productName, String productDescription, String category, double price, double mrp, String unit, String subUnit, String productType, int defaultQuantity, int quantity, ArrayList<String> imageURL, boolean isAvailable, int totalSales, String editDate, String whoEdit) {
         this.productId = productId;
         this.productName = productName;
         this.productDescription = productDescription;
@@ -53,61 +48,6 @@ public class ShoppingCartsProductModel implements Parcelable, Item, Serializable
         this.whoEdit = whoEdit;
     }
 
-    protected ShoppingCartsProductModel(Parcel in) {
-        productId = in.readString();
-        productName = in.readString();
-        productDescription = in.readString();
-        category = in.readString();
-        price = in.readDouble();
-        mrp = in.readDouble();
-        unit = in.readString();
-        SubUnit = in.readString();
-        ProductType = in.readString();
-        DefaultQuantity = in.readInt();
-        quantity = in.readInt();
-        imageURL = in.createStringArrayList();
-        isAvailable = in.readByte() != 0;
-        totalSales = in.readInt();
-        EditDate = in.readString();
-        whoEdit = in.readString();
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(productId);
-        dest.writeString(productName);
-        dest.writeString(productDescription);
-        dest.writeString(category);
-        dest.writeDouble(price);
-        dest.writeDouble(mrp);
-        dest.writeString(unit);
-        dest.writeString(SubUnit);
-        dest.writeString(ProductType);
-        dest.writeInt(DefaultQuantity);
-        dest.writeInt(quantity);
-        dest.writeStringList(imageURL);
-        dest.writeByte((byte) (isAvailable ? 1 : 0));
-        dest.writeInt(totalSales);
-        dest.writeString(EditDate);
-        dest.writeString(whoEdit);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    public static final Creator<ShoppingCartsProductModel> CREATOR = new Creator<ShoppingCartsProductModel>() {
-        @Override
-        public ShoppingCartsProductModel createFromParcel(Parcel in) {
-            return new ShoppingCartsProductModel(in);
-        }
-
-        @Override
-        public ShoppingCartsProductModel[] newArray(int size) {
-            return new ShoppingCartsProductModel[size];
-        }
-    };
 
     public String getProductId() {
         return productId;
@@ -237,16 +177,60 @@ public class ShoppingCartsProductModel implements Parcelable, Item, Serializable
         this.whoEdit = whoEdit;
     }
 
-    @Override
-    public BigDecimal getItemPrice() {
-        return BigDecimal.valueOf(price);
+    protected ShoppingCartsProductFirebaseModel(Parcel in) {
+        productId = in.readString();
+        productName = in.readString();
+        productDescription = in.readString();
+        category = in.readString();
+        price = in.readDouble();
+        mrp = in.readDouble();
+        unit = in.readString();
+        SubUnit = in.readString();
+        ProductType = in.readString();
+        DefaultQuantity = in.readInt();
+        quantity = in.readInt();
+        imageURL = in.createStringArrayList();
+        isAvailable = in.readByte() != 0;
+        totalSales = in.readInt();
+        EditDate = in.readString();
+        whoEdit = in.readString();
     }
 
-
     @Override
-    public String getItemName() {
-        return productName;
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(productId);
+        dest.writeString(productName);
+        dest.writeString(productDescription);
+        dest.writeString(category);
+        dest.writeDouble(price);
+        dest.writeDouble(mrp);
+        dest.writeString(unit);
+        dest.writeString(SubUnit);
+        dest.writeString(ProductType);
+        dest.writeInt(DefaultQuantity);
+        dest.writeInt(quantity);
+        dest.writeStringList(imageURL);
+        dest.writeByte((byte) (isAvailable ? 1 : 0));
+        dest.writeInt(totalSales);
+        dest.writeString(EditDate);
+        dest.writeString(whoEdit);
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<ShoppingCartsProductFirebaseModel> CREATOR = new Creator<ShoppingCartsProductFirebaseModel>() {
+        @Override
+        public ShoppingCartsProductFirebaseModel createFromParcel(Parcel in) {
+            return new ShoppingCartsProductFirebaseModel(in);
+        }
+
+        @Override
+        public ShoppingCartsProductFirebaseModel[] newArray(int size) {
+            return new ShoppingCartsProductFirebaseModel[size];
+        }
+    };
 
 }

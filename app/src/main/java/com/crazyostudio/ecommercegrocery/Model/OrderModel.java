@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class OrderModel implements Parcelable {
     private String name;
     private String OrderId;
-    private ArrayList<ProductModel> ProductModel;
+    private ArrayList<ShoppingCartsProductFirebaseModel> ProductModel;
     private String OrderStatus;
     private String Adders;
     private String shipping;
@@ -24,7 +24,7 @@ public class OrderModel implements Parcelable {
 
     public OrderModel(){}
 
-    public OrderModel(String Name, String orderId,String shipping ,ArrayList<com.crazyostudio.ecommercegrocery.Model.ProductModel> productModel, String orderStatus, String adders, String phoneNumber, double subTotal, double shippingFee, double total, String paymentStatus, String paymentType, long orderTime, String userId,String token,double discount,double save,String email) {
+    public OrderModel(String Name, String orderId,String shipping ,ArrayList<ShoppingCartsProductFirebaseModel> productModel, String orderStatus, String adders, String phoneNumber, double subTotal, double shippingFee, double total, String paymentStatus, String paymentType, long orderTime, String userId,String token,double discount,double save,String email) {
         name = Name;
         OrderId = orderId;
         this.shipping = shipping;
@@ -53,7 +53,7 @@ public class OrderModel implements Parcelable {
         name = in.readString();
         OrderId = in.readString();
         shipping = in.readString();
-        ProductModel = in.createTypedArrayList(com.crazyostudio.ecommercegrocery.Model.ProductModel.CREATOR);
+        ProductModel = in.createTypedArrayList(ShoppingCartsProductFirebaseModel.CREATOR);
         OrderStatus = in.readString();
         Adders = in.readString();
         PhoneNumber = in.readString();
@@ -206,11 +206,11 @@ public class OrderModel implements Parcelable {
         OrderId = orderId;
     }
 
-    public ArrayList<com.crazyostudio.ecommercegrocery.Model.ProductModel> getProductModel() {
+    public ArrayList<ShoppingCartsProductFirebaseModel> getProductModel() {
         return ProductModel;
     }
 
-    public void setProductModel(ArrayList<com.crazyostudio.ecommercegrocery.Model.ProductModel> productModel) {
+    public void setProductModel(ArrayList<ShoppingCartsProductFirebaseModel> productModel) {
         ProductModel = productModel;
     }
 

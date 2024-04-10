@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.renderscript.ScriptGroup;
 import android.util.Log;
 import android.view.View;
@@ -19,6 +20,8 @@ import com.crazyostudio.ecommercegrocery.MainActivity;
 import com.crazyostudio.ecommercegrocery.Model.AddressModel;
 import com.crazyostudio.ecommercegrocery.Model.OrderModel;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
+import com.crazyostudio.ecommercegrocery.Model.ShoppingCartsProductFirebaseModel;
+import com.crazyostudio.ecommercegrocery.Model.ShoppingCartsProductModel;
 import com.crazyostudio.ecommercegrocery.Model.UserinfoModels;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.databinding.ActivityOrderDetailsBinding;
@@ -160,12 +163,15 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
     }
 
     @Override
-    public void onOrder(ProductModel model) {
+    public void onOrder(ShoppingCartsProductFirebaseModel model) {
 //
         Intent intent = new Intent(this,FragmentLoader.class);
         intent.putExtra("LoadID","Details");
-        intent.putExtra("productDetails",model);
+//        intent.putExtra("productDetails",model);
+        intent.putExtra("productDetails",  (Parcelable) model);
         startActivity(intent);
 
     }
+
+
 }

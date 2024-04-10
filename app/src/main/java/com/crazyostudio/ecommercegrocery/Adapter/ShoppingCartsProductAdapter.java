@@ -19,31 +19,30 @@ import com.crazyostudio.ecommercegrocery.interfaceClass.OrderProductInterface;
 
 import java.util.ArrayList;
 
-public class OrderProductAdapter extends RecyclerView.Adapter<OrderProductAdapter.OrderProductAdapterViewHolder>{
+public class ShoppingCartsProductAdapter extends RecyclerView.Adapter<ShoppingCartsProductAdapter.ShoppingCartsProductAdapterViewHolder>{
     ArrayList<ShoppingCartsProductFirebaseModel> productModels;
     Context context;
     OrderProductInterface orderProductInterface;
-    public OrderProductAdapter(ArrayList<ShoppingCartsProductFirebaseModel> productModels, Context context, OrderProductInterface orderProductInterface) {
+    public ShoppingCartsProductAdapter(ArrayList<ShoppingCartsProductFirebaseModel> productModels, Context context) {
         this.productModels = productModels;
         this.context = context;
-        this.orderProductInterface = orderProductInterface;
     }
 
     @NonNull
     @Override
-    public OrderProductAdapter.OrderProductAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new OrderProductAdapter.OrderProductAdapterViewHolder(LayoutInflater.from(context).inflate(R.layout.order_product_layout, parent, false));
+    public ShoppingCartsProductAdapter.ShoppingCartsProductAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new ShoppingCartsProductAdapter.ShoppingCartsProductAdapterViewHolder(LayoutInflater.from(context).inflate(R.layout.order_product_layout, parent, false));
     }
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(@NonNull OrderProductAdapter.OrderProductAdapterViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ShoppingCartsProductAdapter.ShoppingCartsProductAdapterViewHolder holder, int position) {
         ShoppingCartsProductFirebaseModel productModel = productModels.get(position);
         Glide.with(context).load(productModel.getImageURL().get(0)).into(holder.binding.productImage);
         holder.binding.productName.setText(productModel.getProductName());
         holder.binding.quantity.setText(productModel.getDefaultQuantity()+" '(item) * ₹" + productModel.getPrice()+" =");
         holder.binding.TotalProductPrice.setText("₹"+productModel.getPrice()*productModel.getDefaultQuantity());
-        holder.binding.getRoot().setOnClickListener(view -> orderProductInterface.onOrder(productModel));
+//        holder.binding.getRoot().setOnClickListener(view -> orderProductInterface.onOrder(ShoppingCartsProductModel));
     }
 
     @Override
@@ -51,9 +50,9 @@ public class OrderProductAdapter extends RecyclerView.Adapter<OrderProductAdapte
         return productModels.size();
     }
 
-    public static class OrderProductAdapterViewHolder extends RecyclerView.ViewHolder {
+    public static class ShoppingCartsProductAdapterViewHolder extends RecyclerView.ViewHolder {
         OrderProductLayoutBinding binding;
-        public OrderProductAdapterViewHolder(@NonNull View itemView) {
+        public ShoppingCartsProductAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
             binding = OrderProductLayoutBinding.bind(itemView);
         }

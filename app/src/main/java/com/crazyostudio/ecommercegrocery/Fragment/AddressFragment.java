@@ -21,6 +21,7 @@ import com.crazyostudio.ecommercegrocery.interfaceClass.AddressInterface;
 import com.crazyostudio.ecommercegrocery.javaClasses.basicFun;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -60,27 +61,31 @@ public class AddressFragment extends Fragment implements AddressInterface {
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,false);
         binding.UserAddress.setLayoutManager(layoutManager);
         binding.UserAddress.setAdapter(addressAdapter);
-        firestore.collection("UserInfo").document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        binding.progressCircular.setVisibility(View.INVISIBLE);
-                        UserinfoModels userInfo = documentSnapshot.toObject(UserinfoModels.class);
 
-                        if (userInfo != null) {
-                            adderes.addAll(userInfo.getAddress());
-                            binding.NotFoundText.setVisibility(View.INVISIBLE);
-                            binding.UserAddress.setVisibility(View.VISIBLE);
-                        }
-                    } else {
-                        binding.NotFoundText.setVisibility(View.VISIBLE);
-                        binding.UserAddress.setVisibility(View.INVISIBLE);
+        new DatabaseService().getUserInfoByDocumentSnapshot(FirebaseAuth.getInstance().getUid(), new DatabaseService.getUserInfoDocumentSnapshotCallback() {
+            @Override
+
+            public void onSuccess(DocumentSnapshot user) {
+                UserinfoModels models = user.toObject(UserinfoModels.class);
+                if (models != null) {
+//                        binding.email.setText(models.getEmailAddress());
+                    if (models.getAddress() != null && !models.getAddress().isEmpty()) {
+                        adderes.clear();
+                        adderes.addAll(models.getAddress());
+                        addressAdapter.notifyDataSetChanged();
                     }
-                    addressAdapter.notifyDataSetChanged();
-                })
-                .addOnFailureListener(e -> {
-                    // Handle failure
-                });
+                }
+                binding.progressCircular.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+
+            }
+        });
+
+
+
 
 
         return binding.getRoot();

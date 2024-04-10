@@ -1,9 +1,8 @@
 package com.crazyostudio.ecommercegrocery.interfaceClass;
 
-import com.crazyostudio.ecommercegrocery.Model.ProductModel;
+import com.crazyostudio.ecommercegrocery.Model.ShoppingCartsProductFirebaseModel;
 
 public interface OrderProductInterface {
-    void onOrder(ProductModel model);
+    void onOrder(ShoppingCartsProductFirebaseModel model);
 
 }
-
