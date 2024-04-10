@@ -70,7 +70,7 @@
     <string name="cash_on_delivery_cod">Cash on delivery (COD)</string>
     <string name="go_next">-----)</string>
     <string name="select_a_payment">Select a Payment</string>
-    <string name="checkout">CheckOut</string>
+    <string name="checkout">Checkout</string>
     <string name="delivery_address">Delivery Address</string>
     <string name="delivery_options">Delivery Options</string>
     <string name="free_standard_delivery">Free Standard delivery</string>
@@ -170,6 +170,12 @@
     <string name="search">Search</string>
     <string name="cart_is_enity">Cart is Enity</string>
     <string name="cart_is_empty">Cart is empty</string>
-
+    <string name="before_you_checkout">before you Checkout</string>
+    <string name="tap_top_apply_coupon_code">Tap top apply Coupon code</string>
+    <string name="apply_coupon">Apply Coupon</string>
+    <string name="item_total">Item Total</string>
+    <string name="delivery_fee">Delivery fee</string>
+    <string name="grand_total">Grand Total</string>
+    <string name="remove_item">Remove item</string>
 
 </resources>

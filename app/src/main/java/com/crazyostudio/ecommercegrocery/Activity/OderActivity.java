@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.crazyostudio.ecommercegrocery.Fragment.AddressFragment;
+import com.crazyostudio.ecommercegrocery.Fragment.CheckoutFragment;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.databinding.ActivityOderBinding;
@@ -35,7 +36,8 @@ public class OderActivity extends AppCompatActivity {
         String BuyMode = getIntent().getStringExtra("BuyType");
         ProductModel productModel = getIntent().getParcelableExtra("productModel");
 //        if (BuyMode.equals("Cart")){
-            Fragment fragment = new AddressFragment();
+//            Fragment fragment = new AddressFragment();
+            Fragment fragment = new CheckoutFragment();
             transaction.replace(R.id.fragment_container,fragment,"Address");
             transaction.addToBackStack("Address");
             transaction.commit();

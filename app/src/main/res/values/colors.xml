@@ -20,6 +20,7 @@
     <color name="MainQuntityColor">#E6E6E6</color>
     <color name="MainBackgroundColor">#FFFFFF</color>
     <color name="MainTextColor">#000000</color>
+    <color name="MainBgColorCheckout">#fefefe</color>
     <color name="MainHintColor">#757575</color>
     <color name="MainBannerColor">#f3f5f7</color>
     <color name="MainProductColor">#f3f5f7</color>
@@ -67,7 +68,7 @@
     <color name="CancelTextColor">#ccdcf6</color>
     <color name="light_grey">#E0E0E0</color>
     <color name="highlight_color">#8CACACA0</color>
-    <color name="HintMainTextColor">#666666</color>
+    <color name="HintMainTextColor">#9da49e</color>
     <color name="FixColorWhite">#ffff</color>
 
 

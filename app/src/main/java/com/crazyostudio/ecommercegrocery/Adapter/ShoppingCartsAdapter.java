@@ -49,8 +49,6 @@ public class ShoppingCartsAdapter extends RecyclerView.Adapter<ShoppingCartsAdap
         Glide.with(context).load(model.getImageURL().get(0)).into(holder.binding.productImage);
         holder.binding.productQty.setText(model.getDefaultQuantity()+"");
         holder.binding.productPrice.setText("₹"+model.getPrice());
-
-        holder.binding.remove.setOnClickListener(view -> shoppingCartsInterface.remove(position,model.getProductId()));
         holder.binding.productQtyUp.setOnClickListener(up->{
             int quantity = model.getDefaultQuantity();
             quantity++;
@@ -70,7 +68,7 @@ public class ShoppingCartsAdapter extends RecyclerView.Adapter<ShoppingCartsAdap
                 shoppingCartsInterface.UpdateQuantity(model, model.getProductId());
                 holder.binding.productPrice.setText("₹"+model.getPrice());
             }else {
-                Toast.makeText(context, "min 1 :", Toast.LENGTH_SHORT).show();
+                shoppingCartsInterface.remove(position,model.getProductId(),model);
             }
         });
 

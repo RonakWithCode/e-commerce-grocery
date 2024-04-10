@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/MainBackgroundColor"
+    tools:context=".Fragment.CheckoutFragment">
+
+
+    <ScrollView
+        android:id="@+id/ScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RelativeLayout
+            android:id="@+id/order_details_layout_top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_15sdp">
+
+            <RelativeLayout
+                android:id="@+id/TopRelative"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/order_details_view_back"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="20dp"
+                    android:src="@drawable/baseline_arrow_back_ios_new_24" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_toEndOf="@id/order_details_view_back"
+                    android:gravity="center"
+                    android:paddingEnd="25dp"
+                    android:text="@string/checkout"
+                    android:textColor="@color/MainTextColor"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    tools:ignore="RtlSymmetry" />
+
+            </RelativeLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/CardView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/TopRelative"
+                android:layout_marginTop="@dimen/_8sdp" />
+
+
+            <TextView
+                android:id="@+id/viewText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/CardView"
+                android:layout_margin="@dimen/_8sdp"
+                android:text="@string/before_you_checkout"
+                android:textColor="@color/MainTextColor"
+                android:textSize="@dimen/_16ssp"
+                android:textStyle="bold" />
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recommendationsProduct"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/viewText" />
+
+
+            <RelativeLayout
+                android:id="@+id/coupon_code_apply"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/recommendationsProduct"
+                android:layout_marginTop="@dimen/_10sdp">
+
+                <!-- Icon -->
+                <ImageView
+                    android:id="@+id/icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:contentDescription="@string/tap_top_apply_coupon_code"
+                    android:src="@drawable/percentage" />
+
+                <!-- Text -->
+                <TextView
+                    android:id="@+id/text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    android:layout_toEndOf="@id/icon"
+                    android:text="@string/apply_coupon"
+                    android:textAlignment="center"
+                    android:textColor="@color/MainTextColor"
+                    tools:ignore="RelativeOverlap" />
+
+
+                <ImageView
+                    android:id="@+id/go"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/_15sdp"
+                    android:contentDescription="@string/tap_top_apply_coupon_code"
+                    android:src="@drawable/baseline_keyboard_arrow_right_24" />
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:id="@+id/line2"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@id/icon"
+                    android:layout_marginTop="3dp"
+                    app:dividerColor="@color/secondary" />
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/coupon_code_apply">
+
+
+                <LinearLayout
+                    android:id="@+id/subtotal_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="10dp">
+
+                    <TextView
+                        android:id="@+id/subtotal_hint"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:text="@string/item_total"
+                        android:textColor="@color/orange"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/SubTotalPrice"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="00.00 INR"
+                        android:textColor="@color/MainTextColor"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/discount_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/subtotal_box"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="10dp">
+
+                    <TextView
+                        android:id="@+id/discount_hint"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:text="@string/discount"
+                        android:textColor="@color/orange"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/discount"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="00.00 INR"
+                        android:textColor="@color/MainTextColor"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/shipping_fee_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/discount_box"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="10dp">
+
+                    <TextView
+                        android:id="@+id/shipping_fee_hint"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:text="@string/delivery_fee"
+                        android:textColor="@color/orange"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/ShippingPrice"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="free"
+                        android:textColor="@color/MainTextColor"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:id="@+id/line3"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/shipping_fee_box"
+                    android:layout_marginTop="3dp"
+                    app:dividerColor="@color/secondary" />
+
+
+                <LinearLayout
+                    android:id="@+id/grand_total_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/line3"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="10dp">
+
+                    <TextView
+                        android:id="@+id/grand_total_hint"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:text="@string/grand_total"
+                        android:textColor="@color/green_primary"
+                        android:textSize="@dimen/_20ssp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/TotalPrice"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="00.00 INR"
+                        android:textColor="@color/MainTextColor"
+                        android:textSize="@dimen/_20ssp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/grand_total_box"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="10dp">
+
+                    <ImageView
+                        android:id="@+id/AddressType"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/home_shipping" />
+
+                    <TextView
+                        android:id="@+id/deliveryTo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:layout_toEndOf="@+id/AddressType"
+                        android:text="Delivering to Home"
+                        android:textAlignment="center"
+                        android:textColor="@color/MainTextColor"
+                        android:textSize="@dimen/_16ssp"
+                        android:textStyle="normal" />
+
+                    <TextView
+                        android:id="@+id/deliveryAddress"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/deliveryTo"
+                        android:layout_marginStart="@dimen/_8sdp"
+                        android:layout_toEndOf="@+id/AddressType"
+                        android:maxLines="1"
+                        android:text="6391 Elgin St. Celina, Delaware..."
+                        android:textAlignment="center"
+                        android:textColor="@color/HintMainTextColor"
+                        android:textSize="@dimen/_12ssp"
+                        android:textStyle="normal" />
+
+                    <TextView
+                        android:id="@+id/Change"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_15sdp"
+                        android:layout_toEndOf="@id/deliveryTo"
+                        android:text="@string/change"
+                        android:textColor="@color/orange_secondary"
+                        android:textSize="@dimen/_13ssp"
+                        tools:ignore="RelativeOverlap" />
+
+                    <com.google.android.material.divider.MaterialDivider
+                        android:id="@+id/line4"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@id/deliveryAddress"
+                        android:layout_marginTop="3dp"
+                        app:dividerColor="@color/secondary" />
+
+                </RelativeLayout>
+
+
+            </RelativeLayout>
+        </RelativeLayout>
+
+    </ScrollView>
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_10ssp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:text="Pay using"
+            android:textColor="@color/HintMainTextColor"
+            android:textSize="@dimen/_16ssp" />
+
+        <TextView
+            android:id="@+id/using"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/select"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:text="(COD) &amp;&amp; UPI"
+            android:textColor="@color/HintMainTextColor"
+            android:textSize="@dimen/_14ssp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/materialButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_marginEnd="@dimen/_2sdp"
+            android:background="@drawable/round_button"
+            android:text="Place Order"
+            android:textAlignment="center"
+            android:textSize="@dimen/_15ssp" />
+
+    </RelativeLayout>
+
+
+    <ProgressBar
+
+        android:id="@+id/progressCircular"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

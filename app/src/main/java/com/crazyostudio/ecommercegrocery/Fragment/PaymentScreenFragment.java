@@ -1,5 +1,4 @@
 package com.crazyostudio.ecommercegrocery.Fragment;
-
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -219,7 +218,6 @@ public class PaymentScreenFragment extends Fragment implements OrderProductInter
 //        binding.orderContactEmail.setText(userinfoModels.getEmailAddress());
         binding.orderDetailsPayBtn.setOnClickListener(view -> {
             long time = System.currentTimeMillis();
-//            binding.payment.getslec
             if (PaymentMode.equals("COD")){
 
                 PlaceOrder(PaymentMode,userinfoModels,time);
@@ -235,15 +233,10 @@ public class PaymentScreenFragment extends Fragment implements OrderProductInter
         });
         return binding.getRoot();
     }
-
     private void getProduct() {
         databaseService.getUserCartByIdShoppingCarts(FirebaseAuth.getInstance().getUid(), new DatabaseService.GetUserCartByIdShoppingCartsProductCallback() {
             @Override
             public void onSuccess(ArrayList<ShoppingCartsProductFirebaseModel> cartsProductModels) {
-//                cart.clearCart();
-//                for (int i = 0; i < cartsProductModels.size(); i++) {
-//                    cart.addItem(cartsProductModels.get(i),cartsProductModels.get(i).getDefaultQuantity());
-//                }
                 ShowProductModels.addAll(cartsProductModels);
                 binding.progressCircular.setVisibility(View.GONE);
                 ShowProduct();
@@ -299,12 +292,8 @@ public class PaymentScreenFragment extends Fragment implements OrderProductInter
         orderProductAdapter.notifyDataSetChanged();
         binding.progressCircular.setVisibility(View.GONE);
     }
-
-
     @Override
     public void onOrder(ShoppingCartsProductFirebaseModel model) {
 
     }
-
-
 }
