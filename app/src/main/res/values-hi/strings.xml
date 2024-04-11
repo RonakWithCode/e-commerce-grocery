@@ -175,6 +175,8 @@
     <string name="item_total">Item Total</string>
     <string name="delivery_fee">Delivery fee</string>
     <string name="grand_total">Grand Total</string>
+    <string name="apply">apply</string>
+    <string name="enter_coupon_code">Enter coupon code</string>
 
 
 </resources>

@@ -78,63 +78,104 @@
                 android:layout_below="@id/viewText" />
 
 
-            <RelativeLayout
+
+            <LinearLayout
                 android:id="@+id/coupon_code_apply"
                 android:layout_width="match_parent"
+                android:orientation="horizontal"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/recommendationsProduct"
                 android:layout_marginTop="@dimen/_10sdp">
 
-                <!-- Icon -->
-                <ImageView
-                    android:id="@+id/icon"
-                    android:layout_width="wrap_content"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/coupon_code"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="@dimen/_15sdp"
-                    android:contentDescription="@string/tap_top_apply_coupon_code"
-                    android:src="@drawable/percentage" />
+                    android:layout_weight="1"
+                    android:hint="@string/coupon_code">
 
-                <!-- Text -->
-                <TextView
-                    android:id="@+id/text"
-                    android:layout_width="wrap_content"
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:background="@color/MainBackgroundColor"
+                        android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        />
+
+
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <Button
+
+                    android:id="@+id/coupon_code_apply_btn"
+                    android:layout_width="@dimen/_80sdp"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="@dimen/_5sdp"
-                    android:layout_toEndOf="@id/icon"
-                    android:text="@string/apply_coupon"
-                    android:textAlignment="center"
-                    android:textColor="@color/MainTextColor"
-                    tools:ignore="RelativeOverlap" />
+                    android:text="apply"/>
+
+            </LinearLayout>
 
 
-                <ImageView
-                    android:id="@+id/go"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="@dimen/_15sdp"
-                    android:contentDescription="@string/tap_top_apply_coupon_code"
-                    android:src="@drawable/baseline_keyboard_arrow_right_24" />
+<!--            <RelativeLayout-->
+<!--                android:id="@+id/coupon_code_apply"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_below="@id/recommendationsProduct"-->
+<!--                android:layout_marginTop="@dimen/_10sdp">-->
 
-                <com.google.android.material.divider.MaterialDivider
-                    android:id="@+id/line2"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_below="@id/icon"
-                    android:layout_marginTop="3dp"
-                    app:dividerColor="@color/secondary" />
+<!--                 Icon -->
+<!--                <ImageView-->
+<!--                    android:id="@+id/icon"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_alignParentStart="true"-->
+<!--                    android:layout_centerVertical="true"-->
+<!--                    android:layout_marginStart="@dimen/_15sdp"-->
+<!--                    android:contentDescription="@string/tap_top_apply_coupon_code"-->
+<!--                    android:src="@drawable/percentage" />-->
+
+<!--                &lt;!&ndash; Text &ndash;&gt;-->
+<!--                <TextView-->
+<!--                    android:id="@+id/text"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_centerVertical="true"-->
+<!--                    android:layout_marginStart="@dimen/_5sdp"-->
+<!--                    android:layout_toEndOf="@id/icon"-->
+<!--                    android:text="@string/apply_coupon"-->
+<!--                    android:textAlignment="center"-->
+<!--                    android:textColor="@color/MainTextColor"-->
+<!--                    tools:ignore="RelativeOverlap" />-->
 
 
-            </RelativeLayout>
+<!--                <ImageView-->
+<!--                    android:id="@+id/go"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_alignParentEnd="true"-->
+<!--                    android:layout_centerVertical="true"-->
+<!--                    android:layout_marginEnd="@dimen/_15sdp"-->
+<!--                    android:contentDescription="@string/tap_top_apply_coupon_code"-->
+<!--                    android:src="@drawable/baseline_keyboard_arrow_right_24" />-->
+
+
+
+
+<!--            </RelativeLayout>-->
+
+
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/line2"
+                android:layout_below="@id/coupon_code_apply"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="3dp"
+                app:dividerColor="@color/secondary" />
+
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/coupon_code_apply">
+                android:layout_below="@id/line2">
 
 
                 <LinearLayout
