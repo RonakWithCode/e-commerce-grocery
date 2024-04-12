@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.crazyostudio.ecommercegrocery.Adapter.OrderProductAdapter;
 import com.crazyostudio.ecommercegrocery.Fragment.ProductDetailsFragment;
+import com.crazyostudio.ecommercegrocery.HelperClass.ShoppingCartHelper;
 import com.crazyostudio.ecommercegrocery.MainActivity;
 import com.crazyostudio.ecommercegrocery.Model.AddressModel;
 import com.crazyostudio.ecommercegrocery.Model.OrderModel;
@@ -95,7 +96,7 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
             if (orderModel.getOrderStatus().equals("deliver")) {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                 // Format the current date and time as a string
-                String formattedDateTime = dateFormat.format(orderModel.getOrderTime());
+                String formattedDateTime = dateFormat.format(orderModel.getOrderDate());
                 Toast.makeText(this, "Order place on " + formattedDateTime, Toast.LENGTH_SHORT).show();
             }
         });
@@ -103,51 +104,22 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
 
     @SuppressLint({"SetTextI18n", "NotifyDataSetChanged"})
     private void getData() {
-        binding.orderContactName.setText(orderModel.getName());
+        binding.orderContactName.setText(orderModel.getCustomer().getFullName());
 //        Log.i("getEmailAddress", "getData: "+userModel.getEmailAddress());
-        final String[] emailAddress = new String[1];
-        if (userModel != null) {
-            emailAddress[0] = userModel.getEmailAddress();
-        }
-        else {
-            binding.progressCircular.setVisibility(View.VISIBLE);
-            FirebaseDatabase.getInstance().getReference()
-                    .child("UserInfo")
-                    .child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
-                    .child("emailAddress")
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.exists()) {
-                                emailAddress[0] = dataSnapshot.getValue(String.class);
-                                // Now, you can use the emailAddress value
-                                binding.progressCircular.setVisibility(View.GONE);
-
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            // Handle any errors that may occur during the data retrieval
-                        }
-                    });
-
-            // Handle the case when userinfo is null
-        }
-        binding.orderContactEmail.setText(emailAddress[0]);
-        binding.orderContactPhone.setText(orderModel.getPhoneNumber());
-        binding.orderShippingAddress.setText(orderModel.getAdders());
-        binding.orderShippingMethod.setText(orderModel.getShipping());
-        binding.orderPaymentMethod.setText(orderModel.getPaymentType());
+//        binding.orderContactEmail.setText(emailAddress[0]);
+        binding.orderContactPhone.setText(orderModel.getShipping().getShippingAddress().getMobileNumber());
+        binding.orderShippingAddress.setText(orderModel.getShipping().getShippingAddress().getFlatHouse()+orderModel.getShipping().getShippingAddress().getAddress());
+        binding.orderShippingMethod.setText(orderModel.getShipping().getShippingMethod());
+        binding.orderPaymentMethod.setText(orderModel.getPayment().getPaymentMethod());
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         // Format the current date and time as a string
-        String formattedDateTime = dateFormat.format(orderModel.getOrderTime());
+        String formattedDateTime = dateFormat.format(orderModel.getOrderDate());
         binding.orderDate.setText(formattedDateTime);
         binding.orderDeliveryStatus.setText(orderModel.getOrderStatus());
-        binding.subtotal.setText(""+orderModel.getSubTotal());
-        binding.shippingFee.setText(""+orderModel.getShippingFee());
-        binding.save.setText(""+orderModel.getSave());
-        binding.grandTotal.setText(""+orderModel.getTotal());
+//        binding.subtotal.setText(""+orderModel.getSubTotal());
+        binding.shippingFee.setText("₹"+orderModel.getShipping().getShippingFee());
+        binding.save.setText("₹"+ ShoppingCartHelper.calculateTotalSavings(orderModel.getOrderItems()));
+        binding.grandTotal.setText("₹"+orderModel.getOrderTotalPrice());
 
         binding.ContinueShopping.setOnClickListener(ContinueShopping->{
             this.finish();
@@ -155,7 +127,7 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
         });
 
 
-        OrderProductAdapter orderProductAdapter = new OrderProductAdapter(orderModel.getProductModel(),this,this);
+        OrderProductAdapter orderProductAdapter = new OrderProductAdapter(orderModel.getOrderItems(),this,this);
         binding.orderItems.setAdapter(orderProductAdapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
         binding.orderItems.setLayoutManager(layoutManager);
@@ -163,7 +135,7 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
     }
 
     @Override
-    public void onOrder(ShoppingCartsProductFirebaseModel model) {
+    public void onOrder(ShoppingCartsProductModel model) {
 //
         Intent intent = new Intent(this,FragmentLoader.class);
         intent.putExtra("LoadID","Details");

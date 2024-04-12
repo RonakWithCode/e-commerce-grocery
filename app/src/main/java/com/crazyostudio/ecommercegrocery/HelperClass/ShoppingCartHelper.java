@@ -7,17 +7,7 @@ import java.util.ArrayList;
 
 public class ShoppingCartHelper {
 
-    public static double calculateTotalSavings(ArrayList<ShoppingCartsProductFirebaseModel> products) {
-        double totalSavings = 0.0;
-
-        for (ShoppingCartsProductFirebaseModel product : products) {
-            double savingsForProduct = product.getMrp() * product.getDefaultQuantity();
-            totalSavings += savingsForProduct;
-        }
-
-        return totalSavings;
-    }
-    public static double calculateTotalSavingsByShoppingCartsProductModel(ArrayList<ShoppingCartsProductModel> products) {
+    public static double calculateTotalSavings(ArrayList<ShoppingCartsProductModel> products) {
         double totalSavings = 0.0;
 
         for (ShoppingCartsProductModel product : products) {
@@ -27,6 +17,16 @@ public class ShoppingCartHelper {
 
         return totalSavings;
     }
+//    public static double calculateTotalSavingsByShoppingCartsProductModel(ArrayList<ShoppingCartsProductModel> products) {
+//        double totalSavings = 0.0;
+//
+//        for (ShoppingCartsProductModel product : products) {
+//            double savingsForProduct = product.getMrp() * product.getDefaultQuantity();
+//            totalSavings += savingsForProduct;
+//        }
+//
+//        return totalSavings;
+//    }
 
     public static double calculateTotalPrices(ArrayList<ShoppingCartsProductModel> productList) {
         double totalPrices = 00.0;

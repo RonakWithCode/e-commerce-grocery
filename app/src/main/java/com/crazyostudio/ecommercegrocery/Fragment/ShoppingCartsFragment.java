@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.crazyostudio.ecommercegrocery.Activity.AuthMangerActivity;
 import com.crazyostudio.ecommercegrocery.Activity.OderActivity;
 import com.crazyostudio.ecommercegrocery.Adapter.ShoppingCartsAdapter;
+import com.crazyostudio.ecommercegrocery.HelperClass.ShoppingCartHelper;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
 import com.crazyostudio.ecommercegrocery.Model.ShoppingCartsProductModel;
 import com.crazyostudio.ecommercegrocery.Services.AuthService;
@@ -32,8 +33,6 @@ import java.util.ArrayList;
 
 public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInterface {
     FragmentShoppingCartsBinding binding;
-    Cart cart;
-    ProductModel model;
     DatabaseService service;
 
     ShoppingCartsAdapter cartsAdapter;
@@ -57,10 +56,9 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
         service = new DatabaseService();
         uid  = authService.getUserId();
         models = new ArrayList<>();
-        cart = TinyCartHelper.getCart();
         binding.siginUp.setOnClickListener(view -> startActivity(new Intent(requireContext(), AuthMangerActivity.class)));
         binding.Buy.setOnClickListener(Buy->{
-            if (cart.isCartEmpty()){
+            if (models.isEmpty()){
                 Toast.makeText(requireContext(), "Select Product", Toast.LENGTH_SHORT).show();
             }else {
                 Intent intent = new Intent(requireContext(), OderActivity.class);
@@ -90,15 +88,10 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
             @Override
             public void onSuccess(ArrayList<ShoppingCartsProductModel> cartsProductModels) {
                 models.clear();
-                cart.clearCart();
-                for (int i = 0; i < cartsProductModels.size(); i++) {
-                    cart.addItem(cartsProductModels.get(i),cartsProductModels.get(i).getDefaultQuantity());
-
-                }
                 models.addAll(cartsProductModels);
                 binding.progressCircular.setVisibility(View.GONE);
                 cartsAdapter.notifyDataSetChanged();
-                BigDecimal totalPrice = cart.getTotalPrice();
+                double totalPrice = ShoppingCartHelper.calculateTotalPrices(models);
                 binding.SubTotal.setText("SubTotal ₹"+totalPrice);
                 binding.main.setVisibility(View.VISIBLE);
                 binding.IsEnity.setVisibility(View.GONE);

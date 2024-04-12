@@ -20,10 +20,10 @@ import com.crazyostudio.ecommercegrocery.interfaceClass.OrderProductInterface;
 import java.util.ArrayList;
 
 public class OrderProductAdapter extends RecyclerView.Adapter<OrderProductAdapter.OrderProductAdapterViewHolder>{
-    ArrayList<ShoppingCartsProductFirebaseModel> productModels;
+    ArrayList<ShoppingCartsProductModel> productModels;
     Context context;
     OrderProductInterface orderProductInterface;
-    public OrderProductAdapter(ArrayList<ShoppingCartsProductFirebaseModel> productModels, Context context, OrderProductInterface orderProductInterface) {
+    public OrderProductAdapter(ArrayList<ShoppingCartsProductModel> productModels, Context context, OrderProductInterface orderProductInterface) {
         this.productModels = productModels;
         this.context = context;
         this.orderProductInterface = orderProductInterface;
@@ -38,7 +38,7 @@ public class OrderProductAdapter extends RecyclerView.Adapter<OrderProductAdapte
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull OrderProductAdapter.OrderProductAdapterViewHolder holder, int position) {
-        ShoppingCartsProductFirebaseModel productModel = productModels.get(position);
+        ShoppingCartsProductModel productModel = productModels.get(position);
         Glide.with(context).load(productModel.getImageURL().get(0)).into(holder.binding.productImage);
         holder.binding.productName.setText(productModel.getProductName());
         holder.binding.quantity.setText(productModel.getDefaultQuantity()+" '(item) * ₹" + productModel.getPrice()+" =");

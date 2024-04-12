@@ -1,17 +1,22 @@
 package com.crazyostudio.ecommercegrocery.Fragment;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.crazyostudio.ecommercegrocery.Adapter.AddressAdapter;
-import com.crazyostudio.ecommercegrocery.Adapter.newAddressFragment;
+import com.crazyostudio.ecommercegrocery.Dialog.CustomProgressDialog;
 import com.crazyostudio.ecommercegrocery.Model.AddressModel;
 import com.crazyostudio.ecommercegrocery.Model.UserinfoModels;
 import com.crazyostudio.ecommercegrocery.R;
@@ -19,74 +24,72 @@ import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentAddressBinding;
 import com.crazyostudio.ecommercegrocery.interfaceClass.AddressInterface;
 import com.crazyostudio.ecommercegrocery.javaClasses.basicFun;
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 
 public class AddressFragment extends Fragment implements AddressInterface {
     FragmentAddressBinding binding;
-//    FirebaseDatabase
-//
-//
-//    ;
     AddressAdapter addressAdapter;
     UserinfoModels userInfo;
 
-    ArrayList<AddressModel> adderes;
-    FirebaseFirestore firestore;
+    ArrayList<AddressModel> adders;
+   NavController navController;
 
+    private ShimmerFrameLayout shimmerLayout;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentAddressBinding.inflate(inflater,container,false);
 //        firebaseDatabase = FirebaseDatabase.getInstance();
-        firestore = FirebaseFirestore.getInstance();
+        navController = Navigation.findNavController(requireActivity(),R.id.oder_host_fragment);
         binding.backButton.setOnClickListener(back->requireActivity().finish());
-        binding.AddAddress.setOnClickListener(address->{
-            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragment_container,new newAddressFragment(),"newAddress");
-            transaction.addToBackStack("newAddress");
-            transaction.commit();
+        binding.AddAddress.setOnClickListener(address-> navController.navigate(R.id.action_addressFragment_to_newAddressFragment));
+        adders = new ArrayList<>();
+        shimmerLayout = binding.shimmerLayout;
 
-
-        });
-        adderes = new ArrayList<>();
-        addressAdapter = new AddressAdapter(adderes,this,requireContext());
+        // Start shimmer animation
+        shimmerLayout.startShimmer();
+        addressAdapter = new AddressAdapter(adders,this,requireContext());
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,false);
         binding.UserAddress.setLayoutManager(layoutManager);
         binding.UserAddress.setAdapter(addressAdapter);
-
         new DatabaseService().getUserInfoByDocumentSnapshot(FirebaseAuth.getInstance().getUid(), new DatabaseService.getUserInfoDocumentSnapshotCallback() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
 
             public void onSuccess(DocumentSnapshot user) {
                 UserinfoModels models = user.toObject(UserinfoModels.class);
                 if (models != null) {
-//                        binding.email.setText(models.getEmailAddress());
                     if (models.getAddress() != null && !models.getAddress().isEmpty()) {
-                        adderes.clear();
-                        adderes.addAll(models.getAddress());
+                        adders.clear();
+                        adders.addAll(models.getAddress());
                         addressAdapter.notifyDataSetChanged();
+                        binding.UserAddress.setVisibility(View.VISIBLE);
+                        binding.NotFoundText.setVisibility(View.GONE);
+                    }
+                    else {
+                        adders.clear();
+                        binding.NotFoundText.setVisibility(View.VISIBLE);
+                        binding.UserAddress.setVisibility(View.GONE);
                     }
                 }
-                binding.progressCircular.setVisibility(View.GONE);
+                shimmerLayout.stopShimmer();
+                shimmerLayout.setVisibility(View.GONE);
             }
 
             @Override
             public void onError(String errorMessage) {
-
+                shimmerLayout.stopShimmer();
+                shimmerLayout.setVisibility(View.GONE);
+                basicFun.AlertDialog(requireContext(),"getting adders error "+errorMessage);
             }
         });
-
-
-
-
 
         return binding.getRoot();
     }
@@ -94,18 +97,11 @@ public class AddressFragment extends Fragment implements AddressInterface {
 
     @Override
     public void addersSelect(AddressModel adders) {
-        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-        Fragment fragment = new PaymentScreenFragment();
         Bundle bundle = new Bundle();
         bundle.putParcelable("adders",adders);
         bundle.putParcelable("user",userInfo);
-//            bundle.putParcelable("productModel",productModel);
-        fragment.setArguments(bundle);
-        transaction.replace(R.id.fragment_container,fragment,"PaymentScreen");
-        transaction.addToBackStack("PaymentScreen");
-        transaction.commit();
-        }
-
+        navController.navigate(R.id.action_addressFragment_to_checkoutFragment,bundle);
+    }
 
     @Override
     public void remove(AddressModel address, int pos) {
@@ -115,6 +111,7 @@ public class AddressFragment extends Fragment implements AddressInterface {
             String userId = currentUser.getUid();
             new DatabaseService().removeAdders(userId, address, new DatabaseService.removeAddersCallback() {
 
+                @SuppressLint("NotifyDataSetChanged")
                 @Override
                 public void onSuccess() {
                     binding.progressCircular.setVisibility(View.INVISIBLE);
@@ -124,7 +121,6 @@ public class AddressFragment extends Fragment implements AddressInterface {
                 @Override
                 public void onError(String errorMessage) {
                     basicFun.AlertDialog(requireContext(), "Failed to remove address: " + errorMessage);
-
                 }
             });
         }

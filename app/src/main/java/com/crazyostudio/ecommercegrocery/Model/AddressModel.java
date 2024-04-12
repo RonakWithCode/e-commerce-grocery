@@ -1,29 +1,44 @@
 package com.crazyostudio.ecommercegrocery.Model;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
 public class AddressModel implements Parcelable {
-    private String name, phone, Address;
+    private String fullName;
+    private String mobileNumber;
+    private String flatHouse;
+    private String address;
+    private String landmark;
+    private boolean isHomeSelected;
 
     public AddressModel() {}
 
-    public AddressModel(String name, String phone, String address) {
-        this.name = name;
-        this.phone = phone;
-        Address = address;
+    public AddressModel(String fullName, String mobileNumber, String flatHouse, String address, String landmark, boolean isHomeSelected) {
+        this.fullName = fullName;
+        this.mobileNumber = mobileNumber;
+        this.flatHouse = flatHouse;
+        this.address = address;
+        this.landmark = landmark;
+        this.isHomeSelected = isHomeSelected;
     }
 
     protected AddressModel(Parcel in) {
-        name = in.readString();
-        phone = in.readString();
-        Address = in.readString();
+        fullName = in.readString();
+        mobileNumber = in.readString();
+        flatHouse = in.readString();
+        address = in.readString();
+        landmark = in.readString();
+        isHomeSelected = in.readByte() != 0;
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(name);
-        dest.writeString(phone);
-        dest.writeString(Address);
+        dest.writeString(fullName);
+        dest.writeString(mobileNumber);
+        dest.writeString(flatHouse);
+        dest.writeString(address);
+        dest.writeString(landmark);
+        dest.writeByte((byte) (isHomeSelected ? 1 : 0));
     }
 
     @Override
@@ -43,27 +58,51 @@ public class AddressModel implements Parcelable {
         }
     };
 
-    public String getName() {
-        return name;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getMobileNumber() {
+        return mobileNumber;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
+
+    public String getFlatHouse() {
+        return flatHouse;
+    }
+
+    public void setFlatHouse(String flatHouse) {
+        this.flatHouse = flatHouse;
     }
 
     public String getAddress() {
-        return Address;
+        return address;
     }
 
     public void setAddress(String address) {
-        Address = address;
+        this.address = address;
+    }
+
+    public String getLandmark() {
+        return landmark;
+    }
+
+    public void setLandmark(String landmark) {
+        this.landmark = landmark;
+    }
+
+    public boolean isHomeSelected() {
+        return isHomeSelected;
+    }
+
+    public void setHomeSelected(boolean homeSelected) {
+        isHomeSelected = homeSelected;
     }
 }

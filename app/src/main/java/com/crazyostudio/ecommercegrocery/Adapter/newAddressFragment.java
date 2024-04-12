@@ -80,9 +80,26 @@ public class newAddressFragment extends Fragment {
 
         binding.save.setOnClickListener(save -> {
             binding.progressCircular.setVisibility(View.VISIBLE);
-//            userinfoModels.getValue(UserinfoModels.class);
-            AddressModel model = new AddressModel(Objects.requireNonNull(binding.Name.getText()).toString(), Objects.requireNonNull(binding.Phone.getText()).toString(), Objects.requireNonNull(binding.address.getText()).toString());
-            new DatabaseService().setAdders(model, FirebaseAuth.getInstance().getUid(), new DatabaseService.SetAddersCallback() {
+            String fullName = binding.Name.getText().toString();
+            String mobileNumber = binding.Phone.getText().toString();
+            String flatHouse = binding.flatHouse.getText().toString();
+            String address = binding.address.getText().toString();
+            String landmark = binding.landmark.getText().toString();
+            boolean isHomeSelected = binding.home.isChecked();
+
+            if (fullName.isEmpty()) {
+                binding.Name.setError("Full name is required");
+            } else if (mobileNumber.isEmpty()) {
+                binding.Phone.setError("Mobile number is required");
+            } else if (flatHouse.isEmpty()) {
+                binding.flatHouse.setError("Flat/house number is required");
+            } else if (address.isEmpty()) {
+                binding.address.setError("Address is required");
+            } else if (landmark.isEmpty()) {
+                binding.landmark.setError("Landmark is required");
+            }else {
+                AddressModel addressModel = new AddressModel(fullName, mobileNumber, flatHouse, address, landmark, isHomeSelected);
+                new DatabaseService().setAdders(addressModel, FirebaseAuth.getInstance().getUid(), new DatabaseService.SetAddersCallback() {
                 @Override
                 public void onSuccess() {
                     binding.hintView.setError("errorMessage");
@@ -97,7 +114,9 @@ public class newAddressFragment extends Fragment {
                     Toast.makeText(requireContext(), "Fulled to save  Address error " + errorMessage, Toast.LENGTH_SHORT).show();
                 }
             });
+            }
         });
+
         return binding.getRoot();
     }
 

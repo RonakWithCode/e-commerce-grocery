@@ -30,11 +30,15 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.net.PortUnreachableException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class DatabaseService {
@@ -286,6 +290,67 @@ public class DatabaseService {
         });
 
     }
+
+    public void getRecommendations(ArrayList<String> categories, ArrayList<String> productNames, GetAllProductsCallback callback) {
+        List<Query> queries = new ArrayList<>();
+
+        // Create a list of queries for each combination of category and product name
+        for (String category : categories) {
+            for (String productName : productNames) {
+                Query query = database.collection("Product").whereEqualTo("category", category)
+                        .whereEqualTo("productName", productName)
+                        .limit(10); // Limit to 10 recommendations per combination
+                queries.add(query);
+            }
+        }
+
+        // Use the Firestore 'in' operator to combine multiple queries into one
+        Query combinedQuery = queries.get(0);
+        for (int i = 1; i < queries.size(); i++) {
+            combinedQuery = combinedQuery.startAt(queries.get(i));
+        }
+
+        combinedQuery.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    ArrayList<ProductModel> recommendations = new ArrayList<>();
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        ProductModel product = document.toObject(ProductModel.class);
+                        recommendations.add(product);
+                    }
+                    // Pass the recommendations to the callback
+                    callback.onSuccess(recommendations);
+                } else {
+                    // Pass the exception to the callback
+                    callback.onError("error "+task.getException());
+                }
+            }
+        });
+    }
+
+//    private void getRecommendations(String category, String productName, GetAllProductsCallback callback) {
+//        Query query =  database.collection("Product").whereEqualTo("category", category)
+//                .whereGreaterThanOrEqualTo("productName", productName)
+//                .limit(10); // Limit to 10 recommendations
+//
+//        query.get().addOnCompleteListener(task -> {
+//            if (task.isSuccessful()) {
+//                ArrayList<ProductModel> recommendations = new ArrayList<>();
+//                for (QueryDocumentSnapshot document : task.getResult()) {
+//                    ProductModel product = document.toObject(ProductModel.class);
+//                    recommendations.add(product);
+//                }
+//                callback.onSuccess(recommendations);
+//                // Display recommendations to the user
+////                displayRecommendations(recommendations);
+//            } else {
+//                // Handle errors
+//                callback.onError("Error getting recommendations: " + task.getException());
+//                Log.d("DATABASE-SERVICE", "Error getting recommendations: ", task.getException());
+//            }
+//        });
+//    }
 
     public void getProductsByModelId(ArrayList<String> modelIds, GetAllShoppingCartsProductModelCallback callback) {
         database.collection("Product")
@@ -554,7 +619,7 @@ public class DatabaseService {
 
 
     public void PlaceOder(OrderModel order,PlaceOrderCallback callback){
-            database.collection("Order").document(order.getUserId()).collection(order.getOrderId())
+            database.collection("Order").document(order.getCustomer().getCustomerId()).collection(order.getOrderId())
                     .add(order).addOnCompleteListener(task -> {
                         if (task.isSuccessful()){
                             callback.onSuccess();

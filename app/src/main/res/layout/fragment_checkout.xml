@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,13 +8,460 @@
     tools:context=".Fragment.CheckoutFragment">
 
 
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_5sdp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:id="@+id/TopRelative_skeleton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/order_details_view_back_skeleton"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="20dp"
+                    android:src="@drawable/baseline_arrow_back_ios_new_24" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_toEndOf="@id/order_details_view_back_skeleton"
+                    android:gravity="center"
+                    android:paddingEnd="25dp"
+                    android:text="@string/checkout"
+                    android:textColor="@color/MainTextColor"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    tools:ignore="RtlSymmetry" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/ProductView_skeleton"
+                android:layout_below="@id/TopRelative_skeleton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="10dp">
+                <ImageView
+                    android:id="@+id/product_image_skeleton"
+                    android:layout_width="80dp"
+                    android:background="@drawable/rounded_corners"
+                    android:layout_height="80dp"
+                    android:scaleType="fitXY"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:paddingEnd="10dp"
+                    android:src="@drawable/skeleton_shape"/>
+
+                <TextView
+                    android:id="@+id/product_name_skeleton"
+                    android:layout_width="@dimen/_170sdp"
+                    android:layout_height="wrap_content"
+                    android:maxLines="2"
+                    android:minLines="2"
+                    android:background="@drawable/skeleton_shape"
+                    android:layout_toEndOf="@id/product_image_skeleton"
+                    android:textColor="@color/green_primary"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+                <LinearLayout
+                    android:id="@+id/product_pricing_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/product_name_skeleton"
+                    android:layout_toEndOf="@id/product_image_skeleton"
+                    android:orientation="horizontal"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:weightSum="2">
+
+                    <TextView
+                        android:id="@+id/product_price_skeleton"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/skeleton_shape"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:id="@+id/product_qty_layout_skeleton"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:padding="@dimen/_5sdp"
+                        android:orientation="horizontal"
+                        android:weightSum="3">
+
+                        <ImageView
+                            android:id="@+id/product_qty_down_skeleton"
+                            android:layout_width="0dp"
+                            android:layout_height="25dp"
+                            android:background="@drawable/skeleton_shape"
+                            android:layout_weight="1"
+                            tools:ignore="NestedWeights" />
+
+                        <TextView
+                            android:id="@+id/product_qty_skeleton"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:layout_marginStart="@dimen/_5sdp"
+                            android:gravity="center"
+                            android:background="@drawable/skeleton_shape"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:id="@+id/product_qty_up_skeleton"
+                            android:layout_width="0dp"
+                            android:layout_height="25dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/skeleton_shape"
+                            android:layout_marginStart="@dimen/_5sdp"
+                            tools:ignore="NestedWeights" />
+                    </LinearLayout>
+                </LinearLayout>
+                <View
+                    android:layout_below="@+id/product_image_skeleton"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:background="@color/MainBorderColor"
+                    android:alpha="0.9"/>
+
+
+            </RelativeLayout>
+            <LinearLayout
+                android:id="@+id/coupon_code_apply_skeleton"
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ProductView_skeleton"
+                android:layout_marginTop="@dimen/_10sdp">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:background="@drawable/skeleton_shape"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/coupon_code">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        />
+
+
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <ImageView
+                    android:background="@drawable/skeleton_shape"
+                    android:id="@+id/coupon_code_apply_btn_skeleton"
+                    android:layout_width="@dimen/_80sdp"
+                    android:layout_height="@dimen/_40sdp"
+                    android:text="apply"/>
+
+
+            </LinearLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/somethiong"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/coupon_code_apply_skeleton">
+
+
+                <LinearLayout
+                    android:id="@+id/subtotal_box_skeleton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="10dp">
+
+                    <TextView
+
+                        android:id="@+id/subtotal_hint_skeleton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:background="@drawable/skeleton_shape"
+                        android:textColor="@color/orange"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/SubTotalPrice_skeleton"
+                        android:background="@drawable/skeleton_shape"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:textColor="@color/MainTextColor"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/discount_box_skeleton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/subtotal_box_skeleton"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="10dp">
+
+                    <TextView
+                        android:id="@+id/discount_hint_skeleton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:background="@drawable/skeleton_shape"
+                        android:textColor="@color/orange"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/discount_skeleton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:background="@drawable/skeleton_shape"
+                        android:textColor="@color/MainTextColor"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/shipping_fee_box_skeleton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/discount_box_skeleton"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="10dp">
+
+                    <TextView
+                        android:id="@+id/shipping_fee_hint_skeleton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:background="@drawable/skeleton_shape"
+                        android:textColor="@color/orange"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/ShippingPrice_skeleton"
+                        android:layout_width="0dp"
+                        android:background="@drawable/skeleton_shape"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:textColor="@color/MainTextColor"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:id="@+id/line3_skeleton"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/shipping_fee_box_skeleton"
+                    android:layout_marginTop="3dp"
+                    app:dividerColor="@color/secondary" />
+
+
+                <LinearLayout
+                    android:id="@+id/grand_total_box_skeleton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/line3_skeleton"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="10dp">
+
+                    <TextView
+                        android:id="@+id/grand_total_hint_skeleton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:background="@drawable/skeleton_shape"
+                        android:textSize="@dimen/_20ssp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/TotalPrice_skeleton"
+                        android:layout_width="0dp"
+                        android:background="@drawable/skeleton_shape"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:textColor="@color/MainTextColor"
+                        android:textSize="@dimen/_20ssp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/grand_total_box_skeleton"
+                    android:layout_marginLeft="10dp"
+                    android:id="@+id/Address_Box_skeleton"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="10dp">
+
+                    <ImageView
+                        android:id="@+id/AddressType_skeleton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/skeleton_shape" />
+
+                    <TextView
+                        android:id="@+id/deliveryTo_skeleton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:layout_toEndOf="@+id/AddressType_skeleton"
+                        android:background="@drawable/skeleton_shape"
+                        android:textAlignment="center"
+                        android:textColor="@color/MainTextColor"
+                        android:textSize="@dimen/_16ssp"
+                        android:textStyle="normal" />
+
+                    <TextView
+                        android:id="@+id/deliveryAddress_skeleton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/deliveryTo_skeleton"
+                        android:layout_marginStart="@dimen/_8sdp"
+                        android:layout_toEndOf="@+id/AddressType_skeleton"
+                        android:maxLines="1"
+                        android:background="@drawable/skeleton_shape"
+                        android:textAlignment="center"
+                        android:textColor="@color/HintMainTextColor"
+                        android:textSize="@dimen/_12ssp"
+                        android:textStyle="normal" />
+
+                    <TextView
+                        android:id="@+id/Change_skeleton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_15sdp"
+                        android:layout_toEndOf="@id/deliveryTo_skeleton"
+                        android:background="@drawable/skeleton_shape"
+                        android:textColor="@color/orange_secondary"
+                        android:textSize="@dimen/_13ssp"
+                        tools:ignore="RelativeOverlap" />
+
+                    <com.google.android.material.divider.MaterialDivider
+                        android:id="@+id/line4_skeleton"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@id/deliveryAddress_skeleton"
+                        android:layout_marginTop="3dp"
+                        app:dividerColor="@color/secondary" />
+
+                </RelativeLayout>
+
+
+            </RelativeLayout>
+
+
+            <LinearLayout
+                android:layout_below="@+id/somethiong"
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:background="@drawable/skeleton_shape"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:layout_marginEnd="@dimen/_25sdp"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:layout_width="match_parent"
+                    android:minLines="2"
+                    android:layout_height="wrap_content"/>
+                     <TextView
+                    android:background="@drawable/skeleton_shape"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:layout_marginEnd="@dimen/_25sdp"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:layout_width="match_parent"
+                    android:minLines="2"
+                    android:layout_height="wrap_content"/>
+                     <TextView
+                    android:background="@drawable/skeleton_shape"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:layout_marginEnd="@dimen/_25sdp"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:layout_width="match_parent"
+                    android:minLines="2"
+                    android:layout_height="wrap_content"/>
+                     <TextView
+                    android:background="@drawable/skeleton_shape"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:layout_marginEnd="@dimen/_25sdp"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:layout_width="match_parent"
+                    android:minLines="2"
+                    android:layout_height="wrap_content"/>
+                     <TextView
+                    android:background="@drawable/skeleton_shape"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:layout_marginEnd="@dimen/_25sdp"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:layout_width="match_parent"
+                    android:minLines="2"
+                    android:layout_height="wrap_content"/>
+                     <TextView
+                    android:background="@drawable/skeleton_shape"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:layout_marginEnd="@dimen/_25sdp"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:layout_width="match_parent"
+                    android:minLines="2"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+        </RelativeLayout>
+
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+
     <ScrollView
+        android:visibility="gone"
         android:id="@+id/ScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@id/relativeLayout"
+        >
 
         <RelativeLayout
             android:id="@+id/order_details_layout_top"
@@ -59,23 +506,10 @@
                 android:layout_marginTop="@dimen/_8sdp" />
 
 
-            <TextView
-                android:id="@+id/viewText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/CardView"
-                android:layout_margin="@dimen/_8sdp"
-                android:text="@string/before_you_checkout"
-                android:textColor="@color/MainTextColor"
-                android:textSize="@dimen/_16ssp"
-                android:textStyle="bold" />
 
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recommendationsProduct"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/viewText" />
+
+
 
 
 
@@ -84,18 +518,18 @@
                 android:layout_width="match_parent"
                 android:orientation="horizontal"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/recommendationsProduct"
+                android:layout_below="@id/CardView"
                 android:layout_marginTop="@dimen/_10sdp">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/coupon_code"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:hint="@string/coupon_code">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:background="@color/MainBackgroundColor"
                         android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -308,7 +742,6 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="end"
-                        android:text="00.00 INR"
                         android:textColor="@color/MainTextColor"
                         android:textSize="@dimen/_20ssp"
                         android:textStyle="bold" />
@@ -320,14 +753,18 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/grand_total_box"
                     android:layout_marginLeft="10dp"
+                    android:id="@+id/Address_Box"
                     android:layout_marginTop="5dp"
                     android:layout_marginRight="10dp"
                     android:layout_marginBottom="10dp">
 
                     <ImageView
                         android:id="@+id/AddressType"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:scaleType="fitXY"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_width="@dimen/_60sdp"
+                        android:layout_height="@dimen/_55sdp"
                         android:src="@drawable/home_shipping" />
 
                     <TextView
@@ -349,9 +786,9 @@
                         android:layout_below="@+id/deliveryTo"
                         android:layout_marginStart="@dimen/_8sdp"
                         android:layout_toEndOf="@+id/AddressType"
-                        android:maxLines="1"
+                        android:maxLines="5"
                         android:text="6391 Elgin St. Celina, Delaware..."
-                        android:textAlignment="center"
+                        android:textAlignment="textStart"
                         android:textColor="@color/HintMainTextColor"
                         android:textSize="@dimen/_12ssp"
                         android:textStyle="normal" />
@@ -367,15 +804,16 @@
                         android:textSize="@dimen/_13ssp"
                         tools:ignore="RelativeOverlap" />
 
-                    <com.google.android.material.divider.MaterialDivider
-                        android:id="@+id/line4"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_below="@id/deliveryAddress"
-                        android:layout_marginTop="3dp"
-                        app:dividerColor="@color/secondary" />
 
                 </RelativeLayout>
+                <com.google.android.material.divider.MaterialDivider
+                    android:id="@+id/line4"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@id/Address_Box"
+                    android:layout_marginTop="3dp"
+                    app:dividerColor="@color/secondary" />
+
 
 
             </RelativeLayout>
@@ -387,18 +825,16 @@
         android:id="@+id/relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/_10ssp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        android:layout_alignParentBottom="true"
+        android:padding="@dimen/_10ssp">
 
         <TextView
             android:id="@+id/select"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:text="Pay using"
-            android:textColor="@color/HintMainTextColor"
+            android:text="@string/pay_using"
+            android:textColor="@color/MainTextColor"
             android:textSize="@dimen/_16ssp" />
 
         <TextView
@@ -408,19 +844,19 @@
             android:layout_below="@+id/select"
             android:layout_alignParentStart="true"
             android:layout_marginStart="@dimen/_5sdp"
-            android:text="(COD) &amp;&amp; UPI"
+            android:text="@string/cod_amp_amp_upi"
             android:textColor="@color/HintMainTextColor"
             android:textSize="@dimen/_14ssp" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/materialButton"
+            android:id="@+id/placeBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_marginStart="@dimen/_5sdp"
             android:layout_marginEnd="@dimen/_2sdp"
             android:background="@drawable/round_button"
-            android:text="Place Order"
+            android:text="@string/place_order"
             android:textAlignment="center"
             android:textSize="@dimen/_15ssp" />
 
@@ -431,10 +867,7 @@
 
         android:id="@+id/progressCircular"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_centerInParent="true"
+        android:layout_height="wrap_content" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

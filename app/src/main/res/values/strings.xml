@@ -69,7 +69,7 @@
     <string name="address_not_found_please_a_add_new_address">Address not Found Please a add new address</string>
     <string name="cash_on_delivery_cod">Cash on delivery (COD)</string>
     <string name="go_next">-----)</string>
-    <string name="select_a_payment">Select a Payment</string>
+    <string name="select_a_payment">Pay using UPI Apps</string>
     <string name="checkout">Checkout</string>
     <string name="delivery_address">Delivery Address</string>
     <string name="delivery_options">Delivery Options</string>
@@ -154,7 +154,7 @@
     <string name="you_can_change_latter">You can change latter</string>
     <string name="continue_text">Continue</string>
     <string name="information">Information</string>
-    <string name="create_new_address">Create new Address</string>
+    <string name="create_new_address">Add a new Address</string>
     <string name="choose_your_language">choose your language</string>
     <string name="change_your_language">Change your language</string>
     <string name="english">English</string>
@@ -179,5 +179,21 @@
     <string name="remove_item">Remove item</string>
     <string name="apply">apply</string>
     <string name="enter_coupon_code">Enter coupon code</string>
+    <string name="add">+add</string>
+    <string name="place_order">Place Order</string>
+    <string name="cod_amp_amp_upi"><![CDATA[(COD) && UPI]]></string>
+    <string name="pay_using">Pay using</string>
+    <string name="full_name">full name</string>
+    <string name="mobile_number">Mobile number</string>
+    <string name="be_use_to_assist_delivery">be use to assist delivery</string>
+    <string name="full_address_area_street">Full Address Area, Street</string>
+    <string name="e_g_near_hospital">E.g near hospital</string>
+    <string name="landmark">Landmark</string>
+    <string name="rajasthan">rajasthan</string>
+    <string name="state">State</string>
+    <string name="home_">home</string>
+    <string name="work">Work</string>
+    <string name="alwar">Alwar</string>
+    <string name="town_city">Town/City</string>
 
 </resources>

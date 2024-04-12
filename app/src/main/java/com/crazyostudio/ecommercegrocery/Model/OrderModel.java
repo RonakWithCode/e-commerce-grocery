@@ -3,101 +3,52 @@ package com.crazyostudio.ecommercegrocery.Model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
+import java.util.Date;
 
 public class OrderModel implements Parcelable {
-    private String name;
-    private String OrderId;
-    private ArrayList<ShoppingCartsProductFirebaseModel> ProductModel;
-    private String OrderStatus;
-    private String Adders;
-    private String shipping;
-    private String PhoneNumber;
-    private double SubTotal,ShippingFee,Total,discount,save;
-    private String PaymentStatus;
-    private String PaymentType;
-    private long OrderTime;
-    private String UserId;
+    private String orderId;
+    private Customer customer;
+    private ArrayList<ShoppingCartsProductModel> orderItems;
+    private double orderTotalPrice;
+    private String CouponCode;
+    private String orderStatus;
+    private Payment payment;
+    private Shipping shipping;
+    private Date orderDate;
+    private String notes;
     private String token;
-    private String Email;
 
+    public OrderModel() {
+    }
 
-    public OrderModel(){}
-
-    public OrderModel(String Name, String orderId,String shipping ,ArrayList<ShoppingCartsProductFirebaseModel> productModel, String orderStatus, String adders, String phoneNumber, double subTotal, double shippingFee, double total, String paymentStatus, String paymentType, long orderTime, String userId,String token,double discount,double save,String email) {
-        name = Name;
-        OrderId = orderId;
+    public OrderModel(String orderId, Customer customer, ArrayList<ShoppingCartsProductModel> orderItems, double orderTotalPrice, String couponCode, String orderStatus, Payment payment, Shipping shipping, Date orderDate, String notes, String token) {
+        this.orderId = orderId;
+        this.customer = customer;
+        this.orderItems = orderItems;
+        this.orderTotalPrice = orderTotalPrice;
+        CouponCode = couponCode;
+        this.orderStatus = orderStatus;
+        this.payment = payment;
         this.shipping = shipping;
-        ProductModel = productModel;
-        OrderStatus = orderStatus;
-        Adders = adders;
-        PhoneNumber = phoneNumber;
-        SubTotal = subTotal;
-        ShippingFee = shippingFee;
-        Total = total;
-        PaymentStatus = paymentStatus;
-        PaymentType = paymentType;
-        OrderTime = orderTime;
-        UserId = userId;
+        this.orderDate = orderDate;
+        this.notes = notes;
         this.token = token;
-        this.discount = discount;
-        this.save = save;
-        this.Email = email;
     }
 
 
-
-
-    // Constructor for reading data from a Parcel
     protected OrderModel(Parcel in) {
-        name = in.readString();
-        OrderId = in.readString();
-        shipping = in.readString();
-        ProductModel = in.createTypedArrayList(ShoppingCartsProductFirebaseModel.CREATOR);
-        OrderStatus = in.readString();
-        Adders = in.readString();
-        PhoneNumber = in.readString();
-        SubTotal = in.readDouble();
-        ShippingFee = in.readDouble();
-        Total = in.readDouble();
-        PaymentStatus = in.readString();
-        PaymentType = in.readString();
-        OrderTime = in.readLong();
-        UserId = in.readString();
+        orderId = in.readString();
+        orderItems = in.createTypedArrayList(ShoppingCartsProductModel.CREATOR);
+        orderTotalPrice = in.readDouble();
+        CouponCode = in.readString();
+        orderStatus = in.readString();
+        notes = in.readString();
         token = in.readString();
-        this.discount = in.readDouble();
-        this.save = in.readDouble();
-        this.Email = in.readString();
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(name);
-        dest.writeString(OrderId);
-        dest.writeString(shipping);
-        dest.writeTypedList(ProductModel);
-        dest.writeString(OrderStatus);
-        dest.writeString(Adders);
-        dest.writeString(PhoneNumber);
-        dest.writeDouble(SubTotal);
-        dest.writeDouble(ShippingFee);
-        dest.writeDouble(Total);
-        dest.writeString(PaymentStatus);
-        dest.writeString(PaymentType);
-        dest.writeLong(OrderTime);
-        dest.writeString(UserId);
-        dest.writeString(token);
-        dest.writeDouble(discount);
-        dest.writeDouble(save);
-        dest.writeString(Email);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    // Parcelable CREATOR field
     public static final Creator<OrderModel> CREATOR = new Creator<OrderModel>() {
         @Override
         public OrderModel createFromParcel(Parcel in) {
@@ -110,6 +61,86 @@ public class OrderModel implements Parcelable {
         }
     };
 
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public ArrayList<ShoppingCartsProductModel> getOrderItems() {
+        return orderItems;
+    }
+
+    public void setOrderItems(ArrayList<ShoppingCartsProductModel> orderItems) {
+        this.orderItems = orderItems;
+    }
+
+    public double getOrderTotalPrice() {
+        return orderTotalPrice;
+    }
+
+    public void setOrderTotalPrice(double orderTotalPrice) {
+        this.orderTotalPrice = orderTotalPrice;
+    }
+
+    public String getCouponCode() {
+        return CouponCode;
+    }
+
+    public void setCouponCode(String couponCode) {
+        CouponCode = couponCode;
+    }
+
+    public String getOrderStatus() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(String orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
+    public Payment getPayment() {
+        return payment;
+    }
+
+    public void setPayment(Payment payment) {
+        this.payment = payment;
+    }
+
+    public Shipping getShipping() {
+        return shipping;
+    }
+
+    public void setShipping(Shipping shipping) {
+        this.shipping = shipping;
+    }
+
+    public Date getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(Date orderDate) {
+        this.orderDate = orderDate;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
     public String getToken() {
         return token;
     }
@@ -118,139 +149,23 @@ public class OrderModel implements Parcelable {
         this.token = token;
     }
 
-    public String getShipping() {
-        return shipping;
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public void setShipping(String shipping) {
-        this.shipping = shipping;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAdders() {
-        return Adders;
-    }
-
-    public String getEmail() {
-        return Email;
-    }
-
-    public void setEmail(String email) {
-        Email = email;
-    }
-
-    public void setAdders(String adders) {
-        Adders = adders;
-    }
-
-    public String getPhoneNumber() {
-        return PhoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        PhoneNumber = phoneNumber;
-    }
-
-    public double getSubTotal() {
-        return SubTotal;
-    }
-
-    public void setSubTotal(double subTotal) {
-        SubTotal = subTotal;
-    }
-
-    public double getShippingFee() {
-        return ShippingFee;
-    }
-
-    public double getDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(double discount) {
-        this.discount = discount;
-    }
-
-    public double getSave() {
-        return save;
-    }
-
-    public void setSave(double save) {
-        this.save = save;
-    }
-
-    public void setShippingFee(double shippingFee) {
-        ShippingFee = shippingFee;
-    }
-
-    public double getTotal() {
-        return Total;
-    }
-
-    public void setTotal(double total) {
-        Total = total;
-    }
-
-    public String getOrderId() {
-        return OrderId;
-    }
-
-    public void setOrderId(String orderId) {
-        OrderId = orderId;
-    }
-
-    public ArrayList<ShoppingCartsProductFirebaseModel> getProductModel() {
-        return ProductModel;
-    }
-
-    public void setProductModel(ArrayList<ShoppingCartsProductFirebaseModel> productModel) {
-        ProductModel = productModel;
-    }
-
-    public String getOrderStatus() {
-        return OrderStatus;
-    }
-
-    public void setOrderStatus(String orderStatus) {
-        OrderStatus = orderStatus;
-    }
-
-    public String getPaymentStatus() {
-        return PaymentStatus;
-    }
-
-    public void setPaymentStatus(String paymentStatus) {
-        PaymentStatus = paymentStatus;
-    }
-
-    public String getPaymentType() {
-        return PaymentType;
-    }
-
-    public void setPaymentType(String paymentType) {
-        PaymentType = paymentType;
-    }
-
-    public long getOrderTime() {
-        return OrderTime;
-    }
-
-    public void setOrderTime(long orderTime) {
-        OrderTime = orderTime;
-    }
-
-    public String getUserId() {
-        return UserId;
-    }
-
-    public void setUserId(String userId) {
-        UserId = userId;
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(orderId);
+        dest.writeParcelable(customer, flags);
+        dest.writeTypedList(orderItems);
+        dest.writeDouble(orderTotalPrice);
+        dest.writeString(CouponCode);
+        dest.writeString(orderStatus);
+        dest.writeParcelable(payment, flags);
+        dest.writeParcelable(shipping, flags);
+        dest.writeLong(orderDate != null ? orderDate.getTime() : -1);
+        dest.writeString(notes);
+        dest.writeString(token);
     }
 }

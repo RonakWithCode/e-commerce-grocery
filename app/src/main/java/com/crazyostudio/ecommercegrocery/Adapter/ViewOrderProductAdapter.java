@@ -47,9 +47,9 @@ public class ViewOrderProductAdapter  extends RecyclerView.Adapter<ViewOrderProd
     public void onBindViewHolder(@NonNull ViewOrderProductAdapter.ViewOrderProductAdapterViewHolder holder, int position) {
         OrderModel model = orderModels.get(position);
 
-        holder.binding.productName.setText(model.getName());
+        holder.binding.productName.setText(model.getShipping().getShippingAddress().getFullName());
         holder.binding.quantity.setVisibility(View.GONE);
-        holder.binding.TotalProductPrice.setText("₹"+model.getTotal());
+        holder.binding.TotalProductPrice.setText("₹"+model.getOrderTotalPrice());
         holder.binding.getRoot().setOnClickListener(onclickRoot->{
                     orderProductInterface.onOrder(model);
                 });

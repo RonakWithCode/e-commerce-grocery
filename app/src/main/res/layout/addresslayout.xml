@@ -1,69 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_marginTop="@dimen/_5sdp"
-    android:layout_marginBottom="@dimen/_5sdp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/MainBackgroundColor"
-    android:maxHeight="70dp"
-    android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/_5sdp"
+    android:padding="@dimen/_5sdp">
+        <ImageView
+            android:id="@+id/AddressType"
+            android:scaleType="fitXY"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_width="@dimen/_60sdp"
+            android:layout_height="@dimen/_55sdp"
+            android:src="@drawable/office_building" />
 
-    <androidx.cardview.widget.CardView
-        android:padding="@dimen/_10sdp"
-        android:outlineSpotShadowColor="@color/MainTextColor"
-        app:cardPreventCornerOverlap="true"
-        app:cardBackgroundColor="@color/MainBackgroundColor"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:targetApi="p">
-        <RelativeLayout
+        <TextView
+            android:id="@+id/deliveryTo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_toEndOf="@+id/AddressType"
+            android:layout_alignParentTop="true"
+            android:text="Delivering to Home"
+            android:textAlignment="textStart"
+            android:textColor="@color/MainTextColor"
+            android:textSize="@dimen/_16ssp"
+            android:textStyle="normal" />
+
+        <TextView
+            android:id="@+id/deliveryAddress"
+            android:layout_width="@dimen/_170sdp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/deliveryTo"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_toEndOf="@+id/AddressType"
+            android:maxLines="2"
+            android:textAlignment="textStart"
+            android:text="6391 Elgin St. Celina, DelawareDelawareDelaware..."
+            android:textColor="@color/HintMainTextColor"
+            android:textSize="@dimen/_13ssp"
+            android:textStyle="normal" />
+
+        <TextView
+            android:id="@+id/edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:layout_toEndOf="@id/deliveryTo"
+            android:text="@string/edit_address"
+            android:textColor="@color/orange_secondary"
+            android:textSize="@dimen/_13ssp"
+            tools:ignore="RelativeOverlap" />
+
+
+        <ImageButton
+            android:id="@+id/delete"
+            android:layout_width="25dp"
+            android:layout_height="30dp"
+            android:layout_below="@id/edit"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginEnd="@dimen/_5sdp"
+            android:background="@null"
+            android:contentDescription="@string/tap_to_show_menu"
+            android:src="@drawable/ic_baseline_delete_24" />
+
+
+        <com.google.android.material.divider.MaterialDivider
+            android:id="@+id/line4"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/name"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_width="wrap_content"
-                android:layout_gravity="top"
-                android:layout_marginEnd="@dimen/_25sdp"
-                android:layout_height="wrap_content"
-                android:textColor="@color/colorPrimary"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:layout_marginStart="@dimen/_15sdp"
-                android:maxLines="1"
-                android:text="@string/address"
-                tools:ignore="RelativeOverlap" />
-
-            <TextView
-                android:id="@+id/address"
-                android:layout_alignParentStart="true"
-                android:layout_below="@id/name"
-                android:layout_width="wrap_content"
-                android:layout_marginEnd="@dimen/_25sdp"
-                android:layout_height="wrap_content"
-                android:textColor="@color/MainTextColor"
-                android:layout_marginTop="@dimen/_3sdp"
-                android:layout_marginStart="@dimen/_15sdp"
-                android:maxLines="2"
-                android:text="@string/address"/>
-
-
-            <ImageButton
-                android:id="@+id/edit"
-                android:layout_width="20dp"
-                android:layout_height="30dp"
-                android:src="@drawable/ic_baseline_delete_24"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:layout_marginEnd="@dimen/_5sdp"
-                android:layout_alignParentEnd="true"
-                android:background="@null"
-                android:contentDescription="@string/tap_to_show_menu" />
-        </RelativeLayout>
-
-    </androidx.cardview.widget.CardView>
-
-
+            android:layout_height="1dp"
+            android:layout_below="@id/AddressType"
+            android:layout_marginTop="3dp"
+            app:dividerColor="@color/secondary" />
 
 
 

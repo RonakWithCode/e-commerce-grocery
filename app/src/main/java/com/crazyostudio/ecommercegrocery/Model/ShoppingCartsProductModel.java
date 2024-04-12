@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 //Hey change
 //ShoppingCartsProductFirebaseModel
-public class ShoppingCartsProductModel implements Parcelable, Item, Serializable {
+public class ShoppingCartsProductModel implements Parcelable {
     private String productId;
     private String productName;
     private String productDescription;
@@ -237,16 +237,6 @@ public class ShoppingCartsProductModel implements Parcelable, Item, Serializable
         this.whoEdit = whoEdit;
     }
 
-    @Override
-    public BigDecimal getItemPrice() {
-        return BigDecimal.valueOf(price);
-    }
-
-
-    @Override
-    public String getItemName() {
-        return productName;
-    }
 
 
 }

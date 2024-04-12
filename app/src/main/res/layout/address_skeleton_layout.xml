@@ -1,0 +1,81 @@
+<!-- skeleton_layout.xml -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/skeletonLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/_5sdp"
+    android:padding="@dimen/_5sdp"
+    android:visibility="gone">
+
+    <!-- Address type icon -->
+    <View
+        android:id="@+id/AddressType"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_width="@dimen/_60sdp"
+        android:layout_height="@dimen/_55sdp"
+        android:background="@drawable/skeleton_shape" />
+
+    <!-- Delivery to text -->
+    <TextView
+        android:id="@+id/deliveryTo"
+        android:layout_width="@dimen/_170sdp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_5sdp"
+        android:layout_toEndOf="@+id/AddressType"
+        android:layout_alignParentTop="true"
+        android:textColor="@color/MainTextColor"
+        android:textSize="@dimen/_16ssp"
+        android:textStyle="normal"
+        android:background="@drawable/skeleton_shape" />
+
+    <!-- Delivery address text -->
+    <TextView
+        android:id="@+id/deliveryAddress"
+        android:layout_width="@dimen/_170sdp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/deliveryTo"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:layout_toEndOf="@+id/AddressType"
+        android:maxLines="2"
+        android:textAlignment="textStart"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:textColor="@color/HintMainTextColor"
+        android:textSize="@dimen/_13ssp"
+        android:textStyle="normal"
+        android:background="@drawable/skeleton_shape" />
+
+    <!-- Edit button -->
+    <TextView
+        android:id="@+id/edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_2sdp"
+        android:layout_toEndOf="@id/deliveryTo"
+        android:textColor="@color/orange_secondary"
+        android:textSize="@dimen/_13ssp"
+        android:background="@drawable/skeleton_shape" />
+
+    <!-- Delete button -->
+    <View
+        android:id="@+id/delete"
+        android:layout_width="25dp"
+        android:layout_height="30dp"
+        android:layout_below="@id/edit"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_marginEnd="@dimen/_5sdp"
+        android:background="@drawable/skeleton_shape" />
+
+    <!-- Divider line -->
+    <View
+        android:id="@+id/line4"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/AddressType"
+        android:layout_marginTop="3dp"
+        android:background="@color/secondary" />
+
+</RelativeLayout>

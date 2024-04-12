@@ -24,14 +24,12 @@ import java.util.ArrayList;
 public class ShoppingCartsAdapter extends RecyclerView.Adapter<ShoppingCartsAdapter.ShoppingCartsAdapterViewHolder> {
     ArrayList<ShoppingCartsProductModel> productModels;
     ShoppingCartsInterface shoppingCartsInterface;
-    Cart cart;
     Context context;
 
     public ShoppingCartsAdapter(ArrayList<ShoppingCartsProductModel> productModels, ShoppingCartsInterface shoppingCartsInterface, Context context) {
         this.productModels = productModels;
         this.shoppingCartsInterface = shoppingCartsInterface;
         this.context = context;
-        cart = TinyCartHelper.getCart();
     }
 
     @NonNull
@@ -45,7 +43,7 @@ public class ShoppingCartsAdapter extends RecyclerView.Adapter<ShoppingCartsAdap
     @Override
     public void onBindViewHolder(@NonNull ShoppingCartsAdapter.ShoppingCartsAdapterViewHolder holder, int position) {
         ShoppingCartsProductModel model  = productModels.get(position);
-        holder.binding.productName.setText(model.getItemName());
+        holder.binding.productName.setText(model.getProductName());
         Glide.with(context).load(model.getImageURL().get(0)).into(holder.binding.productImage);
         holder.binding.productQty.setText(model.getDefaultQuantity()+"");
         holder.binding.productPrice.setText("₹"+model.getPrice());

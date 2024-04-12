@@ -1,15 +1,18 @@
 package com.crazyostudio.ecommercegrocery.Adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.crazyostudio.ecommercegrocery.Model.AddressModel;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.databinding.AddresslayoutBinding;
@@ -35,13 +38,28 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressA
 
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull AddressAdapter.AddressAdapterViewHolder holder, int position) {
         AddressModel addressS = address.get(position);
-        holder.binding.address.setText(addressS.getAddress());
-        holder.binding.name.setText(addressS.getName());
+//        holder.binding.address.setText(addressS.getAddress());
+        String type;
+        if (addressS.isHomeSelected()) {
+            type = "Home";
+            Glide.with(context).load(R.drawable.home_shipping).into(holder.binding.AddressType);
+        }else {
+            type = "Work";
+            Glide.with(context).load(R.drawable.office_building).into(holder.binding.AddressType);
+        }
+
+
+        holder.binding.deliveryTo.setText("Delivering to "+type);
+        holder.binding.deliveryAddress.setText(addressS.getFlatHouse()+addressS.getAddress());
+        holder.binding.edit.setOnClickListener(view->{
+            Toast.makeText(context, "work", Toast.LENGTH_SHORT).show();
+        });
         holder.binding.getRoot().setOnClickListener(deliver-> addressInterface.addersSelect(addressS));
-        holder.binding.edit.setOnClickListener(Edit->
+        holder.binding.delete.setOnClickListener(Edit->
                 addressInterface.remove(addressS,position)
 //                showPopupMenu(holder.binding.edit,position,addressS)
         );

@@ -177,6 +177,18 @@
     <string name="grand_total">Grand Total</string>
     <string name="apply">apply</string>
     <string name="enter_coupon_code">Enter coupon code</string>
+    <string name="add">+add</string>
+    <string name="place_order">Place Order</string>
+    <string name="cod_amp_amp_upi"><![CDATA[(COD) && UPI]]></string>
+    <string name="pay_using">Pay using</string>
+    <string name="full_name">full name</string>
+    <string name="be_use_to_assist_delivery">be use to assist delivery</string>
+    <string name="e_g_near_hospital">E.g near hospital</string>
+    <string name="state">State</string>
+    <string name="home_">home</string>
+    <string name="work">Work</string>
+    <string name="alwar">Alwar</string>
+    <string name="town_city">Town/City</string>
 
 
 </resources>

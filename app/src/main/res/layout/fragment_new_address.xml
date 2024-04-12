@@ -1,137 +1,257 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/MainBackgroundColor"
     tools:context=".Adapter.newAddressFragment">
-
-
-    <com.makeramen.roundedimageview.RoundedImageView
-        android:id="@+id/backButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="@dimen/_15sdp"
-        android:layout_marginTop="@dimen/_15sdp"
-        android:layout_marginEnd="@dimen/_15sdp"
-        android:layout_marginBottom="@dimen/_15sdp"
-        android:src="@drawable/ic_baseline_arrow_back_24"
-        app:riv_oval="true" />
-
-
-    <TextView
-        android:layout_marginStart="@dimen/_25sdp"
-        android:layout_marginEnd="@dimen/_25sdp"
-        android:layout_marginTop="@dimen/_1sdp"
-        android:textColor="@color/MainTextColor"
-        android:text="@string/create_new_address"
-        android:textAlignment="center"
-        android:layout_below="@id/backButton"
-        android:textSize="@dimen/_25ssp"
-        android:layout_width="match_parent"
-        android:id="@+id/ViewText"
-        android:layout_height="wrap_content"/>
-
-
-    <TextView
-        android:textColor="@color/HintMainTextColor"
-        android:text="@string/give_some_basic_information"
-        android:textAlignment="center"
-        android:textSize="@dimen/_15ssp"
-        android:layout_below="@id/ViewText"
-        android:id="@+id/hintView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-
-    <LinearLayout
-
-        android:orientation="vertical"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/hintView"
-        android:layout_marginTop="@dimen/_15sdp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-
-
-        <com.google.android.material.textfield.TextInputLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:layout_marginStart="@dimen/_15sdp"
-            android:layout_marginEnd="@dimen/_15sdp"
-            android:hint="Name"
-            app:hintTextColor="@color/MainTextColor"
-            app:counterTextColor="@color/MainTextColor"
-            app:boxBackgroundColor="@color/MainBackgroundColor">
-            <com.google.android.material.textfield.TextInputEditText
+            android:layout_height="wrap_content">
+            <com.makeramen.roundedimageview.RoundedImageView
+                android:id="@+id/backButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:layout_marginEnd="@dimen/_15sdp"
+                android:src="@drawable/baseline_arrow_back_ios_new_24"
+                app:riv_oval="true" />
+
+
+            <TextView
+                android:layout_marginStart="@dimen/_25sdp"
+                android:layout_marginEnd="@dimen/_25sdp"
+                android:layout_marginTop="@dimen/_1sdp"
                 android:textColor="@color/MainTextColor"
-                android:id="@+id/Name"
+                android:text="@string/create_new_address"
+                android:textAlignment="center"
+                android:layout_below="@id/backButton"
+                android:textSize="@dimen/_25ssp"
                 android:layout_width="match_parent"
-                android:inputType="textPersonName"
-                android:layout_height="wrap_content" />
+                android:id="@+id/ViewText"
+                android:layout_height="wrap_content"/>
 
-        </com.google.android.material.textfield.TextInputLayout>
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_15sdp"
-            android:layout_marginEnd="@dimen/_15sdp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:hint="Phone"
-            app:hintTextColor="@color/MainTextColor"
-            app:counterTextColor="@color/MainTextColor"
-            app:boxBackgroundColor="@color/MainBackgroundColor">
-            <com.google.android.material.textfield.TextInputEditText
-                android:textColor="@color/MainTextColor"
-                android:id="@+id/Phone"
+
+            <TextView
+                android:textColor="@color/HintMainTextColor"
+                android:text="@string/give_some_basic_information"
+                android:textAlignment="center"
+                android:textSize="@dimen/_15ssp"
+                android:layout_below="@id/ViewText"
+                android:id="@+id/hintView"
                 android:layout_width="match_parent"
-                android:inputType="textPhonetic"
-                android:layout_height="wrap_content" />
-        </com.google.android.material.textfield.TextInputLayout>
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_15sdp"
-            android:layout_marginEnd="@dimen/_15sdp"
-            android:id="@+id/house"
-            app:endIconDrawable="@drawable/ic_baseline_my_location_24"
-            app:endIconCheckable="true"
-            app:endIconMode="custom"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:hint="Address House no,"
-            app:hintTextColor="@color/MainTextColor"
-            app:counterTextColor="@color/MainTextColor"
-            app:boxBackgroundColor="@color/MainBackgroundColor">
-            <com.google.android.material.textfield.TextInputEditText
-                android:textColor="@color/MainTextColor"
+                android:layout_height="wrap_content"/>
+
+
+            <LinearLayout
+
+                android:orientation="vertical"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/hintView"
+                android:layout_marginTop="@dimen/_15sdp"
                 android:layout_width="match_parent"
-                android:id="@+id/address"
-                android:inputType="textPostalAddress"
-                android:autofillHints="postalAddress"
-                android:layout_height="wrap_content" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_height="wrap_content">
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:layout_marginEnd="@dimen/_15sdp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:hint="@string/full_name"
+                    app:hintTextColor="@color/MainTextColor"
+                    app:counterTextColor="@color/MainTextColor">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:textColor="@color/MainTextColor"
+                        android:id="@+id/Name"
+                        android:layout_width="match_parent"
+                        android:inputType="textPersonName"
+                        android:layout_height="wrap_content" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:layout_marginEnd="@dimen/_15sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:hint="@string/mobile_number"
+                    app:hintTextColor="@color/MainTextColor"
+                    app:counterTextColor="@color/MainTextColor"
+                    app:helperText="@string/be_use_to_assist_delivery"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    >
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:textColor="@color/MainTextColor"
+                        android:id="@+id/Phone"
+                        android:maxLength="10"
+                        android:layout_width="match_parent"
+                        android:inputType="number"
+                        android:layout_height="wrap_content" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:layout_marginEnd="@dimen/_15sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:hint="Flat, house no"
+                    app:hintTextColor="@color/MainTextColor"
+                    app:helperText="Flat or house no"
+                    app:counterTextColor="@color/MainTextColor"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    >
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:textColor="@color/MainTextColor"
+                        android:layout_width="match_parent"
+                        android:id="@+id/flat_house"
+                        android:inputType="textPostalAddress"
+                        android:autofillHints="postalAddress"
+                        android:layout_height="wrap_content" />
+                </com.google.android.material.textfield.TextInputLayout>
 
 
 
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/save_address"
-            android:layout_marginTop="@dimen/_15sdp"
-            android:id="@+id/save"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
-    <ProgressBar
-        android:visibility="invisible"
-        android:id="@+id/progress_circular"
-        android:layout_centerInParent="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:layout_marginEnd="@dimen/_15sdp"
+                    android:id="@+id/house"
+                    app:endIconDrawable="@drawable/ic_baseline_my_location_24"
+                    app:endIconCheckable="true"
+                    app:endIconMode="custom"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:hint="@string/full_address_area_street"
+                    app:hintTextColor="@color/MainTextColor"
+                    app:counterTextColor="@color/MainTextColor"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    >
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:textColor="@color/MainTextColor"
+                        android:layout_width="match_parent"
+                        android:id="@+id/address"
+                        android:inputType="textPostalAddress"
+                        android:autofillHints="postalAddress"
+                        android:layout_height="wrap_content" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-</RelativeLayout>
+
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:layout_marginEnd="@dimen/_15sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:hint="@string/landmark"
+                    app:helperText="@string/e_g_near_hospital"
+                    app:hintTextColor="@color/MainTextColor"
+                    app:counterTextColor="@color/MainTextColor"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    >
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:textColor="@color/MainTextColor"
+                        android:layout_width="match_parent"
+                        android:id="@+id/landmark"
+                        android:inputType="textPostalAddress"
+                        android:autofillHints="postalAddress"
+                        android:layout_height="wrap_content" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:layout_marginEnd="@dimen/_15sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:hint="@string/town_city"
+                    android:enabled="false"
+                    app:hintTextColor="@color/MainTextColor"
+                    app:counterTextColor="@color/MainTextColor"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    >
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:textColor="@color/MainTextColor"
+                        android:text="@string/alwar"
+                        android:layout_width="match_parent"
+                        android:inputType="textPostalAddress"
+                        android:autofillHints="postalAddress"
+                        android:layout_height="wrap_content" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:layout_marginEnd="@dimen/_15sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:hint="@string/state"
+                    android:enabled="false"
+                    app:hintTextColor="@color/MainTextColor"
+                    app:counterTextColor="@color/MainTextColor"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    >
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:textColor="@color/MainTextColor"
+                        android:text="@string/rajasthan"
+                        android:layout_width="match_parent"
+                        android:inputType="textPostalAddress"
+                        android:autofillHints="postalAddress"
+                        android:layout_height="wrap_content" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <RadioGroup
+                    android:layout_margin="@dimen/_5sdp"
+                    android:padding="3dp"
+                    android:id="@+id/types"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <RadioButton
+                        android:checked="true"
+                        android:id="@+id/home"
+                        android:text="@string/home_"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <RadioButton
+                        android:id="@+id/work"
+                        android:text="@string/work"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                </RadioGroup>
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/save_address"
+                    android:layout_marginTop="@dimen/_15sdp"
+                    android:id="@+id/save"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+
+            <ProgressBar
+                android:visibility="invisible"
+                android:id="@+id/progress_circular"
+                android:layout_centerInParent="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+    </RelativeLayout>
+
+</ScrollView>

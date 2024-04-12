@@ -206,8 +206,6 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content">
 
-                    <!-- In RadioGroup create the 1 Radio Button-->
-                    <!-- like this we will add some more Radio Button-->
                     <RadioButton
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

@@ -45,7 +45,7 @@ public class RemoveBottomSheetDialogFragment  extends BottomSheetDialogFragment 
             dismiss();
         });
 
-        binding.productName.setText(model.getItemName());
+        binding.productName.setText(model.getProductName());
         Glide.with(requireContext()).load(model.getImageURL().get(0)).into(binding.productImage);
         binding.productQty.setText(model.getDefaultQuantity()+"");
         binding.productPrice.setText("₹"+model.getPrice());

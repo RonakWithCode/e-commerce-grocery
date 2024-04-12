@@ -20,6 +20,7 @@ import com.crazyostudio.ecommercegrocery.HelperClass.ShoppingCartHelper;
 import com.crazyostudio.ecommercegrocery.Model.AddressModel;
 import com.crazyostudio.ecommercegrocery.Model.OrderModel;
 import com.crazyostudio.ecommercegrocery.Model.ShoppingCartsProductFirebaseModel;
+import com.crazyostudio.ecommercegrocery.Model.ShoppingCartsProductModel;
 import com.crazyostudio.ecommercegrocery.Model.UserinfoModels;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
@@ -54,7 +55,7 @@ public class PaymentScreenFragment extends Fragment implements OrderProductInter
     private double newCouponValue = 0;
     private DatabaseService databaseService;
     private boolean CouponValueIsApply = false;
-    private ArrayList<ShoppingCartsProductFirebaseModel> ShowProductModels;
+    private ArrayList<ShoppingCartsProductModel> ShowProductModels;
 
     private static final String RupeeSymbols = "₹";
     private static final int STANDARD = 30;
@@ -213,8 +214,8 @@ public class PaymentScreenFragment extends Fragment implements OrderProductInter
         });
         binding.Change.setOnClickListener(Change-> requireActivity().onBackPressed());
         binding.orderShippingAddress.setText(adders.getAddress());
-        binding.orderContactName.setText(adders.getName());
-        binding.orderContactPhone.setText(adders.getPhone());
+//        binding.orderContactName.setText(adders.getName());
+//        binding.orderContactPhone.setText(adders.getPhone());
 //        binding.orderContactEmail.setText(userinfoModels.getEmailAddress());
         binding.orderDetailsPayBtn.setOnClickListener(view -> {
             long time = System.currentTimeMillis();
@@ -234,9 +235,9 @@ public class PaymentScreenFragment extends Fragment implements OrderProductInter
         return binding.getRoot();
     }
     private void getProduct() {
-        databaseService.getUserCartByIdShoppingCarts(FirebaseAuth.getInstance().getUid(), new DatabaseService.GetUserCartByIdShoppingCartsProductCallback() {
+        databaseService.getUserCartById(FirebaseAuth.getInstance().getUid(), new DatabaseService.GetUserCartByIdCallback() {
             @Override
-            public void onSuccess(ArrayList<ShoppingCartsProductFirebaseModel> cartsProductModels) {
+            public void onSuccess(ArrayList<ShoppingCartsProductModel> cartsProductModels) {
                 ShowProductModels.addAll(cartsProductModels);
                 binding.progressCircular.setVisibility(View.GONE);
                 ShowProduct();
@@ -259,29 +260,29 @@ public class PaymentScreenFragment extends Fragment implements OrderProductInter
         String orderId = time + FirebaseAuth.getInstance().getUid();
         double totalSavings = ShoppingCartHelper.calculateTotalSavings(ShowProductModels);
 
-        OrderModel orderModel = new OrderModel(adders.getName(),orderId,addersMode,ShowProductModels,"shipped",adders.getAddress(),adders.getPhone(),Subtotal,ShippingFee,total,"Padding",PaymentMode,time,FirebaseAuth.getInstance().getUid(),"userinfoModels.getToken()",0,totalSavings,"Hey@gmail.com");
-        databaseService.PlaceOder(orderModel, new DatabaseService.PlaceOrderCallback() {
-            @Override
-            public void onSuccess() {
-                if (progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                    cart.clearCart();
-                    Intent i = new Intent(requireContext(), OrderDetailsActivity.class);
-                    i.putExtra("Type","placeOrder");
-                    i.putExtra("userModel",userinfoModels);
-                    i.putExtra("orderModel",orderModel);
-                    requireActivity().finish();
-                    startActivity(i);
-                }
-            }
-            @Override
-            public void onError(Exception errorMessage) {
-                if (progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                }
-                basicFun.AlertDialog(requireContext(), errorMessage.toString());
-            }
-        });
+//        OrderModel orderModel = new OrderModel(adders.getName(),orderId,addersMode,ShowProductModels,"shipped",adders.getAddress(),adders.getPhone(),Subtotal,ShippingFee,total,"Padding",PaymentMode,time,FirebaseAuth.getInstance().getUid(),"userinfoModels.getToken()",0,totalSavings,"Hey@gmail.com");
+//        databaseService.PlaceOder(orderModel, new DatabaseService.PlaceOrderCallback() {
+//            @Override
+//            public void onSuccess() {
+//                if (progressDialog.isShowing()) {
+//                    progressDialog.dismiss();
+//                    cart.clearCart();
+//                    Intent i = new Intent(requireContext(), OrderDetailsActivity.class);
+//                    i.putExtra("Type","placeOrder");
+//                    i.putExtra("userModel",userinfoModels);
+//                    i.putExtra("orderModel",orderModel);
+//                    requireActivity().finish();
+//                    startActivity(i);
+//                }
+//            }
+//            @Override
+//            public void onError(Exception errorMessage) {
+//                if (progressDialog.isShowing()) {
+//                    progressDialog.dismiss();
+//                }
+//                basicFun.AlertDialog(requireContext(), errorMessage.toString());
+//            }
+//        });
     }
 
     private void ShowProduct(){
@@ -293,7 +294,7 @@ public class PaymentScreenFragment extends Fragment implements OrderProductInter
         binding.progressCircular.setVisibility(View.GONE);
     }
     @Override
-    public void onOrder(ShoppingCartsProductFirebaseModel model) {
+    public void onOrder(ShoppingCartsProductModel model) {
 
     }
 }
