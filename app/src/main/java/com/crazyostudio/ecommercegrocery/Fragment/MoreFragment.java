@@ -34,6 +34,9 @@ public class MoreFragment extends Fragment {
         binding = FragmentMoreBinding.inflate(inflater,container,false);
 
 
+
+
+
         authService = new AuthService();
         if (authService.IsLogin()) {
             binding.relativeNotAuth.setVisibility(View.VISIBLE);
@@ -61,12 +64,12 @@ public class MoreFragment extends Fragment {
             Intent intent = new Intent(requireContext(), AllOrderActivity.class);
             startActivity(intent);
         });
-        binding.address.setOnClickListener(view -> {
-            Intent intent = new Intent(requireContext(), FragmentLoader.class);
-            intent.putExtra("LoadID","MoreAddress");
+//        binding.address.setOnClickListener(view -> {
+//            Intent intent = new Intent(requireContext(), FragmentLoader.class);
 //            intent.putExtra("LoadID","MoreAddress");
-            startActivity(intent);
-        });
+////            intent.putExtra("LoadID","MoreAddress");
+//            startActivity(intent);
+//        });
         binding.continueShipping.setOnClickListener(view -> {
             requireActivity().finish();
             startActivity(new Intent(requireContext(), MainActivity.class));

@@ -16,6 +16,7 @@ import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.Services.AuthService;
 import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentAuthUserDetailsBinding;
+import com.crazyostudio.ecommercegrocery.javaClasses.TokenManager;
 import com.crazyostudio.ecommercegrocery.javaClasses.basicFun;
 import com.google.android.gms.tasks.Task;
 
@@ -57,6 +58,7 @@ public class AuthUserDetailsFragment extends Fragment {
             service.CheckNotificationToken(new DatabaseService.UpdateTokenCallback() {
                 @Override
                 public void onSuccess(String token) {
+                    TokenManager.getInstance(requireContext()).saveToken(token);
                     setupUser(token);
 
                 }
@@ -71,12 +73,10 @@ public class AuthUserDetailsFragment extends Fragment {
     }
 
     void setupUser(String token){
-
         UserinfoModels UserinfoModels = new UserinfoModels(token,uid, Objects.requireNonNull(binding.Name.getText()).toString(),number,true);
         service.setUserInfo(UserinfoModels, new DatabaseService.SetUserInfoCallback() {
             @Override
             public void onSuccess(Task<Void> task) {
-
                 requireActivity().finish();
             }
             @Override

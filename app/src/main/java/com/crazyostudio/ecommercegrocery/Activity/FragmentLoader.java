@@ -24,17 +24,18 @@ public class FragmentLoader extends AppCompatActivity {
         String id = getIntent().getStringExtra("LoadID");
         if (id.isEmpty()) {
             finish();
-        }else if (id.equals("MoreAddress")){
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            Fragment fragment = new AddressFragment();
-            Bundle bundle = new Bundle();
-            bundle.putString("LoadID",id);
-            bundle.putString("BuyType","viewAddress");
-            fragment.setArguments(bundle);
-            transaction.replace(R.id.fragment_container,fragment,id);
-            transaction.addToBackStack(id);
-            transaction.commit();
         }
+//        else if (id.equals("MoreAddress")){
+//            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//            Fragment fragment = new AddressFragment();
+//            Bundle bundle = new Bundle();
+//            bundle.putString("LoadID",id);
+//            bundle.putString("BuyType","viewAddress");
+//            fragment.setArguments(bundle);
+//            transaction.replace(R.id.fragment_container,fragment,id);
+//            transaction.addToBackStack(id);
+//            transaction.commit();
+//        }
         else if (id.equals("UserAccountFragment")){
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             Fragment fragment = new UserAccountFragment();

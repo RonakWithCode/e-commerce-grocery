@@ -73,11 +73,6 @@
                         android:text="@string/check_order"
                         />
                     <Button style="@style/MoreButtonLight"
-                        android:padding="@dimen/_1sdp"
-                        android:id="@+id/address"
-                        android:text="@string/address"
-                        />
-                    <Button style="@style/MoreButtonLight"
                         android:id="@+id/setPickup"
                         android:padding="@dimen/_1sdp"
                         android:text="@string/set_up_fast_pickup"

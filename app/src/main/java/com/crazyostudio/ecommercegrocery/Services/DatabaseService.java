@@ -1,6 +1,7 @@
 package com.crazyostudio.ecommercegrocery.Services;
 
 import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.util.Log;
 import android.view.View;
@@ -472,15 +473,12 @@ public class DatabaseService {
 //    TODO write code Update Token in this code //-->
 
     public void CheckNotificationToken(UpdateTokenCallback callback){
-        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
-            @Override
-            public void onComplete(@NonNull Task<String> task) {
-                if (task.isSuccessful()) {
-                    callback.onSuccess(task.getResult());
-                    Log.i("ThisMainActivityLog", "onComplete: " + task.getResult());
-                }else {
-                    callback.onError(Objects.requireNonNull(task.getException()).toString());
-                }
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                callback.onSuccess(task.getResult());
+                Log.i("ThisMainActivityLog", "onComplete: " + task.getResult());
+            }else {
+                callback.onError(Objects.requireNonNull(task.getException()).toString());
             }
         });
     }
@@ -509,6 +507,9 @@ public class DatabaseService {
 //                    }
 //                });
 //    }
+
+
+
 
     public void getUserInfo(String userId, getUserInfoCallback callback) {
         database.collection("UserInfo").document(userId).get().addOnCompleteListener(task -> {

@@ -30,6 +30,7 @@ import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentAuthOTPBinding;
 import com.crazyostudio.ecommercegrocery.javaClasses.GetPublicIpAddressTask;
 import com.crazyostudio.ecommercegrocery.javaClasses.IpGeolocationTask;
+import com.crazyostudio.ecommercegrocery.javaClasses.TokenManager;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
@@ -41,7 +42,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -51,6 +51,7 @@ import java.util.concurrent.TimeUnit;
 public class AuthOTP extends Fragment {
     FragmentAuthOTPBinding binding;
     ProgressDialog dialog;
+    private final static String TAG = "AuthOTP";
     String verificationId;
     FirebaseAuth firebaseAuth;
     private EditText mEt1, mEt2, mEt3, mEt4, mEt5, mEt6;
@@ -238,63 +239,129 @@ public class AuthOTP extends Fragment {
 
     }
 
-    private void RecentLogins() {
-        ArrayList<String> time = new ArrayList<>();
-        ArrayList<String> device = new ArrayList<>();
-        ArrayList<String> IP_ARRAY = new ArrayList<>();
-        ArrayList<String> approximateLocation = new ArrayList<>();
-        RecentLoginsModels models = new RecentLoginsModels();
-        if (Objects.requireNonNull(firebaseAuth.getCurrentUser()).getDisplayName() != null) {
-            FirebaseDatabase.getInstance().getReference().child("RecentLogins").child(Objects.requireNonNull(firebaseAuth.getUid())).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    RecentLoginsModels models5 = snapshot.getValue(RecentLoginsModels.class);
-                    assert models5 != null;
-                    time.addAll(models5.getTime());
-                    approximateLocation.addAll(models5.getApproximateLocation());
-                    IP_ARRAY.addAll(models5.getIp());
-                    device.addAll(models5.getDevice());
+//    private void recentLogins() {
+//        try {
+//            ArrayList<String> time = new ArrayList<>();
+//            ArrayList<String> device = new ArrayList<>();
+//            ArrayList<String> ipArray = new ArrayList<>();
+//            ArrayList<String> approximateLocation = new ArrayList<>();
+//
+//            String deviceName = Build.MANUFACTURER + " " + Build.MODEL;
+//            device.add(deviceName);
+//            time.add(String.valueOf(System.currentTimeMillis()));
+//
+//            new GetPublicIpAddressTask(ipAddress -> {
+//                if (ipAddress != null) {
+//                    ipArray.add(ipAddress);
+//
+//                    new IpGeolocationTask((city, country) -> {
+//                        if (city != null && country != null) {
+//                            approximateLocation.add("City: " + city + ", Country: " + country);
+//
+//                            // Update RecentLoginsModels object
+//                            RecentLoginsModels models = new RecentLoginsModels();
+//                            models.setIp(ipArray);
+//                            models.setDevice(device);
+//                            models.setTime(time);
+//                            models.setApproximateLocation(approximateLocation);
+//
+//                            // Save to Firebase
+//                            saveRecentLogins(models);
+//                        } else {
+//                            firebaseAuth.signOut();
+//                        }
+//                    }).execute(ipAddress);
+//                } else {
+//                    firebaseAuth.signOut();
+//                }
+//            }).execute();
+//        } catch (Exception e) {
+//            signIn();
+//            Log.e(TAG, "RecentLogins: " + e.getMessage(), e);
+//        }
+//    }
+//
+//    private void saveRecentLogins(RecentLoginsModels models) {
+//        if (firebaseAuth.getCurrentUser() != null) {
+//            FirebaseDatabase.getInstance().getReference().child("RecentLogins").child(firebaseAuth.getUid()).setValue(models)
+//                    .addOnCompleteListener(task -> {
+//                        if (task.isSuccessful()) {
+//                            signIn();
+//                        } else {
+//                            Toast.makeText(requireContext(), Objects.requireNonNull(task.getException()).toString(), Toast.LENGTH_SHORT).show();
+//                            firebaseAuth.signOut();
+//                        }
+//                    })
+//                    .addOnFailureListener(fail -> {
+//                        firebaseAuth.signOut();
+//                    });
+//        }
+//    }
 
+    private void  RecentLogins() {
+        try {
+            ArrayList<String> time = new ArrayList<>();
+            ArrayList<String> device = new ArrayList<>();
+            ArrayList<String> IP_ARRAY = new ArrayList<>();
+            ArrayList<String> approximateLocation = new ArrayList<>();
+            RecentLoginsModels models = new RecentLoginsModels();
+            if (Objects.requireNonNull(firebaseAuth.getCurrentUser()).getDisplayName() != null) {
+                FirebaseDatabase.getInstance().getReference().child("RecentLogins").child(Objects.requireNonNull(firebaseAuth.getUid())).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            RecentLoginsModels models5 = snapshot.getValue(RecentLoginsModels.class);
+                            assert models5 != null;
+                            time.addAll(models5.getTime());
+                            approximateLocation.addAll(models5.getApproximateLocation());
+                            IP_ARRAY.addAll(models5.getIp());
+                            device.addAll(models5.getDevice());
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+
+            String deviceName = Build.MANUFACTURER + " " + Build.MODEL;
+            device.add(deviceName);
+            time.add(String.valueOf(System.currentTimeMillis()));
+            final String[] ip = new String[1];
+            new GetPublicIpAddressTask(ipAddress -> {
+                if (ipAddress != null) {
+                    ip[0] = ipAddress;
+                    IP_ARRAY.add(ipAddress);
                 }
+            }).execute();
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
+            new IpGeolocationTask((city, country) -> {
+                if (city != null && country != null) {
+                    approximateLocation.add("City: " + city + ", Country: " + country);
+                    models.setIp(IP_ARRAY);
+                    models.setDevice(device);
+                    models.setTime(time);
+                    models.setApproximateLocation(approximateLocation);
+                    FirebaseDatabase.getInstance().getReference().child("RecentLogins").child(Objects.requireNonNull(firebaseAuth.getUid())).setValue(models).addOnCompleteListener(task->{
+                        if (task.isSuccessful()) {
+                            Sigin();
+                        }else {
+                            Toast.makeText(requireContext(), Objects.requireNonNull(task.getException()).toString(), Toast.LENGTH_SHORT).show();
+                            firebaseAuth.signOut();
+                        }
+                    }).addOnFailureListener(fail->firebaseAuth.signOut());
 
+                } else {
+                    firebaseAuth.signOut();
                 }
-            });
+            }).execute(ip);
+        }catch (Exception e){
+            Sigin();
+            Log.i(TAG, "RecentLogins: "+e);
         }
 
-        String deviceName = Build.MANUFACTURER + " " + Build.MODEL;
-        device.add(deviceName);
-        time.add(String.valueOf(System.currentTimeMillis()));
-        final String[] ip = new String[1];
-        new GetPublicIpAddressTask(ipAddress -> {
-            if (ipAddress != null) {
-                ip[0] = ipAddress;
-                IP_ARRAY.add(ipAddress);
-            }
-        }).execute();
-
-        new IpGeolocationTask((city, country) -> {
-            if (city != null && country != null) {
-                approximateLocation.add("City: " + city + ", Country: " + country);
-                models.setIp(IP_ARRAY);
-                models.setDevice(device);
-                models.setTime(time);
-                models.setApproximateLocation(approximateLocation);
-                FirebaseDatabase.getInstance().getReference().child("RecentLogins").child(Objects.requireNonNull(firebaseAuth.getUid())).setValue(models).addOnCompleteListener(task->{
-                    if (task.isSuccessful()) {
-                        Sigin();
-                    }else {
-                        Toast.makeText(requireContext(), Objects.requireNonNull(task.getException()).toString(), Toast.LENGTH_SHORT).show();
-                        firebaseAuth.signOut();
-                    }
-                }).addOnFailureListener(fail->firebaseAuth.signOut());
-
-            } else {
-                firebaseAuth.signOut();
-            }
-        }).execute(ip);
     }
 //    private void Sigin() {
 //        Bundle bundle = new Bundle();
@@ -328,7 +395,7 @@ public class AuthOTP extends Fragment {
             @Override
             public void onSuccess(String token) {
                 if (firebaseAuth.getCurrentUser() != null && firebaseAuth.getCurrentUser().getDisplayName() != null) {
-                    UpdateToken(token,0);
+                    UpdateToken(token);
                 }else {
 //                    bundle.putString("token", token);
                     bundle.putString("number", number);
@@ -349,27 +416,17 @@ public class AuthOTP extends Fragment {
 
 //    TODO below the not tested
 
-    private void UpdateToken(String token, int time) {
+    private void UpdateToken(String token) {
+        TokenManager.getInstance(requireContext()).saveToken(token);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference userRef = db.collection("UserInfo").document(Objects.requireNonNull(firebaseAuth.getUid()));
         userRef.update("token", token)
                 .addOnSuccessListener(aVoid -> {
-                    // Token update successful
                     binding.ProgressBar.setVisibility(View.GONE);
                     requireActivity().finish();
                 })
-                .addOnFailureListener(e -> {
-                    // Token update failed
-                    if (time == 0) {
-                        // Retry once if update fails for the first time
-                        binding.ProgressBar.setVisibility(View.GONE);
-                        UpdateToken(token, 1);
-                    } else {
-                        // Sign out if update fails again
-                        firebaseAuth.signOut();
-                        binding.ProgressBar.setVisibility(View.GONE);
-                    }
-                });
+                .addOnFailureListener(e -> Toast.makeText(context, "Failure to save Token.", Toast.LENGTH_SHORT).show());
+
     }
 
 

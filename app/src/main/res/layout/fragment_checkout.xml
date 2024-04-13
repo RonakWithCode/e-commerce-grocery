@@ -10,6 +10,7 @@
 
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/shimmer_layout"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/_5sdp">
@@ -453,7 +454,7 @@
 
 
     <ScrollView
-        android:visibility="gone"
+        android:visibility="visible"
         android:id="@+id/ScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -814,6 +815,25 @@
                     android:layout_marginTop="3dp"
                     app:dividerColor="@color/secondary" />
 
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/note"
+                    android:layout_margin="@dimen/_10ssp"
+                    android:layout_below="@id/line4"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:helperText="Note to Seller or delivery boy"
+                    android:hint="@string/notes">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        />
+
+
+
+                </com.google.android.material.textfield.TextInputLayout>
 
 
             </RelativeLayout>

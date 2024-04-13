@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -22,7 +23,9 @@ import com.crazyostudio.ecommercegrocery.Fragment.HomeFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.MoreFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.SearchFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.ShoppingCartsFragment;
+import com.crazyostudio.ecommercegrocery.Services.AuthService;
 import com.crazyostudio.ecommercegrocery.databinding.ActivityMainBinding;
+import com.google.firebase.auth.FirebaseAuth;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -52,6 +55,10 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         }
+
+//        Log.i("MAIN.TAG", "onCreate: "+ FirebaseAuth.getInstance().token);
+
+
 //        CheckNotificationToken();
 //        loader(new PinCodeFragment(),"null");
         loader(new HomeFragment(),"null");

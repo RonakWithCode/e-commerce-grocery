@@ -20,13 +20,13 @@ import com.crazyostudio.ecommercegrocery.Model.Customer;
 import com.crazyostudio.ecommercegrocery.Model.OrderModel;
 import com.crazyostudio.ecommercegrocery.Model.Payment;
 import com.crazyostudio.ecommercegrocery.Model.Shipping;
-import com.crazyostudio.ecommercegrocery.Model.ShoppingCartsProductFirebaseModel;
 import com.crazyostudio.ecommercegrocery.Model.ShoppingCartsProductModel;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.Services.AuthService;
 import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentCheckoutBinding;
 import com.crazyostudio.ecommercegrocery.interfaceClass.ShoppingCartsInterface;
+import com.crazyostudio.ecommercegrocery.javaClasses.TokenManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -91,7 +91,7 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
 //        productModels = new ArrayList<>();
 //        recommendationsAdapter = new RecommendationsAdapter(productModels,this,requireContext());
 //        binding.recommendationsProduct.setAdapter(recommendationsAdapter);
-//        binding.recommendationsProduct.setLayoutManager(new LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false));
+//        binding.recommendationsProduct.setLayoutManager(new LinearLayoutManager(requireContext(),LinearLayoutManager.
         binding.CardView.setAdapter(cartsAdapter);
         binding.CardView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
@@ -159,9 +159,7 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
         initAddress();
         loadProductFromCart();
 
-        binding.placeBtn.setOnClickListener(view->{
-            placeOrder(System.currentTimeMillis(),"cash","pending");
-        });
+        binding.placeBtn.setOnClickListener(view-> placeOrder(System.currentTimeMillis(),"cash","pending"));
 
         return binding.getRoot();
     }
@@ -281,7 +279,7 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
 
     public void placeOrder(long time,String paymentMethod,String paymentStatus){
         String orderId = time + FirebaseAuth.getInstance().getUid();
-        double totalSavings = ShoppingCartHelper.calculateTotalSavings(models);
+//        double totalSavings = ShoppingCartHelper.calculateTotalSavings(models);
         final double finalTotal = ShoppingCartHelper.calculateTotalPrices(models);
 //    public OrderModel(String orderId, Customer customer, ArrayList< ShoppingCartsProductFirebaseModel > orderItems, double orderTotalPrice, String couponCode, String orderStatus, Payment
 //        payment, Shipping shipping, Date orderDate, String notes, String token) {
@@ -289,12 +287,20 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
         Payment payment = new Payment(paymentMethod,paymentStatus);
         Shipping shipping = new Shipping("Standing","free",addressModel,"OnPending");
         Date currentDate = new Date();
-        OrderModel orderModel = new OrderModel(orderId,customer,models,finalTotal,binding.couponCode.getEditText().getText().toString(),"OnPending",payment, shipping
-                ,currentDate ,"","");
+        String couponCode = "NoCouponCode";
+        String token = TokenManager.getInstance(requireContext()).getToken();
+
+        if (!Objects.requireNonNull(binding.couponCode.getEditText()).getText().toString().isEmpty()) {
+            couponCode = binding.couponCode.getEditText().getText().toString();
+        }
+
+        OrderModel orderModel = new OrderModel(orderId,customer,models,finalTotal,couponCode,"OnPending",payment, shipping
+                ,currentDate , Objects.requireNonNull(binding.note.getEditText()).getText().toString(),token);
 
         databaseService.PlaceOder(orderModel, new DatabaseService.PlaceOrderCallback() {
             @Override
             public void onSuccess() {
+                requireActivity().finish();
 
             }
             @Override
