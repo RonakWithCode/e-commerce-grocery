@@ -80,7 +80,7 @@ public class AllOrderActivity extends AppCompatActivity implements OrderInterfac
         LinearLayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
         binding.itemRecycler.setLayoutManager(layoutManager);
 
-        database.getReference().child("Order").child(FirebaseAuth.getInstance().getUid()).addValueEventListener(new ValueEventListener() {
+        database.getReference().child("Order").child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid())).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot snapshot1 : snapshot.getChildren()) {
@@ -105,35 +105,17 @@ public class AllOrderActivity extends AppCompatActivity implements OrderInterfac
 
         orderProductAdapter = new ViewOrderProductAdapter(orderModel,this, this);
         binding.itemRecycler.setAdapter(orderProductAdapter);
-
         orderProductAdapter.notifyDataSetChanged();
 
     }
 
 
     @Override
-    public void onOrder(OrderModel orderModel) {
+    public void onOrder(OrderModel orderModels) {
         binding.progressCircular.setVisibility(View.VISIBLE);
-        database.getReference().child("UserInfo").child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid())).addListenerForSingleValueEvent(new ValueEventListener() {
-            @SuppressLint("NotifyDataSetChanged")
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    binding.progressCircular.setVisibility(View.INVISIBLE);
-                    userInfo = snapshot.getValue(UserinfoModels.class);
-//                    assert userInfo != null;
-//                    userInfo.setEmailAddress(snapshot.child("emailAddress").toString());
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
         Intent i = new Intent(this, OrderDetailsActivity.class);
-        i.putExtra("Type","seeOrder");
-        i.putExtra("userModel",userInfo);
-        i.putExtra("orderModel",orderModel);
+        i.putExtra("orderID", orderModels.getOrderId());
+        i.putExtra("orderModel", orderModels);
         startActivity(i);
     }
 }

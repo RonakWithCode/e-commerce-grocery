@@ -42,9 +42,12 @@ public class OrderModel implements Parcelable {
     protected OrderModel(Parcel in) {
         orderId = in.readString();
         orderItems = in.createTypedArrayList(ShoppingCartsProductModel.CREATOR);
+        customer = in.readParcelable(Customer.class.getClassLoader());
         orderTotalPrice = in.readDouble();
         CouponCode = in.readString();
         orderStatus = in.readString();
+        payment = in.readParcelable(Payment.class.getClassLoader());
+        shipping = in.readParcelable(Shipping.class.getClassLoader());
         notes = in.readString();
         token = in.readString();
     }

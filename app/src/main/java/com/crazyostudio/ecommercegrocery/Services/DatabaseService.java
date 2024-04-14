@@ -27,6 +27,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
@@ -620,13 +621,10 @@ public class DatabaseService {
 
 
     public void PlaceOder(OrderModel order,PlaceOrderCallback callback){
-            database.collection("Order").document(order.getCustomer().getCustomerId()).collection(order.getOrderId())
-                    .add(order).addOnCompleteListener(task -> {
-                        if (task.isSuccessful()){
-                            callback.onSuccess();
-                        }
-                    })
-                    .addOnFailureListener(callback::onError);
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        firebaseDatabase.getReference().child("Order").child(order.getCustomer().getCustomerId()).child(order.getOrderId()).setValue(order).addOnCompleteListener(task -> callback.onSuccess()).addOnFailureListener(callback::onError);
     }
+
+
 
 }

@@ -103,7 +103,7 @@
     <string name="billing_details">Billing Details</string>
     <string name="billing_details_shipping_details">Billing Details || Shipping details</string>
     <string name="continue_shopping">Continue Shopping</string>
-    <string name="order_delivery">Order delivery</string>
+    <string name="order_delivery">Order delivery on</string>
     <string name="order">Order</string>
     <string name="you_save_upto">you save Upto</string>
     <string name="tap_back">Tap back</string>
@@ -196,5 +196,6 @@
     <string name="alwar">Alwar</string>
     <string name="town_city">Town/City</string>
     <string name="notes">Notes</string>
+    <string name="close">Close</string>
 
 </resources>

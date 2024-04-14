@@ -2,7 +2,6 @@ package com.crazyostudio.ecommercegrocery.Fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,9 +22,7 @@ import com.crazyostudio.ecommercegrocery.databinding.FragmentMoreBinding;
 public class MoreFragment extends Fragment {
     FragmentMoreBinding binding;
     AuthService authService;
-    public MoreFragment() {
-        // Required empty public constructor
-    }
+    public MoreFragment() {}
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,

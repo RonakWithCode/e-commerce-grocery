@@ -5,18 +5,22 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import java.util.Date;
+
 public class Shipping implements Parcelable {
     private String shippingMethod;
     private String ShippingFee;
+    private Date deliveredData;
     private AddressModel shippingAddress;
     private String shippingStatus;
 
     public Shipping() {
     }
 
-    public Shipping(String shippingMethod, String shippingFee, AddressModel shippingAddress, String shippingStatus) {
+    public Shipping(String shippingMethod, String shippingFee, Date deliveredData, AddressModel shippingAddress, String shippingStatus) {
         this.shippingMethod = shippingMethod;
         ShippingFee = shippingFee;
+        this.deliveredData = deliveredData;
         this.shippingAddress = shippingAddress;
         this.shippingStatus = shippingStatus;
     }
@@ -51,7 +55,13 @@ public class Shipping implements Parcelable {
     public String getShippingMethod() {
         return shippingMethod;
     }
+    public Date getDeliveredData() {
+        return deliveredData;
+    }
 
+    public void setDeliveredData(Date deliveredData) {
+        this.deliveredData = deliveredData;
+    }
     public void setShippingMethod(String shippingMethod) {
         this.shippingMethod = shippingMethod;
     }
@@ -81,6 +91,7 @@ public class Shipping implements Parcelable {
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeString(shippingMethod);
         dest.writeString(ShippingFee);
+        dest.writeLong(deliveredData != null ? deliveredData.getTime() : -1);
         dest.writeParcelable(shippingAddress, flags);
         dest.writeString(shippingStatus);
     }

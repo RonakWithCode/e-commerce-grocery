@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 //Hey change
 //ShoppingCartsProductFirebaseModel
+
 public class ShoppingCartsProductModel implements Parcelable {
     private String productId;
     private String productName;

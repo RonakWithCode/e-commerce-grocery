@@ -115,7 +115,7 @@
         <TextView
             android:layout_below="@id/Address"
             android:text="@string/add_address"
-            android:layout_marginStart="@dimen/_25sdp"
+            android:layout_marginStart="@dimen/_20sdp"
             android:textSize="@dimen/_19ssp"
             android:textColor="@color/green_primary"
             android:id="@+id/Add_Address"
@@ -131,8 +131,7 @@
             android:alpha="0.9"/>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/UserAddress"
-            android:layout_marginEnd="@dimen/_25sdp"
-            android:layout_marginStart="@dimen/_25sdp"
+            android:layout_alignParentStart="true"
             android:layout_below="@id/line1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>

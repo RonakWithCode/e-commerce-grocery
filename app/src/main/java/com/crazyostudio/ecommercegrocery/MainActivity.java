@@ -3,17 +3,21 @@ package com.crazyostudio.ecommercegrocery;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -51,10 +55,16 @@ public class MainActivity extends AppCompatActivity {
             if (getIntent().getStringExtra("LoadID").equals("OrderView")) {
                 Intent i = new Intent(MainActivity.this, OrderDetailsActivity.class);
                 i.putExtra("Type","seeOrderNotification");
-                i.putExtra("orderId",getIntent().getStringExtra("orderId"));
+                i.putExtra("orderID",getIntent().getStringExtra("orderId"));
                 startActivity(i);
             }
         }
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.green_primary)));
+
+        // Change Status Bar color
+        Window window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(ContextCompat.getColor(this, R.color.green_primary_variant));
 
 //        Log.i("MAIN.TAG", "onCreate: "+ FirebaseAuth.getInstance().token);
 

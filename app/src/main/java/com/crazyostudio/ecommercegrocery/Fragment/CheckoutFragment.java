@@ -1,10 +1,12 @@
 package com.crazyostudio.ecommercegrocery.Fragment;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -14,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
 import com.crazyostudio.ecommercegrocery.Adapter.ShoppingCartsAdapter;
+import com.crazyostudio.ecommercegrocery.Dialog.CustomErrorDialog;
 import com.crazyostudio.ecommercegrocery.HelperClass.ShoppingCartHelper;
 import com.crazyostudio.ecommercegrocery.Model.AddressModel;
 import com.crazyostudio.ecommercegrocery.Model.Customer;
@@ -95,6 +98,7 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
         binding.CardView.setAdapter(cartsAdapter);
         binding.CardView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
+        binding.orderDetailsViewBack.setOnClickListener(click->navController.popBackStack());
         binding.couponCodeApplyBtn.setOnClickListener(view->{
             if (!CouponValueIsApply) {
                 CouponCode = Objects.requireNonNull(binding.couponCode.getEditText()).getText().toString();
@@ -278,6 +282,11 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
 
 
     public void placeOrder(long time,String paymentMethod,String paymentStatus){
+        ProgressDialog progressDialog = new ProgressDialog(requireContext());
+        progressDialog.setTitle("Placing Order");
+        progressDialog.setMessage("Please wait while we process your order...");
+        progressDialog.setCancelable(false); // Set if dialog is cancelable or not
+        progressDialog.setCanceledOnTouchOutside(false);
         String orderId = time + FirebaseAuth.getInstance().getUid();
 //        double totalSavings = ShoppingCartHelper.calculateTotalSavings(models);
         final double finalTotal = ShoppingCartHelper.calculateTotalPrices(models);
@@ -285,7 +294,7 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
 //        payment, Shipping shipping, Date orderDate, String notes, String token) {
         Customer customer = new Customer(authService.getUserId(), authService.getUserName(), addressModel.getMobileNumber(),authService.getUserPhoneNumber());
         Payment payment = new Payment(paymentMethod,paymentStatus);
-        Shipping shipping = new Shipping("Standing","free",addressModel,"OnPending");
+        Shipping shipping = new Shipping("Standing","free",null,addressModel,"shipped");
         Date currentDate = new Date();
         String couponCode = "NoCouponCode";
         String token = TokenManager.getInstance(requireContext()).getToken();
@@ -294,18 +303,22 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
             couponCode = binding.couponCode.getEditText().getText().toString();
         }
 
-        OrderModel orderModel = new OrderModel(orderId,customer,models,finalTotal,couponCode,"OnPending",payment, shipping
+        OrderModel orderModel = new OrderModel(orderId,customer,models,finalTotal,couponCode,"shipped",payment, shipping
                 ,currentDate , Objects.requireNonNull(binding.note.getEditText()).getText().toString(),token);
 
         databaseService.PlaceOder(orderModel, new DatabaseService.PlaceOrderCallback() {
             @Override
             public void onSuccess() {
+                progressDialog.dismiss();
                 requireActivity().finish();
-
             }
             @Override
             public void onError(Exception errorMessage) {
-
+                progressDialog.dismiss();
+                CustomErrorDialog customErrorDialog = new CustomErrorDialog(requireContext());
+                customErrorDialog.setTitle("Place order error");
+                customErrorDialog.setTitle(errorMessage.getLocalizedMessage());
+                customErrorDialog.show();
             }
         });
     }

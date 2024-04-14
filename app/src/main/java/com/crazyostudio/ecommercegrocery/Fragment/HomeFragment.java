@@ -14,11 +14,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewbinding.ViewBinding;
 
 import com.crazyostudio.ecommercegrocery.Adapter.CategoryAdapter;
 import com.crazyostudio.ecommercegrocery.Adapter.ProductAdapter;
-import com.crazyostudio.ecommercegrocery.MainActivity;
 import com.crazyostudio.ecommercegrocery.Model.BannerModels;
 import com.crazyostudio.ecommercegrocery.Model.ProductCategoryModel;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
@@ -28,21 +28,21 @@ import com.crazyostudio.ecommercegrocery.databinding.FragmentHomeBinding;
 import com.crazyostudio.ecommercegrocery.interfaceClass.CategoryAdapterInterface;
 import com.crazyostudio.ecommercegrocery.interfaceClass.onClickProductAdapter;
 import com.crazyostudio.ecommercegrocery.javaClasses.basicFun;
-import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 
 import org.imaginativeworld.whynotimagecarousel.ImageCarousel;
 import org.imaginativeworld.whynotimagecarousel.listener.CarouselListener;
 import org.imaginativeworld.whynotimagecarousel.model.CarouselItem;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class HomeFragment extends Fragment implements onClickProductAdapter, CategoryAdapterInterface {
@@ -54,7 +54,8 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
     DatabaseService databaseService;
 //    private static final int SPEECH_REQUEST_CODE = 0;
 
-
+    private static final int PAGE_SIZE = 10; // Number of products to load per page
+    private DocumentSnapshot lastVisibleProduct;
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -69,7 +70,6 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
         LoadProduct();
         binding.categorySeeMore.setOnClickListener(view->{
             BottomNavigationView bottomAppBar = getActivity().findViewById(R.id.bottomNavigationView);
-//            View secondElement = bottomAppBar.getChildAt(1);
             bottomAppBar.setSelectedItemId(R.id.GoCategory);
             FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.loader,new CategoryFragment(),"CategoryFragment");
@@ -167,9 +167,36 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
 
             }
         });
+    }
 
-//         carousel.carouselListener
-     }
+
+//    void LoadProduct() {
+//        model = new ArrayList<>();
+//        productAdapter = new ProductAdapter(model, this, requireContext(), "Main");
+//        GridLayoutManager layoutManager = new GridLayoutManager(requireContext(), 2);
+//        binding.productsList.setAdapter(productAdapter);
+//        binding.productsList.setLayoutManager(layoutManager);
+//        databaseService.getAllProducts(new DatabaseService.GetAllProductsCallback() {
+//            @SuppressLint("NotifyDataSetChanged")
+//            @Override
+//            public void onSuccess(ArrayList<ProductModel> products) {
+//                model.addAll(products);
+//                productAdapter.notifyDataSetChanged();
+//                if (binding.ChatsProgressBar.getVisibility() == View.VISIBLE) {
+//                    binding.ChatsProgressBar.setVisibility(View.GONE);
+//                }
+//            }
+//
+//            @Override
+//            public void onError(String errorMessage) {
+//                // Handle the error her
+//                basicFun.AlertDialog(requireContext(),errorMessage);
+//            }
+//        });
+//
+//    }
+
+
 
     void LoadProduct() {
         model = new ArrayList<>();
@@ -177,25 +204,74 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
         GridLayoutManager layoutManager = new GridLayoutManager(requireContext(), 2);
         binding.productsList.setAdapter(productAdapter);
         binding.productsList.setLayoutManager(layoutManager);
-        databaseService.getAllProducts(new DatabaseService.GetAllProductsCallback() {
-            @SuppressLint("NotifyDataSetChanged")
+
+        // Load initial set of products
+        loadNextProducts();
+
+        // Set up RecyclerView scroll listener
+        binding.productsList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onSuccess(ArrayList<ProductModel> products) {
-                model.addAll(products);
-                productAdapter.notifyDataSetChanged();
-                if (binding.ChatsProgressBar.getVisibility() == View.VISIBLE) {
-                    binding.ChatsProgressBar.setVisibility(View.GONE);
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int visibleItemCount = layoutManager.getChildCount();
+                int totalItemCount = layoutManager.getItemCount();
+                int pastVisibleItems = layoutManager.findFirstVisibleItemPosition();
+
+                if ((visibleItemCount + pastVisibleItems) >= totalItemCount) {
+                    // User is near the end of the list, load more products
+                    loadNextProducts();
                 }
             }
+        });
+    }
 
-            @Override
-            public void onError(String errorMessage) {
-                // Handle the error her
-                basicFun.AlertDialog(requireContext(),errorMessage);
+    private void loadNextProducts() {
+        FirebaseFirestore database = FirebaseFirestore.getInstance();
+        binding.ChatsProgressBar.setVisibility(View.VISIBLE);
+
+        Query query;
+        if (lastVisibleProduct != null) {
+            // Load next set of products after the last visible product
+            query = database.collection("Product")
+                    .startAfter(lastVisibleProduct)
+                    .limit(PAGE_SIZE);
+        } else {
+            // Initial load
+            query = database.collection("Product")
+                    .limit(PAGE_SIZE);
+        }
+
+        query.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                ArrayList<ProductModel> products = new ArrayList<>();
+                for (DocumentSnapshot document : task.getResult()) {
+                    ProductModel product = document.toObject(ProductModel.class);
+                    if (product != null && product.isAvailable()) {
+                        products.add(product);
+                    }
+                }
+                model.addAll(products);
+                productAdapter.notifyDataSetChanged();
+
+                // Update last visible product
+                if (!products.isEmpty()) {
+                    lastVisibleProduct = task.getResult().getDocuments()
+                            .get(task.getResult().size() - 1);
+                }
+
+                binding.ChatsProgressBar.setVisibility(View.GONE);
+            } else {
+                // Handle the error
+                basicFun.AlertDialog(requireContext(), task.getException().toString());
+                binding.ChatsProgressBar.setVisibility(View.GONE);
             }
         });
-
     }
+
+
+
+
+
 
     void LoadCategory() {
         ArrayList<ProductCategoryModel> categoryModels = new ArrayList<>();
@@ -251,20 +327,4 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
         super.onDestroy();
     }
 
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode,
-//                                    Intent data) {
-//        if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
-//            List<String> results = data.getStringArrayListExtra(
-//                    RecognizerIntent.EXTRA_RESULTS);
-//            String spokenText = results.get(0);
-//            Log.d("spokenText", "onActivityResult: "+spokenText);
-////            binding.searchBar.openSearch();
-////            binding.searchBar.setText(spokenText);
-////            filterList(binding.searchBar.getText().toString());
-//            // Do something with spokenText.
-//        }
-//        super.onActivityResult(requestCode, resultCode, data);
-//    }
-//
 }

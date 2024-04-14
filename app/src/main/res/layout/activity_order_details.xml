@@ -17,15 +17,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="20dp">
+            android:layout_marginTop="@dimen/_5sdp">
 
             <ImageView
                 android:id="@+id/order_details_view_back"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:layout_width="@dimen/_25sdp"
+                android:layout_height="@dimen/_25sdp"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="20dp"
-                android:src="@drawable/ic_baseline_arrow_back_24" />
+                android:layout_marginStart="@dimen/_10sdp"
+                android:src="@drawable/baseline_arrow_back_ios_new_24" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -37,19 +37,17 @@
                 android:paddingEnd="25dp"
                 android:text="@string/order_details"
                 android:textColor="@color/green_primary"
-                android:textSize="24sp"
+                android:textSize="@dimen/_20ssp"
                 android:textStyle="bold"
                 tools:ignore="RtlSymmetry" />
             <ImageView
                 android:id="@+id/download"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:layout_width="@dimen/_25sdp"
+                android:layout_height="@dimen/_25sdp"
                 android:layout_alignParentEnd="true"
-                android:layout_marginEnd="@dimen/_25sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="20dp"
                 android:src="@drawable/baseline_download_24" />
-
         </RelativeLayout>
 
         <ScrollView
@@ -57,21 +55,21 @@
             android:layout_height="match_parent"
             android:layout_above="@+id/order_details_overview"
             android:layout_below="@id/order_details_layout_top"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="20dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_5sdp"
             android:scrollbars="none">
-
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <LinearLayout
-                    android:id="@+id/order_hash_box"
+                    android:id="@+id/order_place_box"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:weightSum="2">
-
                     <TextView
                         android:id="@+id/order_"
                         android:layout_width="0dp"
@@ -80,7 +78,7 @@
                         android:gravity="start"
                         android:text="Order Place data"
                         android:textColor="@color/colorPrimary"
-                        android:textSize="18sp"
+                        android:textSize="@dimen/_14ssp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -88,19 +86,50 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:gravity="end"
+                        android:gravity="start"
                         android:padding="@dimen/_1sdp"
-                        android:text="Shipping"
+                        android:text="12/5/23"
                         android:textColor="@color/MainTextColor"
-                        android:textSize="14sp" />
+                        android:textSize="@dimen/_14ssp"/>
 
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/order_date_box"
+                    android:id="@+id/order_delivery_on_box"
+                    android:layout_width="match_parent"
+                    android:visibility="gone"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/order_place_box"
+                    android:weightSum="2">
+
+                    <TextView
+                        android:id="@+id/order_delivery_on_hint"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:text="@string/order_delivery"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/_14ssp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/order_delivery_date"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:padding="@dimen/_1sdp"
+                        android:gravity="start"
+                        android:textColor="@color/MainTextColor"
+                        android:textSize="@dimen/_14ssp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/order_state"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/order_hash_box"
+                    android:layout_below="@id/order_delivery_on_box"
                     android:weightSum="2">
 
                     <TextView
@@ -111,7 +140,8 @@
                         android:gravity="start"
                         android:text="@string/order_delivery"
                         android:textColor="@color/colorPrimary"
-                        android:textSize="14sp" />
+                        android:textSize="@dimen/_14ssp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/order_delivery_status"
@@ -119,21 +149,20 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:padding="@dimen/_1sdp"
-                        android:gravity="end"
-                        android:text="@string/dummy_txt"
+                        android:gravity="start"
                         android:textColor="@color/MainTextColor"
-                        android:textSize="14sp" />
+                        android:textSize="@dimen/_14ssp" />
 
                 </LinearLayout>
+
 
                 <LinearLayout
                     android:id="@+id/order_contact_info_box"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/order_date_box"
+                    android:layout_below="@id/order_state"
                     android:layout_marginTop="10dp"
                     android:orientation="vertical">
-
                     <TextView
                         android:id="@+id/order_contact_hint"
                         android:layout_width="match_parent"
@@ -141,7 +170,7 @@
                         android:gravity="start"
                         android:text="@string/billing_details"
                         android:textColor="@color/green_primary"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/_14ssp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -150,23 +179,14 @@
                         android:layout_height="wrap_content"
                         android:gravity="start"
                         android:textColor="@color/MainTextColor"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:id="@+id/order_contact_email"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="start"
-                        android:textColor="@color/MainTextColor"
-                        android:textSize="14sp" />
-
+                        android:textSize="@dimen/_12ssp" />
                     <TextView
                         android:id="@+id/order_contact_phone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="start"
                         android:textColor="@color/MainTextColor"
-                        android:textSize="14sp" />
+                        android:textSize="@dimen/_12ssp" />
 
                     <TextView
                         android:id="@+id/order_shipping_address"
@@ -176,7 +196,7 @@
                         android:gravity="start"
                         android:text="Sysystem poer alwar hai tu kya kar raha h Sysystem poer alwar hai tu kya kar raha hSysystem poer alwar hai tu kya kar raha h"
                         android:textColor="@color/MainTextColor"
-                        android:textSize="14sp" />
+                        android:textSize="@dimen/_12ssp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -196,7 +216,8 @@
                         android:gravity="start"
                         android:text="@string/shipping_method"
                         android:textColor="@color/green_primary"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/_14ssp"
+
                         android:textStyle="bold" />
 
                     <TextView
@@ -207,7 +228,7 @@
                         android:gravity="end"
                         android:text="Raglar shipping"
                         android:textColor="@color/MainTextColor"
-                        android:textSize="14sp" />
+                        android:textSize="@dimen/_14ssp" />
                 </LinearLayout>
 
                 <com.google.android.material.divider.MaterialDivider
@@ -235,7 +256,8 @@
                         android:gravity="start"
                         android:text="Payment Method"
                         android:textColor="@color/green_primary"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/_14ssp"
+
                         android:textStyle="bold" />
 
                     <TextView
@@ -246,7 +268,7 @@
                         android:gravity="end"
                         android:text="COD (Pandding)"
                         android:textColor="@color/MainTextColor"
-                        android:textSize="14sp" />
+                        android:textSize="@dimen/_14ssp" />
                 </LinearLayout>
 
                 <com.google.android.material.divider.MaterialDivider
@@ -273,8 +295,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
             android:paddingTop="20dp">
 
             <LinearLayout
@@ -290,7 +314,7 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="@string/dummy_txt"
-                    android:visibility="invisible"
+                    android:visibility="gone"
                     android:textColor="@color/highlighted"
                     android:textSize="14sp" />
                 <com.google.android.material.divider.MaterialDivider
