@@ -1,12 +1,25 @@
 package com.crazyostudio.ecommercegrocery.Fragment;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -15,6 +28,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
+import com.crazyostudio.ecommercegrocery.Activity.OrderDetailsActivity;
 import com.crazyostudio.ecommercegrocery.Adapter.ShoppingCartsAdapter;
 import com.crazyostudio.ecommercegrocery.Dialog.CustomErrorDialog;
 import com.crazyostudio.ecommercegrocery.HelperClass.ShoppingCartHelper;
@@ -29,7 +43,9 @@ import com.crazyostudio.ecommercegrocery.Services.AuthService;
 import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentCheckoutBinding;
 import com.crazyostudio.ecommercegrocery.interfaceClass.ShoppingCartsInterface;
+import com.crazyostudio.ecommercegrocery.javaClasses.BlurBuilder;
 import com.crazyostudio.ecommercegrocery.javaClasses.TokenManager;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -163,9 +179,42 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
         initAddress();
         loadProductFromCart();
 
-        binding.placeBtn.setOnClickListener(view-> placeOrder(System.currentTimeMillis(),"cash","pending"));
+        binding.placeBtn.setOnClickListener(view -> {
+//            TODO
 
-        return binding.getRoot();
+            final Dialog dialog = new Dialog(requireContext());
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(R.layout.bottom_sheet_payment_options);
+
+
+            RadioButton codRadioButton = dialog.findViewById(R.id.codRadioButton);
+            ImageView closeButton = dialog.findViewById(R.id.closeButton);
+
+
+            codRadioButton.setOnClickListener(v -> placeOrder(System.currentTimeMillis(), "cash", "pending"));
+            closeButton.setOnClickListener(v -> dialog.dismiss());
+
+            dialog.show();
+            dialog.setCancelable(true);
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().getAttributes().windowAnimations = R.style.Animationboy;
+            dialog.getWindow().setGravity(Gravity.BOTTOM);
+
+
+
+
+
+
+
+
+
+
+
+        });
+
+
+            return binding.getRoot();
     }
 
 
@@ -242,8 +291,22 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
     @Override
     public void remove(int pos,String id,ShoppingCartsProductModel cartsProductModel) {
         RemoveBottomSheetDialogFragment bottomSheet = new RemoveBottomSheetDialogFragment(uid,id,cartsAdapter,cartsProductModel);
+//        bottomSheet.getView().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT)); // Set background transparent
+
+
+//        bottomSheet.getActivity().getWindow().setBackgroundDrawable();
+//        bottomShee.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
         bottomSheet.show(requireActivity().getSupportFragmentManager(), bottomSheet.getTag());
         updateSubTotalPrice();
+
+
+
+
+
+
+
+
         if (Total < couponMin) {
             // Total is less than the minimum required value, remove the coupon
             CouponValueIsApply = false;
@@ -252,6 +315,8 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
             binding.couponCode.setEnabled(true);
             binding.discount.setText(RupeeSymbols + newCouponValue);
             updateSubTotalPrice();
+
+
         }
     }
 
@@ -288,7 +353,7 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
         progressDialog.setCancelable(false); // Set if dialog is cancelable or not
         progressDialog.setCanceledOnTouchOutside(false);
         String orderId = time + FirebaseAuth.getInstance().getUid();
-//        double totalSavings = ShoppingCartHelper.calculateTotalSavings(models);
+        double totalSavings = ShoppingCartHelper.calculateTotalSavings(models);
         final double finalTotal = ShoppingCartHelper.calculateTotalPrices(models);
 //    public OrderModel(String orderId, Customer customer, ArrayList< ShoppingCartsProductFirebaseModel > orderItems, double orderTotalPrice, String couponCode, String orderStatus, Payment
 //        payment, Shipping shipping, Date orderDate, String notes, String token) {
@@ -302,15 +367,47 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
         if (!Objects.requireNonNull(binding.couponCode.getEditText()).getText().toString().isEmpty()) {
             couponCode = binding.couponCode.getEditText().getText().toString();
         }
-
         OrderModel orderModel = new OrderModel(orderId,customer,models,finalTotal,couponCode,"shipped",payment, shipping
                 ,currentDate , Objects.requireNonNull(binding.note.getEditText()).getText().toString(),token);
-
         databaseService.PlaceOder(orderModel, new DatabaseService.PlaceOrderCallback() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onSuccess() {
                 progressDialog.dismiss();
-                requireActivity().finish();
+                // Set listener for dismiss event
+// Create an instance of PlaceOrderFragment
+                String totalSaving = RupeeSymbols + totalSavings;
+                PlaceOrderFragment placeOrderFragment = new PlaceOrderFragment(orderId,totalSaving);
+// Show the dialog box
+                placeOrderFragment.show(requireActivity().getSupportFragmentManager(), "place_order_dialog");
+
+//                final Dialog dialog = new Dialog(requireContext());
+//                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//                dialog.setContentView(R.layout.fragment_place_oder);
+//
+//
+//                TextView saveTextView = dialog.findViewById(R.id.orderSave);
+//                saveTextView.setText("you save unto "+RupeeSymbols +totalSavings);
+//                Button orderStatusButton = dialog.findViewById(R.id.orderStatusButton);
+//                orderStatusButton.setOnClickListener(v -> {
+//                    // TODO: Handle order status button click
+//                    dialog.dismiss();
+//                    requireActivity().finish();
+//                    Intent intent = new Intent(requireContext(), OrderDetailsActivity.class);
+//                    intent.putExtra("orderID",orderId);
+//                    startActivity(intent);
+//                });
+//
+//
+//                dialog.show();
+//                dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+//                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//                dialog.getWindow().getAttributes().windowAnimations = R.style.Animationboy;
+//                dialog.getWindow().setGravity(Gravity.CENTER);
+//
+
+
+
             }
             @Override
             public void onError(Exception errorMessage) {
@@ -322,4 +419,5 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
             }
         });
     }
+
 }

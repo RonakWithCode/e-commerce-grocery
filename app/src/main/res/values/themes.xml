@@ -27,6 +27,7 @@
     </style>
 
 
+
     <style name="Theme.ECommerceGrocery.noToolbar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/green_primary</item>

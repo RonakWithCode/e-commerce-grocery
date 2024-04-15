@@ -60,18 +60,7 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
 
             }
         });
-
-
-
-
-
-
-//        orderModel = getIntent().getParcelableExtra("orderModel");
-
-
-
-
-    }
+   }
 
     @SuppressLint({"SetTextI18n", "NotifyDataSetChanged"})
     private void getData() {

@@ -2,10 +2,84 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".Fragment.PlaceOderFragment">
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/dialog_box_background"
+    android:padding="20dp"
+    tools:context=".Fragment.PlaceOrderFragment">
 
 
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/orderIcon"
+            android:layout_width="100dp"
+            android:background="@color/green_primary"
+            android:layout_height="100dp"
+            android:src="@drawable/baseline_done_24"
+            app:riv_mutate_background="true"
+            android:layout_centerHorizontal="true"
+            app:riv_border_color="#eef9f0"
+            app:riv_border_width="5dp"
+            app:riv_oval="true"
+            android:scaleType="fitXY"
+            android:layout_marginBottom="20dp"/>
 
+
+        <TextView
+            android:id="@+id/orderSuccessTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/orderIcon"
+            android:text="@string/order_placed_successfully"
+            android:textSize="@dimen/_20ssp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:layout_alignParentStart="true"
+            android:textAlignment="center"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/orderDescriptionTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/orderSuccessTextView"
+            android:text="@string/you_have_successfully_made_order"
+            android:textSize="@dimen/_14ssp"
+            android:textColor="@android:color/black"
+            android:layout_alignParentStart="true"
+            android:textAlignment="center"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="@dimen/_6sdp"/>
+
+
+    <TextView
+        android:id="@+id/orderSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/orderDescriptionTextView"
+        android:text="you save up to ₹500"
+        android:textSize="@dimen/_14ssp"
+        android:textColor="@color/orange_secondary"
+        android:layout_alignParentStart="true"
+        android:textAlignment="center"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="24dp"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/orderStatusButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/orderSave"
+            android:text="@string/view_order_status"
+            android:textSize="@dimen/_15ssp"
+
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:layout_alignParentStart="true"
+            android:textAlignment="center"
+            android:layout_alignParentEnd="true"/>
 
 </RelativeLayout>
+
+

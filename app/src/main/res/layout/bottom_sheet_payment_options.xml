@@ -1,0 +1,61 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@drawable/dialogbg"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="@dimen/_2sdp"
+        android:id="@+id/titleTextView"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="@dimen/_15sdp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/select_a_payment_method"
+        android:textColor="@color/green_primary"
+        android:textSize="@dimen/_16ssp" />
+
+    <ImageView
+        android:id="@+id/closeButton"
+        android:layout_width="@dimen/_25sdp"
+        android:layout_height="@dimen/_25sdp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:src="@drawable/baseline_close_24" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="@dimen/_7sdp"
+        android:layout_marginBottom="@dimen/_50sdp"
+        android:background="@color/MainBackgroundColor"
+        android:padding="@dimen/_5sdp"
+        android:layout_below="@id/titleTextView">
+
+        <RadioGroup
+            android:id="@+id/paymentRadioGroup"
+            android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/codRadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/MainTextColor"
+                android:text="@string/cash_on_delivery_cod"
+                android:textSize="@dimen/_15ssp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_marginStart="@dimen/_20sdp"
+                android:textColor="@color/HintMainTextColor"
+                android:text="@string/on_the_time_of_delivery_you_can_pay_with_upi"
+                android:layout_height="wrap_content"/>
+        </RadioGroup>
+
+    </LinearLayout>
+</RelativeLayout>

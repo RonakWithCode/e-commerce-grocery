@@ -1,5 +1,8 @@
 package com.crazyostudio.ecommercegrocery.Fragment;
 
+import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,12 +10,15 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
 import com.crazyostudio.ecommercegrocery.Adapter.ShoppingCartsAdapter;
 import com.crazyostudio.ecommercegrocery.Model.ShoppingCartsProductModel;
+import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
 import com.crazyostudio.ecommercegrocery.databinding.RemoveProductBoxBinding;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 public class RemoveBottomSheetDialogFragment  extends BottomSheetDialogFragment {
@@ -31,11 +37,26 @@ public class RemoveBottomSheetDialogFragment  extends BottomSheetDialogFragment 
         this.model = model;
     }
 
+//    @NonNull
+//    @Override
+//    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+//        BottomSheetDialog dialog = (BottomSheetDialog) super.onCreateDialog(savedInstanceState);
+//        return dialog;
+//    }
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = RemoveProductBoxBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
+
+//        view.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT)); // Set background transparent
+
+//        view.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//        view.setBackground(new ColorDrawable(Color.TRANSPARENT));
+//        view.setBackgroundResource(R.drawable.dialogbg);
+//
+//
 
         binding.btnRemove.setOnClickListener(v->{
             binding.progressCircular.setVisibility(View.VISIBLE);
@@ -72,7 +93,6 @@ public class RemoveBottomSheetDialogFragment  extends BottomSheetDialogFragment 
 //                shoppingCartsInterface.remove(position,model.getProductId(),model);
             }
         });
-
 
 
 

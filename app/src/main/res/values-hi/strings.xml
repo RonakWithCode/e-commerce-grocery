@@ -191,6 +191,9 @@
     <string name="town_city">Town/City</string>
     <string name="notes">Notes</string>
     <string name="close">Close</string>
+    <string name="on_the_time_of_delivery_you_can_pay_with_upi">On the time of delivery, you can pay with UPI</string>
+    <string name="you_have_successfully_made_order">You have successfully made order</string>
+    <string name="order_placed_successfully">Order Placed Successfully</string>
 
 
 </resources>

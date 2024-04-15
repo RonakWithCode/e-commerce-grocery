@@ -2,8 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/_100sdp"
-    android:background="@color/MainBackgroundColor"
+    android:background="@drawable/dialogbg"
     xmlns:tools="http://schemas.android.com/tools">
 
     <ImageView
@@ -125,6 +124,7 @@
     <LinearLayout
         android:layout_below="@id/Relative"
         android:layout_width="match_parent"
+        android:layout_marginBottom="@dimen/_50sdp"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
