@@ -26,8 +26,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_baseline_arrow_back_24"
+                    android:id="@+id/backButton"
                     android:contentDescription="@string/tap_to_open_photo_gallery"
-                    android:onClick="onBackButtonClick" />
+                    />
 
                 <ImageView
                     android:layout_width="wrap_content"

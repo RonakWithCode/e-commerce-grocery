@@ -285,28 +285,12 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
         binding.TotalPrice.setText("₹" + grandTotal);
     }
 
-
-
     @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
     @Override
     public void remove(int pos,String id,ShoppingCartsProductModel cartsProductModel) {
         RemoveBottomSheetDialogFragment bottomSheet = new RemoveBottomSheetDialogFragment(uid,id,cartsAdapter,cartsProductModel);
-//        bottomSheet.getView().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT)); // Set background transparent
-
-
-//        bottomSheet.getActivity().getWindow().setBackgroundDrawable();
-//        bottomShee.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
         bottomSheet.show(requireActivity().getSupportFragmentManager(), bottomSheet.getTag());
         updateSubTotalPrice();
-
-
-
-
-
-
-
-
         if (Total < couponMin) {
             // Total is less than the minimum required value, remove the coupon
             CouponValueIsApply = false;

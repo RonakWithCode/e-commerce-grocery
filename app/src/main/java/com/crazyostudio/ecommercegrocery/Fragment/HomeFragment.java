@@ -300,7 +300,6 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
         FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
         Bundle bundle = new Bundle();
         bundle.putParcelable("productDetails", productModel);
-        bundle.putInt("backButton", 0);
         ProductDetailsFragment productDetailsFragment = new ProductDetailsFragment();
         productDetailsFragment.setArguments(bundle);
 //        productDetailsFragment.setArguments(bundle);

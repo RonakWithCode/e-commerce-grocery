@@ -49,7 +49,8 @@ public class FragmentLoader extends AppCompatActivity {
             Objects.requireNonNull(getSupportActionBar()).show();
             FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
             Bundle bundle = new Bundle();
-            bundle.putParcelable("productDetails", getIntent().getParcelableExtra("productDetails"));
+            bundle.putString("productId", getIntent().getStringExtra("productId"));
+
             ProductDetailsFragment productDetailsFragment = new ProductDetailsFragment();
             productDetailsFragment.setArguments(bundle);
 //        productDetailsFragment.setArguments(bundle);

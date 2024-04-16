@@ -16,6 +16,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
 import com.crazyostudio.ecommercegrocery.Activity.OrderDetailsActivity;
+import com.crazyostudio.ecommercegrocery.Dialog.DialogUtils;
 import com.crazyostudio.ecommercegrocery.R;
 
 import java.time.Instant;
@@ -47,9 +48,9 @@ public class PlaceOrderFragment extends DialogFragment {
             requireActivity().finish();
             Intent intent = new Intent(requireContext(), OrderDetailsActivity.class);
             intent.putExtra("orderID",orderId);
+            intent.putExtra("DialogUtils",true);
             startActivity(intent);
         });
-
         return builder.create();
     }
     @Override

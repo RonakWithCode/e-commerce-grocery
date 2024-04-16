@@ -51,6 +51,12 @@ public class DatabaseService {
 
         void onError(String errorMessage);
     }
+
+    public interface GetAllProductsModelCallback {
+        void onSuccess(ProductModel products);
+
+        void onError(String errorMessage);
+    }
     public interface GetAllShoppingCartsProductModelCallback {
         void onSuccess(ArrayList<ShoppingCartsProductModel> products);
 
@@ -141,6 +147,35 @@ public class DatabaseService {
             }
         });
     }
+
+
+    public void getAllProductById(String id, GetAllProductsModelCallback callback) {
+        if (id != null) {
+            database.collection("Product").document(id).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        ProductModel product = document.toObject(ProductModel.class);
+                        if (product != null && product.isAvailable()) {
+                            callback.onSuccess(product);
+                        } else {
+                            callback.onError("Product is null or not available");
+                        }
+                    } else {
+                        callback.onError("Product document does not exist");
+                    }
+                } else {
+                    callback.onError("Failed to retrieve product: " + task.getException().toString());
+                }
+            });
+        } else {
+            // Handle the case where id is null
+            callback.onError("Provided document id is null");
+        }
+    }
+
+
+
 
     public void getAllProductsByCategory(String id,String category, GetAllProductsCallback callback) {
         database.collection("Product")

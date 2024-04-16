@@ -1,6 +1,7 @@
 package com.crazyostudio.ecommercegrocery.Activity;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.crazyostudio.ecommercegrocery.Adapter.OrderProductAdapter;
+import com.crazyostudio.ecommercegrocery.Dialog.DialogUtils;
 import com.crazyostudio.ecommercegrocery.HelperClass.ShoppingCartHelper;
 import com.crazyostudio.ecommercegrocery.Model.OrderModel;
 import com.crazyostudio.ecommercegrocery.Model.ShoppingCartsProductModel;
@@ -33,6 +35,7 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
     FirebaseAuth auth;
     FirebaseDatabase database;
     OrderModel orderModel;
+
 //    OrderModel orderorderID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +44,16 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
         setContentView(binding.getRoot());
         database = FirebaseDatabase.getInstance();
         auth = FirebaseAuth.getInstance();
+        if (getIntent().getBooleanExtra("DialogUtils", false)){
+            DialogUtils.showConfirmationDialog(this, "Do you want to remove all items from the cart?", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // Handle positive button click (remove all items from the cart)
+
+                }
+            });
+        }
+
 
 
          String orderID = getIntent().getStringExtra("orderID");
@@ -89,22 +102,17 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
             binding.save.setText("₹"+ ShoppingCartHelper.calculateTotalSavings(orderModel.getOrderItems()));
             binding.grandTotal.setText("₹"+orderModel.getOrderTotalPrice());
         } else {
-            // Handle the case where customer information is missing
-            // For example, display a default or error message
             Toast.makeText(this, "Customer information is missing", Toast.LENGTH_SHORT).show();
-            // You might want to finish the activity or take other appropriate actions
-//            finish();
         }
     }
 
     @Override
     public void onOrder(ShoppingCartsProductModel model) {
-//
         Intent intent = new Intent(this,FragmentLoader.class);
         intent.putExtra("LoadID","Details");
-//        intent.putExtra("productDetails",model);
-        intent.putExtra("productDetails",  (Parcelable) model);
+        intent.putExtra("productId",model.getProductId());
         startActivity(intent);
+
 
     }
 

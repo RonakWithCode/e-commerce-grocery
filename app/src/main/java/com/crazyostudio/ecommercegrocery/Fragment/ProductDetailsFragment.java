@@ -19,6 +19,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.crazyostudio.ecommercegrocery.Activity.AuthMangerActivity;
 import com.crazyostudio.ecommercegrocery.Adapter.ProductAdapter;
 import com.crazyostudio.ecommercegrocery.Adapter.ProductDisplayImagesAdapter;
+import com.crazyostudio.ecommercegrocery.Dialog.CustomErrorDialog;
+import com.crazyostudio.ecommercegrocery.MainActivity;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
 import com.crazyostudio.ecommercegrocery.Model.ShoppingCartFirebaseModel;
 import com.crazyostudio.ecommercegrocery.R;
@@ -44,19 +46,12 @@ import java.util.Objects;
 @SuppressLint({"ResourceAsColor", "NotifyDataSetChanged", "SetTextI18n"})
 public class ProductDetailsFragment extends Fragment implements onClickProductAdapter {
     private FragmentProductDetailsBinding binding;
-    private ProductModel productModel;
+    private ProductModel productModel = null;
     private FragmentTransaction transaction;
 
     public ProductDetailsFragment() {
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            productModel = getArguments().getParcelable("productDetails");
-        }
-    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -67,10 +62,43 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
         if (actionBar != null) {
             actionBar.hide();
         }
-//        if (BACK == 0) {
-////            bindin.viewBack.setVisibility(View.VISIBLE);
-//        }
+        Bundle args = getArguments();
+        if (args != null) {
+            productModel = args.getParcelable("productDetails");
+            String productId = args.getString("productId");
+            if (productModel == null) {
+                // Fetch productModel from database
+                new DatabaseService().getAllProductById(productId, new DatabaseService.GetAllProductsModelCallback() {
+                    @Override
+                    public void onSuccess(ProductModel products) {
+                        productModel = products;
+                        // Call initValue() once productModel is initialized
+                        initValue();
+                    }
 
+                    @Override
+                    public void onError(String errorMessage) {
+                        CustomErrorDialog customErrorDialog = new CustomErrorDialog(requireContext());
+                        customErrorDialog.setTitle("Loading product error");
+                        customErrorDialog.setMessage(errorMessage);
+                        customErrorDialog.show();
+                    }
+                });
+            } else {
+                // Call initValue() if productModel is already available
+                initValue();
+            }
+        } else {
+            requireActivity().finish();
+            startActivity(new Intent(requireContext(), MainActivity.class));
+        }
+
+
+
+
+        binding.backButton.setOnClickListener(view->{
+            requireActivity().onBackPressed();
+        });
         binding.recyclerViewProgressBar.setVisibility(View.GONE);
         BottomAppBar bottomAppBar = requireActivity().findViewById(R.id.bottomAppBar);
         if (bottomAppBar != null) {
@@ -78,7 +106,7 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
         }
         //        ((AppCompatActivity) requireActivity()).getSupportActionBar().hide();
 //        binding.viewBack.setOnClickListener(back-> requireActivity().onBackPressed());
-        initValue();
+//        initValue();
         binding.AddTOCart.setOnClickListener(view -> addToCart());
         binding.plusBtn.setOnClickListener(view -> {
             int quantity = productModel.getDefaultQuantity();
