@@ -166,6 +166,13 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
         for (int i = 0; i < productModel.getImageURL().size(); i++) {
             binding.productsImages.addData(new CarouselItem(productModel.getImageURL().get(i)));
         }
+
+        if (!Objects.equals(productModel.getProductDescription(), "")){
+            binding.productDescription.setVisibility(View.VISIBLE);
+            binding.Description .setVisibility(View.VISIBLE);
+            binding.productDescription.setText(productModel.getProductDescription());
+        }
+
         double mrp = productModel.getMrp(); // Replace with the actual MRP
         double sellingPrice = productModel.getPrice(); // Replace with the actual selling price
 //
@@ -173,6 +180,7 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
 
 //        float percentageSaved = (float) (((productModel.getMrp() - productModel.getPrice()) / productModel.getMrp()) * 100f);
         binding.discount.setText("₹" + discountPercentage + "% off");
+
         binding.Price.setText("₹" + productModel.getPrice());
         binding.quantitySmail.setText("(₹" + productModel.getPrice() + " / " + productModel.getSubUnit() + productModel.getUnit() + ")");
 //        binding.MRP.setText("M.R.P.: ₹"+productModel.getMrp());

@@ -38,4 +38,5 @@ public class ShoppingCartHelper {
 
         return totalPrices;
     }
+
 }

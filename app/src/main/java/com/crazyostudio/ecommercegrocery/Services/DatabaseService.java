@@ -131,6 +131,31 @@ public class DatabaseService {
     }
 
 
+
+
+    public void getAllProductsByCategoryOnly(String category, GetAllProductsCallback callback) {
+        database.collection("Product")
+                .whereEqualTo("category", category) // Filter by category
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        ArrayList<ProductModel> products = new ArrayList<>();
+                        for (DocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                            ProductModel product = document.toObject(ProductModel.class);
+                            if (product != null && product.isAvailable()) {
+                                products.add(product);
+                            }
+                        }
+                        callback.onSuccess(products);
+                    } else {
+                        callback.onError(Objects.requireNonNull(task.getException()).toString());
+                    }
+                });
+    }
+
+
+
+
     public void getAllProducts(GetAllProductsCallback callback) {
         database.collection("Product").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -443,6 +468,13 @@ public class DatabaseService {
 
     }
 
+    public void removeCartItems(String uid) {
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        firebaseDatabase.getReference().child("Cart").child(Objects.requireNonNull(uid)).removeValue();
+
+    }
+
+
     public void UpdateCartQuantityById(String uid,String itemId,int Quantity){
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseDatabase.getReference().child("Cart").child(uid).child(itemId).child("productSelectQuantity").setValue(Quantity);
@@ -491,7 +523,7 @@ public class DatabaseService {
         });
 
     }
-//    TODO end
+
 
     public void setUserInfo(UserinfoModels userInfo, SetUserInfoCallback callback) {
         database.collection("UserInfo").document(userInfo.getUserId()).set(userInfo).addOnCompleteListener(task -> {

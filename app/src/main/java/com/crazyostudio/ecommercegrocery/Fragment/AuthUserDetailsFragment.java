@@ -71,7 +71,6 @@ public class AuthUserDetailsFragment extends Fragment {
         });
         return binding.getRoot();
     }
-
     void setupUser(String token){
         UserinfoModels UserinfoModels = new UserinfoModels(token,uid, Objects.requireNonNull(binding.Name.getText()).toString(),number,true);
         service.setUserInfo(UserinfoModels, new DatabaseService.SetUserInfoCallback() {
@@ -85,9 +84,4 @@ public class AuthUserDetailsFragment extends Fragment {
             }
         });
     }
-
-
-
-
-
 }

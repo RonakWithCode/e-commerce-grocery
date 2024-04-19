@@ -78,8 +78,8 @@
                     android:background="@color/MainBackgroundColor"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    app:imageScaleType="centerCrop"
                     app:autoPlay="false"
-                    app:imageScaleType="fitCenter"
                     app:showBottomShadow="true"
                     app:showCaption="false"
                     app:showTopShadow="false"
@@ -400,6 +400,9 @@
                 android:orientation="vertical"
                 android:layout_height="wrap_content">
 
+
+
+
                 <TextView
                     android:id="@+id/product_"
                     android:layout_width="wrap_content"
@@ -431,6 +434,30 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_5sdp" />
 
+
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/Description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="italic"
+                    android:textAlignment="textStart"
+                    android:text="@string/description"
+                    android:layout_marginTop="@dimen/_15sdp"
+                    android:textColor="@color/MainTextColor"
+                    android:textSize="@dimen/_18ssp" />
+
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/productDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="italic"
+                    android:textAlignment="textStart"
+                    android:text="@string/product_recommendations"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:textColor="@color/MainTextColor"
+                    android:textSize="@dimen/_15ssp" />
             </LinearLayout>
 
 

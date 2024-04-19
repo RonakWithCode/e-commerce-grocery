@@ -47,9 +47,8 @@ import java.util.ArrayList;
 
 public class HomeFragment extends Fragment implements onClickProductAdapter, CategoryAdapterInterface {
     FragmentHomeBinding binding;
-    ProductAdapter productAdapter;
     CategoryAdapter categoryAdapter;
-    ArrayList<ProductModel> model;
+
 
     DatabaseService databaseService;
 //    private static final int SPEECH_REQUEST_CODE = 0;
@@ -67,7 +66,14 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
         databaseService = new DatabaseService();
         LoadCarousel();
         LoadCategory();
-        LoadProduct();
+        LoadProduct("chips and Snacks",binding.chipsAndSnacks);
+        LoadProduct("dairy",binding.DairyProducts);
+        LoadProduct("toothpaste",binding.forYouTeeth);
+        LoadProduct("drinks",binding.drinks);
+        
+
+
+
         binding.categorySeeMore.setOnClickListener(view->{
             BottomNavigationView bottomAppBar = getActivity().findViewById(R.id.bottomNavigationView);
             bottomAppBar.setSelectedItemId(R.id.GoCategory);
@@ -110,29 +116,29 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
 //        }
 //    }
 
-     void LoadCarousel() {
+    void LoadCarousel() {
         ArrayList<BannerModels> models = new ArrayList<>();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference bannerRef = database.getReference().child("Banner");
         ImageCarousel Image_Carousel = this.binding.carousel;
-         bannerRef.addValueEventListener(new ValueEventListener() {
-             @Override
-             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                     BannerModels banner = snapshot.getValue(BannerModels.class);
-                     models.add(banner);
-                     assert banner != null;
-                     CarouselItem carouselItem = new CarouselItem(banner.getBannerUrl());
-                     Image_Carousel.addData(carouselItem);
-                 }
-             }
+        bannerRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    BannerModels banner = snapshot.getValue(BannerModels.class);
+                    models.add(banner);
+                    assert banner != null;
+                    CarouselItem carouselItem = new CarouselItem(banner.getBannerUrl());
+                    Image_Carousel.addData(carouselItem);
+                }
+            }
 
-             @Override
-             public void onCancelled(@NonNull DatabaseError databaseError) {
-                 // Handle potential errors
-                 Log.e("TAG", "Error fetching data", databaseError.toException());
-             }
-         });
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle potential errors
+                Log.e("TAG", "Error fetching data", databaseError.toException());
+            }
+        });
 
 
         Image_Carousel.setCarouselListener(new CarouselListener() {
@@ -170,103 +176,103 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
     }
 
 
+    void LoadProduct(String category,RecyclerView recyclerView) {
+        ArrayList<ProductModel>  model = new ArrayList<>();
+        ProductAdapter productAdapter = new ProductAdapter(model, this, requireContext(), "Main");
+        LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL,false);
+        recyclerView.setAdapter(productAdapter);
+        recyclerView.setLayoutManager(layoutManager);
+        databaseService.getAllProductsByCategoryOnly(category,new DatabaseService.GetAllProductsCallback() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onSuccess(ArrayList<ProductModel> products) {
+                model.addAll(products);
+                productAdapter.notifyDataSetChanged();
+                if (binding.ChatsProgressBar.getVisibility() == View.VISIBLE) {
+                    binding.ChatsProgressBar.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                // Handle the error her
+                basicFun.AlertDialog(requireContext(),errorMessage);
+            }
+        });
+
+    }
+
+
+
 //    void LoadProduct() {
 //        model = new ArrayList<>();
 //        productAdapter = new ProductAdapter(model, this, requireContext(), "Main");
 //        GridLayoutManager layoutManager = new GridLayoutManager(requireContext(), 2);
 //        binding.productsList.setAdapter(productAdapter);
 //        binding.productsList.setLayoutManager(layoutManager);
-//        databaseService.getAllProducts(new DatabaseService.GetAllProductsCallback() {
-//            @SuppressLint("NotifyDataSetChanged")
+//
+//        // Load initial set of products
+//        loadNextProducts();
+//
+//        // Set up RecyclerView scroll listener
+//        binding.productsList.addOnScrollListener(new RecyclerView.OnScrollListener() {
 //            @Override
-//            public void onSuccess(ArrayList<ProductModel> products) {
-//                model.addAll(products);
-//                productAdapter.notifyDataSetChanged();
-//                if (binding.ChatsProgressBar.getVisibility() == View.VISIBLE) {
-//                    binding.ChatsProgressBar.setVisibility(View.GONE);
+//            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+//                super.onScrolled(recyclerView, dx, dy);
+//                int visibleItemCount = layoutManager.getChildCount();
+//                int totalItemCount = layoutManager.getItemCount();
+//                int pastVisibleItems = layoutManager.findFirstVisibleItemPosition();
+//
+//                if ((visibleItemCount + pastVisibleItems) >= totalItemCount) {
+//                    // User is near the end of the list, load more products
+//                    loadNextProducts();
 //                }
 //            }
-//
-//            @Override
-//            public void onError(String errorMessage) {
-//                // Handle the error her
-//                basicFun.AlertDialog(requireContext(),errorMessage);
-//            }
 //        });
-//
 //    }
 
-
-
-    void LoadProduct() {
-        model = new ArrayList<>();
-        productAdapter = new ProductAdapter(model, this, requireContext(), "Main");
-        GridLayoutManager layoutManager = new GridLayoutManager(requireContext(), 2);
-        binding.productsList.setAdapter(productAdapter);
-        binding.productsList.setLayoutManager(layoutManager);
-
-        // Load initial set of products
-        loadNextProducts();
-
-        // Set up RecyclerView scroll listener
-        binding.productsList.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                int visibleItemCount = layoutManager.getChildCount();
-                int totalItemCount = layoutManager.getItemCount();
-                int pastVisibleItems = layoutManager.findFirstVisibleItemPosition();
-
-                if ((visibleItemCount + pastVisibleItems) >= totalItemCount) {
-                    // User is near the end of the list, load more products
-                    loadNextProducts();
-                }
-            }
-        });
-    }
-
-    private void loadNextProducts() {
-        FirebaseFirestore database = FirebaseFirestore.getInstance();
-        binding.ChatsProgressBar.setVisibility(View.VISIBLE);
-
-        Query query;
-        if (lastVisibleProduct != null) {
-            // Load next set of products after the last visible product
-            query = database.collection("Product")
-                    .startAfter(lastVisibleProduct)
-                    .limit(PAGE_SIZE);
-        } else {
-            // Initial load
-            query = database.collection("Product")
-                    .limit(PAGE_SIZE);
-        }
-
-        query.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                ArrayList<ProductModel> products = new ArrayList<>();
-                for (DocumentSnapshot document : task.getResult()) {
-                    ProductModel product = document.toObject(ProductModel.class);
-                    if (product != null && product.isAvailable()) {
-                        products.add(product);
-                    }
-                }
-                model.addAll(products);
-                productAdapter.notifyDataSetChanged();
-
-                // Update last visible product
-                if (!products.isEmpty()) {
-                    lastVisibleProduct = task.getResult().getDocuments()
-                            .get(task.getResult().size() - 1);
-                }
-
-                binding.ChatsProgressBar.setVisibility(View.GONE);
-            } else {
-                // Handle the error
-                basicFun.AlertDialog(requireContext(), task.getException().toString());
-                binding.ChatsProgressBar.setVisibility(View.GONE);
-            }
-        });
-    }
+//    private void loadNextProducts() {
+//        FirebaseFirestore database = FirebaseFirestore.getInstance();
+//        binding.ChatsProgressBar.setVisibility(View.VISIBLE);
+//
+//        Query query;
+//        if (lastVisibleProduct != null) {
+//            // Load next set of products after the last visible product
+//            query = database.collection("Product")
+//                    .startAfter(lastVisibleProduct)
+//                    .limit(PAGE_SIZE);
+//        } else {
+//            // Initial load
+//            query = database.collection("Product")
+//                    .limit(PAGE_SIZE);
+//        }
+//
+//        query.get().addOnCompleteListener(task -> {
+//            if (task.isSuccessful()) {
+//                ArrayList<ProductModel> products = new ArrayList<>();
+//                for (DocumentSnapshot document : task.getResult()) {
+//                    ProductModel product = document.toObject(ProductModel.class);
+//                    if (product != null && product.isAvailable()) {
+//                        products.add(product);
+//                    }
+//                }
+//                model.addAll(products);
+//                productAdapter.notifyDataSetChanged();
+//
+//                // Update last visible product
+//                if (!products.isEmpty()) {
+//                    lastVisibleProduct = task.getResult().getDocuments()
+//                            .get(task.getResult().size() - 1);
+//                }
+//
+//                binding.ChatsProgressBar.setVisibility(View.GONE);
+//            } else {
+//                // Handle the error
+//                basicFun.AlertDialog(requireContext(), task.getException().toString());
+//                binding.ChatsProgressBar.setVisibility(View.GONE);
+//            }
+//        });
+//    }
 
 
 

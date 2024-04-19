@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -36,26 +37,26 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
     FirebaseDatabase database;
     OrderModel orderModel;
 
-//    OrderModel orderorderID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityOrderDetailsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
         database = FirebaseDatabase.getInstance();
         auth = FirebaseAuth.getInstance();
-        if (getIntent().getBooleanExtra("DialogUtils", false)){
-            DialogUtils.showConfirmationDialog(this, "Do you want to remove all items from the cart?", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    // Handle positive button click (remove all items from the cart)
-
-                }
-            });
-        }
-
-
-
+//        if (getIntent().getBooleanExtra("DialogUtils", false)){
+//            DialogUtils.showConfirmationDialog(this, "Do you want to remove all items from the cart?", (dialog, which) -> {
+//
+//        }
+        binding.orderDetailsViewBack.setOnClickListener(view-> this.onBackPressed());
+        binding.download.setOnClickListener(v -> downloadBill());
+        binding.ContinueShopping.setOnClickListener(v->{
+            this.finish();
+        });
          String orderID = getIntent().getStringExtra("orderID");
         database.getReference().child("Order").child(Objects.requireNonNull(auth.getUid())).child(orderID).addListenerForSingleValueEvent(new ValueEventListener() {
             @SuppressLint("NotifyDataSetChanged")
@@ -74,6 +75,13 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
             }
         });
    }
+
+    private void downloadBill() {
+        DialogUtils.showConfirmationDialog(this, "Do you want to remove all items from the cart?", (dialog, which) -> {
+            Toast.makeText(this, "wait", Toast.LENGTH_SHORT).show();
+        });
+
+    }
 
     @SuppressLint({"SetTextI18n", "NotifyDataSetChanged"})
     private void getData() {

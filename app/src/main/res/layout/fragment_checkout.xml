@@ -9,7 +9,6 @@
 
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/shimmer_layout"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/_5sdp">
@@ -324,69 +323,6 @@
                 </LinearLayout>
 
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/grand_total_box_skeleton"
-                    android:layout_marginLeft="10dp"
-                    android:id="@+id/Address_Box_skeleton"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginBottom="10dp">
-
-                    <ImageView
-                        android:id="@+id/AddressType_skeleton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/skeleton_shape" />
-
-                    <TextView
-                        android:id="@+id/deliveryTo_skeleton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_5sdp"
-                        android:layout_toEndOf="@+id/AddressType_skeleton"
-                        android:background="@drawable/skeleton_shape"
-                        android:textAlignment="center"
-                        android:textColor="@color/MainTextColor"
-                        android:textSize="@dimen/_16ssp"
-                        android:textStyle="normal" />
-
-                    <TextView
-                        android:id="@+id/deliveryAddress_skeleton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/deliveryTo_skeleton"
-                        android:layout_marginStart="@dimen/_8sdp"
-                        android:layout_toEndOf="@+id/AddressType_skeleton"
-                        android:maxLines="1"
-                        android:background="@drawable/skeleton_shape"
-                        android:textAlignment="center"
-                        android:textColor="@color/HintMainTextColor"
-                        android:textSize="@dimen/_12ssp"
-                        android:textStyle="normal" />
-
-                    <TextView
-                        android:id="@+id/Change_skeleton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_15sdp"
-                        android:layout_toEndOf="@id/deliveryTo_skeleton"
-                        android:background="@drawable/skeleton_shape"
-                        android:textColor="@color/orange_secondary"
-                        android:textSize="@dimen/_13ssp"
-                        tools:ignore="RelativeOverlap" />
-
-                    <com.google.android.material.divider.MaterialDivider
-                        android:id="@+id/line4_skeleton"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_below="@id/deliveryAddress_skeleton"
-                        android:layout_marginTop="3dp"
-                        app:dividerColor="@color/secondary" />
-
-                </RelativeLayout>
-
 
             </RelativeLayout>
 
@@ -453,8 +389,8 @@
 
 
     <ScrollView
-        android:visibility="visible"
         android:id="@+id/ScrollView"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"

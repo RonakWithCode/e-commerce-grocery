@@ -230,6 +230,7 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
         }
         binding.deliveryTo.setText("Delivering to "+type);
         binding.deliveryAddress.setText(addressModel.getFullName()+"\n" +addressModel.getMobileNumber()+"\n" +addressModel.getFlatHouse()+addressModel.getAddress());
+
         binding.Change.setOnClickListener(view-> navController.popBackStack());
     }
 
@@ -336,12 +337,14 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
         progressDialog.setMessage("Please wait while we process your order...");
         progressDialog.setCancelable(false); // Set if dialog is cancelable or not
         progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
         String orderId = time + FirebaseAuth.getInstance().getUid();
         double totalSavings = ShoppingCartHelper.calculateTotalSavings(models);
-        final double finalTotal = ShoppingCartHelper.calculateTotalPrices(models);
+        final double finalTotal = ShoppingCartHelper.calculateTotalPrices(models) - newCouponValue;
+
 //    public OrderModel(String orderId, Customer customer, ArrayList< ShoppingCartsProductFirebaseModel > orderItems, double orderTotalPrice, String couponCode, String orderStatus, Payment
 //        payment, Shipping shipping, Date orderDate, String notes, String token) {
-        Customer customer = new Customer(authService.getUserId(), authService.getUserName(), addressModel.getMobileNumber(),authService.getUserPhoneNumber());
+        Customer customer = new Customer(authService.getUserId(), authService.getUserName(), addressModel.getMobileNumber() , authService.getUserPhoneNumber());
         Payment payment = new Payment(paymentMethod,paymentStatus);
         Shipping shipping = new Shipping("Standing","free",null,addressModel,"shipped");
         Date currentDate = new Date();
@@ -357,40 +360,11 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
             @SuppressLint("SetTextI18n")
             @Override
             public void onSuccess() {
-                progressDialog.dismiss();
-                // Set listener for dismiss event
-// Create an instance of PlaceOrderFragment
+                databaseService.removeCartItems(customer.getCustomerId());
                 String totalSaving = RupeeSymbols + totalSavings;
                 PlaceOrderFragment placeOrderFragment = new PlaceOrderFragment(orderId,totalSaving);
-// Show the dialog box
                 placeOrderFragment.show(requireActivity().getSupportFragmentManager(), "place_order_dialog");
-
-//                final Dialog dialog = new Dialog(requireContext());
-//                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-//                dialog.setContentView(R.layout.fragment_place_oder);
-//
-//
-//                TextView saveTextView = dialog.findViewById(R.id.orderSave);
-//                saveTextView.setText("you save unto "+RupeeSymbols +totalSavings);
-//                Button orderStatusButton = dialog.findViewById(R.id.orderStatusButton);
-//                orderStatusButton.setOnClickListener(v -> {
-//                    // TODO: Handle order status button click
-//                    dialog.dismiss();
-//                    requireActivity().finish();
-//                    Intent intent = new Intent(requireContext(), OrderDetailsActivity.class);
-//                    intent.putExtra("orderID",orderId);
-//                    startActivity(intent);
-//                });
-//
-//
-//                dialog.show();
-//                dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
-//                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//                dialog.getWindow().getAttributes().windowAnimations = R.style.Animationboy;
-//                dialog.getWindow().setGravity(Gravity.CENTER);
-//
-
-
+                progressDialog.dismiss();
 
             }
             @Override

@@ -98,7 +98,7 @@ public class SearchFragment extends Fragment implements SearchAdapterInterface {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 // Trigger search when text changes
                 String query = s.toString();
-                searchProductByName(query);
+                searchProductByKeyword(query);
 
             }
 
@@ -119,37 +119,71 @@ public class SearchFragment extends Fragment implements SearchAdapterInterface {
     }
 
 
-    private void searchProductByName(String productName) {
-        // Perform search only if product name is not empty
-        if (!productName.isEmpty()) {
-            // Convert the product name to lowercase for case-insensitive search
-            String lowercaseProductName = productName.toLowerCase();
+//    rivate void searchProductByName(String productName) {
+//        // Perform search only if product name is not empty
+//        if (!productName.isEmpty()) {
+//            // Convert the product name to lowercase for case-insensitive search
+//            String lowercaseProductName = productName.toLowerCase();
+//
+//            // Create a query to filter products by name
+//            Query query = productsRef.whereGreaterThanOrEqualTo("productName", lowercaseProductName)
+//                    .whereLessThanOrEqualTo("productName", lowercaseProductName + "\uf8ff");
+//
+//            // Execute the query
+//            query.get().addOnSuccessListener(queryDocumentSnapshots -> {
+//                // Handle successful query result
+//                ArrayList<ProductModel> models = new ArrayList<>();
+//                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+//                    // Retrieve and process each document
+//                    ProductModel productModel = documentSnapshot.toObject(ProductModel.class);
+//                    models.add(productModel);
+//                }
+//                // Set data to your adapter after the loop to avoid setting data for each iteration
+//                adapter.setData(models);
+//            }).addOnFailureListener(e -> {
+//                // Handle query failure
+//                System.err.println("Error searching for products: " + e.getMessage());
+//            });
+//        }
+//        else {
+//            // If product name is empty, do nothing or show a message
+//            System.out.println("Product name is empty");
+//        }
+//    } p
 
-            // Create a query to filter products by name
-            Query query = productsRef.whereGreaterThanOrEqualTo("productName", lowercaseProductName)
-                    .whereLessThanOrEqualTo("productName", lowercaseProductName + "\uf8ff");
+    private void searchProductByKeyword(String keyword) {
+        // Perform search only if keyword is not empty
+        if (!keyword.isEmpty()) {
+            // Convert the keyword to lowercase for case-insensitive search
+            String lowercaseKeyword = keyword.toLowerCase();
+
+            // Create a query to filter products based on the keyword
+            Query query = productsRef.whereArrayContains("keywords", lowercaseKeyword);
 
             // Execute the query
             query.get().addOnSuccessListener(queryDocumentSnapshots -> {
-                // Handle successful query result
-                ArrayList<ProductModel> models = new ArrayList<>();
+                // Initialize an ArrayList to store matching products
+                ArrayList<ProductModel> matchingProducts = new ArrayList<>();
+
                 for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                    // Retrieve and process each document
+                    // Retrieve each matching product
                     ProductModel productModel = documentSnapshot.toObject(ProductModel.class);
-                    models.add(productModel);
+                    matchingProducts.add(productModel);
                 }
-                // Set data to your adapter after the loop to avoid setting data for each iteration
-                adapter.setData(models);
+
+                // Set data to your adapter after completing the search
+                adapter.setData(matchingProducts);
             }).addOnFailureListener(e -> {
                 // Handle query failure
-                System.err.println("Error searching for products: " + e.getMessage());
+                Log.e("SearchFragment", "Error searching for products: " + e.getMessage());
             });
-        }
-        else {
-            // If product name is empty, do nothing or show a message
-            System.out.println("Product name is empty");
+        } else {
+            // If keyword is empty, do nothing or show a message
+            Log.d("SearchFragment", "Keyword is empty");
         }
     }
+
+
 
     private void openVoiceRecognizer() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);

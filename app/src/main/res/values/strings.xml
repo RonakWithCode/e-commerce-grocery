@@ -201,5 +201,11 @@
     <string name="view_order_status">View Order Status</string>
     <string name="you_have_successfully_made_order">You have successfully made order</string>
     <string name="order_placed_successfully">Order Placed Successfully</string>
+    <string name="top_selling_products">top selling products</string>
+    <string name="dairy">Dairy</string>
+    <string name="for_you_teeth">for you teeth</string>
+    <string name="drinks">drinks</string>
+    <string name="chips_and_snacks">chips and snacks</string>
+    <string name="description">Description</string>
 
 </resources>
