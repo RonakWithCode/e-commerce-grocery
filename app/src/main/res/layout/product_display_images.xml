@@ -4,13 +4,12 @@
     android:background="@color/MainBackgroundColor"
     android:layout_height="wrap_content">
 
-    <ImageView
+    <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/Product_images"
         android:layout_width="match_parent"
-        android:scaleType="center"
-        android:layout_alignParentTop="true"
+        android:layout_marginTop="@dimen/_2sdp"
         android:layout_marginStart="@dimen/_15sdp"
         android:layout_marginEnd="@dimen/_15sdp"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/tap_to_view" />
+        android:layout_height="match_parent"/>
+
 </RelativeLayout>

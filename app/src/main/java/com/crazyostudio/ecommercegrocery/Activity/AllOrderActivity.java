@@ -8,6 +8,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -30,14 +31,22 @@ public class AllOrderActivity extends AppCompatActivity implements OrderInterfac
     ActivityAllOrderBinding binding;
     FirebaseDatabase database;
     ArrayList<OrderModel> orderModel;
-    UserinfoModels userInfo;
     ViewOrderProductAdapter orderProductAdapter;
+    private ActionBar actionBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityAllOrderBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         database = FirebaseDatabase.getInstance();
+
+
+        actionBar = this.getSupportActionBar();
+        if (actionBar != null) {
+            // Hide the ActionBar when the fragment is created
+            actionBar.hide();
+        }
+
 
         binding.orderDetailsViewBack.setOnClickListener(view->onBackPressed());
         getOrders();
@@ -88,7 +97,7 @@ public class AllOrderActivity extends AppCompatActivity implements OrderInterfac
                     if (model != null) {
                         orderModel.add(model);
                         orderProductAdapter.notifyDataSetChanged();
-                        binding.progressCircular.setVisibility(View.INVISIBLE);
+                        binding.progressCircular.setVisibility(View.GONE);
                         orderProductAdapter.getFilter().filter("all");
 //                        productModels.addAll(model.getProductModel());
                     }
@@ -111,8 +120,16 @@ public class AllOrderActivity extends AppCompatActivity implements OrderInterfac
 
 
     @Override
+    protected void onDestroy() {
+        if (actionBar != null) {
+            // Hide the ActionBar when the fragment is created
+            actionBar.show();
+        }
+        super.onDestroy();
+    }
+
+    @Override
     public void onOrder(OrderModel orderModels) {
-        binding.progressCircular.setVisibility(View.VISIBLE);
         Intent i = new Intent(this, OrderDetailsActivity.class);
         i.putExtra("orderID", orderModels.getOrderId());
         i.putExtra("orderModel", orderModels);

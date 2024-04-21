@@ -33,6 +33,10 @@ android {
 }
 
 dependencies {
+//    Image Slides
+//
+    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
+
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
 
     implementation 'com.google.android.gms:play-services-safetynet:18.0.1'
@@ -93,12 +97,15 @@ dependencies {
     implementation 'org.imaginativeworld.whynotimagecarousel:whynotimagecarousel:2.1.0'
 //  Glide
     implementation 'com.github.bumptech.glide:glide:4.16.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
+
 //   Image Picker
     implementation 'com.github.dhaval2404:imagepicker:2.1'
 //
 
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.10.0'
+    implementation 'com.google.android.material:material:1.11.0'
+
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'com.google.firebase:firebase-auth-ktx:22.1.2'
     implementation 'com.google.firebase:firebase-database-ktx:20.2.2'

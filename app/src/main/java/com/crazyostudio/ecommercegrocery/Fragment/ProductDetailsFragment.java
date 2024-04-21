@@ -2,6 +2,7 @@ package com.crazyostudio.ecommercegrocery.Fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -164,7 +165,9 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
         binding.category.setText(productModel.getCategory());
         binding.ProductTitle.setText(productModel.getProductName());
         for (int i = 0; i < productModel.getImageURL().size(); i++) {
-            binding.productsImages.addData(new CarouselItem(productModel.getImageURL().get(i)));
+            String imageUrl = productModel.getImageURL().get(i);
+            CarouselItem carouselItem = new CarouselItem(imageUrl);
+            binding.productsImages.addData(carouselItem);
         }
 
         if (!Objects.equals(productModel.getProductDescription(), "")){
@@ -183,7 +186,8 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
 
         binding.Price.setText("₹" + productModel.getPrice());
         binding.quantitySmail.setText("(₹" + productModel.getPrice() + " / " + productModel.getSubUnit() + productModel.getUnit() + ")");
-//        binding.MRP.setText("M.R.P.: ₹"+productModel.getMrp());
+        binding.MRP.setText(":"+productModel.getMrp());
+        binding.MRP.setPaintFlags(binding.MRP.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         if (productModel.getQuantity() == 0) {
             binding.OutOfStockBuyOptions.setVisibility(View.VISIBLE);
             binding.quantity.setText("0");

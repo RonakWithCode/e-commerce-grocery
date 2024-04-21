@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:padding="@dimen/_5sdp"
+    android:layout_margin="@dimen/_2sdp"
+    android:layout_height="match_parent">
+
+
+    <ImageView
+        android:src="@drawable/ic_close_black_48dp"
+        android:layout_width="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="@dimen/_5sdp"
+        android:id="@+id/closeButton"
+        android:layout_height="wrap_content"/>
+
+    <com.github.chrisbanes.photoview.PhotoView
+        android:id="@+id/photo_view"
+        android:layout_below="@+id/closeButton"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_180sdp" />
+
+</RelativeLayout>

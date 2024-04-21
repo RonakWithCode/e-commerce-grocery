@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/MainBackgroundColor"
+
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Fragment.HomeFragment">
     <ScrollView
@@ -21,51 +22,57 @@
                 android:layout_width="match_parent"
                 android:background="@color/MainBannerColor"
                 android:layout_height="wrap_content">
-
-            <org.imaginativeworld.whynotimagecarousel.ImageCarousel
-                android:id="@+id/carousel"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_200sdp"
-                app:showCaption="true"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentEnd="true"
-                app:captionMargin="0dp"
-                app:captionTextSize="14sp"
-                app:indicatorMargin="0dp"
-                app:imageScaleType="centerCrop"
-                app:carouselPadding="0dp"
-                app:carouselPaddingBottom="0dp"
-                app:carouselPaddingEnd="0dp"
-                app:carouselPaddingStart="0dp"
-                app:carouselPaddingTop="0dp"
-                app:previousButtonMargin="4dp"
-                app:nextButtonMargin="4dp"
-                app:autoPlay="false"
-                app:autoPlayDelay="3000"
-                app:touchToPause="true"/>
-
-
-            <TextView
-                android:layout_below="@+id/carousel"
-                android:id="@+id/category_view_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_2sdp"
-                android:text="@string/top_category"
-                android:textColor="@color/MainTextColor"
-                android:textSize="@dimen/_17ssp" />
-
-            <TextView
-                android:id="@+id/category_see_more"
-                android:layout_below="@+id/carousel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:text="@string/see_more"
-                android:layout_marginEnd="@dimen/_9sdp"
-                android:textColor="@color/green_primary"
-                android:textSize="@dimen/_17ssp" />
+                <org.imaginativeworld.whynotimagecarousel.ImageCarousel
+                    android:id="@+id/carousel"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_190sdp"
+                    android:background="#fff5e4"
+                    app:showTopShadow="false"
+                    app:topShadowAlpha="0.6"
+                    app:topShadowHeight="32dp"
+                    app:showBottomShadow="false"
+                    app:bottomShadowAlpha="0.6"
+                    app:showCaption="false"
+                    app:captionMargin="0dp"
+                    app:captionTextSize="14sp"
+                    app:showIndicator="true"
+                    app:indicatorMargin="0dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    app:imageScaleType="fitCenter"
+                    app:carouselBackground="#00000000"
+                    app:imagePlaceholder="@drawable/placeholder"
+                    app:carouselPadding="0dp"
+                    app:carouselPaddingBottom="0dp"
+                    app:carouselPaddingEnd="0dp"
+                    app:carouselPaddingStart="0dp"
+                    app:carouselPaddingTop="0dp"
+                    app:showNavigationButtons="true"
+                    app:previousButtonMargin="4dp"
+                    app:nextButtonMargin="4dp"
+                    app:carouselGravity="CENTER"
+                    app:scaleOnScroll="true"
+                    app:autoWidthFixing="true" />
+                <TextView
+                    android:layout_below="@+id/carousel"
+                    android:id="@+id/category_view_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_2sdp"
+                    android:text="@string/top_category"
+                    android:textColor="@color/MainTextColor"
+                    android:textSize="@dimen/_17ssp" />
+                <TextView
+                    android:id="@+id/category_see_more"
+                    android:layout_below="@+id/carousel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:text="@string/see_more"
+                    android:layout_marginEnd="@dimen/_9sdp"
+                    android:textColor="@color/green_primary"
+                    android:textSize="@dimen/_17ssp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/category"
@@ -104,7 +111,7 @@
                         android:layout_marginStart="@dimen/_5sdp"
                         android:layout_marginTop="@dimen/_2ssp"
                         android:textSize="@dimen/_20ssp"
-                        android:textStyle="italic"
+                        android:textStyle="normal"
                         android:id="@+id/hint_chips_and_snacks"
                         android:text="@string/chips_and_snacks"
                         android:layout_width="wrap_content"
@@ -142,7 +149,7 @@
                     android:layout_marginStart="@dimen/_5sdp"
                     android:layout_marginTop="@dimen/_2ssp"
                     android:textSize="@dimen/_20ssp"
-                    android:textStyle="italic"
+                    android:textStyle="normal"
                     android:text="@string/dairy"
                     android:id="@+id/Hint_dairy_see_more"
                     android:layout_width="wrap_content"
@@ -168,6 +175,7 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
@@ -203,7 +211,7 @@
                     android:layout_marginStart="@dimen/_5sdp"
                     android:layout_marginTop="@dimen/_2ssp"
                     android:textSize="@dimen/_20ssp"
-                    android:textStyle="italic"
+                    android:textStyle="normal"
                     android:id="@+id/hint_for_you_teeth"
                     android:text="@string/for_you_teeth"
                     android:layout_width="wrap_content"
@@ -237,7 +245,7 @@
                     android:layout_marginStart="@dimen/_5sdp"
                     android:layout_marginTop="@dimen/_2ssp"
                     android:textSize="@dimen/_20ssp"
-                    android:textStyle="italic"
+                    android:textStyle="normal"
                     android:text="@string/drinks"
                     android:id="@+id/hint_drinks"
                     android:layout_width="wrap_content"
@@ -261,15 +269,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/_2ssp"
                     android:layout_marginTop="@dimen/_1sdp" />
-
-
-
                 </RelativeLayout>
-
-
-
             </LinearLayout>
-
 
             <ProgressBar
                 android:id="@+id/ChatsProgressBar"
@@ -279,6 +280,6 @@
                 android:visibility="visible" />
         </RelativeLayout>
     </ScrollView>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
+
 

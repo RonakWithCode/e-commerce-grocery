@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewbinding.ViewBinding;
@@ -34,9 +33,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 
 import org.imaginativeworld.whynotimagecarousel.ImageCarousel;
 import org.imaginativeworld.whynotimagecarousel.listener.CarouselListener;
@@ -51,10 +47,7 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
 
 
     DatabaseService databaseService;
-//    private static final int SPEECH_REQUEST_CODE = 0;
 
-    private static final int PAGE_SIZE = 10; // Number of products to load per page
-    private DocumentSnapshot lastVisibleProduct;
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -66,27 +59,65 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
         databaseService = new DatabaseService();
         LoadCarousel();
         LoadCategory();
-        LoadProduct("chips and Snacks",binding.chipsAndSnacks);
-        LoadProduct("dairy",binding.DairyProducts);
-        LoadProduct("toothpaste",binding.forYouTeeth);
-        LoadProduct("drinks",binding.drinks);
-        
+//        offers();
+        LoadProduct("chips and Snacks", binding.chipsAndSnacks);
+        LoadProduct("dairy", binding.DairyProducts);
+        LoadProduct("toothpaste", binding.forYouTeeth);
+        LoadProduct("drinks", binding.drinks);
 
 
-
-        binding.categorySeeMore.setOnClickListener(view->{
+        binding.categorySeeMore.setOnClickListener(view -> {
             BottomNavigationView bottomAppBar = getActivity().findViewById(R.id.bottomNavigationView);
             bottomAppBar.setSelectedItemId(R.id.GoCategory);
             FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.loader,new CategoryFragment(),"CategoryFragment");
+            transaction.replace(R.id.loader, new CategoryFragment(), "CategoryFragment");
             transaction.addToBackStack("CategoryFragment");
             transaction.commit();
         });
+        binding.chipsAndSnacksSeeMore.setOnClickListener(v -> {
+            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+            Bundle bundle = new Bundle();
+            bundle.putString("filter", "chips and Snacks");
+            ProductFilterFragment fragment = new ProductFilterFragment();
+            fragment.setArguments(bundle);
+            transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
+            transaction.addToBackStack("ProductFilterFragment");
+            transaction.commit();
+        });
+        binding.dairySeeMore.setOnClickListener(v -> {
+            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+            Bundle bundle = new Bundle();
+            bundle.putString("filter", "dairy");
+            ProductFilterFragment fragment = new ProductFilterFragment();
+            fragment.setArguments(bundle);
+            transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
+            transaction.addToBackStack("ProductFilterFragment");
+            transaction.commit();
+        });
+        binding.drinksSeeMore.setOnClickListener(v -> {
+            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+            Bundle bundle = new Bundle();
+            bundle.putString("filter", "drinks");
+            ProductFilterFragment fragment = new ProductFilterFragment();
+            fragment.setArguments(bundle);
+            transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
+            transaction.addToBackStack("ProductFilterFragment");
+            transaction.commit();
+        });
+        binding.forYouTeethSeeMore.setOnClickListener(v -> {
+            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+            Bundle bundle = new Bundle();
+            bundle.putString("filter", "toothpaste");
+            ProductFilterFragment fragment = new ProductFilterFragment();
+            fragment.setArguments(bundle);
+            transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
+            transaction.addToBackStack("ProductFilterFragment");
+            transaction.commit();
+        });
+
         return binding.getRoot();
 
     }
-
-
 
 
 //    private void openVoiceRecognizer() {
@@ -115,6 +146,136 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
 //            productAdapter.setFilerList(filter);
 //        }
 //    }
+
+//    void LoadCarousel() {
+//        ArrayList<BannerModels> models = new ArrayList<>();
+//        FirebaseDatabase database = FirebaseDatabase.getInstance();
+//        DatabaseReference bannerRef = database.getReference().child("Banner");
+//
+//        bannerRef.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                ArrayList<ImageSlidesModel> autoImageList = new ArrayList<>();
+//                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+//                    BannerModels banner = snapshot.getValue(BannerModels.class);
+//                    models.add(banner);
+//                    assert banner != null;
+//                    ImageSlidesModel slideModelModel = new ImageSlidesModel (banner.getBannerUrl(), banner.getBannerCaption());
+//                    autoImageList.add(slideModelModel);
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//                // Handle potential errors
+//                Log.e("TAG", "Error fetching data", databaseError.toException());
+//            }
+//        });
+//
+//
+//        binding.carousel.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Toast.makeText(requireContext(), "it onTouched", Toast.LENGTH_SHORT).show();
+//
+//            }
+//        });
+//
+//
+//        binding.carousel.onItemClickListener(new ItemsListener() {
+//            @Override
+//            public void onItemChanged(int i) {
+//
+//            }
+//
+//            @Override
+//            public void onTouched(@Nullable ImageActionTypes imageActionTypes, int position) {
+//                Toast.makeText(requireContext(), "it onTouched", Toast.LENGTH_SHORT).show();
+//
+//            }
+//
+//            @Override
+//            public void onItemClicked(int position) {
+//                Toast.makeText(requireContext(), "it clicked", Toast.LENGTH_SHORT).show();
+//                FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+//                Bundle bundle = new Bundle();
+//                bundle.putString("filter", models.get(position).getBannerGoto());
+//                ProductFilterFragment fragment = new ProductFilterFragment();
+//                fragment.setArguments(bundle);
+//                transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
+//                transaction.addToBackStack("ProductFilterFragment");
+//                transaction.commit();
+//            }
+//        });
+//
+////
+////        binding.carousel.setItemClickListener(new ItemClickListener() {
+////            @Override
+////            public void onItemSelected(int position) {
+////                Toast.makeText(requireContext(), "it clicked", Toast.LENGTH_SHORT).show();
+////                // Ensure the position is within the bounds of the models list
+////                if (position >= 0 && position < models.size()) {
+////                    FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+////                    Bundle bundle = new Bundle();
+////                    bundle.putString("filter", models.get(position).getBannerGoto());
+////                    ProductFilterFragment fragment = new ProductFilterFragment();
+////                    fragment.setArguments(bundle);
+////                    transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
+////                    transaction.addToBackStack("ProductFilterFragment");
+////                    transaction.commit();
+////                }
+////            }
+////
+////            @Override
+////            public void doubleClick(int position) {
+////                // Handle double click event if needed
+////                Toast.makeText(requireContext(), "it clicked", Toast.LENGTH_SHORT).show();
+////
+////            }
+////        });
+//
+//
+//
+//    }
+
+
+//        Image_Carousel.setCarouselListener(new CarouselListener() {
+//            @Nullable
+//            @Override
+//            public ViewBinding onCreateViewHolder(@NonNull LayoutInflater layoutInflater, @NonNull ViewGroup viewGroup) {
+//                return null;
+//            }
+//
+//            @Override
+//            public void onBindViewHolder(@NonNull ViewBinding viewBinding, @NonNull CarouselItem carouselItem, int i) {
+//            }
+//
+//            @Override
+//            public void onClick(int position, @NonNull CarouselItem carouselItem) {
+//                Log.i("position_ImageCarousel", "position : "+position);
+//                Log.i("position_ImageCarousel", " ArrayList<String>  : "+models.get(position).getBannerGoto());
+//                Toast.makeText(getContext(), "", Toast.LENGTH_SHORT).show();
+//                FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+//                Bundle bundle = new Bundle();
+//                bundle.putString("filter",models.get(position).getBannerGoto());
+//                ProductFilterFragment fragment = new ProductFilterFragment();
+//                fragment.setArguments(bundle);
+//                transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
+//                transaction.addToBackStack("ProductFilterFragment");
+//                transaction.commit();
+//
+//            }
+//
+//            @Override
+//            public void onLongClick(int position, @NonNull CarouselItem carouselItem) {
+//
+//            }
+//        });
+
+
+
+
 
     void LoadCarousel() {
         ArrayList<BannerModels> models = new ArrayList<>();
@@ -176,6 +337,18 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
     void LoadProduct(String category,RecyclerView recyclerView) {
         ArrayList<ProductModel>  model = new ArrayList<>();
         ProductAdapter productAdapter = new ProductAdapter(model, this, requireContext(), "Main");
@@ -201,6 +374,49 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
         });
 
     }
+
+
+//    void handlerBrands(){
+//
+//    }
+
+//    void offers(){
+//        databaseService.getOffers(new DatabaseService.getOffer() {
+//            @Override
+//            public void onSuccess(ArrayList<OffersModel> offers) {
+//                final Dialog dialog = new Dialog(requireContext());
+//                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//                dialog.setContentView(R.layout.sheet_offers);
+//                PhotoView photoView = dialog.findViewById(R.id.photo_view);
+//                ImageView closeButton = dialog.findViewById(R.id.closeButton);
+//
+//                Glide.with(requireContext()).load(offers.get(0).getOfferImage()).placeholder(R.drawable.placeholder).into(photoView);
+////        codRadioButton.setOnClickListener(v -> placeOrder(System.currentTimeMillis(), "cash", "pending"));
+//                closeButton.setOnClickListener(v -> dialog.dismiss());
+//
+//                dialog.show();
+//                dialog.setCancelable(true);
+//                dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+//                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//                dialog.getWindow().getAttributes().windowAnimations = R.style.Animationboy;
+//                dialog.getWindow().setGravity(Gravity.CENTER);
+//
+//
+//            }
+//
+//            @Override
+//            public void onError(DatabaseError errorMessage) {
+//
+//            }
+//        });
+//
+//
+//
+//
+//
+//
+//
+//    }
 
 
 

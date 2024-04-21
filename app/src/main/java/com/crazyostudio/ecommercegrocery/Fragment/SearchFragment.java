@@ -29,9 +29,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.mancj.materialsearchbar.MaterialSearchBar;
+import com.mancj.materialsearchbar.SimpleOnSearchActionListener;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -64,7 +67,7 @@ public class SearchFragment extends Fragment implements SearchAdapterInterface {
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.recyclerView.setAdapter(adapter);
 
-
+        binding.backBtn.setOnClickListener(view-> requireActivity().onBackPressed());
         binding.searchBar.setSpeechMode(true); // Enable voice search
         binding.searchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
             @Override
@@ -81,11 +84,21 @@ public class SearchFragment extends Fragment implements SearchAdapterInterface {
             @Override
             public void onButtonClicked(int buttonCode) {
                 if (buttonCode == MaterialSearchBar.BUTTON_SPEECH) {
-                    Toast.makeText(getContext(), "BUTTON_SPEECH", Toast.LENGTH_SHORT).show();
-
                     openVoiceRecognizer();
                 }
+                else if (buttonCode == MaterialSearchBar.BUTTON_BACK){
+                    binding.searchBar.closeSearch();
+                    binding.backBtn.setVisibility(View.VISIBLE);
+//                    Toast.makeText(requireContext(), "", Toast.LENGTH_SHORT).show();
+                }
+
             }
+        });
+
+        binding.searchBar.setOnClickListener(v ->
+        {
+            binding.backBtn.setVisibility(View.GONE);
+            binding.searchBar.openSearch();
         });
 
         binding.searchBar.addTextChangeListener(new TextWatcher() {
@@ -97,6 +110,7 @@ public class SearchFragment extends Fragment implements SearchAdapterInterface {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 // Trigger search when text changes
+//                binding.backBtn.setVisibility(View.GONE);
                 String query = s.toString();
                 searchProductByKeyword(query);
 
@@ -155,7 +169,7 @@ public class SearchFragment extends Fragment implements SearchAdapterInterface {
         // Perform search only if keyword is not empty
         if (!keyword.isEmpty()) {
             // Convert the keyword to lowercase for case-insensitive search
-            String lowercaseKeyword = keyword.toLowerCase();
+            String lowercaseKeyword = keyword.toLowerCase(Locale.getDefault());
 
             // Create a query to filter products based on the keyword
             Query query = productsRef.whereArrayContains("keywords", lowercaseKeyword);
@@ -183,6 +197,171 @@ public class SearchFragment extends Fragment implements SearchAdapterInterface {
         }
     }
 
+//    private void searchProductByKeyword(String keyword) {
+//        // Perform search only if keyword is not empty
+//        if (!keyword.isEmpty()) {
+//            // Convert the keyword to lowercase for case-insensitive search
+//            String lowercaseKeyword = keyword.toLowerCase();
+//
+//            // Create a query to filter products based on the keyword
+//            Query query = productsRef
+//                    .orderBy("productName") // Order products by name for consistency
+//                    .startAt(lowercaseKeyword) // Start the query at the keyword
+//                    .endAt(lowercaseKeyword + "\uf8ff"); // End the query at the keyword + Unicode character
+//
+//            // Execute the query
+//            query.get().addOnSuccessListener(queryDocumentSnapshots -> {
+//                // Initialize an ArrayList to store matching products
+//                ArrayList<ProductModel> matchingProducts = new ArrayList<>();
+//
+//                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+//                    // Retrieve each matching product
+//                    ProductModel productModel = documentSnapshot.toObject(ProductModel.class);
+//                    matchingProducts.add(productModel);
+//                }
+//
+//                // Set data to your adapter after completing the search
+//                adapter.setData(matchingProducts);
+//            }).addOnFailureListener(e -> {
+//                // Handle query failure
+//                Log.e("SearchFragment", "Error searching for products: " + e.getMessage());
+//            });
+//        } else {
+//            // If keyword is empty, do nothing or show a message
+//            Log.d("SearchFragment", "Keyword is empty");
+//        }
+//    }
+
+
+
+//    private void searchProductByKeyword(String query) {
+//        adapter.clearData();
+//        // Perform search only if query is not empty
+//        if (!query.isEmpty()) {
+//            // Convert the query to lowercase for case-insensitive search
+//            String lowercaseQuery = query.toLowerCase();
+//
+//            // Initialize an ArrayList to store matching products
+//            ArrayList<ProductModel> matchingProducts = new ArrayList<>();
+//
+//            // Create a query to filter products by name
+//            Query nameQuery = productsRef.whereGreaterThanOrEqualTo("productName", lowercaseQuery)
+//                    .whereLessThanOrEqualTo("productName", lowercaseQuery + "\uf8ff");
+//
+//            // Execute the name query
+//            nameQuery.get().addOnSuccessListener(nameQuerySnapshot -> {
+//                for (QueryDocumentSnapshot documentSnapshot : nameQuerySnapshot) {
+//                    // Retrieve each matching product
+//                    ProductModel productModel = documentSnapshot.toObject(ProductModel.class);
+//                    // Add the product to the list of matching products
+//                    matchingProducts.add(productModel);
+//                }
+//
+//                // Create a query to filter products based on keywords
+//                Query keywordQuery = productsRef.whereArrayContains("keywords", lowercaseQuery);
+//
+//                // Execute the keyword query
+//                keywordQuery.get().addOnSuccessListener(keywordQuerySnapshot -> {
+//                    for (QueryDocumentSnapshot documentSnapshot : keywordQuerySnapshot) {
+//                        // Retrieve each matching product
+//                        ProductModel productModel = documentSnapshot.toObject(ProductModel.class);
+//                        // Add the product to the list of matching products if not already added
+//                        if (!matchingProducts.contains(productModel)) {
+//                            matchingProducts.add(productModel);
+//                        }
+//                    }
+//
+//                    // Set data to your adapter after completing the search
+//                    adapter.setData(matchingProducts);
+//                }).addOnFailureListener(e -> {
+//                    // Handle query failure
+//                    Log.e("SearchFragment", "Error searching for products: " + e.getMessage());
+//                });
+//
+//            }).addOnFailureListener(e -> {
+//                // Handle query failure
+//                Log.e("SearchFragment", "Error searching for products: " + e.getMessage());
+//            });
+//        } else {
+//            // If query is empty, do nothing or show a message
+//            Log.d("SearchFragment", "Query is empty");
+//        }
+//    }
+
+
+//    private void searchProductByKeyword(String query) {
+//        adapter.clearData();
+//        // Perform search only if query is not empty
+//        if (!query.isEmpty()) {
+//            // Convert the query to lowercase for case-insensitive search
+//            String lowercaseQuery = query.toLowerCase();
+//
+//            // Initialize a HashSet to store unique product IDs
+//            HashSet<String> uniqueProductIds = new HashSet<>();
+//
+//            // Create a query to filter products by name
+//            Query nameQuery = productsRef.whereGreaterThanOrEqualTo("productName", lowercaseQuery)
+//                    .whereLessThanOrEqualTo("productName", lowercaseQuery + "\uf8ff");
+//
+//            // Execute the name query
+//            nameQuery.get().addOnSuccessListener(nameQuerySnapshot -> {
+//                for (QueryDocumentSnapshot documentSnapshot : nameQuerySnapshot) {
+//                    // Retrieve each matching product
+//                    ProductModel productModel = documentSnapshot.toObject(ProductModel.class);
+//                    // Add the product ID to the set of unique product IDs
+//                    uniqueProductIds.add(productModel.getProductId());
+//                }
+//
+//                // Create a query to filter products based on keywords
+//                Query keywordQuery = productsRef.whereArrayContains("keywords", lowercaseQuery);
+//
+//                // Execute the keyword query
+//                keywordQuery.get().addOnSuccessListener(keywordQuerySnapshot -> {
+//                    for (QueryDocumentSnapshot documentSnapshot : keywordQuerySnapshot) {
+//                        // Retrieve each matching product
+//                        ProductModel productModel = documentSnapshot.toObject(ProductModel.class);
+//                        // Add the product ID to the set of unique product IDs
+//                        uniqueProductIds.add(productModel.getProductId());
+//                    }
+//
+//                    // Initialize an ArrayList to store matching products
+//                    ArrayList<ProductModel> matchingProducts = new ArrayList<>();
+//
+//                    // Retrieve products based on the unique product IDs
+//                    for (String productId : uniqueProductIds) {
+//                        // Create a query to retrieve the product by its ID
+//                        Query productQuery = productsRef.whereEqualTo("productId", productId);
+//
+//                        // Execute the product query
+//                        productQuery.get().addOnSuccessListener(productQuerySnapshot -> {
+//                            // Retrieve the product and add it to the list of matching products
+//                            for (QueryDocumentSnapshot snapshot : productQuerySnapshot) {
+//                                ProductModel productModel = snapshot.toObject(ProductModel.class);
+//                                matchingProducts.add(productModel);
+//                            }
+//
+//                            // Set data to your adapter after completing the search
+//                            adapter.setData(matchingProducts);
+//                        }).addOnFailureListener(e -> {
+//                            // Handle query failure
+//                            Log.e("SearchFragment", "Error retrieving product: " + e.getMessage());
+//                        });
+//                    }
+//
+//                }).addOnFailureListener(e -> {
+//                    // Handle query failure
+//                    Log.e("SearchFragment", "Error searching for products: " + e.getMessage());
+//                });
+//
+//            }).addOnFailureListener(e -> {
+//                // Handle query failure
+//                Log.e("SearchFragment", "Error searching for products: " + e.getMessage());
+//            });
+//        } else {
+//            // If query is empty, do nothing or show a message
+//            Log.d("SearchFragment", "Query is empty");
+//        }
+//    }
 
 
     private void openVoiceRecognizer() {

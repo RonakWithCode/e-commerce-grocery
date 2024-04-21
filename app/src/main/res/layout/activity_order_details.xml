@@ -12,21 +12,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <RelativeLayout
-            android:id="@+id/order_details_layout_top"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="@dimen/_5sdp">
-
-
-        </RelativeLayout>
-
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/order_details_overview"
-            android:layout_below="@id/order_details_layout_top"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
             android:layout_marginStart="@dimen/_10sdp"
@@ -61,6 +50,7 @@
                 <ImageView
                     android:id="@+id/download"
                     android:layout_width="@dimen/_25sdp"
+                    android:visibility="invisible"
                     android:layout_height="@dimen/_25sdp"
                     android:layout_alignParentEnd="true"
                     android:layout_marginEnd="@dimen/_10sdp"

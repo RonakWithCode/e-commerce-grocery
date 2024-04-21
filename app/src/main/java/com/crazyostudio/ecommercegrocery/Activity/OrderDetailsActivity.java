@@ -109,8 +109,13 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
             binding.shippingFee.setText("₹"+orderModel.getShipping().getShippingFee());
             binding.save.setText("₹"+ ShoppingCartHelper.calculateTotalSavings(orderModel.getOrderItems()));
             binding.grandTotal.setText("₹"+orderModel.getOrderTotalPrice());
+            if (orderModel.getOrderStatus().equals("successfully"))
+            {
+                binding.download.setVisibility(View.VISIBLE);
+            }
         } else {
             Toast.makeText(this, "Customer information is missing", Toast.LENGTH_SHORT).show();
+            binding.download.setVisibility(View.INVISIBLE);
         }
     }
 

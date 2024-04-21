@@ -9,6 +9,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 
 import com.crazyostudio.ecommercegrocery.Model.AddressModel;
+import com.crazyostudio.ecommercegrocery.Model.OffersModel;
 import com.crazyostudio.ecommercegrocery.Model.OrderModel;
 import com.crazyostudio.ecommercegrocery.Model.ProductCategoryModel;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
@@ -129,6 +130,10 @@ public class DatabaseService {
         void onSuccess();
         void onError(Exception errorMessage);
     }
+    public interface getOffer {
+        void onSuccess(ArrayList<OffersModel> offers);
+        void onError(DatabaseError errorMessage);
+    }
 
 
 
@@ -136,6 +141,7 @@ public class DatabaseService {
     public void getAllProductsByCategoryOnly(String category, GetAllProductsCallback callback) {
         database.collection("Product")
                 .whereEqualTo("category", category) // Filter by category
+                .limit(10)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -692,6 +698,27 @@ public class DatabaseService {
         firebaseDatabase.getReference().child("Order").child(order.getCustomer().getCustomerId()).child(order.getOrderId()).setValue(order).addOnCompleteListener(task -> callback.onSuccess()).addOnFailureListener(callback::onError);
     }
 
+    public void getOffers(getOffer offer){
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        firebaseDatabase.getReference().child("offer").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                ArrayList<OffersModel> offersModelArrayList = new ArrayList<>();
+                for (DataSnapshot data: snapshot.getChildren() ) {
+                    OffersModel offersModel = data.getValue(OffersModel.class);
+                    offersModelArrayList.add(offersModel);
+                }
+                offer.onSuccess(offersModelArrayList);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                offer.onError(error);
+
+            }
+        });
+    }
 
 
 }

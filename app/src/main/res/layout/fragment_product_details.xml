@@ -68,23 +68,53 @@
                 android:id="@+id/card_Slider"
                 android:background="@color/MainBackgroundColor"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_200sdp"
+                android:layout_height="@dimen/_220sdp"
                 android:minHeight="@dimen/_200sdp"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true">
-
                 <org.imaginativeworld.whynotimagecarousel.ImageCarousel
                     android:id="@+id/productsImages"
-                    android:background="@color/MainBackgroundColor"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    app:imageScaleType="centerCrop"
-                    app:autoPlay="false"
-                    app:showBottomShadow="true"
-                    app:showCaption="false"
+                    android:background="@color/MainBackgroundColor"
                     app:showTopShadow="false"
+                    app:topShadowAlpha="0.6"
+                    app:topShadowHeight="32dp"
+
+                    app:showBottomShadow="false"
+                    app:bottomShadowAlpha="0.6"
+                    app:bottomShadowHeight="64dp"
+
+                    app:showCaption="false"
+                    app:captionMargin="0dp"
+                    app:captionTextSize="14sp"
+
                     app:showIndicator="true"
-                    app:showNavigationButtons="true" />
+                    app:indicatorMargin="0dp"
+
+                    app:imageScaleType="fitCenter"
+
+                    app:carouselBackground="#00000000"
+                    app:imagePlaceholder="@drawable/placeholder"
+
+                    app:carouselPadding="0dp"
+                    app:carouselPaddingBottom="0dp"
+                    app:carouselPaddingEnd="0dp"
+                    app:carouselPaddingStart="0dp"
+                    app:carouselPaddingTop="0dp"
+
+                    app:showNavigationButtons="true"
+
+                    app:previousButtonMargin="4dp"
+
+                    app:nextButtonMargin="4dp"
+
+                    app:carouselType="SHOWCASE"
+                    app:carouselGravity="CENTER"
+
+                    app:scaleOnScroll="true"
+                    app:autoWidthFixing="true"
+                    />
 
             </androidx.cardview.widget.CardView>
 
@@ -144,7 +174,7 @@
                     android:id="@+id/TextViewMRP"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="MRP "
+                    android:text="MRP"
                     android:textColor="@color/HintMainTextColor"
                     android:layout_marginStart="@dimen/_5sdp"
                     android:layout_marginTop="@dimen/_5sdp"
