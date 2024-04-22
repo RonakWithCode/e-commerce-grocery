@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.crazyostudio.ecommercegrocery.Adapter.ViewOrderProductAdapter;
 import com.crazyostudio.ecommercegrocery.Model.OrderModel;
-import com.crazyostudio.ecommercegrocery.Model.UserinfoModels;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.databinding.ActivityAllOrderBinding;
 import com.crazyostudio.ecommercegrocery.interfaceClass.OrderInterface;

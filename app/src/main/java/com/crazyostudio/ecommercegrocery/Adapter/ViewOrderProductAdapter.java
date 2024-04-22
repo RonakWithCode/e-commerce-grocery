@@ -35,6 +35,7 @@ public class ViewOrderProductAdapter  extends RecyclerView.Adapter<ViewOrderProd
     ArrayList<OrderModel> orderModels;
     Context context;
     OrderInterface orderProductInterface;
+    private boolean showMoreOrders = false; // Flag to indicate whether to show more orders
 
 
     public ViewOrderProductAdapter(ArrayList<OrderModel> orderModels, Context context, OrderInterface orderProductInterface) {
@@ -56,10 +57,11 @@ public class ViewOrderProductAdapter  extends RecyclerView.Adapter<ViewOrderProd
     public void onBindViewHolder(@NonNull ViewOrderProductAdapter.ViewOrderProductAdapterViewHolder holder, int position) {
         OrderModel model = orderModels.get(position);
 
-        String Address = model.getShipping().getShippingAddress().getFullName() +"\n" +model.getShipping().getShippingAddress().getFlatHouse() +" "  +model.getShipping().getShippingAddress().getAddress();
-        holder.binding.productName.setText(Address);
+        String Address = model.getShipping().getShippingAddress().getFlatHouse() +" "  +model.getShipping().getShippingAddress().getAddress();
+        holder.binding.productName.setText(model.getShipping().getShippingAddress().getFullName());
+        holder.binding.productAdders.setText(Address);
         holder.binding.quantity.setText(model.getOrderItems().size()+" (Item)'");
-//        holder.binding.quantity.setVisibility(View.GONE);
+        holder.binding.TotalProductPrice.setText("₹"+model.getOrderTotalPrice());
 //        holder.binding.TotalProductPrice.setText("₹"+model.getOrderTotalPrice());
         holder.binding.getRoot().setOnClickListener(onclickRoot->{
                     orderProductInterface.onOrder(model);
@@ -82,20 +84,25 @@ public class ViewOrderProductAdapter  extends RecyclerView.Adapter<ViewOrderProd
     private final Filter mFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence charSequence) {
-            ArrayList<OrderModel> filter =new ArrayList<>();
-            if (charSequence.equals("all"))
-            {
+            ArrayList<OrderModel> filter = new ArrayList<>();
+            if (charSequence.equals("all")) {
                 filter.addAll(orderModelsFull);
-
-            }
-            else {
-                for(OrderModel model: orderModelsFull){
-                    if (model.getOrderStatus().contentEquals(charSequence)){
+            } else {
+                for (OrderModel model : orderModelsFull) {
+                    if (model.getOrderStatus().equals(charSequence)) {
                         filter.add(model);
                     }
                 }
             }
-            FilterResults results =new FilterResults();
+            // Check if there are more orders than the maximum limit
+//            if (filter.size() > MAX_ORDERS_TO_DISPLAY) {
+//                // Show the option to see more orders
+//                showMoreOrders = true;
+//            } else {
+//                // Hide the option to see more orders
+//                showMoreOrders = false;
+//            }
+            FilterResults results = new FilterResults();
             results.values = filter;
             results.count = filter.size();
             return results;
@@ -104,10 +111,22 @@ public class ViewOrderProductAdapter  extends RecyclerView.Adapter<ViewOrderProd
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
             orderModels.clear();
-            orderModels.addAll((ArrayList)filterResults.values);
+            orderModels.addAll((ArrayList<OrderModel>) filterResults.values);
             notifyDataSetChanged();
+            // Check if there are more orders than the maximum limit
+            if (showMoreOrders) {
+                // Show the option to see more orders
+                // Perform the action to show more orders here
+            } else {
+                // Hide the option to see more orders
+                // Perform the action to hide the option here
+            }
         }
+
     };
+
+
+
 
     public static class ViewOrderProductAdapterViewHolder extends RecyclerView.ViewHolder {
         OrderProductLayoutBinding binding;

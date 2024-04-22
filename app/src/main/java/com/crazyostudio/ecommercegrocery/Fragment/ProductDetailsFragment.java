@@ -348,4 +348,13 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
         }
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
+    }
 }

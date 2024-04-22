@@ -80,41 +80,29 @@
                     app:showTopShadow="false"
                     app:topShadowAlpha="0.6"
                     app:topShadowHeight="32dp"
-
                     app:showBottomShadow="false"
                     app:bottomShadowAlpha="0.6"
                     app:bottomShadowHeight="64dp"
-
                     app:showCaption="false"
                     app:captionMargin="0dp"
                     app:captionTextSize="14sp"
-
                     app:showIndicator="true"
                     app:indicatorMargin="0dp"
-
                     app:imageScaleType="fitCenter"
-
                     app:carouselBackground="#00000000"
                     app:imagePlaceholder="@drawable/placeholder"
-
                     app:carouselPadding="0dp"
                     app:carouselPaddingBottom="0dp"
                     app:carouselPaddingEnd="0dp"
                     app:carouselPaddingStart="0dp"
                     app:carouselPaddingTop="0dp"
-
                     app:showNavigationButtons="true"
-
                     app:previousButtonMargin="4dp"
-
                     app:nextButtonMargin="4dp"
-
-                    app:carouselType="SHOWCASE"
+                    app:carouselType="BLOCK"
                     app:carouselGravity="CENTER"
-
                     app:scaleOnScroll="true"
-                    app:autoWidthFixing="true"
-                    />
+                    app:autoWidthFixing="true" />
 
             </androidx.cardview.widget.CardView>
 

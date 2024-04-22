@@ -113,9 +113,9 @@
     <string-array name="typesSpinnerArray">
         <item>all</item>
         <item>on the way</item>
-        <item>shipped</item>
+        <item>successfully</item>
+        <item>failed</item>
         <item>canceled</item>
-        <item>successful</item>
     </string-array>
     <!-- Preference Titles -->
     <string name="messages_header">संदेशों</string>

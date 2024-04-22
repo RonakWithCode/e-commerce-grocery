@@ -104,6 +104,15 @@ public class ProductFilterFragment extends Fragment implements onClickProductAda
 
 
     @Override
+    public void onResume() {
+        super.onResume();
+        ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();

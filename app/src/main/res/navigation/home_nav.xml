@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.crazyostudio.ecommercegrocery.Fragment.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_categoryFragment"
+            app:destination="@id/categoryFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_shoppingCartsFragment"
+            app:destination="@id/shoppingCartsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_moreFragment"
+            app:destination="@id/moreFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/categoryFragment"
+        android:name="com.crazyostudio.ecommercegrocery.Fragment.CategoryFragment"
+        android:label="fragment_category"
+        tools:layout="@layout/fragment_category" />
+    <fragment
+        android:id="@+id/shoppingCartsFragment"
+        android:name="com.crazyostudio.ecommercegrocery.Fragment.ShoppingCartsFragment"
+        android:label="fragment_shopping_carts"
+        tools:layout="@layout/fragment_shopping_carts" />
+    <fragment
+        android:id="@+id/moreFragment"
+        android:name="com.crazyostudio.ecommercegrocery.Fragment.MoreFragment"
+        android:label="fragment_more"
+        tools:layout="@layout/fragment_more" />
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.crazyostudio.ecommercegrocery.Fragment.SearchFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search" />
+    <fragment
+        android:id="@+id/productDetailsFragment2"
+        android:name="com.crazyostudio.ecommercegrocery.Fragment.ProductDetailsFragment"
+        android:label="fragment_product_details"
+        tools:layout="@layout/fragment_product_details" />
+    <fragment
+        android:id="@+id/productFilterFragment"
+        android:name="com.crazyostudio.ecommercegrocery.Fragment.ProductFilterFragment"
+        android:label="fragment_product_filter"
+        tools:layout="@layout/fragment_product_filter" />
+</navigation>

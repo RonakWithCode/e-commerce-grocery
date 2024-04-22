@@ -315,9 +315,9 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
 
             @Override
             public void onClick(int position, @NonNull CarouselItem carouselItem) {
-                Log.i("position_ImageCarousel", "position : "+position);
-                Log.i("position_ImageCarousel", " ArrayList<String>  : "+models.get(position).getBannerGoto());
-                Toast.makeText(getContext(), "", Toast.LENGTH_SHORT).show();
+//                Log.i("position_ImageCarousel", "position : "+position);
+//                Log.i("position_ImageCarousel", " ArrayList<String>  : "+models.get(position).getBannerGoto());
+//                Toast.makeText(getContext(), "", Toast.LENGTH_SHORT).show();
                 FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
                 Bundle bundle = new Bundle();
                 bundle.putString("filter",models.get(position).getBannerGoto());
@@ -335,20 +335,6 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
             }
         });
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     void LoadProduct(String category,RecyclerView recyclerView) {
         ArrayList<ProductModel>  model = new ArrayList<>();
         ProductAdapter productAdapter = new ProductAdapter(model, this, requireContext(), "Main");
