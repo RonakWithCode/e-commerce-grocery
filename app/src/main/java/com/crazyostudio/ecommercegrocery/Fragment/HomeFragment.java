@@ -1,6 +1,8 @@
 package com.crazyostudio.ecommercegrocery.Fragment;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -287,10 +289,16 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     BannerModels banner = snapshot.getValue(BannerModels.class);
+                    if (isDarkModeEnabled(requireContext())){
+                        if (banner != null) {
+                            banner.setBannerUrl(snapshot.child("darkModeUrl").getValue(String.class));
+                        }
+                    }
                     models.add(banner);
-                    assert banner != null;
-                    CarouselItem carouselItem = new CarouselItem(banner.getBannerUrl());
-                    Image_Carousel.addData(carouselItem);
+                    if (banner != null) {
+                        CarouselItem carouselItem = new CarouselItem(banner.getBannerUrl());
+                        Image_Carousel.addData(carouselItem);
+                    }
                 }
             }
 
@@ -335,6 +343,18 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
             }
         });
     }
+
+    public static boolean isDarkModeEnabled(Context context) {
+        int currentNightMode = context.getResources().getConfiguration().uiMode
+                & Configuration.UI_MODE_NIGHT_MASK;
+        return currentNightMode == Configuration.UI_MODE_NIGHT_YES;
+    }
+
+
+
+
+
+
     void LoadProduct(String category,RecyclerView recyclerView) {
         ArrayList<ProductModel>  model = new ArrayList<>();
         ProductAdapter productAdapter = new ProductAdapter(model, this, requireContext(), "Main");

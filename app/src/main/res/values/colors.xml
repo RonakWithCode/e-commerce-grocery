@@ -48,6 +48,7 @@
 
     <color name="green_primary">#4CAF50</color>
     <color name="green_primary_variant">#388E3C</color>
+    <color name="grey_green_primary_variant">#fff5e4</color>
 
     <color name="orange_secondary">#FFA726</color>
     <color name="orange_secondary_variant">#FF7043</color>
@@ -87,5 +88,6 @@
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="pin_code_bg_color">#c6d3c9</color>
+    <color name="Banner_Colors">#fff5e4</color>
 
 </resources>

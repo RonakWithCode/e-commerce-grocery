@@ -26,5 +26,6 @@
 
     <!--User list of Chat Layout Color -->
     <color name="FixNavColor">#ffff</color>
+    <color name="Banner_Colors">#2C3E50</color>
 
 </resources>

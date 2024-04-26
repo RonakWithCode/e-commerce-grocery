@@ -3,6 +3,9 @@
     android:layout_width="@dimen/_150sdp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginBottom="@dimen/_2sdp"
+    android:scrollbars="horizontal"
+    android:isScrollContainer="true"
+    android:background="@color/MainBackgroundColor"
     android:layout_height="@dimen/_210sdp">
 
     <com.google.android.material.card.MaterialCardView
@@ -10,6 +13,7 @@
         android:minHeight="@dimen/_210sdp"
         android:layout_height="@dimen/_210sdp"
         android:layout_margin="5dp"
+        app:cardBackgroundColor="@color/MainBackgroundColor"
         app:cardCornerRadius="5dp">
         <RelativeLayout
             android:layout_width="wrap_content"

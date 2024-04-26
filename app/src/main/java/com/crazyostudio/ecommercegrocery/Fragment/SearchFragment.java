@@ -370,6 +370,7 @@ public class SearchFragment extends Fragment implements SearchAdapterInterface {
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
 // This starts the activity and populates the intent with the speech text.
         startActivityForResult(intent, SPEECH_REQUEST_CODE);
+        binding.backBtn.setVisibility(View.GONE);
 
 
     }

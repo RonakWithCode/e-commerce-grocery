@@ -26,7 +26,7 @@
                     android:id="@+id/carousel"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_190sdp"
-                    android:background="#fff5e4"
+                    android:background="@color/Banner_Colors"
                     app:showTopShadow="false"
                     app:topShadowAlpha="0.6"
                     app:topShadowHeight="32dp"

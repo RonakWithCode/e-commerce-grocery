@@ -32,6 +32,7 @@ import com.crazyostudio.ecommercegrocery.Activity.OrderDetailsActivity;
 import com.crazyostudio.ecommercegrocery.Adapter.ShoppingCartsAdapter;
 import com.crazyostudio.ecommercegrocery.Dialog.CustomErrorDialog;
 import com.crazyostudio.ecommercegrocery.HelperClass.ShoppingCartHelper;
+import com.crazyostudio.ecommercegrocery.HelperClass.ValuesHelper;
 import com.crazyostudio.ecommercegrocery.Model.AddressModel;
 import com.crazyostudio.ecommercegrocery.Model.Customer;
 import com.crazyostudio.ecommercegrocery.Model.OrderModel;
@@ -344,9 +345,10 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
 
 //    public OrderModel(String orderId, Customer customer, ArrayList< ShoppingCartsProductFirebaseModel > orderItems, double orderTotalPrice, String couponCode, String orderStatus, Payment
 //        payment, Shipping shipping, Date orderDate, String notes, String token) {
+        String deliveryState = ValuesHelper.PROCESSING;
         Customer customer = new Customer(authService.getUserId(), authService.getUserName(), addressModel.getMobileNumber() , authService.getUserPhoneNumber());
         Payment payment = new Payment(paymentMethod,paymentStatus);
-        Shipping shipping = new Shipping("Standing","free",null,addressModel,"shipped");
+        Shipping shipping = new Shipping("Standing","free",null,addressModel, deliveryState);
         Date currentDate = new Date();
         String couponCode = "NoCouponCode";
         String token = TokenManager.getInstance(requireContext()).getToken();
@@ -354,7 +356,7 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
         if (!Objects.requireNonNull(binding.couponCode.getEditText()).getText().toString().isEmpty()) {
             couponCode = binding.couponCode.getEditText().getText().toString();
         }
-        OrderModel orderModel = new OrderModel(orderId,customer,models,finalTotal,couponCode,"shipped",payment, shipping
+        OrderModel orderModel = new OrderModel(orderId,customer,models,finalTotal,couponCode,deliveryState,payment, shipping
                 ,currentDate , Objects.requireNonNull(binding.note.getEditText()).getText().toString(),token);
         databaseService.PlaceOder(orderModel, new DatabaseService.PlaceOrderCallback() {
             @SuppressLint("SetTextI18n")
