@@ -7,6 +7,10 @@ public class ValuesHelper {
     public static final String FAILED = "Failed";
 
 
+    public static final String RupeeSymbols = "₹";
+
+    public static final double MIN_TOTAL_PRICE = 120;
+    public static final double MIN_TOTAL_PRICE_VALUE = 35;
 
 
 

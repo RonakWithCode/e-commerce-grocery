@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.crazyostudio.ecommercegrocery.Adapter.ViewOrderProductAdapter;
 import com.crazyostudio.ecommercegrocery.Model.OrderModel;
@@ -21,6 +22,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -32,6 +34,13 @@ public class AllOrderActivity extends AppCompatActivity implements OrderInterfac
     ArrayList<OrderModel> orderModel;
     ViewOrderProductAdapter orderProductAdapter;
     private ActionBar actionBar;
+    private int itemCount = 10; // Number of items to initially load
+    private int lastVisibleItemPosition;
+    private boolean isLoading = false;
+    private int totalItemCount;
+    private LinearLayoutManager layoutManager;
+    private String filter = "all"; // Default filter value
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,92 +48,101 @@ public class AllOrderActivity extends AppCompatActivity implements OrderInterfac
         setContentView(binding.getRoot());
         database = FirebaseDatabase.getInstance();
 
-
-        actionBar = this.getSupportActionBar();
+        actionBar = getSupportActionBar();
         if (actionBar != null) {
-            // Hide the ActionBar when the fragment is created
             actionBar.hide();
         }
 
-
-        binding.orderDetailsViewBack.setOnClickListener(view->onBackPressed());
-        getOrders();
-
-// Create an ArrayAdapter using the string array and a default spinner layout.
+        binding.orderDetailsViewBack.setOnClickListener(view -> onBackPressed());
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 this,
                 R.array.typesSpinnerArray,
                 android.R.layout.simple_spinner_item
         );
-// Specify the layout to use when the list of choices appears.
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-// Apply the adapter to the spinner.
         binding.typesSpinner.setAdapter(adapter);
-
         binding.typesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//                Log.i("LOG", "onItemSelected: "+adapter.getItem(i).toString());
-                orderProductAdapter.getFilter().filter(adapter.getItem(i).toString());
+                filter = adapter.getItem(i).toString();
+                getOrders(filter);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-//                binding.typesSpinner.setSelection(0);
+                filter = "all";
+                getOrders(filter);
             }
         });
 
+        layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        binding.itemRecycler.setLayoutManager(layoutManager);
+        orderModel = new ArrayList<>();
+        orderProductAdapter = new ViewOrderProductAdapter(orderModel, this, this);
+        binding.itemRecycler.setAdapter(orderProductAdapter);
 
+        binding.itemRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
 
+                totalItemCount = layoutManager.getItemCount();
+                lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
 
+                if (!isLoading && totalItemCount <= (lastVisibleItemPosition + itemCount)) {
+                    // Load more data
+                    isLoading = true;
+                    getMoreOrders(filter);
+                }
+            }
+        });
 
-
+        getOrders(filter);
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    private void getOrders() {
-        binding.progressCircular.setVisibility(View.VISIBLE);
-        orderModel = new ArrayList<>();
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
-        binding.itemRecycler.setLayoutManager(layoutManager);
 
-        database.getReference().child("Order").child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid())).addValueEventListener(new ValueEventListener() {
+    @SuppressLint("NotifyDataSetChanged")
+    private void getOrders(String filter) {
+        binding.progressCircular.setVisibility(View.VISIBLE);
+        Query query = database.getReference("Order")
+                .child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
+                .limitToLast(itemCount)
+                .orderByChild("orderStatus");
+
+        if (!filter.equals("all")) {
+            query = query.equalTo(filter);
+        }
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                orderModel.clear();
                 for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                     OrderModel model = snapshot1.getValue(OrderModel.class);
                     if (model != null) {
                         orderModel.add(model);
-                        orderProductAdapter.notifyDataSetChanged();
-                        binding.progressCircular.setVisibility(View.GONE);
-                        orderProductAdapter.getFilter().filter("all");
-//                        productModels.addAll(model.getProductModel());
                     }
-
                 }
+                orderProductAdapter.notifyDataSetChanged();
+                binding.progressCircular.setVisibility(View.GONE);
+                isLoading = false;
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                binding.progressCircular.setVisibility(View.GONE);
+                isLoading = false;
             }
         });
-
-
-        orderProductAdapter = new ViewOrderProductAdapter(orderModel,this, this);
-        binding.itemRecycler.setAdapter(orderProductAdapter);
-        orderProductAdapter.notifyDataSetChanged();
-
     }
 
 
-    @Override
-    protected void onDestroy() {
-        if (actionBar != null) {
-            // Hide the ActionBar when the fragment is created
-            actionBar.show();
-        }
-        super.onDestroy();
+
+
+    private void getMoreOrders(String filter) {
+        // Increase itemCount for loading more items
+        itemCount += 10;
+        getOrders(filter);
     }
 
     @Override
@@ -133,5 +151,13 @@ public class AllOrderActivity extends AppCompatActivity implements OrderInterfac
         i.putExtra("orderID", orderModels.getOrderId());
         i.putExtra("orderModel", orderModels);
         startActivity(i);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (actionBar != null) {
+            actionBar.show();
+        }
+        super.onDestroy();
     }
 }

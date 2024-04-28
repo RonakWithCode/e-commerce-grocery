@@ -3,9 +3,6 @@ package com.crazyostudio.ecommercegrocery.Fragment;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -14,12 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -28,7 +21,6 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
-import com.crazyostudio.ecommercegrocery.Activity.OrderDetailsActivity;
 import com.crazyostudio.ecommercegrocery.Adapter.ShoppingCartsAdapter;
 import com.crazyostudio.ecommercegrocery.Dialog.CustomErrorDialog;
 import com.crazyostudio.ecommercegrocery.HelperClass.ShoppingCartHelper;
@@ -44,9 +36,7 @@ import com.crazyostudio.ecommercegrocery.Services.AuthService;
 import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentCheckoutBinding;
 import com.crazyostudio.ecommercegrocery.interfaceClass.ShoppingCartsInterface;
-import com.crazyostudio.ecommercegrocery.javaClasses.BlurBuilder;
 import com.crazyostudio.ecommercegrocery.javaClasses.TokenManager;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -71,12 +61,12 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
     private String CouponCode;
     double Total =  00.0;
     double grandTotal = 00.0;
-    private static final String RupeeSymbols = "₹";
+
+    double processFee = 00.0;
     private double newCouponValue;
     private double couponMin;
     private AddressModel addressModel;
     NavController navController;
-
 
     public CheckoutFragment() {}
 
@@ -134,12 +124,12 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
                                 CouponValueIsApply = true;
                                 newCouponValue = Double.parseDouble(couponDiscountAmount); // Example coupon value
                                 binding.couponCodeApplyBtn.setText("remove");
-                                binding.discount.setText(RupeeSymbols+newCouponValue);
+                                binding.discount.setText(ValuesHelper.RupeeSymbols+newCouponValue);
                                 binding.couponCode.setEnabled(!CouponValueIsApply);
                                 updateSubTotalPrice();
                             }
                             else {
-                                binding.couponCode.setError("Minimum subtotal value required to apply the coupon is "+RupeeSymbols + couponMinValue);
+                                binding.couponCode.setError("Minimum subtotal value required to apply the coupon is "+ValuesHelper.RupeeSymbols + couponMinValue);
                             }
 
                         } else {
@@ -156,7 +146,7 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
                         CouponValueIsApply = false;
                         newCouponValue = 00.0; // No coupon applied
                         binding.couponCodeApplyBtn.setText("Apply");
-                        binding.discount.setText(RupeeSymbols+newCouponValue);
+                        binding.discount.setText(ValuesHelper.RupeeSymbols+newCouponValue);
                         binding.couponCode.setEnabled(!CouponValueIsApply);
                     }
                 });
@@ -165,7 +155,7 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
                 newCouponValue = 0; // No coupon applied
                 updateSubTotalPrice();
                 CouponValueIsApply = false;
-                binding.discount.setText(RupeeSymbols+newCouponValue);
+                binding.discount.setText(ValuesHelper.RupeeSymbols+newCouponValue);
                 binding.couponCodeApplyBtn.setText("Apply");
                 binding.couponCode.setEnabled(!CouponValueIsApply);
 
@@ -282,16 +272,28 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
     @SuppressLint("SetTextI18n")
     private void updateSubTotalPrice() {
         Total = ShoppingCartHelper.calculateTotalPrices(models);
+        if (Total < ValuesHelper.MIN_TOTAL_PRICE) {
+            processFee = ValuesHelper.MIN_TOTAL_PRICE_VALUE;
+            binding.processFee.setText(ValuesHelper.RupeeSymbols + processFee);
+        }else {
+            processFee = 00;
+            binding.processFee.setText(ValuesHelper.RupeeSymbols + processFee);
+        }
+
         binding.SubTotalPrice.setText("₹" + Total);
-        grandTotal = Total - newCouponValue;
-        binding.TotalPrice.setText("₹" + grandTotal);
+
+        grandTotal = Total - newCouponValue + processFee;
+        binding.TotalPrice.setText(ValuesHelper.RupeeSymbols  + grandTotal);
     }
 
     @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
     @Override
     public void remove(int pos,String id,ShoppingCartsProductModel cartsProductModel) {
-        RemoveBottomSheetDialogFragment bottomSheet = new RemoveBottomSheetDialogFragment(uid,id,cartsAdapter,cartsProductModel);
-        bottomSheet.show(requireActivity().getSupportFragmentManager(), bottomSheet.getTag());
+        if (requireActivity().getSupportFragmentManager().findFragmentByTag("bottom_sheet_fragment") == null) {
+            RemoveBottomSheetDialogFragment bottomSheet = new RemoveBottomSheetDialogFragment(uid,id,cartsAdapter,cartsProductModel);
+
+            bottomSheet.show(requireActivity().getSupportFragmentManager(), "bottom_sheet_fragment");
+        }
         updateSubTotalPrice();
         if (Total < couponMin) {
             // Total is less than the minimum required value, remove the coupon
@@ -299,7 +301,7 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
             newCouponValue = 00.0;
             binding.couponCodeApplyBtn.setText("Apply");
             binding.couponCode.setEnabled(true);
-            binding.discount.setText(RupeeSymbols + newCouponValue);
+            binding.discount.setText(ValuesHelper.RupeeSymbols + newCouponValue);
             updateSubTotalPrice();
 
 
@@ -321,7 +323,7 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
             newCouponValue = 00.0;
             binding.couponCodeApplyBtn.setText("Apply");
             binding.couponCode.setEnabled(true);
-            binding.discount.setText(RupeeSymbols + newCouponValue);
+            binding.discount.setText(ValuesHelper.RupeeSymbols + newCouponValue);
             updateSubTotalPrice();
         }
 
@@ -363,7 +365,7 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
             @Override
             public void onSuccess() {
                 databaseService.removeCartItems(customer.getCustomerId());
-                String totalSaving = RupeeSymbols + totalSavings;
+                String totalSaving = ValuesHelper.RupeeSymbols + totalSavings;
                 PlaceOrderFragment placeOrderFragment = new PlaceOrderFragment(orderId,totalSaving);
                 placeOrderFragment.show(requireActivity().getSupportFragmentManager(), "place_order_dialog");
                 progressDialog.dismiss();

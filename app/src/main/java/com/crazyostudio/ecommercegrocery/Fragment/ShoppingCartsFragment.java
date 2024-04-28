@@ -118,10 +118,10 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
 
 
 // Show the bottom sheet
-            RemoveBottomSheetDialogFragment bottomSheet = new RemoveBottomSheetDialogFragment(uid,id,cartsAdapter,cartsProductModel);
-            bottomSheet.show(requireActivity().getSupportFragmentManager(), bottomSheet.getTag());
-
-
+        if (requireActivity().getSupportFragmentManager().findFragmentByTag("bottom_sheet_fragment") == null) {
+            RemoveBottomSheetDialogFragment bottomSheet = new RemoveBottomSheetDialogFragment(uid, id, cartsAdapter, cartsProductModel);
+            bottomSheet.show(requireActivity().getSupportFragmentManager(), "bottom_sheet_fragment");
+        }
 
 //        binding.progressCircular.setVisibility(View.GONE);
     }

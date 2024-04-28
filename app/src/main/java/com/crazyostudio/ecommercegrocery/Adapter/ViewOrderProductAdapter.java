@@ -30,17 +30,14 @@ import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-public class ViewOrderProductAdapter  extends RecyclerView.Adapter<ViewOrderProductAdapter.ViewOrderProductAdapterViewHolder> implements Filterable {
-    ArrayList<OrderModel> orderModelsFull;
+public class ViewOrderProductAdapter  extends RecyclerView.Adapter<ViewOrderProductAdapter.ViewOrderProductAdapterViewHolder> {
+
     ArrayList<OrderModel> orderModels;
     Context context;
     OrderInterface orderProductInterface;
-    private boolean showMoreOrders = false; // Flag to indicate whether to show more orders
-
 
     public ViewOrderProductAdapter(ArrayList<OrderModel> orderModels, Context context, OrderInterface orderProductInterface) {
-        this.orderModelsFull = orderModels;
-        this.orderModels = new ArrayList<>(orderModels);
+        this.orderModels = orderModels;
         this.context = context;
         this.orderProductInterface = orderProductInterface;
     }
@@ -49,7 +46,6 @@ public class ViewOrderProductAdapter  extends RecyclerView.Adapter<ViewOrderProd
     @Override
     public ViewOrderProductAdapter.ViewOrderProductAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new ViewOrderProductAdapter.ViewOrderProductAdapterViewHolder(LayoutInflater.from(context).inflate(R.layout.order_product_layout, parent, false));
-
     }
 
     @SuppressLint("SetTextI18n")
@@ -76,56 +72,56 @@ public class ViewOrderProductAdapter  extends RecyclerView.Adapter<ViewOrderProd
         return orderModels.size();
     }
 
-    @Override
-    public Filter getFilter() {
-        return mFilter;
-    }
-
-    private final Filter mFilter = new Filter() {
-        @Override
-        protected FilterResults performFiltering(CharSequence charSequence) {
-            ArrayList<OrderModel> filter = new ArrayList<>();
-            if (charSequence.equals("all")) {
-                filter.addAll(orderModelsFull);
-            } else {
-                for (OrderModel model : orderModelsFull) {
-                    if (model.getOrderStatus().equals(charSequence)) {
-                        filter.add(model);
-                    }
-                }
-            }
-            // Check if there are more orders than the maximum limit
-//            if (filter.size() > MAX_ORDERS_TO_DISPLAY) {
+//    @Override
+//    public Filter getFilter() {
+//        return mFilter;
+//    }
+//
+//    private final Filter mFilter = new Filter() {
+//        @Override
+//        protected FilterResults performFiltering(CharSequence charSequence) {
+//            ArrayList<OrderModel> filter = new ArrayList<>();
+//            if (charSequence.equals("all")) {
+//                filter.addAll(orderModelsFull);
+//            } else {
+//                for (OrderModel model : orderModelsFull) {
+//                    if (model.getOrderStatus().equals(charSequence)) {
+//                        filter.add(model);
+//                    }
+//                }
+//            }
+//            // Check if there are more orders than the maximum limit
+////            if (filter.size() > MAX_ORDERS_TO_DISPLAY) {
+////                // Show the option to see more orders
+////                showMoreOrders = true;
+////            } else {
+////                // Hide the option to see more orders
+////                showMoreOrders = false;
+////            }
+//            FilterResults results = new FilterResults();
+//            results.values = filter;
+//            results.count = filter.size();
+//            return results;
+//        }
+//
+//        @Override
+//        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+//            orderModels.clear();
+//            orderModels.addAll((ArrayList<OrderModel>) filterResults.values);
+//            notifyDataSetChanged();
+//            // Check if there are more orders than the maximum limit
+//            if (showMoreOrders) {
 //                // Show the option to see more orders
-//                showMoreOrders = true;
+//                // Perform the action to show more orders here
 //            } else {
 //                // Hide the option to see more orders
-//                showMoreOrders = false;
+//                // Perform the action to hide the option here
 //            }
-            FilterResults results = new FilterResults();
-            results.values = filter;
-            results.count = filter.size();
-            return results;
-        }
-
-        @Override
-        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-            orderModels.clear();
-            orderModels.addAll((ArrayList<OrderModel>) filterResults.values);
-            notifyDataSetChanged();
-            // Check if there are more orders than the maximum limit
-            if (showMoreOrders) {
-                // Show the option to see more orders
-                // Perform the action to show more orders here
-            } else {
-                // Hide the option to see more orders
-                // Perform the action to hide the option here
-            }
-        }
-
-    };
-
-
+//        }
+//
+//    };
+//
+//
 
 
     public static class ViewOrderProductAdapterViewHolder extends RecyclerView.ViewHolder {

@@ -8,6 +8,7 @@
     tools:context=".Fragment.CheckoutFragment">
 
     <com.facebook.shimmer.ShimmerFrameLayout
+        android:visibility="gone"
         android:id="@+id/shimmer_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -390,7 +391,7 @@
 
     <ScrollView
         android:id="@+id/ScrollView"
-        android:visibility="gone"
+        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -577,13 +578,43 @@
                         android:textSize="14sp" />
 
                 </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/process_fee_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/subtotal_box"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="10dp">
+
+                    <TextView
+                        android:id="@+id/process_fee_hint"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:text="@string/process_fee"
+                        android:textColor="@color/orange"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/process_fee"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="00.00"
+                        android:textColor="@color/MainTextColor"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
 
 
                 <LinearLayout
                     android:id="@+id/discount_box"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/subtotal_box"
+                    android:layout_below="@+id/process_fee_box"
                     android:layout_marginLeft="10dp"
                     android:layout_marginTop="5dp"
                     android:layout_marginRight="10dp">
