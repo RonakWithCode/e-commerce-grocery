@@ -112,7 +112,6 @@ public class AllOrderActivity extends AppCompatActivity implements OrderInterfac
         if (!filter.equals("all")) {
             query = query.equalTo(filter);
         }
-
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
