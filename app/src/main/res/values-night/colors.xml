@@ -6,13 +6,20 @@
 
 <!--    <color name="MainBackgroundColor">#0d1f29</color>-->
     <color name="MainBackgroundColor">#202124</color>
+    <color name="OrderMainBackgroundColor">#3D3E42</color>
+    <color name="ProductSeeViewMainBackgroundColor">#414A41</color>
+
     <color name="MainQuntityColor">#333030</color>
     <color name="MainTextColor">#FFFFFF</color>
     <color name="HintMainTextColor">#c3c5c3</color>
+    <color name="OrderImageBgColor">#414A41</color>
     <color name="MainBannerColor">#E1292B2F</color>
     <color name="MainBgColorCheckout">#101811</color>
     <color name="home_shipping_bg_color">#17291a</color>
-
+    <color name="orderAddressColor">#C2C6C2</color>
+    <color name="OrderLineColor">#D9D9D9</color>
+    <color name="Round_see_more_Color">#353835</color>
+    <color name="productRecyclerViewColor">#414A41</color>
     <!--SeeUserProfile-->
 
     <!-- Login    -->

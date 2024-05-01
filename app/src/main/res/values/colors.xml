@@ -7,6 +7,7 @@
     <color name="PintButtonEnd">#E87FFF</color>
     <color name="white">#ffffff</color>
     <color name="green">#005c4b</color>
+    <color name="red">#F70000</color>
     <color name="green_text">#24ba87</color>
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#D5A5A3A3</color>
@@ -19,6 +20,8 @@
     <!--Main Background Color -->
     <color name="MainQuntityColor">#E6E6E6</color>
     <color name="MainBackgroundColor">#FFFFFF</color>
+    <color name="ProductSeeViewMainBackgroundColor">#F5F6F5</color>
+    <color name="OrderMainBackgroundColor">#F2F2F2</color>
     <color name="MainTextColor">#000000</color>
     <color name="MainBgColorCheckout">#fefefe</color>
     <color name="MainHintColor">#757575</color>
@@ -70,6 +73,7 @@
     <color name="light_grey">#E0E0E0</color>
     <color name="highlight_color">#8CACACA0</color>
     <color name="HintMainTextColor">#9da49e</color>
+    <color name="OrderImageBgColor">#D9D9D9</color>
     <color name="FixColorWhite">#ffff</color>
     <color name="home_shipping_bg_color">#17291a</color>
 
@@ -89,5 +93,12 @@
     <color name="teal_700">#FF018786</color>
     <color name="pin_code_bg_color">#c6d3c9</color>
     <color name="Banner_Colors">#fff5e4</color>
+    <color name="orderAddressColor">#C2C6C2</color>
+    <color name="OrderLineColor">#D9D9D9</color>
+    <color name="productRecyclerViewColor">#f0f0f0</color>
+    <color name="Round_see_more_Color">#EEF9F0</color>
+    <color name="errorRed">#DE6060</color>
+    <color name="OrderYellowColor">#FFE074</color>
+    <color name="OrderblackTextColor">#000000</color>
 
 </resources>

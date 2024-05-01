@@ -40,8 +40,8 @@ public class ShoppingCartsProductAdapter extends RecyclerView.Adapter<ShoppingCa
         ShoppingCartsProductModel productModel = productModels.get(position);
         Glide.with(context).load(productModel.getImageURL().get(0)).into(holder.binding.productImage);
         holder.binding.productName.setText(productModel.getProductName());
-        holder.binding.quantity.setText(productModel.getDefaultQuantity()+" '(item) * ₹" + productModel.getPrice()+" =");
-        holder.binding.TotalProductPrice.setText("₹"+productModel.getPrice()*productModel.getDefaultQuantity());
+        holder.binding.oneProductPrice.setText(productModel.getDefaultQuantity()+" '(item) * ₹" + productModel.getPrice()+" =");
+        holder.binding.TotalProductPrice.setText("Total ₹"+productModel.getPrice()*productModel.getDefaultQuantity());
 //        holder.binding.getRoot().setOnClickListener(view -> orderProductInterface.onOrder(ShoppingCartsProductModel));
     }
 

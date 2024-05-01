@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/MainBackgroundColor"
+    android:background="@color/OrderMainBackgroundColor"
     android:layout_height="match_parent"
     tools:context=".Activity.AllOrderActivity">
     <RelativeLayout
@@ -19,18 +19,17 @@
                 android:id="@+id/order_details_view_back"
                 android:layout_width="@dimen/_25sdp"
                 android:layout_height="@dimen/_25sdp"
+                android:layout_marginTop="@dimen/_5sdp"
                 android:layout_marginStart="@dimen/_10sdp"
-                android:src="@drawable/ic_baseline_arrow_back_24" />
+                android:src="@drawable/baseline_arrow_back_ios_new_24" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
+                android:layout_marginTop="@dimen/_5sdp"
                 android:layout_toEndOf="@id/order_details_view_back"
                 android:gravity="center"
-                android:paddingEnd="25dp"
-                android:text="Orders"
+                android:text="@string/my_orders"
                 android:textColor="@color/green_primary"
                 android:textSize="@dimen/_20ssp"
                 android:textStyle="bold"
@@ -72,8 +71,8 @@
         <ProgressBar
             android:id="@+id/progressCircular"
             android:layout_width="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
     </RelativeLayout>
 
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

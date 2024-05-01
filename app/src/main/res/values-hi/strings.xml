@@ -199,6 +199,8 @@
     <string name="drinks">drinks</string>
     <string name="description">Description</string>
     <string name="process_fee">process fee</string>
+    <string name="request_to_call">Request to Call</string>
+    <string name="my_orders">My orders</string>
 
 
 </resources>
