@@ -19,8 +19,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewbinding.ViewBinding;
 
 import com.crazyostudio.ecommercegrocery.Adapter.CategoryAdapter;
+import com.crazyostudio.ecommercegrocery.Adapter.HomeProductAdapter;
 import com.crazyostudio.ecommercegrocery.Adapter.ProductAdapter;
 import com.crazyostudio.ecommercegrocery.Model.BannerModels;
+import com.crazyostudio.ecommercegrocery.Model.HomeProductModel;
 import com.crazyostudio.ecommercegrocery.Model.ProductCategoryModel;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
 import com.crazyostudio.ecommercegrocery.R;
@@ -40,16 +42,17 @@ import org.imaginativeworld.whynotimagecarousel.ImageCarousel;
 import org.imaginativeworld.whynotimagecarousel.listener.CarouselListener;
 import org.imaginativeworld.whynotimagecarousel.model.CarouselItem;
 
+import java.lang.annotation.Native;
 import java.util.ArrayList;
 
 
 public class HomeFragment extends Fragment implements onClickProductAdapter, CategoryAdapterInterface {
     FragmentHomeBinding binding;
     CategoryAdapter categoryAdapter;
-
-
+//    MultiViewAdapter
     DatabaseService databaseService;
-
+    HomeProductAdapter homeProductAdapter;
+    ArrayList<HomeProductModel> homeProductModel;
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -59,13 +62,21 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
         // Inflate the layout for this fragment
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         databaseService = new DatabaseService();
+        binding.shimmerLayout.startShimmer();
+
         LoadCarousel();
         LoadCategory();
+
+        homeProductModel = new ArrayList<>();
+        homeProductAdapter = new HomeProductAdapter(homeProductModel,requireActivity());
+
 //        offers();
-        LoadProduct("chips and Snacks", binding.chipsAndSnacks);
-        LoadProduct("dairy", binding.DairyProducts);
-        LoadProduct("toothpaste", binding.forYouTeeth);
-        LoadProduct("drinks", binding.drinks);
+//        LoadProduct("chips and Snacks");
+//        LoadProduct("dairy");
+//        LoadProduct("toothpaste");
+//        LoadProduct("drinks");
+        String[] categories = {"chips and Snacks", "toothpaste", "dairy", "drinks"};
+        loadProductsForCategories(categories);
 
 
         binding.categorySeeMore.setOnClickListener(view -> {
@@ -76,46 +87,46 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
             transaction.addToBackStack("CategoryFragment");
             transaction.commit();
         });
-        binding.chipsAndSnacksSeeMore.setOnClickListener(v -> {
-            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-            Bundle bundle = new Bundle();
-            bundle.putString("filter", "chips and Snacks");
-            ProductFilterFragment fragment = new ProductFilterFragment();
-            fragment.setArguments(bundle);
-            transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
-            transaction.addToBackStack("ProductFilterFragment");
-            transaction.commit();
-        });
-        binding.dairySeeMore.setOnClickListener(v -> {
-            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-            Bundle bundle = new Bundle();
-            bundle.putString("filter", "dairy");
-            ProductFilterFragment fragment = new ProductFilterFragment();
-            fragment.setArguments(bundle);
-            transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
-            transaction.addToBackStack("ProductFilterFragment");
-            transaction.commit();
-        });
-        binding.drinksSeeMore.setOnClickListener(v -> {
-            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-            Bundle bundle = new Bundle();
-            bundle.putString("filter", "drinks");
-            ProductFilterFragment fragment = new ProductFilterFragment();
-            fragment.setArguments(bundle);
-            transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
-            transaction.addToBackStack("ProductFilterFragment");
-            transaction.commit();
-        });
-        binding.forYouTeethSeeMore.setOnClickListener(v -> {
-            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-            Bundle bundle = new Bundle();
-            bundle.putString("filter", "toothpaste");
-            ProductFilterFragment fragment = new ProductFilterFragment();
-            fragment.setArguments(bundle);
-            transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
-            transaction.addToBackStack("ProductFilterFragment");
-            transaction.commit();
-        });
+//        binding.chipsAndSnacksSeeMore.setOnClickListener(v -> {
+//            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+//            Bundle bundle = new Bundle();
+//            bundle.putString("filter", "chips and Snacks");
+//            ProductFilterFragment fragment = new ProductFilterFragment();
+//            fragment.setArguments(bundle);
+//            transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
+//            transaction.addToBackStack("ProductFilterFragment");
+//            transaction.commit();
+//        });
+//        binding.dairySeeMore.setOnClickListener(v -> {
+//            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+//            Bundle bundle = new Bundle();
+//            bundle.putString("filter", "dairy");
+//            ProductFilterFragment fragment = new ProductFilterFragment();
+//            fragment.setArguments(bundle);
+//            transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
+//            transaction.addToBackStack("ProductFilterFragment");
+//            transaction.commit();
+//        });
+//        binding.drinksSeeMore.setOnClickListener(v -> {
+//            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+//            Bundle bundle = new Bundle();
+//            bundle.putString("filter", "drinks");
+//            ProductFilterFragment fragment = new ProductFilterFragment();
+//            fragment.setArguments(bundle);
+//            transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
+//            transaction.addToBackStack("ProductFilterFragment");
+//            transaction.commit();
+//        });
+//        binding.forYouTeethSeeMore.setOnClickListener(v -> {
+//            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+//            Bundle bundle = new Bundle();
+//            bundle.putString("filter", "toothpaste");
+//            ProductFilterFragment fragment = new ProductFilterFragment();
+//            fragment.setArguments(bundle);
+//            transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
+//            transaction.addToBackStack("ProductFilterFragment");
+//            transaction.commit();
+//        });
 
         return binding.getRoot();
 
@@ -352,24 +363,30 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
 
 
 
+    void loadProductsForCategories(String[] categories) {
+        for (String category : categories) {
+            LoadProduct(category);
+        }
+    }
 
-
-
-    void LoadProduct(String category,RecyclerView recyclerView) {
-        ArrayList<ProductModel>  model = new ArrayList<>();
-        ProductAdapter productAdapter = new ProductAdapter(model, this, requireContext(), "Main");
-        LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL,false);
-        recyclerView.setAdapter(productAdapter);
-        recyclerView.setLayoutManager(layoutManager);
+    void LoadProduct(String category) {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL,false);
+        binding.MultiViewAdapter.setAdapter(homeProductAdapter);
+        binding.MultiViewAdapter.setLayoutManager(layoutManager);
+//        homeProductModel.clear();
         databaseService.getAllProductsByCategoryOnly(category,new DatabaseService.GetAllProductsCallback() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onSuccess(ArrayList<ProductModel> products) {
-                model.addAll(products);
-                productAdapter.notifyDataSetChanged();
+                homeProductModel.add(new HomeProductModel(category,products));
+//                model.addAll(products);
+                homeProductAdapter.notifyDataSetChanged();
                 if (binding.ChatsProgressBar.getVisibility() == View.VISIBLE) {
                     binding.ChatsProgressBar.setVisibility(View.GONE);
                 }
+                binding.shimmerLayout.stopShimmer();
+                binding.shimmerLayout.setVisibility(View.GONE);
+                binding.ScrollView.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -378,6 +395,7 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
                 basicFun.AlertDialog(requireContext(),errorMessage);
             }
         });
+        homeProductAdapter.notifyDataSetChanged();
 
     }
 

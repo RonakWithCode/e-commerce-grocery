@@ -43,7 +43,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         Glide
                 .with(context)
                 .load(model.getImageUri())
-                .placeholder(R.drawable.spinner_gif)
+                .placeholder(R.drawable.product_image_shimmee_effect)
                 .into(holder.binding.CategoryImage);
         holder.binding.getRoot().setOnClickListener(view -> onclick.onClick(model));
     }

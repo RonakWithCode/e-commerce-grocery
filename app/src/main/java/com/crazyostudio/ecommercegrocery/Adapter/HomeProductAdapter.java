@@ -22,6 +22,7 @@ import java.util.ArrayList;
 
 public class HomeProductAdapter extends RecyclerView.Adapter<HomeProductAdapter.ViewHolder> implements onClickProductAdapter {
     ArrayList<HomeProductModel> homeProductModel;
+    
     FragmentActivity context;
 
     public HomeProductAdapter(ArrayList<HomeProductModel> homeProductModel, FragmentActivity context) {

@@ -18,9 +18,8 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-            <ImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
                 android:layout_centerHorizontal="true"
                 android:id="@+id/product_Image"
                 android:layout_marginStart="5dp"
@@ -34,10 +33,11 @@
                 android:layout_marginStart="@dimen/_8sdp"
                 android:id="@+id/product_name"
                 android:maxLines="3"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <TextView
-                android:textSize="@dimen/_14ssp"
+                android:textSize="@dimen/_13ssp"
                 android:layout_below="@id/product_name"
                 android:textColor="@color/HintMainTextColor"
                 android:id="@+id/product_MRP"

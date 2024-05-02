@@ -30,6 +30,7 @@ import com.crazyostudio.ecommercegrocery.databinding.OrderProductLayoutBinding;
 import com.crazyostudio.ecommercegrocery.databinding.OrdersViewLayoutBinding;
 import com.crazyostudio.ecommercegrocery.interfaceClass.OrderInterface;
 import com.crazyostudio.ecommercegrocery.interfaceClass.OrderProductInterface;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.lang.annotation.Target;
 import java.text.SimpleDateFormat;
@@ -68,7 +69,7 @@ public class ViewOrderProductAdapter  extends RecyclerView.Adapter<ViewOrderProd
         holder.binding.seeAllButton.setText("+" + model.getOrderItems().size() + " more");
         holder.binding.OrderPrice.setText("₹" + model.getOrderTotalPrice());
         holder.binding.OrderStatus.setText(model.getOrderStatus());
-
+        holder.binding.OrderId.setText("#"+model.getOrderId().replace(FirebaseAuth.getInstance().getUid(),""));
         int textColor = ContextCompat.getColor(holder.itemView.getContext(), R.color.green_primary);
         int backgroundColor = R.drawable.round_status;
 
@@ -95,6 +96,10 @@ public class ViewOrderProductAdapter  extends RecyclerView.Adapter<ViewOrderProd
         holder.binding.OrderStatus.setBackground(ContextCompat.getDrawable(context, backgroundColor));
 
         holder.binding.orderContactPhone.setText(model.getShipping().getShippingAddress().getMobileNumber());
+
+        holder.binding.Call.setOnClickListener(Call->{
+//          create the box layout for request for call
+        });
 
         SimpleDateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy 'at' hh:mm a", Locale.ENGLISH);
         String date = outputFormat.format(model.getOrderDate());

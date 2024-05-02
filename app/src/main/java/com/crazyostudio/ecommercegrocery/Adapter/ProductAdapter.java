@@ -20,6 +20,8 @@ import com.crazyostudio.ecommercegrocery.interfaceClass.onClickProductAdapter;
 
 import java.util.ArrayList;
 
+
+
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductAdapterViewHolder>{
     ArrayList<ProductModel> productModels;
     onClickProductAdapter onClickProductAdapter;
@@ -62,6 +64,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
 //        }
         Glide.with(context)
                 .load(product.getImageURL().get(0))
+                .placeholder(R.drawable.product_image_shimmee_effect)
                 .into(holder.binding.productImage);
         holder.binding.productName.setText(product.getProductName());
         holder.binding.productPrice.setText("₹" + product.getPrice());

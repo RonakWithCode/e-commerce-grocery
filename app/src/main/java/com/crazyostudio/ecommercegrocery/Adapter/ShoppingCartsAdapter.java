@@ -44,7 +44,11 @@ public class ShoppingCartsAdapter extends RecyclerView.Adapter<ShoppingCartsAdap
     public void onBindViewHolder(@NonNull ShoppingCartsAdapter.ShoppingCartsAdapterViewHolder holder, int position) {
         ShoppingCartsProductModel model  = productModels.get(position);
         holder.binding.productName.setText(model.getProductName());
-        Glide.with(context).load(model.getImageURL().get(0)).into(holder.binding.productImage);
+        Glide.with(context).load(model.getImageURL().get(0))
+                .placeholder(R.drawable.product_image_shimmee_effect)
+                .into(holder.binding.productImage);
+//        holder.binding.productImage.setZoomable(false);
+
         holder.binding.productQty.setText(model.getDefaultQuantity()+"");
         holder.binding.productPrice.setText("₹"+model.getPrice());
         holder.binding.productQtyUp.setOnClickListener(up->{

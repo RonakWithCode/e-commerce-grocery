@@ -4,10 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/MainBackgroundColor"
-
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Fragment.HomeFragment">
     <ScrollView
+        android:visibility="gone"
+        android:id="@+id/ScrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -93,184 +94,13 @@
                 app:dividerColor="@color/secondary" />
             </RelativeLayout>
 
-
-            <LinearLayout
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/MultiViewAdapter"
+                android:layout_marginTop="@dimen/_1sdp"
                 android:layout_below="@id/Category_RelativeLayout"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"/>
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:textColor="@color/MainTextColor"
-                        android:layout_marginStart="@dimen/_5sdp"
-                        android:layout_marginTop="@dimen/_2ssp"
-                        android:textSize="@dimen/_20ssp"
-                        android:textStyle="normal"
-                        android:id="@+id/hint_chips_and_snacks"
-                        android:text="@string/chips_and_snacks"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-                    <TextView
-                        android:id="@+id/chips_and_snacks_see_more"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:text="@string/see_more"
-                        android:layout_marginTop="@dimen/_2ssp"
-                        android:layout_marginEnd="@dimen/_9sdp"
-                        android:textColor="@color/green_primary"
-                        android:textSize="@dimen/_17ssp" />
-
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/chips_and_snacks"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/hint_chips_and_snacks"
-                        android:layout_marginBottom="@dimen/_2ssp"
-                        android:layout_marginTop="@dimen/_1sdp" />
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-
-
-                <TextView
-                    android:textColor="@color/MainTextColor"
-                    android:layout_marginStart="@dimen/_5sdp"
-                    android:layout_marginTop="@dimen/_2ssp"
-                    android:textSize="@dimen/_20ssp"
-                    android:textStyle="normal"
-                    android:text="@string/dairy"
-                    android:id="@+id/Hint_dairy_see_more"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
-                    <TextView
-                        android:id="@+id/dairy_see_more"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:text="@string/see_more"
-                        android:layout_marginTop="@dimen/_2ssp"
-                        android:layout_marginEnd="@dimen/_9sdp"
-                        android:textColor="@color/green_primary"
-                        android:textSize="@dimen/_17ssp" />
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/Dairy_products"
-                    android:layout_below="@+id/Hint_dairy_see_more"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/_2ssp"
-                    android:layout_marginTop="@dimen/_1sdp" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:visibility="gone"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:id="@+id/byBrand_see_more"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:text="@string/see_more"
-                        android:layout_marginTop="@dimen/_2ssp"
-                        android:layout_marginEnd="@dimen/_9sdp"
-                        android:textColor="@color/green_primary"
-                        android:textSize="@dimen/_17ssp" />
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/byBrand"
-                        android:layout_below="@+id/byBrand_see_more"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/_2ssp"
-                        android:layout_marginTop="@dimen/_5sdp" />
-
-                </RelativeLayout>
-
-
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-
-                <TextView
-                    android:textColor="@color/MainTextColor"
-                    android:layout_marginStart="@dimen/_5sdp"
-                    android:layout_marginTop="@dimen/_2ssp"
-                    android:textSize="@dimen/_20ssp"
-                    android:textStyle="normal"
-                    android:id="@+id/hint_for_you_teeth"
-                    android:text="@string/for_you_teeth"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
-                    <TextView
-                        android:id="@+id/for_you_teeth_see_more"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:text="@string/see_more"
-                        android:layout_marginTop="@dimen/_2ssp"
-                        android:layout_marginEnd="@dimen/_9sdp"
-                        android:textColor="@color/green_primary"
-                        android:textSize="@dimen/_17ssp" />
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/for_you_teeth"
-                    android:layout_below="@+id/hint_for_you_teeth"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/_2ssp"
-                    android:layout_marginTop="@dimen/_1sdp" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                <TextView
-                    android:textColor="@color/MainTextColor"
-                    android:layout_marginStart="@dimen/_5sdp"
-                    android:layout_marginTop="@dimen/_2ssp"
-                    android:textSize="@dimen/_20ssp"
-                    android:textStyle="normal"
-                    android:text="@string/drinks"
-                    android:id="@+id/hint_drinks"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
-
-                    <TextView
-                        android:id="@+id/drinks_see_more"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:text="@string/see_more"
-                        android:layout_marginTop="@dimen/_2ssp"
-                        android:layout_marginEnd="@dimen/_9sdp"
-                        android:textColor="@color/green_primary"
-                        android:textSize="@dimen/_17ssp" />
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/drinks"
-                    android:layout_below="@+id/hint_drinks"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/_2ssp"
-                    android:layout_marginTop="@dimen/_1sdp" />
-                </RelativeLayout>
-            </LinearLayout>
 
             <ProgressBar
                 android:id="@+id/ChatsProgressBar"
@@ -280,6 +110,220 @@
                 android:visibility="visible" />
         </RelativeLayout>
     </ScrollView>
+
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/_5sdp"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <org.imaginativeworld.whynotimagecarousel.ImageCarousel
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_190sdp"
+                android:background="@drawable/skeleton_shape"
+                app:showTopShadow="false"
+                app:topShadowAlpha="0.6"
+                app:topShadowHeight="32dp"
+                app:showBottomShadow="false"
+                app:bottomShadowAlpha="0.6"
+                app:showCaption="false"
+                app:captionMargin="0dp"
+                app:captionTextSize="14sp"
+                app:showIndicator="true"
+                app:indicatorMargin="0dp"
+                app:imageScaleType="fitCenter"
+                app:carouselBackground="#00000000"
+                app:imagePlaceholder="@drawable/placeholder"
+                app:carouselPadding="0dp"
+                app:carouselPaddingBottom="0dp"
+                app:carouselPaddingEnd="0dp"
+                app:carouselPaddingStart="0dp"
+                app:carouselPaddingTop="0dp"
+                app:showNavigationButtons="true"
+                app:previousButtonMargin="4dp"
+                app:nextButtonMargin="4dp"
+                app:carouselGravity="CENTER"
+                app:scaleOnScroll="true"
+                app:autoWidthFixing="true" />
+            <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="@dimen/_140sdp"
+                    android:layout_height="@dimen/_150sdp"
+                    android:src="@drawable/skeleton_shape" />
+
+                <TextView
+                    android:layout_width="@dimen/_170sdp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/skeleton_shape" />
+                <TextView
+                    android:layout_width="@dimen/_170sdp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/skeleton_shape" />
+
+            </LinearLayout>
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="@dimen/_140sdp"
+                        android:layout_height="@dimen/_150sdp"
+                        android:src="@drawable/skeleton_shape" />
+
+                    <TextView
+                        android:layout_width="@dimen/_170sdp"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/skeleton_shape" />
+                    <TextView
+                        android:layout_width="@dimen/_170sdp"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/skeleton_shape" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="@dimen/_140sdp"
+                        android:layout_height="@dimen/_150sdp"
+                        android:src="@drawable/skeleton_shape" />
+
+                    <TextView
+                        android:layout_width="@dimen/_170sdp"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/skeleton_shape" />
+                    <TextView
+                        android:layout_width="@dimen/_170sdp"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/skeleton_shape" />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="@dimen/_140sdp"
+                        android:layout_height="@dimen/_150sdp"
+                        android:src="@drawable/skeleton_shape" />
+
+                    <TextView
+                        android:layout_width="@dimen/_170sdp"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/skeleton_shape" />
+                    <TextView
+                        android:layout_width="@dimen/_170sdp"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/skeleton_shape" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="@dimen/_140sdp"
+                        android:layout_height="@dimen/_150sdp"
+                        android:src="@drawable/skeleton_shape" />
+
+                    <TextView
+                        android:layout_width="@dimen/_170sdp"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/skeleton_shape" />
+                    <TextView
+                        android:layout_width="@dimen/_170sdp"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/skeleton_shape" />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="@dimen/_140sdp"
+                        android:layout_height="@dimen/_150sdp"
+                        android:src="@drawable/skeleton_shape" />
+
+                    <TextView
+                        android:layout_width="@dimen/_170sdp"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/skeleton_shape" />
+                    <TextView
+                        android:layout_width="@dimen/_170sdp"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/skeleton_shape" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+            <org.imaginativeworld.whynotimagecarousel.ImageCarousel
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_190sdp"
+                android:background="@drawable/skeleton_shape"
+                app:showTopShadow="false"
+                app:topShadowAlpha="0.6"
+                app:topShadowHeight="32dp"
+                app:showBottomShadow="false"
+                app:bottomShadowAlpha="0.6"
+                app:showCaption="false"
+                app:captionMargin="0dp"
+                app:captionTextSize="14sp"
+                app:showIndicator="true"
+                app:indicatorMargin="0dp"
+                app:imageScaleType="fitCenter"
+                app:carouselBackground="#00000000"
+                app:imagePlaceholder="@drawable/placeholder"
+                app:carouselPadding="0dp"
+                app:carouselPaddingBottom="0dp"
+                app:carouselPaddingEnd="0dp"
+                app:carouselPaddingStart="0dp"
+                app:carouselPaddingTop="0dp"
+                app:showNavigationButtons="true"
+                app:previousButtonMargin="4dp"
+                app:nextButtonMargin="4dp"
+                app:carouselGravity="CENTER"
+                app:scaleOnScroll="true"
+                app:autoWidthFixing="true" />
+        </LinearLayout>
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 
