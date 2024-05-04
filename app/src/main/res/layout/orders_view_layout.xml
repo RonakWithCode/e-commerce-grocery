@@ -127,7 +127,7 @@
         android:layout_toEndOf="@+id/OrderId"
         android:padding="@dimen/_1sdp"
         android:text="₹10150"
-        android:textAlignment="center"
+        android:textAlignment="textEnd"
         android:textColor="@color/MainTextColor"
         android:textSize="@dimen/_14ssp"
         android:textStyle="bold" />
