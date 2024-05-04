@@ -42,17 +42,6 @@
                     android:layout_alignParentTop="true"
                     android:text="Full User Name "
                     android:layout_toEndOf="@+id/userImage" />
-                <TextView
-                    android:id="@+id/Email"
-                    android:textColor="@color/MainTextColor"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:layout_marginStart="@dimen/_7sdp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/Username"
-                    android:text="E-Mail"
-                    android:layout_toEndOf="@+id/userImage" />
-
                 <LinearLayout
                     android:id="@+id/container_btu"
                     android:paddingBottom="@dimen/_5sdp"
@@ -73,9 +62,9 @@
                         android:text="@string/check_order"
                         />
                     <Button style="@style/MoreButtonLight"
-                        android:id="@+id/setPickup"
+                        android:id="@+id/language"
                         android:padding="@dimen/_1sdp"
-                        android:text="@string/set_up_fast_pickup"
+                        android:text="@string/language"
                         />
                     <Button style="@style/MoreButtonLight"
                         android:id="@+id/settings"
@@ -86,6 +75,7 @@
                     <Button style="@style/MoreButtonLight"
                         android:padding="@dimen/_1sdp"
                         android:id="@+id/continue_shipping"
+                        android:layout_marginBottom="@dimen/_5sdp"
                         android:text="@string/continue_shipping"
                         />
                 </LinearLayout>

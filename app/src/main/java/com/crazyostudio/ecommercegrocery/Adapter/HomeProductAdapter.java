@@ -1,6 +1,8 @@
 package com.crazyostudio.ecommercegrocery.Adapter;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.crazyostudio.ecommercegrocery.Fragment.ProductDetailsFragment;
+import com.crazyostudio.ecommercegrocery.Fragment.ProductFilterFragment;
 import com.crazyostudio.ecommercegrocery.Model.HomeProductModel;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
 import com.crazyostudio.ecommercegrocery.R;
@@ -33,11 +36,10 @@ public class HomeProductAdapter extends RecyclerView.Adapter<HomeProductAdapter.
     @NonNull
     @Override
     public HomeProductAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//        return new View();
         return new HomeProductAdapter.ViewHolder(LayoutInflater.from(context).inflate(R.layout.home_product_view, parent, false));
-
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     public void onBindViewHolder(@NonNull HomeProductAdapter.ViewHolder holder, int position) {
         HomeProductModel homeProductModel1 = homeProductModel.get(position);
@@ -46,6 +48,18 @@ public class HomeProductAdapter extends RecyclerView.Adapter<HomeProductAdapter.
         LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL,false);
         holder.binding.recycler.setAdapter(productAdapter);
         holder.binding.recycler.setLayoutManager(layoutManager);
+        holder.binding.seeMore.setOnClickListener(view->{
+            FragmentTransaction transaction = context.getSupportFragmentManager().beginTransaction();
+            Bundle bundle = new Bundle();
+            bundle.putString("filter", homeProductModel1.getProduct().get(position).getCategory());
+            Log.i("HomeProductAdapter", "onBindViewHolder: "+homeProductModel1.getProduct().get(position).getCategory());
+            ProductFilterFragment fragment = new ProductFilterFragment();
+            fragment.setArguments(bundle);
+            transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
+            transaction.addToBackStack("ProductFilterFragment");
+            transaction.commit();
+        });
+
         productAdapter.notifyDataSetChanged();
     }
 

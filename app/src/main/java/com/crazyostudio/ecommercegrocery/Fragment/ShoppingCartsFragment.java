@@ -40,11 +40,9 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
     ArrayList<ShoppingCartsProductModel> models;
     AuthService authService;
     String uid;
+
     public ShoppingCartsFragment() {
         // Required empty public constructor
-
-
-
     }
     @SuppressLint("SetTextI18n")
     @Override
@@ -65,11 +63,16 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
                 startActivity(intent);
             }
         });
+        binding.linearLayoutPlaceHolder.startShimmer();
+
+
 
         if (authService.IsLogin()) {
             binding.relativeNotAuth.setVisibility(View.VISIBLE);
             binding.main.setVisibility(View.GONE);
             binding.progressCircular.setVisibility(View.GONE);
+            binding.linearLayoutPlaceHolder.stopShimmer();
+            binding.linearLayoutPlaceHolder.setVisibility(View.GONE);
         }  else {
             init();
         }
@@ -95,6 +98,8 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
                 binding.SubTotal.setText("SubTotal ₹"+totalPrice);
                 binding.main.setVisibility(View.VISIBLE);
                 binding.IsEnity.setVisibility(View.GONE);
+                binding.linearLayoutPlaceHolder.stopShimmer();
+                binding.linearLayoutPlaceHolder.setVisibility(View.GONE);
             }
 
             @Override
@@ -102,6 +107,8 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
                 if (errorMessage.equals("Cart is empty")) {
                     binding.main.setVisibility(View.GONE);
                     binding.IsEnity.setVisibility(View.VISIBLE);
+                    binding.linearLayoutPlaceHolder.stopShimmer();
+                    binding.linearLayoutPlaceHolder.setVisibility(View.GONE);
                 }
 //                basicFun.AlertDialog(requireContext(), errorMessage);
                 Log.i("ERRORDATABASE", "onError: "+errorMessage);

@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
 import com.crazyostudio.ecommercegrocery.Activity.AllOrderActivity;
@@ -18,6 +19,7 @@ import com.crazyostudio.ecommercegrocery.MainActivity;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.Services.AuthService;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentMoreBinding;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MoreFragment extends Fragment {
     FragmentMoreBinding binding;
@@ -72,7 +74,14 @@ public class MoreFragment extends Fragment {
             startActivity(new Intent(requireContext(), MainActivity.class));
 
         });
-        binding.setPickup.setOnClickListener(view -> {});
+        binding.language.setOnClickListener(view -> {
+            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.loader, new SelectLanguageFragment(), "CategoryFragment");
+            transaction.addToBackStack("SelectLanguageFragment");
+            transaction.commit();
+
+
+        });
         binding.settings.setOnClickListener(view -> {
             Intent intent = new Intent(requireContext(), SettingsActivity.class);
 //            intent.putExtra("LoadID","SettingsFragment");

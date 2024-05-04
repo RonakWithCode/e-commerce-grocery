@@ -6,6 +6,7 @@
     android:background="@color/MainBackgroundColor"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Fragment.HomeFragment">
+
     <ScrollView
         android:visibility="gone"
         android:id="@+id/ScrollView"
@@ -78,6 +79,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/category"
                 android:layout_width="match_parent"
+                android:saveEnabled="true"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/category_view_text"
                 android:layout_alignParentStart="true"
@@ -102,6 +104,9 @@
                 android:layout_height="wrap_content"/>
 
 
+
+
+
             <ProgressBar
                 android:id="@+id/ChatsProgressBar"
                 android:layout_width="wrap_content"
@@ -110,6 +115,7 @@
                 android:visibility="visible" />
         </RelativeLayout>
     </ScrollView>
+
 
 
     <com.facebook.shimmer.ShimmerFrameLayout
@@ -154,33 +160,14 @@
                 app:scaleOnScroll="true"
                 app:autoWidthFixing="true" />
             <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <LinearLayout
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
-
-                <ImageView
-                    android:layout_width="@dimen/_140sdp"
-                    android:layout_height="@dimen/_150sdp"
-                    android:src="@drawable/skeleton_shape" />
-
-                <TextView
-                    android:layout_width="@dimen/_170sdp"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/skeleton_shape" />
-                <TextView
-                    android:layout_width="@dimen/_170sdp"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/skeleton_shape" />
-
-            </LinearLayout>
                 <LinearLayout
-                    android:orientation="vertical"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_margin="@dimen/_5sdp">
 
                     <ImageView
                         android:layout_width="@dimen/_140sdp"
@@ -191,6 +178,34 @@
                         android:layout_width="@dimen/_170sdp"
                         android:layout_height="wrap_content"
                         android:src="@drawable/skeleton_shape" />
+
+                    <TextView
+                        android:layout_width="@dimen/_170sdp"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/skeleton_shape" />
+
+                </LinearLayout>
+
+                <!-- Right LinearLayout -->
+                <LinearLayout
+                    android:id="@+id/rightLinearLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="@dimen/_25sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginBottom="@dimen/_5sdp">
+
+                    <ImageView
+                        android:layout_width="@dimen/_140sdp"
+                        android:layout_height="@dimen/_150sdp"
+                        android:src="@drawable/skeleton_shape" />
+
+                    <TextView
+                        android:layout_width="@dimen/_170sdp"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/skeleton_shape" />
+
                     <TextView
                         android:layout_width="@dimen/_170sdp"
                         android:layout_height="wrap_content"
@@ -199,15 +214,15 @@
                 </LinearLayout>
 
             </LinearLayout>
-
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
                 <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_margin="@dimen/_5sdp">
 
                     <ImageView
                         android:layout_width="@dimen/_140sdp"
@@ -218,42 +233,22 @@
                         android:layout_width="@dimen/_170sdp"
                         android:layout_height="wrap_content"
                         android:src="@drawable/skeleton_shape" />
+
                     <TextView
                         android:layout_width="@dimen/_170sdp"
                         android:layout_height="wrap_content"
                         android:src="@drawable/skeleton_shape" />
 
                 </LinearLayout>
+
+                <!-- Right LinearLayout -->
                 <LinearLayout
-                    android:orientation="vertical"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <ImageView
-                        android:layout_width="@dimen/_140sdp"
-                        android:layout_height="@dimen/_150sdp"
-                        android:src="@drawable/skeleton_shape" />
-
-                    <TextView
-                        android:layout_width="@dimen/_170sdp"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/skeleton_shape" />
-                    <TextView
-                        android:layout_width="@dimen/_170sdp"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/skeleton_shape" />
-
-            </LinearLayout>
-
-        </LinearLayout>
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <LinearLayout
+                    android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_marginEnd="@dimen/_25sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginBottom="@dimen/_5sdp">
 
                     <ImageView
                         android:layout_width="@dimen/_140sdp"
@@ -264,26 +259,7 @@
                         android:layout_width="@dimen/_170sdp"
                         android:layout_height="wrap_content"
                         android:src="@drawable/skeleton_shape" />
-                    <TextView
-                        android:layout_width="@dimen/_170sdp"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/skeleton_shape" />
 
-                </LinearLayout>
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <ImageView
-                        android:layout_width="@dimen/_140sdp"
-                        android:layout_height="@dimen/_150sdp"
-                        android:src="@drawable/skeleton_shape" />
-
-                    <TextView
-                        android:layout_width="@dimen/_170sdp"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/skeleton_shape" />
                     <TextView
                         android:layout_width="@dimen/_170sdp"
                         android:layout_height="wrap_content"
@@ -292,6 +268,8 @@
                 </LinearLayout>
 
             </LinearLayout>
+
+
             <org.imaginativeworld.whynotimagecarousel.ImageCarousel
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_190sdp"

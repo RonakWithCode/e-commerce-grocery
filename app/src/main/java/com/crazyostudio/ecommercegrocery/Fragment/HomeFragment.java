@@ -75,7 +75,7 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
 //        LoadProduct("dairy");
 //        LoadProduct("toothpaste");
 //        LoadProduct("drinks");
-        String[] categories = {"chips and Snacks", "toothpaste", "dairy", "drinks"};
+        String[] categories = {"chips and Snacks", "toothpaste", "hair oil ", "drinks"};
         loadProductsForCategories(categories);
 
 

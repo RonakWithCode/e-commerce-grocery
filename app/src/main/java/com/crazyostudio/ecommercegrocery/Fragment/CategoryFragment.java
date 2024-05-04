@@ -36,6 +36,7 @@ public class CategoryFragment extends Fragment implements CategoryAdapterInterfa
         // Inflate the layout for this fragment
         binding = FragmentCategoryBinding.inflate(inflater,container,false);
 //        BannerCategoryAdapter
+        binding.shimmerLayout.startShimmer();
 
         LoadCategory();
         return binding.getRoot();
@@ -61,14 +62,17 @@ public class CategoryFragment extends Fragment implements CategoryAdapterInterfa
         ArrayList<ProductCategoryModel> categoryModels = new ArrayList<>();
         ListCategoryAdapter categoryAdapter = new ListCategoryAdapter(categoryModels, requireContext(), this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        binding.getRoot().setLayoutManager(layoutManager);
-        binding.getRoot().setAdapter(categoryAdapter);
+        binding.recyclerCategory.setLayoutManager(layoutManager);
+        binding.recyclerCategory.setAdapter(categoryAdapter);
         new DatabaseService().getAllCategory(new DatabaseService.GetAllCategoryCallback() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onSuccess(ArrayList<ProductCategoryModel> category) {
                 categoryModels.addAll(category);
                 categoryAdapter.notifyDataSetChanged();
+                binding.shimmerLayout.stopShimmer();
+                binding.shimmerLayout.setVisibility(View.GONE);
+                binding.recyclerCategory.setVisibility(View.VISIBLE);
 
             }
 

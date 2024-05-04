@@ -1,0 +1,19 @@
+<LinearLayout android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/_5sdp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ImageView
+        android:src="@drawable/skeleton_shape"
+        android:layout_margin="@dimen/_5sdp"
+        android:layout_width="@dimen/_90sdp"
+        android:layout_height="@dimen/_90sdp"/>
+    <TextView
+        android:background="@drawable/skeleton_shape"
+        android:maxLines="1"
+        android:layout_margin="@dimen/_5sdp"
+        android:layout_width="@dimen/_170sdp"
+        android:layout_height="@dimen/_30sdp"/>
+
+</LinearLayout>

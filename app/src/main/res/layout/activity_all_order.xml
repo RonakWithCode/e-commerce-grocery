@@ -61,8 +61,8 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/itemRecycler"
             android:layout_width="match_parent"
-            android:layout_marginStart="@dimen/_15sdp"
-            android:layout_marginEnd="@dimen/_15sdp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_15sdp"
             android:layout_below="@id/spinner_cantanir"
             android:layout_height="wrap_content"/>

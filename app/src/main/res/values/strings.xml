@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ASHOK E Commerce Grocery</string>
+    <string name="app_name">RK</string>
     <string name="create_account">Create a new Account</string>
 
     <string name="name">Name</string>
@@ -213,5 +213,6 @@
     <string name="process_fee">process fee</string>
     <string name="request_to_call">Request to Call</string>
     <string name="my_orders">My orders</string>
+    <string name="language">language</string>
 
 </resources>
