@@ -30,6 +30,7 @@ import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentHomeBinding;
 import com.crazyostudio.ecommercegrocery.interfaceClass.CategoryAdapterInterface;
 import com.crazyostudio.ecommercegrocery.interfaceClass.onClickProductAdapter;
+import com.crazyostudio.ecommercegrocery.javaClasses.CustomSmoothScroller;
 import com.crazyostudio.ecommercegrocery.javaClasses.basicFun;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.DataSnapshot;
@@ -373,6 +374,10 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL,false);
         binding.MultiViewAdapter.setAdapter(homeProductAdapter);
         binding.MultiViewAdapter.setLayoutManager(layoutManager);
+        layoutManager.setSmoothScrollbarEnabled(true);
+        CustomSmoothScroller smoothScroller = new CustomSmoothScroller(requireContext());
+        smoothScroller.setTargetPosition(0);
+        layoutManager.startSmoothScroll(smoothScroller);
 //        homeProductModel.clear();
         databaseService.getAllProductsByCategoryOnly(category,new DatabaseService.GetAllProductsCallback() {
             @SuppressLint("NotifyDataSetChanged")

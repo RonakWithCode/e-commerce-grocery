@@ -11,22 +11,31 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.crazyostudio.ecommercegrocery.Fragment.ProductDetailsFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.ProductFilterFragment;
+import com.crazyostudio.ecommercegrocery.Model.BannerModels;
 import com.crazyostudio.ecommercegrocery.Model.HomeProductModel;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.databinding.HomeProductViewBinding;
 import com.crazyostudio.ecommercegrocery.interfaceClass.onClickProductAdapter;
+import com.crazyostudio.ecommercegrocery.javaClasses.CustomSmoothScroller;
 
 import java.util.ArrayList;
 
 public class HomeProductAdapter extends RecyclerView.Adapter<HomeProductAdapter.ViewHolder> implements onClickProductAdapter {
     ArrayList<HomeProductModel> homeProductModel;
-    
+
+
+//    BannerModels
     FragmentActivity context;
+
+    private final int VIEW_TYPE_PRODUCT = 0;
+    private final int VIEW_TYPE_BANNER = 1;
+    private final int VIEW_TYPE_WHAT_NEW = 2;
 
     public HomeProductAdapter(ArrayList<HomeProductModel> homeProductModel, FragmentActivity context) {
         this.homeProductModel = homeProductModel;
@@ -46,8 +55,13 @@ public class HomeProductAdapter extends RecyclerView.Adapter<HomeProductAdapter.
         holder.binding.title.setText(homeProductModel1.getTitle());
         ProductAdapter productAdapter = new ProductAdapter(homeProductModel1.getProduct(), this, context, "Main");
         LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL,false);
+
         holder.binding.recycler.setAdapter(productAdapter);
         holder.binding.recycler.setLayoutManager(layoutManager);
+        layoutManager.setSmoothScrollbarEnabled(true);
+        CustomSmoothScroller smoothScroller = new CustomSmoothScroller(context);
+        smoothScroller.setTargetPosition(0);
+        layoutManager.startSmoothScroll(smoothScroller);
         holder.binding.seeMore.setOnClickListener(view->{
             FragmentTransaction transaction = context.getSupportFragmentManager().beginTransaction();
             Bundle bundle = new Bundle();
@@ -66,6 +80,13 @@ public class HomeProductAdapter extends RecyclerView.Adapter<HomeProductAdapter.
     @Override
     public int getItemCount() {
         return homeProductModel.size();
+    }
+
+
+    @Override
+    public int getItemViewType(int position) {
+        return super.getItemViewType(position);
+
     }
 
     @Override

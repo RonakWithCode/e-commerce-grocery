@@ -31,7 +31,6 @@ import com.crazyostudio.ecommercegrocery.Services.AuthService;
 import com.crazyostudio.ecommercegrocery.databinding.ActivityMainBinding;
 import com.google.firebase.auth.FirebaseAuth;
 
-
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
     private final ActivityResultLauncher<String> pushNotificationPermissionLauncher =

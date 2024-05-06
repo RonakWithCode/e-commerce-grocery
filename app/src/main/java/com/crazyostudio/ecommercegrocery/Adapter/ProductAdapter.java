@@ -62,15 +62,16 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
 //            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
 //            holder.binding.getRoot().setLayoutParams(params);
 //        }
-        Glide.with(context)
-                .load(product.getImageURL().get(0))
-                .placeholder(R.drawable.product_image_shimmee_effect)
-                .into(holder.binding.productImage);
+
         holder.binding.productName.setText(product.getProductName());
         holder.binding.productPrice.setText("₹" + product.getPrice());
         holder.binding.productMRP.setText("₹" + product.getMrp());
         holder.binding.productMRP.setPaintFlags(holder.binding.productMRP.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         holder.binding.getRoot().setOnClickListener(onclick-> onClickProductAdapter.onClick(product));
+        Glide.with(context)
+                .load(product.getImageURL().get(0))
+                .placeholder(R.drawable.product_image_shimmee_effect)
+                .into(holder.binding.productImage);
     }
 
     @Override
