@@ -13,7 +13,7 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-        <com.github.chrisbanes.photoview.PhotoView
+        <ImageView
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:id="@+id/product_Image"

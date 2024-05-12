@@ -1,30 +1,212 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/MainBackgroundColor"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Fragment.HomeFragment">
-
-    <ScrollView
-        android:visibility="gone"
-        android:id="@+id/ScrollView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-        <RelativeLayout
+        <LinearLayout
+            android:id="@+id/ScrollView"
+            android:visibility="visible"
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <RelativeLayout
-                android:id="@+id/Category_RelativeLayout"
+
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/shimmer_layout"
                 android:layout_width="match_parent"
-                android:background="@color/MainBannerColor"
+                android:layout_height="match_parent"
+                android:padding="@dimen/_5sdp"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                android:orientation="vertical"
+                app:layout_constraintTop_toTopOf="parent">
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <org.imaginativeworld.whynotimagecarousel.ImageCarousel
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_190sdp"
+                        android:background="@drawable/skeleton_shape"
+                        app:showTopShadow="false"
+                        app:topShadowAlpha="0.6"
+                        app:topShadowHeight="32dp"
+                        app:showBottomShadow="false"
+                        app:bottomShadowAlpha="0.6"
+                        app:showCaption="false"
+                        app:captionMargin="0dp"
+                        app:captionTextSize="14sp"
+                        app:showIndicator="true"
+                        app:indicatorMargin="0dp"
+                        app:imageScaleType="fitCenter"
+                        app:carouselBackground="#00000000"
+                        app:imagePlaceholder="@drawable/placeholder"
+                        app:carouselPadding="0dp"
+                        app:carouselPaddingBottom="0dp"
+                        app:carouselPaddingEnd="0dp"
+                        app:carouselPaddingStart="0dp"
+                        app:carouselPaddingTop="0dp"
+                        app:showNavigationButtons="true"
+                        app:previousButtonMargin="4dp"
+                        app:nextButtonMargin="4dp"
+                        app:carouselGravity="CENTER"
+                        app:scaleOnScroll="true"
+                        app:autoWidthFixing="true" />
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_margin="@dimen/_5sdp">
+
+                            <ImageView
+                                android:layout_width="@dimen/_140sdp"
+                                android:layout_height="@dimen/_150sdp"
+                                android:src="@drawable/skeleton_shape" />
+
+                            <TextView
+                                android:layout_width="@dimen/_170sdp"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/skeleton_shape" />
+
+                            <TextView
+                                android:layout_width="@dimen/_170sdp"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/skeleton_shape" />
+
+                        </LinearLayout>
+
+                        <!-- Right LinearLayout -->
+                        <LinearLayout
+                            android:id="@+id/rightLinearLayout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginEnd="@dimen/_25sdp"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:layout_marginBottom="@dimen/_5sdp">
+
+                            <ImageView
+                                android:layout_width="@dimen/_140sdp"
+                                android:layout_height="@dimen/_150sdp"
+                                android:src="@drawable/skeleton_shape" />
+
+                            <TextView
+                                android:layout_width="@dimen/_170sdp"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/skeleton_shape" />
+
+                            <TextView
+                                android:layout_width="@dimen/_170sdp"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/skeleton_shape" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_margin="@dimen/_5sdp">
+
+                            <ImageView
+                                android:layout_width="@dimen/_140sdp"
+                                android:layout_height="@dimen/_150sdp"
+                                android:src="@drawable/skeleton_shape" />
+
+                            <TextView
+                                android:layout_width="@dimen/_170sdp"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/skeleton_shape" />
+
+                            <TextView
+                                android:layout_width="@dimen/_170sdp"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/skeleton_shape" />
+
+                        </LinearLayout>
+
+                        <!-- Right LinearLayout -->
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_marginEnd="@dimen/_25sdp"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:layout_marginBottom="@dimen/_5sdp">
+
+                            <ImageView
+                                android:layout_width="@dimen/_140sdp"
+                                android:layout_height="@dimen/_150sdp"
+                                android:src="@drawable/skeleton_shape" />
+
+                            <TextView
+                                android:layout_width="@dimen/_170sdp"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/skeleton_shape" />
+
+                            <TextView
+                                android:layout_width="@dimen/_170sdp"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/skeleton_shape" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+
+                    <org.imaginativeworld.whynotimagecarousel.ImageCarousel
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_190sdp"
+                        android:background="@drawable/skeleton_shape"
+                        app:showTopShadow="false"
+                        app:topShadowAlpha="0.6"
+                        app:topShadowHeight="32dp"
+                        app:showBottomShadow="false"
+                        app:bottomShadowAlpha="0.6"
+                        app:showCaption="false"
+                        app:captionMargin="0dp"
+                        app:captionTextSize="14sp"
+                        app:showIndicator="true"
+                        app:indicatorMargin="0dp"
+                        app:imageScaleType="fitCenter"
+                        app:carouselBackground="#00000000"
+                        app:imagePlaceholder="@drawable/placeholder"
+                        app:carouselPadding="0dp"
+                        app:carouselPaddingBottom="0dp"
+                        app:carouselPaddingEnd="0dp"
+                        app:carouselPaddingStart="0dp"
+                        app:carouselPaddingTop="0dp"
+                        app:showNavigationButtons="true"
+                        app:previousButtonMargin="4dp"
+                        app:nextButtonMargin="4dp"
+                        app:carouselGravity="CENTER"
+                        app:scaleOnScroll="true"
+                        app:autoWidthFixing="true" />
+
+
+                </LinearLayout>
+            </com.facebook.shimmer.ShimmerFrameLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <org.imaginativeworld.whynotimagecarousel.ImageCarousel
+                <RelativeLayout
+                    android:id="@+id/Category_RelativeLayout"
+                    android:background="@color/MainBannerColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <org.imaginativeworld.whynotimagecarousel.ImageCarousel
                     android:id="@+id/carousel"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_190sdp"
@@ -56,7 +238,7 @@
                     app:carouselGravity="CENTER"
                     app:scaleOnScroll="true"
                     app:autoWidthFixing="true" />
-                <TextView
+                    <TextView
                     android:layout_below="@+id/carousel"
                     android:id="@+id/category_view_text"
                     android:layout_width="wrap_content"
@@ -65,7 +247,7 @@
                     android:text="@string/top_category"
                     android:textColor="@color/MainTextColor"
                     android:textSize="@dimen/_17ssp" />
-                <TextView
+                    <TextView
                     android:id="@+id/category_see_more"
                     android:layout_below="@+id/carousel"
                     android:layout_width="wrap_content"
@@ -75,8 +257,7 @@
                     android:layout_marginEnd="@dimen/_9sdp"
                     android:textColor="@color/green_primary"
                     android:textSize="@dimen/_17ssp" />
-
-            <androidx.recyclerview.widget.RecyclerView
+                    <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/category"
                 android:layout_width="match_parent"
                 android:saveEnabled="true"
@@ -86,222 +267,66 @@
                 android:layout_alignParentEnd="true"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:layout_marginBottom="@dimen/_5sdp" />
-
-            <com.google.android.material.divider.MaterialDivider
+                    <com.google.android.material.divider.MaterialDivider
                 android:id="@+id/coupon_code_box_divider"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_below="@id/category"
                 android:layout_marginTop="2dp"
                 app:dividerColor="@color/secondary" />
+                </RelativeLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/MultiViewAdapter"
+                    android:layout_marginTop="@dimen/_1sdp"
+                    android:layout_below="@id/Category_RelativeLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+                <org.imaginativeworld.whynotimagecarousel.ImageCarousel
+                    android:id="@+id/carousel2"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_120sdp"
+                    android:background="#EFF9F0"
+                    app:showTopShadow="false"
+                    app:topShadowAlpha="0.6"
+                    app:topShadowHeight="32dp"
+                    app:showBottomShadow="false"
+                    app:bottomShadowAlpha="0.6"
+                    app:showCaption="false"
+                    app:captionMargin="0dp"
+                    app:captionTextSize="14sp"
+                    app:showIndicator="true"
+                    app:indicatorMargin="0dp"
+                    android:layout_below="@id/MultiViewAdapter"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    app:imageScaleType="fitCenter"
+                    app:carouselBackground="#00000000"
+                    app:imagePlaceholder="@drawable/placeholder"
+                    app:carouselPadding="0dp"
+                    app:carouselPaddingBottom="0dp"
+                    app:carouselPaddingEnd="0dp"
+                    app:carouselPaddingStart="0dp"
+                    app:carouselPaddingTop="0dp"
+                    app:showNavigationButtons="true"
+                    app:previousButtonMargin="4dp"
+                    app:nextButtonMargin="4dp"
+                    app:carouselGravity="CENTER"
+                    app:scaleOnScroll="true"
+                    app:autoWidthFixing="true" />
             </RelativeLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/MultiViewAdapter"
-                android:layout_marginTop="@dimen/_1sdp"
-                android:layout_below="@id/Category_RelativeLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-
-
-
 
             <ProgressBar
                 android:id="@+id/ChatsProgressBar"
                 android:layout_width="wrap_content"
+                android:minHeight="@dimen/_100sdp"
+                android:minWidth="@dimen/_100sdp"
+                android:background="@drawable/skeleton_shape"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
+                android:layout_gravity="center"
                 android:visibility="visible" />
-        </RelativeLayout>
-    </ScrollView>
 
-
-
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/shimmer_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="@dimen/_5sdp"
-        android:visibility="visible"
-        app:layout_constraintStart_toStartOf="parent"
-        android:orientation="vertical"
-        app:layout_constraintTop_toTopOf="parent">
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <org.imaginativeworld.whynotimagecarousel.ImageCarousel
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_190sdp"
-                android:background="@drawable/skeleton_shape"
-                app:showTopShadow="false"
-                app:topShadowAlpha="0.6"
-                app:topShadowHeight="32dp"
-                app:showBottomShadow="false"
-                app:bottomShadowAlpha="0.6"
-                app:showCaption="false"
-                app:captionMargin="0dp"
-                app:captionTextSize="14sp"
-                app:showIndicator="true"
-                app:indicatorMargin="0dp"
-                app:imageScaleType="fitCenter"
-                app:carouselBackground="#00000000"
-                app:imagePlaceholder="@drawable/placeholder"
-                app:carouselPadding="0dp"
-                app:carouselPaddingBottom="0dp"
-                app:carouselPaddingEnd="0dp"
-                app:carouselPaddingStart="0dp"
-                app:carouselPaddingTop="0dp"
-                app:showNavigationButtons="true"
-                app:previousButtonMargin="4dp"
-                app:nextButtonMargin="4dp"
-                app:carouselGravity="CENTER"
-                app:scaleOnScroll="true"
-                app:autoWidthFixing="true" />
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_margin="@dimen/_5sdp">
-
-                    <ImageView
-                        android:layout_width="@dimen/_140sdp"
-                        android:layout_height="@dimen/_150sdp"
-                        android:src="@drawable/skeleton_shape" />
-
-                    <TextView
-                        android:layout_width="@dimen/_170sdp"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/skeleton_shape" />
-
-                    <TextView
-                        android:layout_width="@dimen/_170sdp"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/skeleton_shape" />
-
-                </LinearLayout>
-
-                <!-- Right LinearLayout -->
-                <LinearLayout
-                    android:id="@+id/rightLinearLayout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginEnd="@dimen/_25sdp"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:layout_marginBottom="@dimen/_5sdp">
-
-                    <ImageView
-                        android:layout_width="@dimen/_140sdp"
-                        android:layout_height="@dimen/_150sdp"
-                        android:src="@drawable/skeleton_shape" />
-
-                    <TextView
-                        android:layout_width="@dimen/_170sdp"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/skeleton_shape" />
-
-                    <TextView
-                        android:layout_width="@dimen/_170sdp"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/skeleton_shape" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_margin="@dimen/_5sdp">
-
-                    <ImageView
-                        android:layout_width="@dimen/_140sdp"
-                        android:layout_height="@dimen/_150sdp"
-                        android:src="@drawable/skeleton_shape" />
-
-                    <TextView
-                        android:layout_width="@dimen/_170sdp"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/skeleton_shape" />
-
-                    <TextView
-                        android:layout_width="@dimen/_170sdp"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/skeleton_shape" />
-
-                </LinearLayout>
-
-                <!-- Right LinearLayout -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginEnd="@dimen/_25sdp"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:layout_marginBottom="@dimen/_5sdp">
-
-                    <ImageView
-                        android:layout_width="@dimen/_140sdp"
-                        android:layout_height="@dimen/_150sdp"
-                        android:src="@drawable/skeleton_shape" />
-
-                    <TextView
-                        android:layout_width="@dimen/_170sdp"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/skeleton_shape" />
-
-                    <TextView
-                        android:layout_width="@dimen/_170sdp"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/skeleton_shape" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-
-            <org.imaginativeworld.whynotimagecarousel.ImageCarousel
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_190sdp"
-                android:background="@drawable/skeleton_shape"
-                app:showTopShadow="false"
-                app:topShadowAlpha="0.6"
-                app:topShadowHeight="32dp"
-                app:showBottomShadow="false"
-                app:bottomShadowAlpha="0.6"
-                app:showCaption="false"
-                app:captionMargin="0dp"
-                app:captionTextSize="14sp"
-                app:showIndicator="true"
-                app:indicatorMargin="0dp"
-                app:imageScaleType="fitCenter"
-                app:carouselBackground="#00000000"
-                app:imagePlaceholder="@drawable/placeholder"
-                app:carouselPadding="0dp"
-                app:carouselPaddingBottom="0dp"
-                app:carouselPaddingEnd="0dp"
-                app:carouselPaddingStart="0dp"
-                app:carouselPaddingTop="0dp"
-                app:showNavigationButtons="true"
-                app:previousButtonMargin="4dp"
-                app:nextButtonMargin="4dp"
-                app:carouselGravity="CENTER"
-                app:scaleOnScroll="true"
-                app:autoWidthFixing="true" />
         </LinearLayout>
 
-    </com.facebook.shimmer.ShimmerFrameLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
 
 

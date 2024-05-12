@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,7 +19,6 @@ import androidx.viewbinding.ViewBinding;
 
 import com.crazyostudio.ecommercegrocery.Adapter.CategoryAdapter;
 import com.crazyostudio.ecommercegrocery.Adapter.HomeProductAdapter;
-import com.crazyostudio.ecommercegrocery.Adapter.ProductAdapter;
 import com.crazyostudio.ecommercegrocery.Model.BannerModels;
 import com.crazyostudio.ecommercegrocery.Model.HomeProductModel;
 import com.crazyostudio.ecommercegrocery.Model.ProductCategoryModel;
@@ -41,16 +39,16 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.imaginativeworld.whynotimagecarousel.ImageCarousel;
 import org.imaginativeworld.whynotimagecarousel.listener.CarouselListener;
+import org.imaginativeworld.whynotimagecarousel.listener.CarouselOnScrollListener;
 import org.imaginativeworld.whynotimagecarousel.model.CarouselItem;
 
-import java.lang.annotation.Native;
 import java.util.ArrayList;
 
 
 public class HomeFragment extends Fragment implements onClickProductAdapter, CategoryAdapterInterface {
     FragmentHomeBinding binding;
     CategoryAdapter categoryAdapter;
-//    MultiViewAdapter
+    //    MultiViewAdapter
     DatabaseService databaseService;
     HomeProductAdapter homeProductAdapter;
     ArrayList<HomeProductModel> homeProductModel;
@@ -67,6 +65,7 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
 
         LoadCarousel();
         LoadCategory();
+//        loadMainCarousel();
 
         homeProductModel = new ArrayList<>();
         homeProductAdapter = new HomeProductAdapter(homeProductModel,requireActivity());
@@ -81,7 +80,7 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
 
 
         binding.categorySeeMore.setOnClickListener(view -> {
-            BottomNavigationView bottomAppBar = getActivity().findViewById(R.id.bottomNavigationView);
+            BottomNavigationView bottomAppBar = requireActivity().findViewById(R.id.bottomNavigationView);
             bottomAppBar.setSelectedItemId(R.id.GoCategory);
             FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.loader, new CategoryFragment(), "CategoryFragment");
@@ -292,24 +291,41 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
 
 
     void LoadCarousel() {
-        ArrayList<BannerModels> models = new ArrayList<>();
+        ArrayList<BannerModels> modelsTop = new ArrayList<>();
+        ArrayList<BannerModels> modelsCenter = new ArrayList<>();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference bannerRef = database.getReference().child("Banner");
         ImageCarousel Image_Carousel = this.binding.carousel;
+        ImageCarousel Image_CarouselCenter = this.binding.carousel2;
         bannerRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     BannerModels banner = snapshot.getValue(BannerModels.class);
-                    if (isDarkModeEnabled(requireContext())){
-                        if (banner != null) {
-                            banner.setBannerUrl(snapshot.child("darkModeUrl").getValue(String.class));
-                        }
-                    }
-                    models.add(banner);
                     if (banner != null) {
-                        CarouselItem carouselItem = new CarouselItem(banner.getBannerUrl());
-                        Image_Carousel.addData(carouselItem);
+                        if (banner.getPosition().equals("Top Position")){
+                            modelsTop.add(banner);
+                            if (isDarkModeEnabled(requireContext())){
+                                CarouselItem carouselItem = new CarouselItem(banner.getDarkBannerImage());
+                                Image_Carousel.addData(carouselItem);
+                            }
+                            else {
+                                CarouselItem carouselItem = new CarouselItem(banner.getBannerImages());
+                                Image_Carousel.addData(carouselItem);
+                            }
+                        }
+                        else if (banner.getPosition().equals("Center Position"))
+                        {
+                            modelsCenter.add(banner);
+                            if (isDarkModeEnabled(requireContext())){
+                                CarouselItem carouselItem = new CarouselItem(banner.getDarkBannerImage());
+                                Image_CarouselCenter.addData(carouselItem);
+                            }
+                            else {
+                                CarouselItem carouselItem = new CarouselItem(banner.getBannerImages());
+                                Image_CarouselCenter.addData(carouselItem);
+                            }
+                        }
                     }
                 }
             }
@@ -320,8 +336,6 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
                 Log.e("TAG", "Error fetching data", databaseError.toException());
             }
         });
-
-
         Image_Carousel.setCarouselListener(new CarouselListener() {
             @Nullable
             @Override
@@ -338,14 +352,30 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
 //                Log.i("position_ImageCarousel", "position : "+position);
 //                Log.i("position_ImageCarousel", " ArrayList<String>  : "+models.get(position).getBannerGoto());
 //                Toast.makeText(getContext(), "", Toast.LENGTH_SHORT).show();
-                FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-                Bundle bundle = new Bundle();
-                bundle.putString("filter",models.get(position).getBannerGoto());
-                ProductFilterFragment fragment = new ProductFilterFragment();
-                fragment.setArguments(bundle);
-                transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
-                transaction.addToBackStack("ProductFilterFragment");
-                transaction.commit();
+
+                if (modelsTop.get(position).isByCategory()) {
+                    FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("filter",modelsTop.get(position).getFilterQuery());
+                    ProductFilterFragment fragment = new ProductFilterFragment();
+                    fragment.setArguments(bundle);
+                    transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
+                    transaction.addToBackStack("ProductFilterFragment");
+                    transaction.commit();
+                }else {
+               //TODO : ---------------------------------------------------------
+                    FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("filter",modelsTop.get(position).getFilterQuery());
+                    bundle.putString("filterName",modelsTop.get(position).getBannerCaption());
+                    ProductFilterByQueryFragment fragment = new ProductFilterByQueryFragment();
+                    fragment.setArguments(bundle);
+                    transaction.replace(R.id.loader, fragment, "ProductFilterByQueryFragment");
+                    transaction.addToBackStack("ProductFilterByQueryFragment");
+                    transaction.commit();
+
+                }
+
 
             }
 
@@ -354,6 +384,55 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
 
             }
         });
+        Image_CarouselCenter.setCarouselListener(new CarouselListener() {
+            @Nullable
+            @Override
+            public ViewBinding onCreateViewHolder(@NonNull LayoutInflater layoutInflater, @NonNull ViewGroup viewGroup) {
+                return null;
+            }
+
+            @Override
+            public void onBindViewHolder(@NonNull ViewBinding viewBinding, @NonNull CarouselItem carouselItem, int i) {
+            }
+
+            @Override
+            public void onClick(int position, @NonNull CarouselItem carouselItem) {
+//                Log.i("position_ImageCarousel", "position : "+position);
+//                Log.i("position_ImageCarousel", " ArrayList<String>  : "+models.get(position).getBannerGoto());
+//                Toast.makeText(getContext(), "", Toast.LENGTH_SHORT).show();
+
+                if (modelsCenter.get(position).isByCategory()) {
+                    FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("filter",modelsCenter.get(position).getFilterQuery());
+                    ProductFilterFragment fragment = new ProductFilterFragment();
+                    fragment.setArguments(bundle);
+                    transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
+                    transaction.addToBackStack("ProductFilterFragment");
+                    transaction.commit();
+                }else {
+      //TODO : ---------------------------------------------------------
+                    FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("filter",modelsCenter.get(position).getFilterQuery());
+                    bundle.putString("filterName",modelsCenter.get(position).getBannerCaption());
+                    ProductFilterByQueryFragment fragment = new ProductFilterByQueryFragment();
+                    fragment.setArguments(bundle);
+                    transaction.replace(R.id.loader, fragment, "ProductFilterByQueryFragment");
+                    transaction.addToBackStack("ProductFilterByQueryFragment");
+                    transaction.commit();
+
+                }
+
+
+            }
+
+            @Override
+            public void onLongClick(int position, @NonNull CarouselItem carouselItem) {
+
+            }
+        });
+
     }
 
     public static boolean isDarkModeEnabled(Context context) {
@@ -370,6 +449,7 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     void LoadProduct(String category) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL,false);
         binding.MultiViewAdapter.setAdapter(homeProductAdapter);
@@ -378,6 +458,15 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
         CustomSmoothScroller smoothScroller = new CustomSmoothScroller(requireContext());
         smoothScroller.setTargetPosition(0);
         layoutManager.startSmoothScroll(smoothScroller);
+        binding.MultiViewAdapter.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                // Adjust the scrolling speed by multiplying dy (vertical scroll amount) with a factor
+                int newDy = (int) (dy * 2); // Increase scrolling speed by multiplying with a factor (e.g., 1.5)
+                super.onScrolled(recyclerView, dx, newDy);
+            }
+        });
+
 //        homeProductModel.clear();
         databaseService.getAllProductsByCategoryOnly(category,new DatabaseService.GetAllProductsCallback() {
             @SuppressLint("NotifyDataSetChanged")
@@ -391,8 +480,9 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
                 }
                 binding.shimmerLayout.stopShimmer();
                 binding.shimmerLayout.setVisibility(View.GONE);
-                binding.ScrollView.setVisibility(View.VISIBLE);
+//                binding.ScrollView.setVisibility(View.VISIBLE);
             }
+
 
             @Override
             public void onError(String errorMessage) {
@@ -405,9 +495,7 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
     }
 
 
-//    void handlerBrands(){
-//
-//    }
+
 
 //    void offers(){
 //        databaseService.getOffers(new DatabaseService.getOffer() {
@@ -572,9 +660,6 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
 
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
+
 
 }

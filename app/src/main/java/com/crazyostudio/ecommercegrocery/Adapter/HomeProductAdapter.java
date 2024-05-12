@@ -11,12 +11,10 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.crazyostudio.ecommercegrocery.Fragment.ProductDetailsFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.ProductFilterFragment;
-import com.crazyostudio.ecommercegrocery.Model.BannerModels;
 import com.crazyostudio.ecommercegrocery.Model.HomeProductModel;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
 import com.crazyostudio.ecommercegrocery.R;
@@ -30,12 +28,12 @@ public class HomeProductAdapter extends RecyclerView.Adapter<HomeProductAdapter.
     ArrayList<HomeProductModel> homeProductModel;
 
 
-//    BannerModels
+    //    BannerModels
     FragmentActivity context;
 
-    private final int VIEW_TYPE_PRODUCT = 0;
-    private final int VIEW_TYPE_BANNER = 1;
-    private final int VIEW_TYPE_WHAT_NEW = 2;
+//    private final int VIEW_TYPE_PRODUCT = 0;
+//    private final int VIEW_TYPE_BANNER = 1;
+//    private final int VIEW_TYPE_WHAT_NEW = 2;
 
     public HomeProductAdapter(ArrayList<HomeProductModel> homeProductModel, FragmentActivity context) {
         this.homeProductModel = homeProductModel;

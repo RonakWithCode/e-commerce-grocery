@@ -9,6 +9,7 @@ public class MyNotificationListenerService extends NotificationListenerService {
     public void onListenerConnected() {
         super.onListenerConnected();
         // Your service is now connected and can access notifications.
+
     }
 
     @Override
