@@ -65,6 +65,7 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
 
         LoadCarousel();
         LoadCategory();
+
 //        loadMainCarousel();
 
         homeProductModel = new ArrayList<>();
