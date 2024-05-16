@@ -39,7 +39,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.imaginativeworld.whynotimagecarousel.ImageCarousel;
 import org.imaginativeworld.whynotimagecarousel.listener.CarouselListener;
-import org.imaginativeworld.whynotimagecarousel.listener.CarouselOnScrollListener;
 import org.imaginativeworld.whynotimagecarousel.model.CarouselItem;
 
 import java.util.ArrayList;
@@ -48,7 +47,8 @@ import java.util.ArrayList;
 public class HomeFragment extends Fragment implements onClickProductAdapter, CategoryAdapterInterface {
     FragmentHomeBinding binding;
     CategoryAdapter categoryAdapter;
-    //    MultiViewAdapter
+
+
     DatabaseService databaseService;
     HomeProductAdapter homeProductAdapter;
     ArrayList<HomeProductModel> homeProductModel;
@@ -62,9 +62,9 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         databaseService = new DatabaseService();
         binding.shimmerLayout.startShimmer();
-
-        LoadCarousel();
-        LoadCategory();
+//
+//        LoadCarousel();
+//        LoadCategory();
 
 //        loadMainCarousel();
 
@@ -76,9 +76,13 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
 //        LoadProduct("dairy");
 //        LoadProduct("toothpaste");
 //        LoadProduct("drinks");
-        String[] categories = {"chips and Snacks", "toothpaste", "hair oil ", "drinks"};
-        loadProductsForCategories(categories);
+//        String[] categories = {"chips and Snacks", "toothpaste", "hair oil ", "drinks"};
+//        loadProductsForCategories(categories);
 
+
+        LoadCarousel();
+        LoadCategory();
+        loadProductsForCategories(new String[]{"chips and Snacks", "toothpaste", "hair oil ", "drinks"});
 
         binding.categorySeeMore.setOnClickListener(view -> {
             BottomNavigationView bottomAppBar = requireActivity().findViewById(R.id.bottomNavigationView);
@@ -364,7 +368,7 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
                     transaction.addToBackStack("ProductFilterFragment");
                     transaction.commit();
                 }else {
-               //TODO : ---------------------------------------------------------
+                    //TODO : ---------------------------------------------------------
                     FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
                     Bundle bundle = new Bundle();
                     bundle.putString("filter",modelsTop.get(position).getFilterQuery());
@@ -412,7 +416,7 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
                     transaction.addToBackStack("ProductFilterFragment");
                     transaction.commit();
                 }else {
-      //TODO : ---------------------------------------------------------
+                    //TODO : ---------------------------------------------------------
                     FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
                     Bundle bundle = new Bundle();
                     bundle.putString("filter",modelsCenter.get(position).getFilterQuery());
@@ -445,14 +449,60 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
 
 
     void loadProductsForCategories(String[] categories) {
+        homeProductModel.clear();
         for (String category : categories) {
             LoadProduct(category);
         }
     }
+//
+//    @SuppressLint("NotifyDataSetChanged")
+//    void LoadProduct(String category) {
+//        LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL,false);
+//        binding.MultiViewAdapter.setAdapter(homeProductAdapter);
+//        binding.MultiViewAdapter.setLayoutManager(layoutManager);
+//        layoutManager.setSmoothScrollbarEnabled(true);
+//        CustomSmoothScroller smoothScroller = new CustomSmoothScroller(requireContext());
+//        smoothScroller.setTargetPosition(0);
+//        layoutManager.startSmoothScroll(smoothScroller);
+//        binding.MultiViewAdapter.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+//                // Adjust the scrolling speed by multiplying dy (vertical scroll amount) with a factor
+//                int newDy = (int) (dy * 2); // Increase scrolling speed by multiplying with a factor (e.g., 1.5)
+//                super.onScrolled(recyclerView, dx, newDy);
+//            }
+//        });
+//
+////        homeProductModel.clear();
+//        databaseService.getAllProductsByCategoryOnly(category,new DatabaseService.GetAllProductsCallback() {
+//            @SuppressLint("NotifyDataSetChanged")
+//            @Override
+//            public void onSuccess(ArrayList<ProductModel> products) {
+//                homeProductModel.add(new HomeProductModel(category,products));
+////                model.addAll(products);
+//                homeProductAdapter.notifyDataSetChanged();
+//                if (binding.ChatsProgressBar.getVisibility() == View.VISIBLE) {
+//                    binding.ChatsProgressBar.setVisibility(View.GONE);
+//                }
+//                binding.shimmerLayout.stopShimmer();
+//                binding.shimmerLayout.setVisibility(View.GONE);
+////                binding.ScrollView.setVisibility(View.VISIBLE);
+//            }
+//
+//
+//            @Override
+//            public void onError(String errorMessage) {
+//                // Handle the error her
+//                basicFun.AlertDialog(requireContext(),errorMessage);
+//            }
+//        });
+//        homeProductAdapter.notifyDataSetChanged();
+//
+//    }
 
-    @SuppressLint("NotifyDataSetChanged")
+
     void LoadProduct(String category) {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL,false);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false);
         binding.MultiViewAdapter.setAdapter(homeProductAdapter);
         binding.MultiViewAdapter.setLayoutManager(layoutManager);
         layoutManager.setSmoothScrollbarEnabled(true);
@@ -468,34 +518,31 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
             }
         });
 
-//        homeProductModel.clear();
-        databaseService.getAllProductsByCategoryOnly(category,new DatabaseService.GetAllProductsCallback() {
-            @SuppressLint("NotifyDataSetChanged")
+        // Load products for the specified category
+        databaseService.getAllProductsByCategoryOnly(category, new DatabaseService.GetAllProductsCallback() {
             @Override
             public void onSuccess(ArrayList<ProductModel> products) {
-                homeProductModel.add(new HomeProductModel(category,products));
-//                model.addAll(products);
+                // Add the loaded products to the home product model list
+                homeProductModel.add(new HomeProductModel(category, products));
+
+                // Notify the adapter that data set has changed
                 homeProductAdapter.notifyDataSetChanged();
+
+                // Hide progress bar and shimmer effect when products are loaded
                 if (binding.ChatsProgressBar.getVisibility() == View.VISIBLE) {
                     binding.ChatsProgressBar.setVisibility(View.GONE);
                 }
                 binding.shimmerLayout.stopShimmer();
                 binding.shimmerLayout.setVisibility(View.GONE);
-//                binding.ScrollView.setVisibility(View.VISIBLE);
             }
-
 
             @Override
             public void onError(String errorMessage) {
-                // Handle the error her
-                basicFun.AlertDialog(requireContext(),errorMessage);
+                // Handle the error here
+                basicFun.AlertDialog(requireContext(), errorMessage);
             }
         });
-        homeProductAdapter.notifyDataSetChanged();
-
     }
-
-
 
 
 //    void offers(){
@@ -644,7 +691,7 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
         productDetailsFragment.setArguments(bundle);
 //        productDetailsFragment.setArguments(bundle);
         transaction.replace(R.id.loader, productDetailsFragment, "HomeFragment");
-        transaction.addToBackStack("HomeFragment");
+        transaction.addToBackStack(null);
         transaction.commit();
     }
 
@@ -656,7 +703,7 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
         ProductFilterFragment fragment = new ProductFilterFragment();
         fragment.setArguments(bundle);
         transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
-        transaction.addToBackStack("ProductFilterFragment");
+        transaction.addToBackStack(null);
         transaction.commit();
 
     }

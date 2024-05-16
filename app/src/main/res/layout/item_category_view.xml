@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/MainBannerColor"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:layout_below="@+id/carousel"
+        android:id="@+id/category_view_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_2sdp"
+        android:text="@string/top_category"
+        android:textColor="@color/MainTextColor"
+        android:textSize="@dimen/_17ssp" />
+    <TextView
+        android:id="@+id/category_see_more"
+        android:layout_below="@+id/carousel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:text="@string/see_more"
+        android:layout_marginEnd="@dimen/_9sdp"
+        android:textColor="@color/green_primary"
+        android:textSize="@dimen/_17ssp" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/category"
+        android:layout_width="match_parent"
+        android:saveEnabled="true"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/category_view_text"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_marginBottom="@dimen/_5sdp" />
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/coupon_code_box_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/category"
+        android:layout_marginTop="2dp"
+        app:dividerColor="@color/secondary" />
+</RelativeLayout>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/MainBannerColor"
+    android:layout_height="wrap_content">
+
+    <org.imaginativeworld.whynotimagecarousel.ImageCarousel
+        android:id="@+id/carousel"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_190sdp"
+        android:background="@color/Banner_Colors"
+        app:showTopShadow="false"
+        app:topShadowAlpha="0.6"
+        app:topShadowHeight="32dp"
+        app:showBottomShadow="false"
+        app:bottomShadowAlpha="0.6"
+        app:showCaption="false"
+        app:captionMargin="0dp"
+        app:captionTextSize="14sp"
+        app:showIndicator="true"
+        app:indicatorMargin="0dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        app:imageScaleType="fitCenter"
+        app:carouselBackground="#00000000"
+        app:imagePlaceholder="@drawable/placeholder"
+        app:carouselPadding="0dp"
+        app:carouselPaddingBottom="0dp"
+        app:carouselPaddingEnd="0dp"
+        app:carouselPaddingStart="0dp"
+        app:carouselPaddingTop="0dp"
+        app:showNavigationButtons="true"
+        app:previousButtonMargin="4dp"
+        app:nextButtonMargin="4dp"
+        app:carouselGravity="CENTER"
+        app:scaleOnScroll="true"
+        app:autoWidthFixing="true" />
+
+</RelativeLayout>

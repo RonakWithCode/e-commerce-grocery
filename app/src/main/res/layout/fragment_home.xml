@@ -18,7 +18,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="@dimen/_5sdp"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
                 android:orientation="vertical"
                 app:layout_constraintTop_toTopOf="parent">
@@ -239,7 +239,7 @@
                     app:scaleOnScroll="true"
                     app:autoWidthFixing="true" />
                     <TextView
-                    android:layout_below="@+id/carousel"
+                        android:layout_below="@+id/carousel"
                     android:id="@+id/category_view_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -258,8 +258,8 @@
                     android:textColor="@color/green_primary"
                     android:textSize="@dimen/_17ssp" />
                     <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/category"
-                android:layout_width="match_parent"
+                        android:id="@+id/category"
+                        android:layout_width="match_parent"
                 android:saveEnabled="true"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/category_view_text"
@@ -274,6 +274,13 @@
                 android:layout_below="@id/category"
                 android:layout_marginTop="2dp"
                 app:dividerColor="@color/secondary" />
+                    <ProgressBar
+                        android:id="@+id/ChatsProgressBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:visibility="visible" />
+
                 </RelativeLayout>
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/MultiViewAdapter"
@@ -315,15 +322,13 @@
                     app:autoWidthFixing="true" />
             </RelativeLayout>
 
-            <ProgressBar
-                android:id="@+id/ChatsProgressBar"
-                android:layout_width="wrap_content"
-                android:minHeight="@dimen/_100sdp"
-                android:minWidth="@dimen/_100sdp"
-                android:background="@drawable/skeleton_shape"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:visibility="visible" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+            </LinearLayout>
 
         </LinearLayout>
 

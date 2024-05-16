@@ -5,7 +5,6 @@
     android:id="@+id/authnav"
     app:startDestination="@id/siginFragment">
 
-
     <fragment
         android:id="@+id/siginFragment"
         android:name="com.crazyostudio.ecommercegrocery.Fragment.SiginFragment"
