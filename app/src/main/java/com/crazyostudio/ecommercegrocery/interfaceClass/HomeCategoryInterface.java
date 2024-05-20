@@ -1,5 +1,7 @@
 package com.crazyostudio.ecommercegrocery.interfaceClass;
 
+import com.crazyostudio.ecommercegrocery.Model.HomeProductModel;
+
 public interface HomeCategoryInterface {
-    void onClick(String filter);
+    void onClick(HomeProductModel filter);
 }

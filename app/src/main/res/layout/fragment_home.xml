@@ -16,7 +16,6 @@
 
         <org.imaginativeworld.whynotimagecarousel.ImageCarousel
             android:id="@+id/carousel"
-
             android:layout_width="match_parent"
             android:layout_height="@dimen/_190sdp"
             android:background="@color/Banner_Colors"
