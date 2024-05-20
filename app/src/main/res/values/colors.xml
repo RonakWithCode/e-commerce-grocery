@@ -100,5 +100,7 @@
     <color name="errorRed">#DE6060</color>
     <color name="OrderYellowColor">#FFE074</color>
     <color name="OrderblackTextColor">#000000</color>
+    <color name="light_gray">#e5f3f3</color>
+    <color name="dark_gray">#777684</color>
 
 </resources>

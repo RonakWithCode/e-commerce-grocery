@@ -66,8 +66,8 @@
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/card_Slider"
-                android:background="@color/MainBackgroundColor"
                 android:layout_width="match_parent"
+                android:background="@color/MainBackgroundColor"
                 android:layout_height="@dimen/_220sdp"
                 android:minHeight="@dimen/_200sdp"
                 android:layout_alignParentStart="true"

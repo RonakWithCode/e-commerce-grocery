@@ -188,6 +188,8 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
         binding.quantitySmail.setText("(₹" + productModel.getPrice() + " / " + productModel.getSubUnit() + productModel.getUnit() + ")");
         binding.MRP.setText(":"+productModel.getMrp());
         binding.MRP.setPaintFlags(binding.MRP.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+
+
         if (productModel.getQuantity() == 0) {
             binding.OutOfStockBuyOptions.setVisibility(View.VISIBLE);
             binding.quantity.setText("0");
@@ -213,8 +215,8 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
             binding.dietType.setVisibility(View.GONE);
             binding.diet.setVisibility(View.GONE);
         }
-
         binding.dietType.setText(diet);
+
         binding.ExpiryDate.setText(productModel.getEditDate());
         ProductDisplayImagesAdapter productDisplayImagesAdapter = new ProductDisplayImagesAdapter(productModel.getImageURL(), getContext());
         LinearLayoutManager manager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);

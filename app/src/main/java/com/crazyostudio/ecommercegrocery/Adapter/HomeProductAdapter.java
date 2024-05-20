@@ -20,6 +20,7 @@ import com.crazyostudio.ecommercegrocery.Model.HomeProductModel;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.databinding.HomeProductViewBinding;
+import com.crazyostudio.ecommercegrocery.interfaceClass.HomeProductInterface;
 import com.crazyostudio.ecommercegrocery.interfaceClass.onClickProductAdapter;
 import com.crazyostudio.ecommercegrocery.javaClasses.CustomSmoothScroller;
 
@@ -27,17 +28,20 @@ import java.util.ArrayList;
 
 public class HomeProductAdapter extends RecyclerView.Adapter<HomeProductAdapter.ViewHolder> implements onClickProductAdapter {
     ArrayList<HomeProductModel> homeProductModel;
-
-
+//    showProductViewDialog(productModel);
+    HomeProductInterface homeProductInterface;
     //    BannerModels
     FragmentActivity context;
+
 
 //    private final int VIEW_TYPE_PRODUCT = 0;
 //    private final int VIEW_TYPE_BANNER = 1;
 //    private final int VIEW_TYPE_WHAT_NEW = 2;
 
-    public HomeProductAdapter(ArrayList<HomeProductModel> homeProductModel, FragmentActivity context) {
+
+    public HomeProductAdapter(ArrayList<HomeProductModel> homeProductModel, HomeProductInterface homeProductInterface, FragmentActivity context) {
         this.homeProductModel = homeProductModel;
+        this.homeProductInterface = homeProductInterface;
         this.context = context;
     }
 
@@ -90,14 +94,15 @@ public class HomeProductAdapter extends RecyclerView.Adapter<HomeProductAdapter.
 
     @Override
     public void onClick(ProductModel productModel) {
-        FragmentTransaction transaction = context.getSupportFragmentManager().beginTransaction();
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("productDetails", productModel);
-        ProductDetailsFragment productDetailsFragment = new ProductDetailsFragment();
-        productDetailsFragment.setArguments(bundle);
-        transaction.replace(R.id.loader, productDetailsFragment, "HomeFragment");
-        transaction.addToBackStack("HomeFragment");
-        transaction.commit();
+        homeProductInterface.HomeProductOnclick(productModel);
+//        FragmentTransaction transaction = context.getSupportFragmentManager().beginTransaction();
+//        Bundle bundle = new Bundle();
+//        bundle.putParcelable("productDetails", productModel);
+//        ProductDetailsFragment productDetailsFragment = new ProductDetailsFragment();
+//        productDetailsFragment.setArguments(bundle);
+//        transaction.replace(R.id.loader, productDetailsFragment, "HomeFragment");
+//        transaction.addToBackStack("HomeFragment");
+//        transaction.commit();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

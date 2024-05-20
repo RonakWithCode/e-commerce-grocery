@@ -213,5 +213,8 @@
     <string name="request_to_call">Request to Call</string>
     <string name="my_orders">My orders</string>
     <string name="language">language</string>
+    <string name="see_all">see all</string>
+    <string name="dabur">Dabur</string>
+    <string name="itc">ITC</string>
 
 </resources>

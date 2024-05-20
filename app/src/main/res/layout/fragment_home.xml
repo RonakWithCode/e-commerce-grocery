@@ -1,337 +1,505 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/MainBackgroundColor"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Fragment.HomeFragment">
-        <LinearLayout
-            android:id="@+id/ScrollView"
-            android:visibility="visible"
-            android:orientation="vertical"
+
+
+
+    <RelativeLayout
+        android:id="@+id/Category_RelativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <org.imaginativeworld.whynotimagecarousel.ImageCarousel
+            android:id="@+id/carousel"
+
             android:layout_width="match_parent"
+            android:layout_height="@dimen/_190sdp"
+            android:background="@color/Banner_Colors"
+            app:autoWidthFixing="true"
+            app:bottomShadowAlpha="0.6"
+            app:captionMargin="0dp"
+            app:captionTextSize="14sp"
+            app:carouselBackground="#00000000"
+            app:carouselGravity="CENTER"
+            app:carouselPadding="0dp"
+            app:carouselPaddingBottom="0dp"
+            app:carouselPaddingEnd="0dp"
+            app:carouselPaddingStart="0dp"
+            app:carouselPaddingTop="0dp"
+            app:imagePlaceholder="@drawable/placeholder"
+            app:imageScaleType="fitCenter"
+            app:indicatorMargin="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            app:nextButtonMargin="4dp"
+            app:previousButtonMargin="4dp"
+            app:scaleOnScroll="true"
+            app:showBottomShadow="false"
+            app:showCaption="false"
+            app:showIndicator="true"
+            app:showNavigationButtons="true"
+            app:showTopShadow="false"
+            app:topShadowAlpha="0.6"
+            app:topShadowHeight="32dp" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_9sdp"
+            android:layout_alignParentStart="true"
+
+            android:padding="@dimen/_2sdp"
+            android:text="Bestsellers"
+            android:textColor="@color/MainTextColor"
+            android:textSize="@dimen/_17ssp"
+            android:textStyle="bold"
+            android:layout_below="@+id/carousel"/>
+
+        <TextView
+            android:id="@+id/BestsellersSee"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:padding="@dimen/_2sdp"
+            android:text="@string/see_all"
+            android:textColor="@color/green_primary"
+            android:textSize="@dimen/_17ssp"
+            android:textStyle="bold"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/carousel"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/textView"/>
+
+        <TextView
+            android:id="@+id/Grocery_Kitchen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_9sdp"
+            android:padding="@dimen/_2sdp"
+            android:text="Grocery &amp; Kitchen"
+            android:textColor="@color/MainTextColor"
+            android:textSize="@dimen/_17ssp"
+            android:textStyle="bold"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/recycler_category"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/GridLayout"
+            android:layout_width="match_parent"
+            android:layout_below="@+id/Grocery_Kitchen"
             android:layout_height="wrap_content">
+            <GridLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_4sdp"
+            android:columnCount="4"
+            android:padding="@dimen/_4sdp"
+                app:layout_constraintTop_toTopOf="parent"
+            android:rowCount="4"
+            android:background="@color/light_gray"
+            app:layout_constraintStart_toStartOf="parent">
 
-            <com.facebook.shimmer.ShimmerFrameLayout
-                android:id="@+id/shimmer_layout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="@dimen/_5sdp"
-                android:visibility="gone"
-                app:layout_constraintStart_toStartOf="parent"
-                android:orientation="vertical"
-                app:layout_constraintTop_toTopOf="parent">
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <org.imaginativeworld.whynotimagecarousel.ImageCarousel
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/_190sdp"
-                        android:background="@drawable/skeleton_shape"
-                        app:showTopShadow="false"
-                        app:topShadowAlpha="0.6"
-                        app:topShadowHeight="32dp"
-                        app:showBottomShadow="false"
-                        app:bottomShadowAlpha="0.6"
-                        app:showCaption="false"
-                        app:captionMargin="0dp"
-                        app:captionTextSize="14sp"
-                        app:showIndicator="true"
-                        app:indicatorMargin="0dp"
-                        app:imageScaleType="fitCenter"
-                        app:carouselBackground="#00000000"
-                        app:imagePlaceholder="@drawable/placeholder"
-                        app:carouselPadding="0dp"
-                        app:carouselPaddingBottom="0dp"
-                        app:carouselPaddingEnd="0dp"
-                        app:carouselPaddingStart="0dp"
-                        app:carouselPaddingTop="0dp"
-                        app:showNavigationButtons="true"
-                        app:previousButtonMargin="4dp"
-                        app:nextButtonMargin="4dp"
-                        app:carouselGravity="CENTER"
-                        app:scaleOnScroll="true"
-                        app:autoWidthFixing="true" />
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:layout_margin="@dimen/_5sdp">
-
-                            <ImageView
-                                android:layout_width="@dimen/_140sdp"
-                                android:layout_height="@dimen/_150sdp"
-                                android:src="@drawable/skeleton_shape" />
-
-                            <TextView
-                                android:layout_width="@dimen/_170sdp"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/skeleton_shape" />
-
-                            <TextView
-                                android:layout_width="@dimen/_170sdp"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/skeleton_shape" />
-
-                        </LinearLayout>
-
-                        <!-- Right LinearLayout -->
-                        <LinearLayout
-                            android:id="@+id/rightLinearLayout"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:layout_marginEnd="@dimen/_25sdp"
-                            android:layout_marginTop="@dimen/_5sdp"
-                            android:layout_marginBottom="@dimen/_5sdp">
-
-                            <ImageView
-                                android:layout_width="@dimen/_140sdp"
-                                android:layout_height="@dimen/_150sdp"
-                                android:src="@drawable/skeleton_shape" />
-
-                            <TextView
-                                android:layout_width="@dimen/_170sdp"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/skeleton_shape" />
-
-                            <TextView
-                                android:layout_width="@dimen/_170sdp"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/skeleton_shape" />
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-                    <LinearLayout
-                        android:orientation="horizontal"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:layout_margin="@dimen/_5sdp">
-
-                            <ImageView
-                                android:layout_width="@dimen/_140sdp"
-                                android:layout_height="@dimen/_150sdp"
-                                android:src="@drawable/skeleton_shape" />
-
-                            <TextView
-                                android:layout_width="@dimen/_170sdp"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/skeleton_shape" />
-
-                            <TextView
-                                android:layout_width="@dimen/_170sdp"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/skeleton_shape" />
-
-                        </LinearLayout>
-
-                        <!-- Right LinearLayout -->
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:layout_marginEnd="@dimen/_25sdp"
-                            android:layout_marginTop="@dimen/_5sdp"
-                            android:layout_marginBottom="@dimen/_5sdp">
-
-                            <ImageView
-                                android:layout_width="@dimen/_140sdp"
-                                android:layout_height="@dimen/_150sdp"
-                                android:src="@drawable/skeleton_shape" />
-
-                            <TextView
-                                android:layout_width="@dimen/_170sdp"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/skeleton_shape" />
-
-                            <TextView
-                                android:layout_width="@dimen/_170sdp"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/skeleton_shape" />
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-
-                    <org.imaginativeworld.whynotimagecarousel.ImageCarousel
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/_190sdp"
-                        android:background="@drawable/skeleton_shape"
-                        app:showTopShadow="false"
-                        app:topShadowAlpha="0.6"
-                        app:topShadowHeight="32dp"
-                        app:showBottomShadow="false"
-                        app:bottomShadowAlpha="0.6"
-                        app:showCaption="false"
-                        app:captionMargin="0dp"
-                        app:captionTextSize="14sp"
-                        app:showIndicator="true"
-                        app:indicatorMargin="0dp"
-                        app:imageScaleType="fitCenter"
-                        app:carouselBackground="#00000000"
-                        app:imagePlaceholder="@drawable/placeholder"
-                        app:carouselPadding="0dp"
-                        app:carouselPaddingBottom="0dp"
-                        app:carouselPaddingEnd="0dp"
-                        app:carouselPaddingStart="0dp"
-                        app:carouselPaddingTop="0dp"
-                        app:showNavigationButtons="true"
-                        app:previousButtonMargin="4dp"
-                        app:nextButtonMargin="4dp"
-                        app:carouselGravity="CENTER"
-                        app:scaleOnScroll="true"
-                        app:autoWidthFixing="true" />
-
-
-                </LinearLayout>
-            </com.facebook.shimmer.ShimmerFrameLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <RelativeLayout
-                    android:id="@+id/Category_RelativeLayout"
-                    android:background="@color/MainBannerColor"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <org.imaginativeworld.whynotimagecarousel.ImageCarousel
-                    android:id="@+id/carousel"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/_190sdp"
-                    android:background="@color/Banner_Colors"
-                    app:showTopShadow="false"
-                    app:topShadowAlpha="0.6"
-                    app:topShadowHeight="32dp"
-                    app:showBottomShadow="false"
-                    app:bottomShadowAlpha="0.6"
-                    app:showCaption="false"
-                    app:captionMargin="0dp"
-                    app:captionTextSize="14sp"
-                    app:showIndicator="true"
-                    app:indicatorMargin="0dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentEnd="true"
-                    app:imageScaleType="fitCenter"
-                    app:carouselBackground="#00000000"
-                    app:imagePlaceholder="@drawable/placeholder"
-                    app:carouselPadding="0dp"
-                    app:carouselPaddingBottom="0dp"
-                    app:carouselPaddingEnd="0dp"
-                    app:carouselPaddingStart="0dp"
-                    app:carouselPaddingTop="0dp"
-                    app:showNavigationButtons="true"
-                    app:previousButtonMargin="4dp"
-                    app:nextButtonMargin="4dp"
-                    app:carouselGravity="CENTER"
-                    app:scaleOnScroll="true"
-                    app:autoWidthFixing="true" />
-                    <TextView
-                        android:layout_below="@+id/carousel"
-                    android:id="@+id/category_view_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_2sdp"
-                    android:text="@string/top_category"
-                    android:textColor="@color/MainTextColor"
-                    android:textSize="@dimen/_17ssp" />
-                    <TextView
-                    android:id="@+id/category_see_more"
-                    android:layout_below="@+id/carousel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:text="@string/see_more"
-                    android:layout_marginEnd="@dimen/_9sdp"
-                    android:textColor="@color/green_primary"
-                    android:textSize="@dimen/_17ssp" />
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/category"
-                        android:layout_width="match_parent"
-                android:saveEnabled="true"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/category_view_text"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:layout_marginBottom="@dimen/_5sdp" />
-                    <com.google.android.material.divider.MaterialDivider
-                android:id="@+id/coupon_code_box_divider"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_below="@id/category"
-                android:layout_marginTop="2dp"
-                app:dividerColor="@color/secondary" />
-                    <ProgressBar
-                        android:id="@+id/ChatsProgressBar"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:visibility="visible" />
-
-                </RelativeLayout>
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/MultiViewAdapter"
-                    android:layout_marginTop="@dimen/_1sdp"
-                    android:layout_below="@id/Category_RelativeLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-                <org.imaginativeworld.whynotimagecarousel.ImageCarousel
-                    android:id="@+id/carousel2"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/_120sdp"
-                    android:background="#EFF9F0"
-                    app:showTopShadow="false"
-                    app:topShadowAlpha="0.6"
-                    app:topShadowHeight="32dp"
-                    app:showBottomShadow="false"
-                    app:bottomShadowAlpha="0.6"
-                    app:showCaption="false"
-                    app:captionMargin="0dp"
-                    app:captionTextSize="14sp"
-                    app:showIndicator="true"
-                    app:indicatorMargin="0dp"
-                    android:layout_below="@id/MultiViewAdapter"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentEnd="true"
-                    app:imageScaleType="fitCenter"
-                    app:carouselBackground="#00000000"
-                    app:imagePlaceholder="@drawable/placeholder"
-                    app:carouselPadding="0dp"
-                    app:carouselPaddingBottom="0dp"
-                    app:carouselPaddingEnd="0dp"
-                    app:carouselPaddingStart="0dp"
-                    app:carouselPaddingTop="0dp"
-                    app:showNavigationButtons="true"
-                    app:previousButtonMargin="4dp"
-                    app:nextButtonMargin="4dp"
-                    app:carouselGravity="CENTER"
-                    app:scaleOnScroll="true"
-                    app:autoWidthFixing="true" />
-            </RelativeLayout>
 
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
+                android:layout_row="0"
+                android:layout_column="0"
+                android:orientation="vertical"
                 android:layout_height="wrap_content">
 
+                <com.github.chrisbanes.photoview.PhotoView
+                    android:id="@+id/Atta_RiceDal"
+                    android:layout_width="@dimen/_70sdp"
+                    android:layout_height="@dimen/_80sdp"
+                    android:layout_margin="@dimen/_3sdp"
+                    android:background="@color/FixColorWhite"
+                    android:src="@drawable/delivery_truck" />
+                <TextView
+                    android:textColor="@color/MainTextColor"
+                    android:textAlignment="center"
+                    android:layout_gravity="center"
+                    android:text="Atta, Rice &amp;\n Dal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
 
             </LinearLayout>
 
-        </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_row="0"
+                android:layout_column="1"
+                android:orientation="vertical"
+                android:layout_height="wrap_content">
 
+                <com.github.chrisbanes.photoview.PhotoView
+                    android:layout_width="@dimen/_70sdp"
+                    android:layout_height="@dimen/_80sdp"
+                    android:layout_margin="@dimen/_3sdp"
+                    android:background="@color/FixColorWhite"
+                    android:id="@+id/skin"
+                    android:src="@drawable/delivery_truck" />
+                <TextView
+                    android:textColor="@color/MainTextColor"
+                    android:textAlignment="center"
+                    android:layout_gravity="center"
+                    android:text="skin care"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_row="0"
+                android:layout_column="2"
+                android:orientation="vertical"
+                android:layout_height="wrap_content">
+
+                <com.github.chrisbanes.photoview.PhotoView
+                    android:id="@+id/drinks"
+                    android:layout_width="@dimen/_70sdp"
+                    android:layout_height="@dimen/_80sdp"
+                    android:layout_margin="@dimen/_3sdp"
+                    android:background="@color/FixColorWhite"
+                    android:src="@drawable/delivery_truck" />
+                <TextView
+                    android:textColor="@color/MainTextColor"
+                    android:textAlignment="center"
+                    android:layout_gravity="center"
+                    android:text="drinks &amp;\n juice "
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_row="0"
+                android:layout_column="3"
+                android:orientation="vertical"
+                android:layout_height="wrap_content">
+
+                <com.github.chrisbanes.photoview.PhotoView
+                    android:id="@+id/milk"
+                    android:layout_width="@dimen/_70sdp"
+                    android:layout_height="@dimen/_80sdp"
+                    android:layout_margin="@dimen/_3sdp"
+                    android:background="@color/FixColorWhite"
+                    android:src="@drawable/delivery_truck" />
+                <TextView
+                    android:textColor="@color/MainTextColor"
+                    android:textAlignment="center"
+                    android:layout_gravity="center"
+                    android:text="milk &amp;\n paneer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+            <!-- First Product Image -->
+
+            <!-- Second Product Image -->
+
+
+            <!-- Third Product Image -->
+
+
+            <LinearLayout
+                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_width="match_parent"
+                android:layout_row="1"
+                android:layout_column="0"
+                android:orientation="vertical"
+                android:layout_height="wrap_content">
+
+                <com.github.chrisbanes.photoview.PhotoView
+                    android:id="@+id/Bakery"
+                    android:layout_width="@dimen/_70sdp"
+                    android:layout_height="@dimen/_80sdp"
+                    android:layout_margin="@dimen/_3sdp"
+                    android:background="@color/FixColorWhite"
+                    android:src="@drawable/delivery_truck" />
+                <TextView
+                    android:textColor="@color/MainTextColor"
+                    android:textAlignment="center"
+                    android:layout_gravity="center"
+                    android:text="Bakery &amp;\nBiscuits"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_width="match_parent"
+                android:layout_row="1"
+                android:layout_column="1"
+                android:orientation="vertical"
+                android:layout_height="wrap_content">
+
+                <com.github.chrisbanes.photoview.PhotoView
+                    android:id="@+id/oil"
+                    android:layout_width="@dimen/_70sdp"
+                    android:layout_height="@dimen/_80sdp"
+                    android:layout_margin="@dimen/_3sdp"
+                    android:background="@color/FixColorWhite"
+                    android:src="@drawable/delivery_truck" />
+                <TextView
+                    android:textColor="@color/MainTextColor"
+                    android:textAlignment="center"
+                    android:layout_gravity="center"
+                    android:text="oil"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginTop="@dimen/_4sdp"
+
+                android:layout_width="match_parent"
+                android:layout_row="1"
+                android:layout_column="2"
+                android:orientation="vertical"
+                android:layout_height="wrap_content">
+
+                <com.github.chrisbanes.photoview.PhotoView
+                    android:id="@+id/View2"
+                    android:layout_width="@dimen/_70sdp"
+                    android:layout_height="@dimen/_80sdp"
+
+                    android:layout_margin="@dimen/_3sdp"
+                    android:background="@color/FixColorWhite"
+                    android:src="@drawable/delivery_truck" />
+                <TextView
+                    android:textColor="@color/MainTextColor"
+                    android:textAlignment="center"
+                    android:layout_gravity="center"                    android:text="Atta, Rice &amp;\n Dal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginTop="@dimen/_4sdp"
+
+                android:layout_width="match_parent"
+                android:layout_row="1"
+                android:layout_column="3"
+                android:orientation="vertical"
+                android:layout_height="wrap_content">
+
+                <com.github.chrisbanes.photoview.PhotoView
+                    android:id="@+id/View1"
+                    android:layout_width="@dimen/_70sdp"
+                    android:layout_height="@dimen/_80sdp"
+
+                    android:layout_margin="@dimen/_3sdp"
+                    android:background="@color/FixColorWhite"
+                    android:src="@drawable/delivery_truck" />
+                <TextView
+                    android:textColor="@color/MainTextColor"
+                    android:textAlignment="center"
+                    android:layout_gravity="center"                    android:text="Atta, Rice &amp;\n Dal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+
+        </GridLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/boysSkinCare"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_9sdp"
+            android:padding="@dimen/_2sdp"
+            android:text="boys skin care"
+            android:textColor="@color/MainTextColor"
+            android:textSize="@dimen/_17ssp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/GridLayout" />
+
+        <TextView
+            android:id="@+id/boysSkinCareSee"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:padding="@dimen/_2sdp"
+            android:text="@string/see_all"
+            android:textColor="@color/green_primary"
+            android:textSize="@dimen/_17ssp"
+            android:textStyle="bold"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/GridLayout"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/boys_skin_care_RecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/boysSkinCare" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:id="@+id/TopBrandText"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_9sdp"
+            android:padding="@dimen/_2sdp"
+            android:text="Top Brand"
+            android:textColor="@color/MainTextColor"
+            android:textSize="@dimen/_17ssp"
+            android:textStyle="bold"
+            android:layout_below="@id/boys_skin_care_RecyclerView"
+            android:layout_alignParentStart="true"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:id="@+id/TopBrand"
+            android:layout_below="@+id/TopBrandText"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_height="wrap_content">
+
+            <GridLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_4sdp"
+                android:columnCount="4"
+                android:padding="@dimen/_4sdp"
+                android:rowCount="1"
+                android:background="@color/light_gray"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_row="0"
+                    android:layout_column="0"
+                    android:orientation="vertical">
+
+                    <com.github.chrisbanes.photoview.PhotoView
+                        android:id="@+id/Dabur"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="@dimen/_80sdp"
+                        android:layout_margin="@dimen/_3sdp"
+                        android:background="@color/FixColorWhite"
+                        android:src="@drawable/delivery_truck" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/dabur"
+                        android:textAlignment="center"
+                        android:textColor="@color/MainTextColor" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_row="0"
+                    android:layout_column="1"
+                    android:orientation="vertical">
+
+                    <com.github.chrisbanes.photoview.PhotoView
+                        android:id="@+id/itc"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="@dimen/_80sdp"
+                        android:layout_margin="@dimen/_3sdp"
+                        android:background="@color/FixColorWhite"
+                        android:src="@drawable/delivery_truck" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/itc"
+                        android:textAlignment="center"
+                        android:textColor="@color/MainTextColor" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_row="0"
+                    android:layout_column="2"
+                    android:orientation="vertical">
+
+                    <com.github.chrisbanes.photoview.PhotoView
+                        android:id="@+id/view3"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="@dimen/_80sdp"
+                        android:layout_margin="@dimen/_3sdp"
+                        android:background="@color/FixColorWhite"
+                        android:src="@drawable/delivery_truck" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/itc"
+                        android:textAlignment="center"
+                        android:textColor="@color/MainTextColor" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_row="0"
+                    android:layout_column="3"
+                    android:orientation="vertical">
+
+                    <com.github.chrisbanes.photoview.PhotoView
+                        android:id="@+id/view4"
+                        android:layout_width="@dimen/_70sdp"
+                        android:layout_height="@dimen/_80sdp"
+                        android:layout_margin="@dimen/_3sdp"
+                        android:background="@color/FixColorWhite"
+                        android:src="@drawable/delivery_truck" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/itc"
+                        android:textAlignment="center"
+                        android:textColor="@color/MainTextColor" />
+                </LinearLayout>
+
+            </GridLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/MultiViewAdapter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@id/TopBrand"
+            app:layout_constraintTop_toBottomOf="@id/TopBrand" />
+    </RelativeLayout>
 </ScrollView>
-
-

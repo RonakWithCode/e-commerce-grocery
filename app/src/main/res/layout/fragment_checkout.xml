@@ -8,7 +8,7 @@
     tools:context=".Fragment.CheckoutFragment">
 
     <com.facebook.shimmer.ShimmerFrameLayout
-        android:visibility="visible"
+        android:visibility="gone"
         android:id="@+id/shimmer_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -379,7 +379,23 @@
                     android:layout_marginEnd="@dimen/_25sdp"
                     android:layout_marginTop="@dimen/_2sdp"
                     android:layout_width="match_parent"
-                    android:minLines="2"
+                    android:minLines="3"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:background="@drawable/skeleton_shape"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:layout_marginEnd="@dimen/_25sdp"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:layout_width="match_parent"
+                    android:minLines="3"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:background="@drawable/skeleton_shape"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:layout_marginEnd="@dimen/_25sdp"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:layout_width="match_parent"
+                    android:minLines="4"
                     android:layout_height="wrap_content"/>
 
             </LinearLayout>
@@ -391,7 +407,7 @@
 
     <ScrollView
         android:id="@+id/ScrollView"
-        android:visibility="gone"
+        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -468,6 +484,8 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:theme="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:maxLines="1"
+                        android:layout_gravity="center_vertical"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         />
@@ -476,11 +494,12 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:textSize="@dimen/_10ssp"
                     android:id="@+id/coupon_code_apply_btn"
-                    android:layout_width="@dimen/_80sdp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
                     android:text="@string/apply"/>
 
             </LinearLayout>
@@ -573,7 +592,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="end"
-                        android:text="00.00 INR"
+                        android:text="₹00"
                         android:textColor="@color/MainTextColor"
                         android:textSize="14sp" />
 
@@ -603,7 +622,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="end"
-                        android:text="00.00"
+                        android:text="₹00"
                         android:textColor="@color/MainTextColor"
                         android:textSize="14sp" />
 
@@ -635,7 +654,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="end"
-                        android:text="00.00 INR"
+                        android:text="₹00"
                         android:textColor="@color/MainTextColor"
                         android:textSize="14sp" />
 
@@ -666,7 +685,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="end"
-                        android:text="free"
+                        android:text="₹00"
                         android:textColor="@color/MainTextColor"
                         android:textSize="14sp" />
 

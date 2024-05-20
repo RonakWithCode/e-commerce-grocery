@@ -59,15 +59,15 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
     String deliveryFee = "free";
     private boolean CouponValueIsApply = false;
     private String CouponCode;
-    double Total =  00.0;
-    double grandTotal = 00.0;
+    double Total =  00;
+    double grandTotal = 00;
 
-    double processFee = 00.0;
+    double processFee = 00;
     private double newCouponValue;
     private double couponMin;
     private AddressModel addressModel;
     NavController navController;
-
+    int TotalUse;
     public CheckoutFragment() {}
 
 
@@ -106,60 +106,75 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
         binding.CardView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
         binding.orderDetailsViewBack.setOnClickListener(click->navController.popBackStack());
+//        CouponFragment
         binding.couponCodeApplyBtn.setOnClickListener(view->{
-            if (!CouponValueIsApply) {
-                CouponCode = Objects.requireNonNull(binding.couponCode.getEditText()).getText().toString();
-                FirebaseDatabase.getInstance().getReference().child("admin").child("Coupon").child(CouponCode).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @SuppressLint("SetTextI18n")
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.exists()) {
-                            // Coupon code exists, retrieve discount amount and min value
-                            String couponDiscountAmount = snapshot.child("coupon_discount_amount").getValue(String.class);
-                            String couponMinValue = snapshot.child("couponMinvalue").getValue(String.class);
-                            assert couponMinValue != null;
-                            couponMin = Double.parseDouble(couponMinValue);
-                            assert couponDiscountAmount != null;
-                            if (Total >= couponMin) {
-                                CouponValueIsApply = true;
-                                newCouponValue = Double.parseDouble(couponDiscountAmount); // Example coupon value
-                                binding.couponCodeApplyBtn.setText("remove");
-                                binding.discount.setText(ValuesHelper.RupeeSymbols+newCouponValue);
-                                binding.couponCode.setEnabled(!CouponValueIsApply);
-                                updateSubTotalPrice();
-                            }
-                            else {
-                                binding.couponCode.setError("Minimum subtotal value required to apply the coupon is "+ValuesHelper.RupeeSymbols + couponMinValue);
-                            }
+            if (!Objects.requireNonNull(binding.couponCode.getEditText()).getText().toString().isEmpty()) {
+                if (!CouponValueIsApply) {
+                    CouponCode = Objects.requireNonNull(binding.couponCode.getEditText()).getText().toString();
+                    FirebaseDatabase.getInstance().getReference().child("admin").child("Coupon").child(CouponCode).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @SuppressLint("SetTextI18n")
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                // Coupon code exists, retrieve discount amount and min value
+                                String couponDiscountAmount = snapshot.child("coupon_discount_amount").getValue(String.class);
+                                String couponMinValue = snapshot.child("couponMinvalue").getValue(String.class);
+                                TotalUse = snapshot.child("TotalUse").getValue(Integer.class);
+                                boolean isActive = Boolean.TRUE.equals(snapshot.child("isActive").getValue(Boolean.class));
 
-                        } else {
-                            // Coupon code does not exist
-                            binding.couponCode.setError(CouponCode + " not valid");
+                                if (isActive && TotalUse > 0) { // Changed the condition to TotalUse > 0
+                                    assert couponMinValue != null;
+                                    couponMin = Double.parseDouble(couponMinValue);
+                                    assert couponDiscountAmount != null;
+                                    if (Total >= couponMin) {
+                                        CouponValueIsApply = true;
+                                        newCouponValue = Double.parseDouble(couponDiscountAmount); // Example coupon value
+                                        binding.couponCodeApplyBtn.setText("remove");
+                                        binding.discount.setText(ValuesHelper.RupeeSymbols + newCouponValue);
+                                        binding.couponCode.setEnabled(!CouponValueIsApply);
+                                        updateSubTotalPrice();
+                                    }
+                                    else {
+                                        binding.couponCode.setError("Minimum subtotal value required to apply the coupon is " + ValuesHelper.RupeeSymbols + couponMinValue);
+                                    }
+                                }else {
+                                    binding.couponCode.setError("this "+ binding.couponCode.getEditText().getText().toString()+" coupon has expired");
+                                    binding.couponCode.getEditText().setText("");
+                                }
+
+                            } else {
+                                // Coupon code does not exist
+                                binding.couponCode.setError(CouponCode + " not valid");
+                                binding.couponCode.getEditText().setText("");
+                            }
                         }
-                    }
 
-                    @SuppressLint("SetTextI18n")
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        // Handle database error
-                        binding.couponCode.setError(CouponCode + " not valid");
-                        CouponValueIsApply = false;
-                        newCouponValue = 00.0; // No coupon applied
-                        binding.couponCodeApplyBtn.setText("Apply");
-                        binding.discount.setText(ValuesHelper.RupeeSymbols+newCouponValue);
-                        binding.couponCode.setEnabled(!CouponValueIsApply);
-                    }
-                });
-            }
-            else {
-                newCouponValue = 0; // No coupon applied
-                updateSubTotalPrice();
-                CouponValueIsApply = false;
-                binding.discount.setText(ValuesHelper.RupeeSymbols+newCouponValue);
-                binding.couponCodeApplyBtn.setText("Apply");
-                binding.couponCode.setEnabled(!CouponValueIsApply);
+                        @SuppressLint("SetTextI18n")
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            // Handle database error
+                            binding.couponCode.setError(CouponCode + " not valid");
+                            CouponValueIsApply = false;
+                            newCouponValue = 00; // No coupon applied
+                            binding.couponCodeApplyBtn.setText("Apply");
+                            binding.discount.setText(ValuesHelper.RupeeSymbols+newCouponValue);
+                            binding.couponCode.setEnabled(!CouponValueIsApply);
+                        }
+                    });
+                }
+                else {
+                    newCouponValue = 0; // No coupon applied
+                    updateSubTotalPrice();
+                    CouponValueIsApply = false;
+                    binding.discount.setText(ValuesHelper.RupeeSymbols+newCouponValue);
+                    binding.couponCodeApplyBtn.setText("Apply");
+                    binding.couponCode.setEnabled(!CouponValueIsApply);
 
+                }
+            }else {
+                binding.couponCode.setError("fill the discount code");
             }
+
         });
 
 
@@ -284,6 +299,7 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
 
         grandTotal = Total - newCouponValue + processFee;
         binding.TotalPrice.setText(ValuesHelper.RupeeSymbols  + grandTotal);
+
     }
 
     @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
@@ -298,7 +314,7 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
         if (Total < couponMin) {
             // Total is less than the minimum required value, remove the coupon
             CouponValueIsApply = false;
-            newCouponValue = 00.0;
+            newCouponValue = 00;
             binding.couponCodeApplyBtn.setText("Apply");
             binding.couponCode.setEnabled(true);
             binding.discount.setText(ValuesHelper.RupeeSymbols + newCouponValue);
@@ -320,7 +336,7 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
         if (Total < couponMin) {
             // Total is less than the minimum required value, remove the coupon
             CouponValueIsApply = false;
-            newCouponValue = 00.0;
+            newCouponValue = 00;
             binding.couponCodeApplyBtn.setText("Apply");
             binding.couponCode.setEnabled(true);
             binding.discount.setText(ValuesHelper.RupeeSymbols + newCouponValue);
@@ -354,10 +370,12 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
         Date currentDate = new Date();
         String couponCode = "NoCouponCode";
         String token = TokenManager.getInstance(requireContext()).getToken();
-
-        if (!Objects.requireNonNull(binding.couponCode.getEditText()).getText().toString().isEmpty()) {
-            couponCode = binding.couponCode.getEditText().getText().toString();
+        if (CouponValueIsApply) {
+            couponCode = Objects.requireNonNull(binding.couponCode.getEditText()).getText().toString();
+            int newTotalUse = TotalUse - 1;
+            FirebaseDatabase.getInstance().getReference().child("admin").child("Coupon").child(CouponCode).child("TotalUse").setValue(newTotalUse);
         }
+
         OrderModel orderModel = new OrderModel(orderId,customer,models,finalTotal,couponCode,deliveryState,payment, shipping
                 ,currentDate , Objects.requireNonNull(binding.note.getEditText()).getText().toString(),token);
         databaseService.PlaceOder(orderModel, new DatabaseService.PlaceOrderCallback() {

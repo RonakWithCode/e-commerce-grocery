@@ -3,6 +3,8 @@ package com.crazyostudio.ecommercegrocery.Model;
 public class ProductCategoryModel {
     private String Tag,ImageUri;
 
+
+
     public ProductCategoryModel() {
     }
 

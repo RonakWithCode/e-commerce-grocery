@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/rounded_border"
+    android:padding="@dimen/_2sdp">
+
+    <!-- Product Images Grid -->
+    <GridLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@color/light_gray"
+        android:columnCount="2"
+        android:padding="@dimen/_4sdp"
+        android:rowCount="2">
+
+        <!-- First Product Image -->
+        <com.github.chrisbanes.photoview.PhotoView
+            android:background="@color/FixColorWhite"
+            android:id="@+id/View1"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_margin="@dimen/_3sdp"
+            android:src="@drawable/delivery_truck" />
+
+        <!-- Second Product Image -->
+        <com.github.chrisbanes.photoview.PhotoView
+            android:background="@color/FixColorWhite"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:id="@+id/View2"
+            android:layout_row="0"
+            android:layout_column="1"
+            android:layout_margin="@dimen/_3sdp"
+            android:src="@drawable/delivery_truck" />
+
+        <!-- Third Product Image -->
+        <com.github.chrisbanes.photoview.PhotoView
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_row="1"
+            android:background="@color/FixColorWhite"
+            android:layout_column="0"
+            android:layout_margin="@dimen/_3sdp"
+            android:id="@+id/View3"
+            android:src="@drawable/delivery_truck" />
+
+
+        <!-- +3 Placeholder Image -->
+        <TextView
+            android:id="@+id/Text1"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_row="1"
+            android:layout_column="1"
+            android:layout_margin="@dimen/_3sdp"
+            android:background="@color/light_gray"
+            android:gravity="center"
+            android:text="+3"
+            android:textSize="@dimen/_16ssp"
+            android:textColor="@color/dark_gray"
+            android:textStyle="bold" />
+    </GridLayout>
+
+    <!-- Product Category -->
+    <TextView
+        android:id="@+id/ProductName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:text="fortune"
+        android:layout_marginStart="@dimen/_7sdp"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_13ssp"
+        android:textStyle="bold" />
+
+    <!-- Number of Products -->
+    <TextView
+        android:id="@+id/ProductSize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:layout_marginStart="@dimen/_7sdp"
+        android:text="6 products"
+        android:textColor="@color/dark_gray"
+        android:textSize="@dimen/_12ssp" />
+
+    <!-- See All Button -->
+    <Button
+        android:id="@+id/see_all_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/_5sdp"
+        android:layout_marginTop="@dimen/_7sdp"
+        android:paddingRight="@dimen/_5sdp"
+        android:layout_marginStart="@dimen/_5sdp"
+        android:paddingTop="@dimen/_5sdp"
+        style="?attr/materialButtonOutlinedStyle"
+        android:paddingBottom="@dimen/_5sdp"
+        android:text="See all"
+        android:textColor="#4CAF50"
+        android:textSize="@dimen/_10ssp"
+        android:textStyle="bold" />
+
+</LinearLayout>
