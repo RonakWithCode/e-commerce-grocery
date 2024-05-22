@@ -24,6 +24,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 
 public class ProductFilterFragment extends Fragment implements onClickProductAdapter {
+
     private static final String FILTER = "filter";
     private FragmentProductFilterBinding binding;
     private String category;
@@ -122,8 +123,11 @@ public class ProductFilterFragment extends Fragment implements onClickProductAda
     }
     
 
+
+
+
     @Override
-    public void onClick(ProductModel productModel) {
+    public void onClick(ProductModel productModel, ArrayList<ProductModel> sameProducts) {
         FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
         Bundle bundle = new Bundle();
         bundle.putParcelable("productDetails", productModel);
@@ -135,6 +139,4 @@ public class ProductFilterFragment extends Fragment implements onClickProductAda
         transaction.commit();
 
     }
-
-
 }

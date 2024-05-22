@@ -4,16 +4,15 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.ImageButton;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,7 +21,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewbinding.ViewBinding;
 
 import com.bumptech.glide.Glide;
@@ -30,22 +28,15 @@ import com.crazyostudio.ecommercegrocery.Adapter.HomeCategoryAdapter;
 import com.crazyostudio.ecommercegrocery.Adapter.HomeProductAdapter;
 import com.crazyostudio.ecommercegrocery.Adapter.ProductAdapter;
 import com.crazyostudio.ecommercegrocery.Model.BannerModels;
-import com.crazyostudio.ecommercegrocery.Model.HomeCategoryModel;
 import com.crazyostudio.ecommercegrocery.Model.HomeProductModel;
-import com.crazyostudio.ecommercegrocery.Model.ProductCategoryModel;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
 import com.crazyostudio.ecommercegrocery.databinding.CategoryViewDialogBinding;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentHomeBinding;
 import com.crazyostudio.ecommercegrocery.databinding.ProductViewDialogBinding;
-import com.crazyostudio.ecommercegrocery.interfaceClass.CategoryAdapterInterface;
-import com.crazyostudio.ecommercegrocery.interfaceClass.HomeCategoryInterface;
-import com.crazyostudio.ecommercegrocery.interfaceClass.HomeProductInterface;
 import com.crazyostudio.ecommercegrocery.interfaceClass.onClickProductAdapter;
-import com.crazyostudio.ecommercegrocery.javaClasses.CustomSmoothScroller;
 import com.crazyostudio.ecommercegrocery.javaClasses.basicFun;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -60,11 +51,14 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 
-public class HomeFragment extends Fragment implements onClickProductAdapter, CategoryAdapterInterface {
+public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
     private DatabaseService databaseService;
     private HomeCategoryAdapter homeCategoryAdapter;
     private HomeCategoryAdapter homeProductBoysSkinAdapter;
+    private HomeProductAdapter MultiViewAdapter;
+
+    private ArrayList<HomeProductModel> MultiViewModel;
     private ArrayList<HomeProductModel> homeProductModel;
     private ArrayList<HomeProductModel> homeProductModelBoysSkin;
 
@@ -102,21 +96,12 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
         databaseService = new DatabaseService();
 
         homeProductModel = new ArrayList<>();
+        MultiViewModel = new ArrayList<>();
         homeProductModelBoysSkin = new ArrayList<>();
 
-        homeCategoryAdapter = new HomeCategoryAdapter(homeProductModel, requireContext(), new HomeCategoryInterface() {
-            @Override
-            public void onClick(HomeProductModel filter) {
-                ViewCat(filter);
-            }
-        });
-        homeProductBoysSkinAdapter = new HomeCategoryAdapter(homeProductModelBoysSkin, requireContext(), new HomeCategoryInterface() {
-            @Override
-            public void onClick(HomeProductModel filter) {
-                ViewCat(filter);
-
-            }
-        });
+        homeCategoryAdapter = new HomeCategoryAdapter(homeProductModel, requireContext(), this::ViewCat);
+        homeProductBoysSkinAdapter = new HomeCategoryAdapter(homeProductModelBoysSkin, requireContext(), this::ViewCat);
+        MultiViewAdapter = new HomeProductAdapter(MultiViewModel, this::showProductViewDialog, requireActivity());
 
         setupAdapters();
         loadInitialData();
@@ -130,46 +115,6 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
     }
 
 
-    public void SetupAdapter(){
-        homeProductModel = new ArrayList<>();
-        LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL,false);
-        binding.recyclerCategory.setAdapter(homeCategoryAdapter);
-        binding.boysSkinCareRecyclerView.setLayoutManager(layoutManager);
-        layoutManager.setSmoothScrollbarEnabled(true);
-        CustomSmoothScroller smoothScroller = new CustomSmoothScroller(requireContext());
-        smoothScroller.setTargetPosition(0);
-        layoutManager.startSmoothScroll(smoothScroller);
-        binding.recyclerCategory.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                // Adjust the scrolling speed by multiplying dy (vertical scroll amount) with a factor
-                int newDy = dy * 2; // Increase scrolling speed by multiplying with a factor (e.g., 1.5)
-                super.onScrolled(recyclerView, dx, newDy);
-            }
-        });
-
-
-    }
-//    private void SetupAdapterByBoysSkin() {
-//        homeProductModelBoysSkin = new ArrayList<>();
-//        LinearLayoutManager layoutManager1 = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL,false);
-//        binding.boysSkinCareRecyclerView.setAdapter(homeProductBoysSkinAdapter);
-//        binding.recyclerCategory.setLayoutManager(layoutManager1);
-//        layoutManager1.setSmoothScrollbarEnabled(true);
-//        CustomSmoothScroller smoothScroller = new CustomSmoothScroller(requireContext());
-//        smoothScroller.setTargetPosition(0);
-//        layoutManager1.startSmoothScroll(smoothScroller);
-//
-//        binding.boysSkinCareRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-//                // Adjust the scrolling speed by multiplying dy (vertical scroll amount) with a factor
-//                int newDy = (int) (dy * 2); // Increase scrolling speed by multiplying with a factor (e.g., 1.5)
-//                super.onScrolled(recyclerView, dx, newDy);
-//            }
-//        });
-//    }
-//
     private void setupAdapters() {
         LinearLayoutManager categoryLayoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
         binding.recyclerCategory.setLayoutManager(categoryLayoutManager);
@@ -179,16 +124,48 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
         binding.boysSkinCareRecyclerView.setLayoutManager(boysSkinLayoutManager);
         binding.boysSkinCareRecyclerView.setAdapter(homeProductBoysSkinAdapter);
 
+
+        LinearLayoutManager MultiViewManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
+        binding.MultiViewAdapter.setLayoutManager(MultiViewManager);
+        binding.MultiViewAdapter.setAdapter(MultiViewAdapter);
+
+//        MultiViewAdapter.setHasStableIds(true);
+
+
     }
     private void loadInitialData() {
         LoadCarousel();
         LoadProductCategory();
 
-//        loadProductsForCategories(new String[]{"chips and Snacks"});
+        loadProductsMultiViewForLoop(new String[]{"chips and Snacks"});
         loadProductsForCategories(new String[]{"chips and Snacks", "toothpaste", "hair oil ", "drinks"});
         loadProductsForCategoriesByBoysSkin(new String[]{"toothpaste", "drinks"});
+    }
 
-//        loadProductsForCategoriesByBoysSkin(new String[]{"toothpaste"});
+    private void loadProductsMultiViewForLoop(String[] strings) {
+        for (String s : strings) {
+            loadProductsMultiView(s);
+        }
+    }
+
+
+    private void loadProductsMultiView(String s) {
+        databaseService.getAllProductsByCategoryOnly(s, new DatabaseService.GetAllProductsCallback() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onSuccess(ArrayList<ProductModel> products) {
+//                MultiViewModel.clear();
+                MultiViewModel.add(new HomeProductModel(s,products));
+                MultiViewAdapter.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                basicFun.AlertDialog(requireContext(), errorMessage);
+
+            }
+        });
     }
 
 
@@ -376,7 +353,6 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
             loadProduct(category, homeProductModel, homeCategoryAdapter);
         }
     }
-
     private void loadProductsForCategoriesByBoysSkin(String[] categories) {
         for (String category : categories) {
             loadProduct(category, homeProductModelBoysSkin, homeProductBoysSkinAdapter);
@@ -399,161 +375,13 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
     }
 
 
-
-//    @SuppressLint("NotifyDataSetChanged")
-//    void LoadProduct(String category) {
-////        homeProductModel.clear();
-//        databaseService.getAllProductsByCategoryOnly(category,new DatabaseService.GetAllProductsCallback() {
-//            @SuppressLint("NotifyDataSetChanged")
-//            @Override
-//            public void onSuccess(ArrayList<ProductModel> products) {
-//                homeProductModel.clear();
-//                homeProductModel.add(new HomeProductModel(category,products));
-//                homeCategoryAdapter.notifyDataSetChanged();
-//            }
-//
-//
-//            @Override
-//            public void onError(String errorMessage) {
-//                // Handle the error her
-//                basicFun.AlertDialog(requireContext(),errorMessage);
-//            }
-//        });
-//        homeCategoryAdapter.notifyDataSetChanged();
-//
-//    }
-//
-//    @SuppressLint("NotifyDataSetChanged")
-//    void LoadProductByBoysSkin(String category) {
-////        homeProductModel.clear();
-//        databaseService.getAllProductsByCategoryOnly(category,new DatabaseService.GetAllProductsCallback() {
-//            @SuppressLint("NotifyDataSetChanged")
-//            @Override
-//            public void onSuccess(ArrayList<ProductModel> products) {
-//
-////                categoryBoysSkinModels.add(new HomeCategoryModel(category,Images,String.valueOf(products.size()),category));
-//                homeProductModelBoysSkin.clear();
-//                homeProductModelBoysSkin.add(new HomeProductModel(category,products));
-////                model.addAll(products);
-//                homeProductBoysSkinAdapter.notifyDataSetChanged();
-//
-//            }
-//
-//
-//            @Override
-//            public void onError(String errorMessage) {
-//                // Handle the error her
-//                basicFun.AlertDialog(requireContext(),errorMessage);
-//            }
-//        });
-//        homeProductBoysSkinAdapter.notifyDataSetChanged();
-//
-//    }
-//
-//
-
-
-
-
-
-
-    @Override
-    public void onClick(ProductModel productModel) {
-    }
-
-    @Override
-    public void onClick(ProductCategoryModel productModel) {
-        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-        Bundle bundle = new Bundle();
-        bundle.putString("filter", productModel.getTag());
-        ProductFilterFragment fragment = new ProductFilterFragment();
-        fragment.setArguments(bundle);
-        transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
-        transaction.addToBackStack(null);
-        transaction.commit();
-
-    }
-
-//
-//    @SuppressLint("SetTextI18n")
-//    private void showProductViewDialog(ProductModel productModel) {
-//        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext());
-//        ProductViewDialogBinding productViewDialogBinding = ProductViewDialogBinding.inflate(getLayoutInflater());
-////        productViewDialogBinding.getRoot().setBackgroundResource(R.drawable.rounded_corners);
-//
-//        // Set data and click listeners
-////        productViewDialogBinding.productsImages.setImageResource(R.drawable.sample_product_image); // Replace with actual image resource
-//        productViewDialogBinding.ProductName.setText(productModel.getProductName());
-//
-//        for (int i = 0; i < productModel.getImageURL().size(); i++) {
-//            String imageUrl = productModel.getImageURL().get(i);
-//            CarouselItem carouselItem = new CarouselItem(imageUrl);
-//            productViewDialogBinding.productsImages.addData(carouselItem);
-//        }
-//
-//        if (!Objects.equals(productModel.getProductDescription(), "")){
-//            productViewDialogBinding.productDescription.setVisibility(View.VISIBLE);
-//            productViewDialogBinding.Description .setVisibility(View.VISIBLE);
-//            productViewDialogBinding.productDescription.setText(productModel.getProductDescription());
-//        }
-//        double mrp = productModel.getMrp(); // Replace with the actual MRP
-//        double sellingPrice = productModel.getPrice(); // Replace with the actual selling price
-////
-//        double discountPercentage = mrp - sellingPrice;
-//
-////        float percentageSaved = (float) (((productModel.getMrp() - productModel.getPrice()) / productModel.getMrp()) * 100f);
-//        productViewDialogBinding.discount.setText("₹" + discountPercentage + "% off");
-//        productViewDialogBinding.Price.setText("₹" + productModel.getPrice());
-//        productViewDialogBinding.quantitySmail.setText("(₹" + productModel.getPrice() + " / " + productModel.getSubUnit() + productModel.getUnit() + ")");
-//        productViewDialogBinding.MRP.setText(":"+productModel.getMrp());
-//        productViewDialogBinding.MRP.setPaintFlags(productViewDialogBinding.MRP.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-//
-//
-//        if (productModel.getQuantity() == 0) {
-//            productViewDialogBinding.OutOfStockBuyOptions.setVisibility(View.VISIBLE);
-//            productViewDialogBinding.quantity.setText("0");
-//            productViewDialogBinding.TextInStock.setText("Out of Stock");
-//            productViewDialogBinding.quantityBox.setVisibility(View.INVISIBLE);
-//            productViewDialogBinding.TextInStock.setTextColor(ContextCompat.getColor(requireContext(), R.color.FixRed));
-//            productViewDialogBinding.AddTOCart.setVisibility(View.INVISIBLE);
-////            binding.BuyNow.setVisibility(View.INVISIBLE);
-//        }
-//        productViewDialogBinding.categoryType.setText(productModel.getCategory());
-//        productViewDialogBinding.netQuantity.setText(productModel.getSubUnit() + productModel.getUnit());
-//        String diet;
-//        if (productModel.getProductType().equals("FoodVeg")) {
-////            binding.ItemType.setImageResource(R.drawable.food_green);
-//            diet = "Veg";
-//        } else if (productModel.getProductType().equals("FoodNonVeg")) {
-////            binding.ItemType.setImageResource(R.drawable.food_brown);
-//            diet = "NonVeg";
-//        } else {
-//            diet = "not food item.";
-////            binding.ItemType.setVisibility(View.GONE);
-//            productViewDialogBinding.dietType.setVisibility(View.GONE);
-//            productViewDialogBinding.diet.setVisibility(View.GONE);
-//        }
-//        productViewDialogBinding.dietType.setText(diet);
-//        productViewDialogBinding.ExpiryDate.setText(productModel.getEditDate());
-//
-//
-//
-//        productViewDialogBinding.AddTOCart.setOnClickListener(v -> {
-//            // Handle add to cart action
-//            bottomSheetDialog.dismiss();
-//        });
-//
-//        bottomSheetDialog.setContentView(productViewDialogBinding.getRoot());
-//        bottomSheetDialog.show();
-//    }
-//
-
     @SuppressLint("SetTextI18n")
-    private void showProductViewDialog(ProductModel productModel) {
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext());
+    private void showProductViewDialog(ProductModel productModel,ArrayList<ProductModel> sameProducts) {
+        Dialog bottomSheetDialog = new Dialog(requireContext());
         ProductViewDialogBinding productViewDialogBinding = ProductViewDialogBinding.inflate(getLayoutInflater());
 
         productViewDialogBinding.ProductName.setText(productModel.getProductName());
+        productViewDialogBinding.closeButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
 
         for (String imageUrl : productModel.getImageURL()) {
             CarouselItem carouselItem = new CarouselItem(imageUrl);
@@ -602,36 +430,50 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
         productViewDialogBinding.ExpiryDate.setText(productModel.getEditDate());
 
         productViewDialogBinding.AddTOCart.setOnClickListener(v -> {
+
             bottomSheetDialog.dismiss();
         });
+        sameProducts.remove(productModel);
+        if (sameProducts.isEmpty()){
+            productViewDialogBinding.product.setVisibility(View.GONE);
+            productViewDialogBinding.itemCategory.setVisibility(View.GONE);
+        }else {
+            LinearLayoutManager LayoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
+            productViewDialogBinding.itemCategory.setLayoutManager(LayoutManager);
+            productViewDialogBinding.itemCategory.setAdapter(new ProductAdapter(sameProducts, (productModel1, sameProducts1) -> showProductViewDialog(productModel1, sameProducts1),requireContext(),"Main"));
+        }
 
         bottomSheetDialog.setContentView(productViewDialogBinding.getRoot());
+        bottomSheetDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        bottomSheetDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        bottomSheetDialog.getWindow().getAttributes().windowAnimations = R.style.bottom_sheet_dialogAnimation;
+        bottomSheetDialog.getWindow().setGravity(Gravity.BOTTOM);
+
         bottomSheetDialog.show();
     }
 
     void ViewCat(HomeProductModel model){
-        Toast.makeText(requireContext(), "ww", Toast.LENGTH_SHORT).show();
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext());
+        Dialog bottomSheetDialog = new Dialog(requireContext());
         CategoryViewDialogBinding productViewDialogBinding = CategoryViewDialogBinding.inflate(getLayoutInflater());
 
-        RecyclerView recyclerView;
-        ImageButton closeButton;
-//        Animation slideUp, slideDown;
-//        slideUp = AnimationUtils.loadAnimation(requireContext(), R.anim.slide_up);
-//        slideDown = AnimationUtils.loadAnimation(requireContext(), R.anim.slide_down);
+        productViewDialogBinding.productsRecyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
+        productViewDialogBinding.productsRecyclerView.setAdapter(new ProductAdapter(model.getProduct(), new onClickProductAdapter() {
+            @Override
+            public void onClick(ProductModel productModel, ArrayList<ProductModel> sameProducts) {
+                showProductViewDialog(productModel,sameProducts);
+            }
+        }, requireContext(), "Main"));
+        productViewDialogBinding.title.setText(model.getTitle());
 
-        recyclerView = productViewDialogBinding.productsRecyclerView;
-        closeButton = productViewDialogBinding.closeButton;
-
-        recyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
-        recyclerView.setAdapter(new ProductAdapter(model.getProduct(), productModel -> {
-
-        },requireContext(),"Main"));
-
-        closeButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
-
+        productViewDialogBinding.closeButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
 
         bottomSheetDialog.setContentView(productViewDialogBinding.getRoot());
+
+        bottomSheetDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        bottomSheetDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        bottomSheetDialog.getWindow().getAttributes().windowAnimations = R.style.bottom_sheet_dialogAnimation;
+        bottomSheetDialog.getWindow().setGravity(Gravity.BOTTOM);
+
         bottomSheetDialog.show();
 
 
@@ -639,4 +481,8 @@ public class HomeFragment extends Fragment implements onClickProductAdapter, Cat
 
 
     }
+
+
+
+
 }

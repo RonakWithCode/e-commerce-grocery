@@ -1,30 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/transparent">
-    <ImageButton
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="#3C000000"
+    android:layout_height="wrap_content">
+    <ImageView
+        android:layout_marginTop="@dimen/_15sdp"
         android:id="@+id/close_button"
         android:layout_width="wrap_content"
+        android:background="@drawable/circular_button"
         android:layout_alignParentTop="true"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:background="@android:color/transparent"
         android:src="@drawable/ic_close" />
 
     <RelativeLayout
+        android:background="@drawable/rounded_corners"
         android:layout_below="@id/close_button"
+        android:layout_marginTop="@dimen/_5sdp"
         android:id="@+id/dialog_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/rounded_top_corners"
         android:padding="16dp">
+
+        <TextView
+            android:textColor="@color/MainTextColor"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_2ssp"
+            android:textSize="@dimen/_20ssp"
+            android:textStyle="bold"
+            android:id="@+id/title"
+            android:text="@string/chips_and_snacks"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/see_More"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="@string/see_more"
+            android:layout_marginTop="@dimen/_2ssp"
+            android:layout_marginEnd="@dimen/_9sdp"
+            android:textColor="@color/green_primary"
+            android:textSize="@dimen/_17ssp"
+            tools:ignore="RelativeOverlap" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/products_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
+            android:layout_below="@+id/title"
             android:layout_marginTop="16dp"
             android:clipToPadding="false"
             android:paddingTop="8dp"

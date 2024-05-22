@@ -26,6 +26,7 @@ import java.util.ArrayList;
 public class CategoryFragment extends Fragment implements CategoryAdapterInterface {
     FragmentCategoryBinding binding;
 
+    
     public CategoryFragment() {
         // Required empty public constructor
     }

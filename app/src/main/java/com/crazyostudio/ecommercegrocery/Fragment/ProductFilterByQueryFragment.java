@@ -205,8 +205,10 @@ public class ProductFilterByQueryFragment extends Fragment implements onClickPro
     }
 
 
+
+
     @Override
-    public void onClick(ProductModel productModel) {
+    public void onClick(ProductModel productModel, ArrayList<ProductModel> sameProducts) {
         FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
         Bundle bundle = new Bundle();
         bundle.putParcelable("productDetails", productModel);
@@ -216,7 +218,5 @@ public class ProductFilterByQueryFragment extends Fragment implements onClickPro
         transaction.replace(R.id.loader,productDetailsFragment,"ProductFilterFragment");
         transaction.addToBackStack("ProductFilterFragment");
         transaction.commit();
-
     }
-
 }

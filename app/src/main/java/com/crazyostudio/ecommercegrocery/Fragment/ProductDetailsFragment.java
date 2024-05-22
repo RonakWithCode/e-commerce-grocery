@@ -326,16 +326,7 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
                 .addOnFailureListener(error -> basicFun.AlertDialog(requireContext(), error.toString()));
     }
 
-    @Override
-    public void onClick(ProductModel productModel) {
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("productDetails", productModel);
-        bundle.putInt("backButton", 0);
-        ProductDetailsFragment productDetailsFragment = new ProductDetailsFragment();
-        productDetailsFragment.setArguments(bundle);
-        transaction.replace(R.id.loader,productDetailsFragment,"productDetailsFragment");
-        transaction.addToBackStack("productDetailsFragment").commit();
-    }
+
 
     @Override
     public void onDestroy() {
@@ -358,5 +349,16 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
         if (actionBar != null) {
             actionBar.hide();
         }
+    }
+
+    @Override
+    public void onClick(ProductModel productModel, ArrayList<ProductModel> sameProducts) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("productDetails", productModel);
+        bundle.putInt("backButton", 0);
+        ProductDetailsFragment productDetailsFragment = new ProductDetailsFragment();
+        productDetailsFragment.setArguments(bundle);
+        transaction.replace(R.id.loader,productDetailsFragment,"productDetailsFragment");
+        transaction.addToBackStack("productDetailsFragment").commit();
     }
 }

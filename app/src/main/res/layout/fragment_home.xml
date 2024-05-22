@@ -55,7 +55,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_9sdp"
             android:layout_alignParentStart="true"
-
             android:padding="@dimen/_2sdp"
             android:text="Bestsellers"
             android:textColor="@color/MainTextColor"

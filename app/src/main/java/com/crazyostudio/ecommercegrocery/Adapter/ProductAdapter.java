@@ -27,6 +27,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
     ArrayList<ProductModel> productModels;
     onClickProductAdapter onClickProductAdapter;
     Context context;
+
+
     String layout;
     //    productboxview
     public void setFilerList(ArrayList<ProductModel> FilterModels){
@@ -68,7 +70,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
         holder.binding.productPrice.setText("₹" + product.getPrice());
         holder.binding.productMRP.setText("₹" + product.getMrp());
         holder.binding.productMRP.setPaintFlags(holder.binding.productMRP.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-        holder.binding.getRoot().setOnClickListener(onclick-> onClickProductAdapter.onClick(product));
+        holder.binding.getRoot().setOnClickListener(onclick-> onClickProductAdapter.onClick(product,productModels));
         Glide.with(context)
                 .load(product.getImageURL().get(0))
                 .placeholder(R.drawable.product_image_shimmee_effect)

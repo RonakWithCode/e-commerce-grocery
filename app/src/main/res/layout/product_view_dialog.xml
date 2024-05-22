@@ -1,39 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@android:color/transparent"
+    android:background="#3C000000"
     xmlns:tools="http://schemas.android.com/tools">
 
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/dialogCardView"
-        android:layout_width="match_parent"
+    <ImageView
         android:layout_marginTop="@dimen/_15sdp"
+        android:id="@+id/close_button"
+        android:layout_width="wrap_content"
+        android:background="@drawable/circular_button"
+        android:layout_alignParentTop="true"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="@dimen/_16sdp"
-        app:cardElevation="@dimen/_4sdp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
-    <androidx.core.widget.NestedScrollView
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_close" />
+    <RelativeLayout
+        android:layout_below="@id/close_button"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:background="@drawable/rounded_corners"
+        android:layout_height="wrap_content">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:background="@drawable/rounded_corners"
+        android:layout_alignParentStart="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
         <LinearLayout
+            android:background="@drawable/rounded_corners"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
         <org.imaginativeworld.whynotimagecarousel.ImageCarousel
             android:id="@+id/productsImages"
+            android:background="@drawable/rounded_corners"
             android:layout_marginTop="@dimen/_5sdp"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_220sdp"
             android:minHeight="@dimen/_200sdp"
-            android:background="@color/MainBackgroundColor"
             app:showTopShadow="false"
             app:topShadowAlpha="0.6"
             app:topShadowHeight="32dp"
@@ -243,6 +254,7 @@
             android:textStyle="italic"
             android:textAlignment="textStart"
             android:text="@string/description"
+            android:layout_marginStart="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_15sdp"
             android:textColor="@color/MainTextColor"
             android:textSize="@dimen/_18ssp" />
@@ -256,20 +268,42 @@
             android:textAlignment="textStart"
             android:text="@string/product_recommendations"
             android:layout_marginTop="@dimen/_2sdp"
+            android:layout_marginStart="@dimen/_10sdp"
             android:textColor="@color/MainTextColor"
             android:textSize="@dimen/_15ssp" />
 
-        <TextView
+
+            <TextView
+                android:id="@+id/product_"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/product_recommendations"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:textColor="@color/MainTextColor"
+                android:textSize="@dimen/_20ssp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/item_category"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+
+
+
+            <TextView
             android:id="@+id/Product_d"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/product_details"
             android:layout_marginTop="@dimen/_5sdp"
-            android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginStart="@dimen/_10sdp"
             android:textColor="@color/MainTextColor"
             android:textSize="@dimen/_20ssp" />
 
         <LinearLayout
+            android:layout_marginStart="@dimen/_10sdp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <LinearLayout
@@ -355,8 +389,8 @@
 
     </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+    </RelativeLayout>
 
 
-    </androidx.cardview.widget.CardView>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

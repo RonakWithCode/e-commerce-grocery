@@ -25,6 +25,7 @@ import com.crazyostudio.ecommercegrocery.Activity.OrderDetailsActivity;
 import com.crazyostudio.ecommercegrocery.Fragment.CategoryFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.HomeFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.MoreFragment;
+import com.crazyostudio.ecommercegrocery.Fragment.ProductWithSlideCategoryFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.SearchFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.ShoppingCartsFragment;
 import com.crazyostudio.ecommercegrocery.Services.AuthService;
@@ -84,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                     loader(new HomeFragment(),"HomeFragment");
                     break;
                 case R.id.GoCategory:
-                    loader(new CategoryFragment(),"CategoryFragment");
+                    loader(new ProductWithSlideCategoryFragment(),"CategoryFragment");
                     break;
                 case R.id.shoppingCartsBtn:
                     loader(new ShoppingCartsFragment(),"ShoppingCartsFragment");
