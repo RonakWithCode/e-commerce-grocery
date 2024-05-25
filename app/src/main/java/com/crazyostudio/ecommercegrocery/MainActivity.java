@@ -24,6 +24,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.crazyostudio.ecommercegrocery.Activity.OrderDetailsActivity;
 import com.crazyostudio.ecommercegrocery.Fragment.CategoryFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.HomeFragment;
+import com.crazyostudio.ecommercegrocery.Fragment.MapFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.MoreFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.ProductWithSlideCategoryFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.SearchFragment;
@@ -31,6 +32,8 @@ import com.crazyostudio.ecommercegrocery.Fragment.ShoppingCartsFragment;
 import com.crazyostudio.ecommercegrocery.Services.AuthService;
 import com.crazyostudio.ecommercegrocery.databinding.ActivityMainBinding;
 import com.google.firebase.auth.FirebaseAuth;
+import com.mappls.sdk.maps.Mappls;
+import com.mappls.sdk.services.account.MapplsAccountManager;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
@@ -51,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+//
         if (getIntent() != null && getIntent().hasExtra("LoadID")) {
             if (getIntent().getStringExtra("LoadID").equals("OrderView")) {
                 Intent i = new Intent(MainActivity.this, OrderDetailsActivity.class);
@@ -59,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         }
+
 //        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.green_primary)));
 
 
@@ -78,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         binding.bottomNavigationView.setOnItemSelectedListener(itemId -> {
             switch (itemId.getItemId()) {
                 case R.id.homeBtn:
-                    loader(new HomeFragment(),"HomeFragment");
+                    loader(new MapFragment(),"HomeFragment");
                     break;
                 case R.id.GoCategory:
                     loader(new ProductWithSlideCategoryFragment(),"CategoryFragment");

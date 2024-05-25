@@ -4,6 +4,9 @@ pluginManagement {
         google()
         maven { url 'https://jitpack.io' }
         mavenCentral()
+        maven {
+            url 'https://maven.mappls.com/repository/mappls/'
+        }
     }
 }
 dependencyResolutionManagement {
@@ -12,7 +15,11 @@ dependencyResolutionManagement {
         google()
         maven { url 'https://jitpack.io' }
         mavenCentral()
+        maven {
+            url 'https://maven.mappls.com/repository/mappls/'
+        }
     }
+
 }
 rootProject.name = "E Commerce Grocery"
 include ':app'
