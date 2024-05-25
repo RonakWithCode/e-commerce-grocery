@@ -11,9 +11,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -21,23 +21,20 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.crazyostudio.ecommercegrocery.Adapter.SearchAdapter;
 import com.crazyostudio.ecommercegrocery.Adapter.SearchAdapterInterface;
+import com.crazyostudio.ecommercegrocery.Adapter.ViewAdapterSearchViewRecommendation;
+import com.crazyostudio.ecommercegrocery.Model.HomeProductModel;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentSearchBinding;
+import com.crazyostudio.ecommercegrocery.interfaceClass.HomeProductInterface;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.mancj.materialsearchbar.MaterialSearchBar;
-import com.mancj.materialsearchbar.SimpleOnSearchActionListener;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 
 public class SearchFragment extends Fragment implements SearchAdapterInterface {
     private FragmentSearchBinding binding;
@@ -45,10 +42,12 @@ public class SearchFragment extends Fragment implements SearchAdapterInterface {
     private final CollectionReference productsRef = db.collection("Product");
 
     private ActionBar actionBar;
+    private ViewAdapterSearchViewRecommendation adapterSearchViewRecommendation;
 
     private SearchAdapter adapter;
-    private static final int SPEECH_REQUEST_CODE = 0;
 
+    private static final int SPEECH_REQUEST_CODE = 0;
+    ArrayList<HomeProductModel> homeProductModels;
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -60,77 +59,97 @@ public class SearchFragment extends Fragment implements SearchAdapterInterface {
             // Hide the ActionBar when the fragment is created
             actionBar.hide();
         }
+        if (getArguments() != null) {
+            // Check if the arguments contain the "model" key
+            if (getArguments().containsKey("model")) {
+                homeProductModels = getArguments().getParcelableArrayList("model");
+            } else {
+                // Handle the case where "model" key is not found
+                Log.e("FragmentName", "Arguments do not contain 'model' key");
+                homeProductModels = new ArrayList<>(); // Initialize with an empty list
+            }
+        } else {
+            // Handle the case where arguments are null
+            Log.e("FragmentName", "Arguments are null");
+            homeProductModels = new ArrayList<>(); // Initialize with an empty list
+        }
 
+
+        adapterSearchViewRecommendation = new ViewAdapterSearchViewRecommendation(homeProductModels, new HomeProductInterface() {
+                    @Override
+                    public void HomeProductOnclick(ProductModel productModel, ArrayList<ProductModel> sameProducts) {
+
+                    }
+                }, requireActivity());
+
+        binding.Recommendation.setLayoutManager(new LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false));
+        binding.Recommendation.setAdapter(adapterSearchViewRecommendation);
 
         adapter = new SearchAdapter(requireContext(),this);
-//
+
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.recyclerView.setAdapter(adapter);
 
-        binding.backBtn.setOnClickListener(view-> requireActivity().onBackPressed());
-        binding.searchBar.setSpeechMode(true); // Enable voice search
-        binding.searchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
-            @Override
-            public void onSearchStateChanged(boolean enabled) {
-                // Handle search state changes
-            }
+//        binding.backBtn.setOnClickListener(view-> requireActivity().onBackPressed());
+//        binding.searchBar.setSpeechMode(true); // Enable voice search
+//        binding.searchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
+//            @Override
+//            public void onSearchStateChanged(boolean enabled) {
+//                // Handle search state changes
+//            }
+//
+//            @Override
+//            public void onSearchConfirmed(CharSequence text) {
+//                // Perform a search based on the entered text
+//
+//            }
+//
+//            @Override
+//            public void onButtonClicked(int buttonCode) {
+//                if (buttonCode == MaterialSearchBar.BUTTON_SPEECH) {
+//                    openVoiceRecognizer();
+//                }
+//                else if (buttonCode == MaterialSearchBar.BUTTON_BACK){
+//                    binding.searchBar.closeSearch();
+////                    binding.backBtn.setVisibility(View.VISIBLE);
+////                    Toast.makeText(requireContext(), "", Toast.LENGTH_SHORT).show();
+//                }
+//
+//            }
+//        });
 
-            @Override
-            public void onSearchConfirmed(CharSequence text) {
-                // Perform a search based on the entered text
+        binding.backIcon.setOnClickListener(v -> requireActivity().onBackPressed());
 
-            }
+        binding.micIcon.setOnClickListener(v -> openVoiceRecognizer());
 
-            @Override
-            public void onButtonClicked(int buttonCode) {
-                if (buttonCode == MaterialSearchBar.BUTTON_SPEECH) {
-                    openVoiceRecognizer();
-                }
-                else if (buttonCode == MaterialSearchBar.BUTTON_BACK){
-                    binding.searchBar.closeSearch();
-                    binding.backBtn.setVisibility(View.VISIBLE);
-//                    Toast.makeText(requireContext(), "", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
-
-        binding.searchBar.setOnClickListener(v ->
-        {
-            binding.backBtn.setVisibility(View.GONE);
-            binding.searchBar.openSearch();
-        });
-
-        binding.searchBar.addTextChangeListener(new TextWatcher() {
+        binding.searchEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // No action needed
+
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // Trigger search when text changes
-//                binding.backBtn.setVisibility(View.GONE);
                 String query = s.toString();
                 searchProductByKeyword(query);
-
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                // No action needed
+
             }
         });
 
+
         return binding.getRoot();
     }
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        if (actionBar != null) {
-            actionBar.show();
-        }
-    }
+//    @Override
+//    public void onDestroyView() {
+//        super.onDestroyView();
+//        if (actionBar != null) {
+//            actionBar.show();
+//        }
+//    }
 
 
 //    rivate void searchProductByName(String productName) {
@@ -166,6 +185,7 @@ public class SearchFragment extends Fragment implements SearchAdapterInterface {
 //    } p
 
     private void searchProductByKeyword(String keyword) {
+
         // Perform search only if keyword is not empty
         if (!keyword.isEmpty()) {
             // Convert the keyword to lowercase for case-insensitive search
@@ -370,7 +390,7 @@ public class SearchFragment extends Fragment implements SearchAdapterInterface {
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
 // This starts the activity and populates the intent with the speech text.
         startActivityForResult(intent, SPEECH_REQUEST_CODE);
-        binding.backBtn.setVisibility(View.GONE);
+//        binding.backBtn.setVisibility(View.GONE);
 
 
     }
@@ -382,16 +402,14 @@ public class SearchFragment extends Fragment implements SearchAdapterInterface {
                     RecognizerIntent.EXTRA_RESULTS);
             String spokenText = results.get(0);
 
-            binding.searchBar.setText(spokenText);
+            binding.searchEditText.setText(spokenText);
 
             // Set cursor position to the end of the text
 //            binding.searchBar.setSelection(binding.searchBar.getText().length());
-            binding.searchBar.getSearchEditText().setSelection(spokenText.length());
+            binding.searchEditText.setSelection(spokenText.length());
             // Request focus on the search bar
-            binding.searchBar.requestFocus();
+            binding.searchEditText.requestFocus();
 
-            // Open the search bar
-            binding.searchBar.openSearch();
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

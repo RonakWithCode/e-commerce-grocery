@@ -59,12 +59,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         }
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.green_primary)));
+//        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.green_primary)));
 
-        // Change Status Bar color
-        Window window = getWindow();
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(this, R.color.green_primary_variant));
 
 //        Log.i("MAIN.TAG", "onCreate: "+ FirebaseAuth.getInstance().token);
 
@@ -103,6 +99,12 @@ public class MainActivity extends AppCompatActivity {
         if (actionBar != null && !actionBar.isShowing()) {
             actionBar.show();
         }
+
+        //        // Change Status Bar color
+        Window window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(ContextCompat.getColor(this, R.color.green_primary_variant));
+
     }
 
 

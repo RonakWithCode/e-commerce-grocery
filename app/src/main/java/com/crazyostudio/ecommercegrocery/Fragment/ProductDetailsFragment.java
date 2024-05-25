@@ -97,9 +97,7 @@ public class ProductDetailsFragment extends Fragment implements onClickProductAd
 
 
 
-        binding.backButton.setOnClickListener(view->{
-            requireActivity().onBackPressed();
-        });
+        binding.backButton.setOnClickListener(view-> requireActivity().onBackPressed());
         binding.recyclerViewProgressBar.setVisibility(View.GONE);
         BottomAppBar bottomAppBar = requireActivity().findViewById(R.id.bottomAppBar);
         if (bottomAppBar != null) {

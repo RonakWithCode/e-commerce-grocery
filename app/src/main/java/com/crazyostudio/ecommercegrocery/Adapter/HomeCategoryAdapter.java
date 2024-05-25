@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.Target;
 import com.crazyostudio.ecommercegrocery.Model.HomeCategoryModel;
 import com.crazyostudio.ecommercegrocery.Model.HomeProductModel;
 import com.crazyostudio.ecommercegrocery.R;
@@ -49,13 +50,28 @@ public class HomeCategoryAdapter extends RecyclerView.Adapter<HomeCategoryAdapte
         int productSize = homeCategoryModel.getProduct().size();
 
         if (productSize > 0) {
-            Glide.with(context).load(homeCategoryModel.getProduct().get(0).getImageURL().get(0)).into(holder.binding.View1);
+            Glide.with(context).load(homeCategoryModel.getProduct().get(0).getImageURL().get(0))
+                    .placeholder(R.drawable.product_image_shimmee_effect) // Placeholder image while loading
+                    .error(R.drawable.product_image_shimmee_effect) // Error image if loading fails
+                    .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL) // Resize the image
+                    .centerCrop() // Scale type for resizing
+                    .into(holder.binding.View1);
         }
         if (productSize > 1) {
-            Glide.with(context).load(homeCategoryModel.getProduct().get(1).getImageURL().get(0)).into(holder.binding.View2); // Fix: Using index 0 for the second product's image URL
+            Glide.with(context).load(homeCategoryModel.getProduct().get(1).getImageURL().get(0))
+                    .placeholder(R.drawable.product_image_shimmee_effect) // Placeholder image while loading
+                    .error(R.drawable.product_image_shimmee_effect) // Error image if loading fails
+                    .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL) // Resize the image
+                    .centerCrop() // Scale type for resizing
+                    .into(holder.binding.View2); // Fix: Using index 0 for the second product's image URL
         }
         if (productSize > 2) {
-            Glide.with(context).load(homeCategoryModel.getProduct().get(2).getImageURL().get(0)).into(holder.binding.View3); // Fix: Using index 0 for the third product's image URL
+            Glide.with(context).load(homeCategoryModel.getProduct().get(2).getImageURL().get(0))
+                    .placeholder(R.drawable.product_image_shimmee_effect) // Placeholder image while loading
+                    .error(R.drawable.product_image_shimmee_effect) // Error image if loading fails
+                    .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL) // Resize the image
+                    .centerCrop() // Scale type for resizing
+                    .into(holder.binding.View3); // Fix: Using index 0 for the third product's image URL
         }
         holder.binding.getRoot().setOnClickListener(v -> homeCategoryInterface.onClick(homeCategoryModel));
         holder.binding.seeAllButton.setOnClickListener(v -> homeCategoryInterface.onClick(homeCategoryModel));

@@ -3,6 +3,7 @@ package com.crazyostudio.ecommercegrocery.Fragment;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -13,34 +14,48 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewbinding.ViewBinding;
 
 import com.bumptech.glide.Glide;
+import com.crazyostudio.ecommercegrocery.Activity.AuthMangerActivity;
 import com.crazyostudio.ecommercegrocery.Adapter.HomeCategoryAdapter;
 import com.crazyostudio.ecommercegrocery.Adapter.HomeProductAdapter;
 import com.crazyostudio.ecommercegrocery.Adapter.ProductAdapter;
 import com.crazyostudio.ecommercegrocery.Model.BannerModels;
 import com.crazyostudio.ecommercegrocery.Model.HomeProductModel;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
+import com.crazyostudio.ecommercegrocery.Model.ShoppingCartFirebaseModel;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
 import com.crazyostudio.ecommercegrocery.databinding.CategoryViewDialogBinding;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentHomeBinding;
 import com.crazyostudio.ecommercegrocery.databinding.ProductViewDialogBinding;
-import com.crazyostudio.ecommercegrocery.interfaceClass.onClickProductAdapter;
+import com.crazyostudio.ecommercegrocery.javaClasses.CustomSmoothScroller;
 import com.crazyostudio.ecommercegrocery.javaClasses.basicFun;
+import com.google.android.material.bottomappbar.BottomAppBar;
+import com.google.android.material.button.MaterialButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import org.imaginativeworld.whynotimagecarousel.ImageCarousel;
@@ -62,36 +77,40 @@ public class HomeFragment extends Fragment {
     private ArrayList<HomeProductModel> homeProductModel;
     private ArrayList<HomeProductModel> homeProductModelBoysSkin;
 
-
+    Dialog HomeProductBottomSheetDialog;
     public HomeFragment() {
         // Required empty public constructor
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentHomeBinding.inflate(inflater, container, false);
-//        databaseService = new DatabaseService();
-//        SetupAdapter();
-//        SetupAdapterByBoysSkin();
-//        homeCategoryAdapter = new HomeCategoryAdapter(homeProductModel, requireContext(), new HomeCategoryInterface() {
-//            @Override
-//            public void onClick(HomeProductModel filter) {
-//
-//            }
-//        });
-//        homeProductBoysSkinAdapter = new HomeCategoryAdapter(homeProductModelBoysSkin, requireContext(), new HomeCategoryInterface() {
-//            @Override
-//            public void onClick(HomeProductModel filter) {
-//
-//            }
-//        });
-//
-//        LoadCarousel();
-//        LoadProductCategory();
-//        loadProductsForCategories(new String[]{"chips and Snacks"});
-//        loadProductsForCategoriesByBoysSkin(new String[]{"toothpaste"});
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if (currentUser != null){
+            String displayName = currentUser.getDisplayName() != null ? currentUser.getDisplayName() : "Hi user";
+            String phoneNumber = currentUser.getPhoneNumber() != null ? currentUser.getPhoneNumber() : "No phone number";
 
+            binding.UserName.setText(displayName);
+            binding.address.setText(phoneNumber);
+        }else {
+            binding.UserName.setText("Hi user");
+            binding.address.setText("Alwar Mart");
+        }
+        HomeProductBottomSheetDialog = new Dialog(requireContext());
+        ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
+
+//        // Change Status Bar color
+        Window window = requireActivity().getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(ContextCompat.getColor(requireContext(), R.color.OrderYellowColor));
+
+        binding.searchView.setOnClickListener(view->openSearchFragment());
 
         databaseService = new DatabaseService();
 
@@ -103,15 +122,26 @@ public class HomeFragment extends Fragment {
         homeProductBoysSkinAdapter = new HomeCategoryAdapter(homeProductModelBoysSkin, requireContext(), this::ViewCat);
         MultiViewAdapter = new HomeProductAdapter(MultiViewModel, this::showProductViewDialog, requireActivity());
 
+
+        binding.BestsellersSee.setOnClickListener(v -> SeeAll());
+        binding.boysSkinCareSee.setOnClickListener(v -> SeeAll());
+
         setupAdapters();
         loadInitialData();
 
 
 
 
-
         return binding.getRoot();
 
+    }
+
+
+    public void SeeAll(){
+        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.loader,new ProductWithSlideCategoryFragment());
+        transaction.addToBackStack("SelectLanguageFragment");
+        transaction.commit();
     }
 
 
@@ -125,9 +155,21 @@ public class HomeFragment extends Fragment {
         binding.boysSkinCareRecyclerView.setAdapter(homeProductBoysSkinAdapter);
 
 
-        LinearLayoutManager MultiViewManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager MultiViewManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false);
         binding.MultiViewAdapter.setLayoutManager(MultiViewManager);
         binding.MultiViewAdapter.setAdapter(MultiViewAdapter);
+        MultiViewManager.setSmoothScrollbarEnabled(true);
+        CustomSmoothScroller smoothScroller = new CustomSmoothScroller(requireContext());
+        smoothScroller.setTargetPosition(0);
+        MultiViewManager.startSmoothScroll(smoothScroller);
+        binding.MultiViewAdapter.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                // Adjust the scrolling speed by multiplying dy (vertical scroll amount) with a factor
+                int newDy = (int) (dy * 2); // Increase scrolling speed by multiplying with a factor (e.g., 1.5)
+                super.onScrolled(recyclerView, dx, newDy);
+            }
+        });
 
 //        MultiViewAdapter.setHasStableIds(true);
 
@@ -137,7 +179,8 @@ public class HomeFragment extends Fragment {
         LoadCarousel();
         LoadProductCategory();
 
-        loadProductsMultiViewForLoop(new String[]{"chips and Snacks"});
+//        loadProductsMultiViewForLoop(new String[]{"chips and Snacks"});
+        loadProductsMultiViewForLoop(new String[]{"chips and Snacks", "toothpaste", "hair oil ", "drinks"});
         loadProductsForCategories(new String[]{"chips and Snacks", "toothpaste", "hair oil ", "drinks"});
         loadProductsForCategoriesByBoysSkin(new String[]{"toothpaste", "drinks"});
     }
@@ -150,11 +193,13 @@ public class HomeFragment extends Fragment {
 
 
     private void loadProductsMultiView(String s) {
+
+        MultiViewModel.clear();
+
         databaseService.getAllProductsByCategoryOnly(s, new DatabaseService.GetAllProductsCallback() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onSuccess(ArrayList<ProductModel> products) {
-//                MultiViewModel.clear();
                 MultiViewModel.add(new HomeProductModel(s,products));
                 MultiViewAdapter.notifyDataSetChanged();
 
@@ -181,6 +226,8 @@ public class HomeFragment extends Fragment {
 
         Glide.with(requireContext()).load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/all_category%2Fbrand%2Fdabur.png?alt=media&token=26e97c85-3c03-47d9-8971-0b496ab5100f").placeholder(R.drawable.skeleton_shape).into(binding.Dabur);
         Glide.with(requireContext()).load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/all_category%2Fbrand%2Fitc.png?alt=media&token=34307cc3-bba2-492c-9393-8306898f7757").placeholder(R.drawable.skeleton_shape).into(binding.itc);
+        Glide.with(requireContext()).load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/all_category%2Fbrand%2Fitc.png?alt=media&token=34307cc3-bba2-492c-9393-8306898f7757").placeholder(R.drawable.skeleton_shape).into(binding.View1);
+        Glide.with(requireContext()).load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/all_category%2Fbrand%2Fitc.png?alt=media&token=34307cc3-bba2-492c-9393-8306898f7757").placeholder(R.drawable.skeleton_shape).into(binding.View2);
 //        Glide.with(requireContext()).load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/all_category%2F4.png?alt=media&token=8aad396a-a33a-4d71-94bb-b1bf9052d425").placeholder(R.drawable.skeleton_shape).into(binding.drinks);
 
 
@@ -247,10 +294,6 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onClick(int position, @NonNull CarouselItem carouselItem) {
-//                Log.i("position_ImageCarousel", "position : "+position);
-//                Log.i("position_ImageCarousel", " ArrayList<String>  : "+models.get(position).getBannerGoto());
-//                Toast.makeText(getContext(), "", Toast.LENGTH_SHORT).show();
-
                 if (modelsTop.get(position).isByCategory()) {
                     FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
                     Bundle bundle = new Bundle();
@@ -295,10 +338,6 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onClick(int position, @NonNull CarouselItem carouselItem) {
-//                Log.i("position_ImageCarousel", "position : "+position);
-//                Log.i("position_ImageCarousel", " ArrayList<String>  : "+models.get(position).getBannerGoto());
-//                Toast.makeText(getContext(), "", Toast.LENGTH_SHORT).show();
-
                 if (modelsCenter.get(position).isByCategory()) {
                     FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
                     Bundle bundle = new Bundle();
@@ -360,6 +399,7 @@ public class HomeFragment extends Fragment {
     }
     private void loadProduct(String category, ArrayList<HomeProductModel> productList, HomeCategoryAdapter adapter) {
         databaseService.getAllProductsByCategoryOnly(category, new DatabaseService.GetAllProductsCallback() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onSuccess(ArrayList<ProductModel> products) {
 //                productList.clear();
@@ -380,9 +420,35 @@ public class HomeFragment extends Fragment {
         Dialog bottomSheetDialog = new Dialog(requireContext());
         ProductViewDialogBinding productViewDialogBinding = ProductViewDialogBinding.inflate(getLayoutInflater());
 
+        if (FirebaseAuth.getInstance().getCurrentUser() !=null) {
+            String userId = FirebaseAuth.getInstance().getUid();
+            assert userId != null;
+            DatabaseReference productsRef = FirebaseDatabase.getInstance().getReference().child("Cart").child(userId);
+            String productNameToFind = productModel.getProductId();
+            Query query = productsRef.orderByKey().equalTo(productNameToFind);
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        productViewDialogBinding.AddTOCart.setText("Go to Cart");
+                        productViewDialogBinding.quantityBox.setVisibility(View.GONE);
+//                        addTOCart.setText("Go to Cart");
+                        productViewDialogBinding.AddTOCart.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.white));
+                        productViewDialogBinding.AddTOCart.setTextColor(ContextCompat.getColor(requireContext(), R.color.FixBlack));
+
+                    }
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Handle the error in case of a database error.
+                    Toast.makeText(getContext(), "Database error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+
         productViewDialogBinding.ProductName.setText(productModel.getProductName());
         productViewDialogBinding.closeButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
-
         for (String imageUrl : productModel.getImageURL()) {
             CarouselItem carouselItem = new CarouselItem(imageUrl);
             productViewDialogBinding.productsImages.addData(carouselItem);
@@ -430,8 +496,10 @@ public class HomeFragment extends Fragment {
         productViewDialogBinding.ExpiryDate.setText(productModel.getEditDate());
 
         productViewDialogBinding.AddTOCart.setOnClickListener(v -> {
+            addToCart(productModel,productViewDialogBinding.AddTOCart,bottomSheetDialog,productViewDialogBinding.quantityBox);
 
-            bottomSheetDialog.dismiss();
+//            bottomSheetDialog.dismiss();
+
         });
         sameProducts.remove(productModel);
         if (sameProducts.isEmpty()){
@@ -440,9 +508,33 @@ public class HomeFragment extends Fragment {
         }else {
             LinearLayoutManager LayoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
             productViewDialogBinding.itemCategory.setLayoutManager(LayoutManager);
-            productViewDialogBinding.itemCategory.setAdapter(new ProductAdapter(sameProducts, (productModel1, sameProducts1) -> showProductViewDialog(productModel1, sameProducts1),requireContext(),"Main"));
+            productViewDialogBinding.itemCategory.setAdapter(new ProductAdapter(sameProducts, this::showProductViewDialog,requireContext(),"Main"));
         }
 
+
+
+        productViewDialogBinding.plusBtn.setOnClickListener(view -> {
+            int quantity = productModel.getDefaultQuantity();
+            quantity++;
+            if (quantity > productModel.getQuantity()) {
+                Toast.makeText(requireContext(), "Max stock available: " + productModel.getQuantity(), Toast.LENGTH_SHORT).show();
+            } else {
+                productModel.setDefaultQuantity(quantity);
+                productViewDialogBinding.quantity.setText(String.valueOf(quantity));
+            }
+        });
+        productViewDialogBinding.minusBtn.setOnClickListener(view -> {
+            int quantity = productModel.getDefaultQuantity();
+            if (quantity > 1)
+                quantity--;
+            productModel.setDefaultQuantity(quantity);
+            productViewDialogBinding.quantity.setText(String.valueOf(quantity));
+
+        });
+
+
+
+
         bottomSheetDialog.setContentView(productViewDialogBinding.getRoot());
         bottomSheetDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         bottomSheetDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -451,30 +543,104 @@ public class HomeFragment extends Fragment {
 
         bottomSheetDialog.show();
     }
+
+    public void addToCart(ProductModel productModel, MaterialButton addTOCart, Dialog bottomSheetDialog, CardView quantityBox) {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            ShoppingCartFirebaseModel shoppingCartFirebaseModel = new ShoppingCartFirebaseModel(productModel.getProductId(), productModel.getDefaultQuantity());
+            DatabaseReference productsRef = FirebaseDatabase.getInstance().getReference().child("Cart").child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
+            String productNameToFind = productModel.getProductId();
+            Query query = productsRef.orderByKey().equalTo(productNameToFind);
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        // Product already exists in the cart
+                        // Handle this scenario, e.g., navigate to the cart
+                        navigateToShoppingCartFragment(bottomSheetDialog);
+                    } else {
+                        // Product doesn't exist in the cart, add it
+                        addProductToCart(productsRef, shoppingCartFirebaseModel,productModel,addTOCart,quantityBox);
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Handle the error in case of a database error.
+                    Log.e("DatabaseError", "Database error: " + databaseError.getMessage());
+                    Toast.makeText(getContext(), "Database error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            // User not authenticated, navigate to authentication screen
+            startActivity(new Intent(getContext(), AuthMangerActivity.class));
+        }
+    }
+
+
+    @SuppressLint("SetTextI18n")
+    private void addProductToCart(DatabaseReference productsRef, ShoppingCartFirebaseModel shoppingCartFirebaseModel, ProductModel productModel, MaterialButton addTOCart, CardView quantityBox) {
+        productsRef.child(productModel.getProductId()).setValue(shoppingCartFirebaseModel)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        addTOCart.setText("Go to Cart");
+                        addTOCart.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.white));
+                        addTOCart.setTextColor(ContextCompat.getColor(requireContext(), R.color.FixBlack));
+                        quantityBox.setVisibility(View.GONE);
+                    }
+                })
+                .addOnFailureListener(error -> basicFun.AlertDialog(requireContext(), error.toString()));
+    }
+
+
+    private void navigateToShoppingCartFragment(Dialog bottomSheetDialog) {
+        BottomAppBar bottomAppBar = requireActivity().findViewById(R.id.bottomAppBar);
+        if (bottomAppBar != null) {
+            bottomAppBar.setVisibility(View.VISIBLE);
+        }
+        ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.show();
+        }
+        bottomSheetDialog.dismiss();
+        if (HomeProductBottomSheetDialog.isShowing()){
+            HomeProductBottomSheetDialog.dismiss();
+        }
+        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.loader, new ShoppingCartsFragment(), "ShoppingCartsFragment");
+        transaction.addToBackStack("ShoppingCartsFragment");
+        transaction.commit();
+    }
+
 
     void ViewCat(HomeProductModel model){
-        Dialog bottomSheetDialog = new Dialog(requireContext());
+//        HomeProductBottomSheetDialog = new Dialog(requireContext());
         CategoryViewDialogBinding productViewDialogBinding = CategoryViewDialogBinding.inflate(getLayoutInflater());
-
         productViewDialogBinding.productsRecyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
-        productViewDialogBinding.productsRecyclerView.setAdapter(new ProductAdapter(model.getProduct(), new onClickProductAdapter() {
-            @Override
-            public void onClick(ProductModel productModel, ArrayList<ProductModel> sameProducts) {
-                showProductViewDialog(productModel,sameProducts);
-            }
-        }, requireContext(), "Main"));
+        productViewDialogBinding.productsRecyclerView.setAdapter(new ProductAdapter(model.getProduct(), this::showProductViewDialog, requireContext(), "Main"));
         productViewDialogBinding.title.setText(model.getTitle());
+        productViewDialogBinding.seeMore.setOnClickListener(v -> {
+            HomeProductBottomSheetDialog.dismiss();
+            Bundle bundle = new Bundle();
+            bundle.putString("filter" , model.getTitle());
+            ProductWithSlideCategoryFragment productWithSlideCategoryFragment = new ProductWithSlideCategoryFragment();
+            productWithSlideCategoryFragment.setArguments(bundle);
+            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.loader,productWithSlideCategoryFragment);
+            transaction.addToBackStack("SelectLanguageFragment");
+            transaction.commit();
+        });
 
-        productViewDialogBinding.closeButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
+        productViewDialogBinding.closeButton.setOnClickListener(v -> HomeProductBottomSheetDialog.dismiss());
 
-        bottomSheetDialog.setContentView(productViewDialogBinding.getRoot());
+        HomeProductBottomSheetDialog.setContentView(productViewDialogBinding.getRoot());
 
-        bottomSheetDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        bottomSheetDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        bottomSheetDialog.getWindow().getAttributes().windowAnimations = R.style.bottom_sheet_dialogAnimation;
-        bottomSheetDialog.getWindow().setGravity(Gravity.BOTTOM);
+        HomeProductBottomSheetDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        HomeProductBottomSheetDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        HomeProductBottomSheetDialog.getWindow().getAttributes().windowAnimations = R.style.bottom_sheet_dialogAnimation;
+        HomeProductBottomSheetDialog.getWindow().setGravity(Gravity.BOTTOM);
 
-        bottomSheetDialog.show();
+        HomeProductBottomSheetDialog.show();
 
 
 
@@ -483,6 +649,19 @@ public class HomeFragment extends Fragment {
     }
 
 
-
+//    void
+//
+    private void openSearchFragment() {
+        if (isAdded() && getActivity() != null) {
+            SearchFragment fragment  = new SearchFragment();
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList("model",homeProductModel);
+            fragment.setArguments(bundle);
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.loader,fragment)
+                    .addToBackStack("HomeFragment")
+                    .commit();
+    }
+}
 
 }
