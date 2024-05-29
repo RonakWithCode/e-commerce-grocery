@@ -33,12 +33,14 @@ android {
 }
 
 dependencies {
+    implementation 'com.mappls.sdk:place-widget:2.0.1'
+
+
 //    implementation 'com.mappls.sdk:mappls-android-sdk:8.0.0'
 //    dependencies {
 //    implementation 'com.mapmyindia.sdk:mapmyindia-android-sdk:8.0.0' // Replace VERSION with the latest version
 
-    implementation 'com.mappls.sdk:mappls-android-sdk:8.0.0'
-
+    implementation 'com.mappls.sdk:mappls-android-sdk:8.0.4'
 
 //    }
 

@@ -27,6 +27,12 @@
     </style>
 
 
+    <style name="WhiteButton" parent="Widget.AppCompat.Button">
+        <item name="android:textColor">@color/green_primary</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:drawableLeft">@drawable/ic_location_target</item>
+        <item name="android:backgroundTint">@android:color/white</item>
+    </style>
 
     <style name="Theme.ECommerceGrocery.Home" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Primary brand color. -->

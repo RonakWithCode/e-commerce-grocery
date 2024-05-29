@@ -216,5 +216,7 @@
     <string name="see_all">see all</string>
     <string name="dabur">Dabur</string>
     <string name="itc">ITC</string>
+    <string name="go_to_current_location">Go to current location</string>
+    <string name="welcome_to">Welcome to</string>
 
 </resources>

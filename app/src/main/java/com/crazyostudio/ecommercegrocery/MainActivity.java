@@ -3,10 +3,8 @@ package com.crazyostudio.ecommercegrocery;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
@@ -22,18 +20,13 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.crazyostudio.ecommercegrocery.Activity.OrderDetailsActivity;
-import com.crazyostudio.ecommercegrocery.Fragment.CategoryFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.HomeFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.MapFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.MoreFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.ProductWithSlideCategoryFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.SearchFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.ShoppingCartsFragment;
-import com.crazyostudio.ecommercegrocery.Services.AuthService;
 import com.crazyostudio.ecommercegrocery.databinding.ActivityMainBinding;
-import com.google.firebase.auth.FirebaseAuth;
-import com.mappls.sdk.maps.Mappls;
-import com.mappls.sdk.services.account.MapplsAccountManager;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
@@ -65,26 +58,16 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-//        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.green_primary)));
-
-
-//        Log.i("MAIN.TAG", "onCreate: "+ FirebaseAuth.getInstance().token);
-
-
-//        CheckNotificationToken();
-//        loader(new PinCodeFragment(),"null");
         loader(new HomeFragment(),"null");
         requestNotificationPermission();
-
-
-
-
 
         binding.bottomNavigationView.setBackground(null);
         binding.bottomNavigationView.setOnItemSelectedListener(itemId -> {
             switch (itemId.getItemId()) {
                 case R.id.homeBtn:
-                    loader(new MapFragment(),"HomeFragment");
+//                    HomeFragment
+//                    loader(new MapFragment(),"HomeFragment");
+                    loader(new HomeFragment(),"HomeFragment");
                     break;
                 case R.id.GoCategory:
                     loader(new ProductWithSlideCategoryFragment(),"CategoryFragment");
@@ -133,8 +116,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void requestNotificationPermission() {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-            // Permission is already granted, you can show notifications
-//            showDummyNotification();
         } else {
             // Permission is not granted, request it
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -157,9 +138,4 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
         ActionBarShow();
     }
-
-
-
-
-
 }
