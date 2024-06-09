@@ -40,7 +40,6 @@ public class SearchFragment extends Fragment implements SearchAdapterInterface {
     private FragmentSearchBinding binding;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final CollectionReference productsRef = db.collection("Product");
-
     private ActionBar actionBar;
     private ViewAdapterSearchViewRecommendation adapterSearchViewRecommendation;
 
@@ -52,8 +51,6 @@ public class SearchFragment extends Fragment implements SearchAdapterInterface {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentSearchBinding.inflate(inflater, container, false);
-
-
         actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
         if (actionBar != null) {
             // Hide the ActionBar when the fragment is created
@@ -61,12 +58,8 @@ public class SearchFragment extends Fragment implements SearchAdapterInterface {
         }
         if (getArguments() != null) {
             // Check if the arguments contain the "model" key
-            if (getArguments().containsKey("model")) {
+             if (getArguments().containsKey("model")) {
                 homeProductModels = getArguments().getParcelableArrayList("model");
-            } else {
-                // Handle the case where "model" key is not found
-                Log.e("FragmentName", "Arguments do not contain 'model' key");
-                homeProductModels = new ArrayList<>(); // Initialize with an empty list
             }
         } else {
             // Handle the case where arguments are null
@@ -75,12 +68,12 @@ public class SearchFragment extends Fragment implements SearchAdapterInterface {
         }
 
 
-        adapterSearchViewRecommendation = new ViewAdapterSearchViewRecommendation(homeProductModels, new HomeProductInterface() {
-                    @Override
-                    public void HomeProductOnclick(ProductModel productModel, ArrayList<ProductModel> sameProducts) {
 
-                    }
-                }, requireActivity());
+        adapterSearchViewRecommendation = new ViewAdapterSearchViewRecommendation(homeProductModels, new HomeProductInterface() {
+            @Override
+            public void HomeProductOnclick(ProductModel productModel, ArrayList<ProductModel> sameProducts) {
+
+            }}, requireActivity());
 
         binding.Recommendation.setLayoutManager(new LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false));
         binding.Recommendation.setAdapter(adapterSearchViewRecommendation);
@@ -89,6 +82,7 @@ public class SearchFragment extends Fragment implements SearchAdapterInterface {
 
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.recyclerView.setAdapter(adapter);
+
 
 //        binding.backBtn.setOnClickListener(view-> requireActivity().onBackPressed());
 //        binding.searchBar.setSpeechMode(true); // Enable voice search

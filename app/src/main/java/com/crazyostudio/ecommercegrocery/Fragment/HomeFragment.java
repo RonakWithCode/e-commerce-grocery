@@ -65,7 +65,6 @@ import org.imaginativeworld.whynotimagecarousel.model.CarouselItem;
 import java.util.ArrayList;
 import java.util.Objects;
 
-
 public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
     private DatabaseService databaseService;
@@ -396,6 +395,7 @@ public class HomeFragment extends Fragment {
         for (String category : categories) {
             loadProduct(category, homeProductModelBoysSkin, homeProductBoysSkinAdapter);
         }
+//        binding.loader.setVisibility(View.GONE);
     }
     private void loadProduct(String category, ArrayList<HomeProductModel> productList, HomeCategoryAdapter adapter) {
         databaseService.getAllProductsByCategoryOnly(category, new DatabaseService.GetAllProductsCallback() {
@@ -497,8 +497,6 @@ public class HomeFragment extends Fragment {
 
         productViewDialogBinding.AddTOCart.setOnClickListener(v -> {
             addToCart(productModel,productViewDialogBinding.AddTOCart,bottomSheetDialog,productViewDialogBinding.quantityBox);
-
-//            bottomSheetDialog.dismiss();
 
         });
         sameProducts.remove(productModel);

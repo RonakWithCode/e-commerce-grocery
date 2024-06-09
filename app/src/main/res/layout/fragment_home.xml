@@ -11,6 +11,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/Category_RelativeLayout"
         android:layout_width="match_parent"
+        android:visibility="visible"
         android:layout_height="wrap_content">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/TopNav"
@@ -530,4 +531,5 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/TopBrand" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+    
 </androidx.core.widget.NestedScrollView>

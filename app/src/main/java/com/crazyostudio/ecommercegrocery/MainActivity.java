@@ -1,6 +1,7 @@
 package com.crazyostudio.ecommercegrocery;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -20,13 +21,17 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.crazyostudio.ecommercegrocery.Activity.OrderDetailsActivity;
+import com.crazyostudio.ecommercegrocery.DAO.CartDAOHelper;
 import com.crazyostudio.ecommercegrocery.Fragment.HomeFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.MapFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.MoreFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.ProductWithSlideCategoryFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.SearchFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.ShoppingCartsFragment;
+import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
 import com.crazyostudio.ecommercegrocery.databinding.ActivityMainBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
@@ -49,6 +54,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
 //
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user!=null) {
+            CartManger(user.getUid());
+        }
+
         if (getIntent() != null && getIntent().hasExtra("LoadID")) {
             if (getIntent().getStringExtra("LoadID").equals("OrderView")) {
                 Intent i = new Intent(MainActivity.this, OrderDetailsActivity.class);
@@ -83,6 +93,12 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
     }
+
+    private void  CartManger(String id)  {
+        new DatabaseService().updateRoomDatabase(this,id);
+    }
+
+
     public void ActionBarShow(){
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null && !actionBar.isShowing()) {

@@ -2,16 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="@dimen/_90sdp"
+    android:layout_height="@dimen/_80sdp"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="8dp"
+        android:padding="4dp"
         android:background="@android:color/white"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="6dp"
         android:elevation="2dp"
         android:layout_gravity="center"
         android:gravity="center_vertical">
@@ -19,8 +19,8 @@
         <!-- Product Image -->
         <ImageView
             android:id="@+id/product_image"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
+            android:layout_width="@dimen/_60sdp"
+            android:layout_height="@dimen/_60sdp"
             android:src="@drawable/placeholder"
             android:scaleType="centerCrop"
             android:layout_marginEnd="8dp" />
@@ -40,7 +40,7 @@
                 android:text="Product Name"
                 android:lines="1"
                 android:textStyle="bold"
-                android:textSize="@dimen/_16ssp"
+                android:textSize="@dimen/_14ssp"
                 android:textColor="@android:color/black" />
 
             <!-- Product Quantity -->
@@ -49,7 +49,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="500 ml"
-                android:textSize="@dimen/_14ssp"
+                android:textSize="@dimen/_13ssp"
                 android:textColor="@android:color/darker_gray" />
 
             <!-- Product Price -->
@@ -58,7 +58,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="₹33"
-                android:textSize="@dimen/_16ssp"
+                android:textSize="@dimen/_14ssp"
                 android:textStyle="bold"
                 android:textColor="@android:color/black" />
 
@@ -67,21 +67,20 @@
         <!-- Add/Remove Button -->
         <Button
             android:id="@+id/add_to_cart_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/_70sdp"
+            android:layout_height="@dimen/_30sdp"
             android:background="@drawable/rounded_button_background"
             android:text="ADD"
             android:textColor="@color/MainTextColor"
-            android:textSize="@dimen/_14ssp"
+            android:textSize="@dimen/_12ssp"
             android:visibility="visible" />
 
         <!-- Quantity Controller -->
         <LinearLayout
             android:id="@+id/quantity_controller"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/_90sdp"
+            android:layout_height="@dimen/_30sdp"
             android:orientation="horizontal"
-            android:background="@color/green_primary"
             android:visibility="gone">
 
             <!-- Decrease Quantity -->
@@ -91,8 +90,9 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="-"
-                android:textColor="@android:color/white"
-                android:background="@android:color/transparent" />
+
+                android:textColor="@android:color/black"
+                android:background="@drawable/rounded_button_background" />
             <!-- Current Quantity -->
             <TextView
                 android:id="@+id/current_quantity"
@@ -101,8 +101,10 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="1"
-                android:textColor="@android:color/white"
-                android:background="@android:color/transparent" />                android:textSize="16sp" />
+                android:textColor="@android:color/black"
+                android:background="@drawable/rounded_button_background"
+
+                android:textSize="16sp" />
 
             <!-- Increase Quantity -->
             <Button
@@ -111,8 +113,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="+"
-                android:textColor="@android:color/white"
-                android:background="@android:color/transparent" />
+                android:background="@drawable/rounded_button_background"
+                android:textColor="@android:color/black" />
 
         </LinearLayout>
     </LinearLayout>

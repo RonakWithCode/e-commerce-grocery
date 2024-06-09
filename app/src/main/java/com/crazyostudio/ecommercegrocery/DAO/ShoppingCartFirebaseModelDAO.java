@@ -1,16 +1,31 @@
-package com.crazyostudio.ecommercegrocery.Model;
+package com.crazyostudio.ecommercegrocery.DAO;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
-public class ShoppingCartFirebaseModel {
+@Entity(tableName = "cart")
+public class ShoppingCartFirebaseModelDAO {
+
+    @PrimaryKey(autoGenerate = true)
+    private int Id;
+
+    @ColumnInfo(name="productId")
     private String productId;
+    @ColumnInfo(name="productSelectQuantity")
     private int productSelectQuantity;
 
-    public ShoppingCartFirebaseModel() {
-    }
-
-    public ShoppingCartFirebaseModel(String productId, int productSelectQuantity) {
+    public ShoppingCartFirebaseModelDAO(String productId, int productSelectQuantity) {
         this.productId = productId;
         this.productSelectQuantity = productSelectQuantity;
+    }
+
+    public int getId() {
+        return Id;
+    }
+
+    public void setId(int id) {
+        Id = id;
     }
 
     public String getProductId() {

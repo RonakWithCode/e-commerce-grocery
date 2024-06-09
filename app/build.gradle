@@ -33,6 +33,11 @@ android {
 }
 
 dependencies {
+    def room_version = "2.6.1"
+    //noinspection GradleDependency
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+
     implementation 'com.mappls.sdk:place-widget:2.0.1'
 
 

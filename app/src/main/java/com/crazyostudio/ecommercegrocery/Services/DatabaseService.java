@@ -1,13 +1,13 @@
 package com.crazyostudio.ecommercegrocery.Services;
 
-import android.annotation.SuppressLint;
-import android.content.SharedPreferences;
-import android.net.Uri;
+import android.content.Context;
 import android.util.Log;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 
+import com.crazyostudio.ecommercegrocery.DAO.CartDAOHelper;
+import com.crazyostudio.ecommercegrocery.DAO.ShoppingCartFirebaseModelDAO;
+import com.crazyostudio.ecommercegrocery.MainActivity;
 import com.crazyostudio.ecommercegrocery.Model.AddressModel;
 import com.crazyostudio.ecommercegrocery.Model.OffersModel;
 import com.crazyostudio.ecommercegrocery.Model.OrderModel;
@@ -17,9 +17,7 @@ import com.crazyostudio.ecommercegrocery.Model.ShoppingCartFirebaseModel;
 import com.crazyostudio.ecommercegrocery.Model.ShoppingCartsProductFirebaseModel;
 import com.crazyostudio.ecommercegrocery.Model.ShoppingCartsProductModel;
 import com.crazyostudio.ecommercegrocery.Model.UserinfoModels;
-import com.crazyostudio.ecommercegrocery.javaClasses.basicFun;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -28,8 +26,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -39,13 +35,14 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 
-import java.net.PortUnreachableException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class DatabaseService {
     private final FirebaseFirestore database = FirebaseFirestore.getInstance();
+
+
 
     public interface GetAllProductsCallback {
         void onSuccess(ArrayList<ProductModel> products);
@@ -720,5 +717,106 @@ public class DatabaseService {
         });
     }
 
+    public interface AddCartByIdAndADD{
+        void added();
 
+        void ExistsInCart(int DefaultQuantity);
+
+        void failure(Exception error);
+    }
+
+    public void checkCartByIdAndAdd(String productNameToFind,int DefaultQuantity , AddCartByIdAndADD inter){
+        DatabaseReference productsRef = FirebaseDatabase.getInstance().getReference().child("Cart").child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
+        com.google.firebase.database.Query query = productsRef.orderByKey().equalTo(productNameToFind);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    ShoppingCartFirebaseModel shoppingCartFirebaseModel = dataSnapshot.getValue(ShoppingCartFirebaseModel.class);
+                    inter.added();
+                    // Product already exists in the cart
+                    // Handle this scenario, e.g., navigate to the cart
+//                                navigateToShoppingCartFragment(bottomSheetDialog);
+                } else {
+                    ShoppingCartFirebaseModel shoppingCartFirebaseModel = new ShoppingCartFirebaseModel(productNameToFind, DefaultQuantity);
+                    productsRef.child(productNameToFind).setValue(shoppingCartFirebaseModel)
+                            .addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    inter.added();
+//                                    addTOCart.setText("Go to Cart");
+//                                    addTOCart.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.white));
+//                                    addTOCart.setTextColor(ContextCompat.getColor(requireContext(), R.color.FixBlack));
+//                                    quantityBox.setVisibility(View.GONE);
+                                }
+                            })
+                            .addOnFailureListener(error -> {
+                                inter.failure(error);
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle the error in case of a database error.
+//                Log.e("DatabaseError", "Database error: " + databaseError.getMessage());
+//                Toast.makeText(getContext(), "Database error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+    }
+
+
+
+
+    public void updateRoomDatabase(Context context,String id) {
+        CartDAOHelper databaseHelper = CartDAOHelper.getDB(context);
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        firebaseDatabase.getReference().child("Cart").child(id).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    databaseHelper.clearAllTables();
+                    for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+                        ShoppingCartFirebaseModel productModel = snapshot1.getValue(ShoppingCartFirebaseModel.class);
+                        if (productModel != null) {
+                            ShoppingCartFirebaseModelDAO shoppingCartFirebaseModelDAO = new ShoppingCartFirebaseModelDAO(productModel.getProductId(),productModel.getProductSelectQuantity());
+                            databaseHelper.ModelDAO().insertAll(shoppingCartFirebaseModelDAO);
+                        }
+                    }
+//                    ArrayList
+
+                }else {
+//
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
+
+
+    }
+
+    public interface addCartRoomDatabase{
+        void Found(List<ShoppingCartFirebaseModelDAO> list);
+        void notFound();
+    }
+
+
+
+    public void getCartRoomDatabase(Context context,addCartRoomDatabase callback){
+        CartDAOHelper databaseHelper = CartDAOHelper.getDB(context);
+        List<ShoppingCartFirebaseModelDAO> daoList =  databaseHelper.ModelDAO().getAllModel();
+        if (daoList.isEmpty()){
+            callback.notFound();
+        }
+        else {
+            callback.Found(daoList);
+        }
+    }
 }
