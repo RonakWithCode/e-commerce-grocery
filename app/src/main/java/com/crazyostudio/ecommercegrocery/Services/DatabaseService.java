@@ -7,14 +7,12 @@ import androidx.annotation.NonNull;
 
 import com.crazyostudio.ecommercegrocery.DAO.CartDAOHelper;
 import com.crazyostudio.ecommercegrocery.DAO.ShoppingCartFirebaseModelDAO;
-import com.crazyostudio.ecommercegrocery.MainActivity;
 import com.crazyostudio.ecommercegrocery.Model.AddressModel;
 import com.crazyostudio.ecommercegrocery.Model.OffersModel;
 import com.crazyostudio.ecommercegrocery.Model.OrderModel;
 import com.crazyostudio.ecommercegrocery.Model.ProductCategoryModel;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
 import com.crazyostudio.ecommercegrocery.Model.ShoppingCartFirebaseModel;
-import com.crazyostudio.ecommercegrocery.Model.ShoppingCartsProductFirebaseModel;
 import com.crazyostudio.ecommercegrocery.Model.ShoppingCartsProductModel;
 import com.crazyostudio.ecommercegrocery.Model.UserinfoModels;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -73,13 +71,13 @@ public class DatabaseService {
         void onError(String errorMessage);
     }
     public interface GetUserCartByIdShoppingCartsProductCallback {
-        void onSuccess(ArrayList<ShoppingCartsProductFirebaseModel> cartsProductModels);
+        void onSuccess(ArrayList<ShoppingCartsProductModel> cartsProductModels);
 
         void onError(String errorMessage);
     }
 
     public interface GetAllShoppingCartsProductModelFirebaseCallback {
-        void onSuccess(ArrayList<ShoppingCartsProductFirebaseModel> products);
+        void onSuccess(ArrayList<ShoppingCartsProductModel> products);
 
         void onError(String errorMessage);
     }
@@ -268,7 +266,7 @@ public class DatabaseService {
                             for (ShoppingCartsProductModel product : products) {
                                 for (ShoppingCartFirebaseModel cartModel : list) {
                                     if (product.getProductId().equals(cartModel.getProductId())) {
-                                        product.setDefaultQuantity(cartModel.getProductSelectQuantity());
+                                        product.setSelectableQuantity(cartModel.getProductSelectQuantity());
                                         finalProduct.add(product);
                                     }
                                 }
@@ -318,12 +316,12 @@ public class DatabaseService {
                     }
                     getProductsByModelIdFirebase(productIds, new GetAllShoppingCartsProductModelFirebaseCallback() {
                         @Override
-                        public void onSuccess(ArrayList<ShoppingCartsProductFirebaseModel> products) {
-                            ArrayList<ShoppingCartsProductFirebaseModel> finalProduct = new ArrayList<>();
-                            for (ShoppingCartsProductFirebaseModel product : products) {
+                        public void onSuccess(ArrayList<ShoppingCartsProductModel> products) {
+                            ArrayList<ShoppingCartsProductModel> finalProduct = new ArrayList<>();
+                            for (ShoppingCartsProductModel product : products) {
                                 for (ShoppingCartFirebaseModel cartModel : list) {
                                     if (product.getProductId().equals(cartModel.getProductId())) {
-                                        product.setDefaultQuantity(cartModel.getProductSelectQuantity());
+                                        product.setSelectableQuantity(cartModel.getProductSelectQuantity());
                                         finalProduct.add(product);
                                     }
                                 }
@@ -446,9 +444,9 @@ public class DatabaseService {
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        ArrayList<ShoppingCartsProductFirebaseModel> products = new ArrayList<>();
+                        ArrayList<ShoppingCartsProductModel> products = new ArrayList<>();
                         for (DocumentSnapshot document : task.getResult()) {
-                            ShoppingCartsProductFirebaseModel product = document.toObject(ShoppingCartsProductFirebaseModel.class);
+                            ShoppingCartsProductModel product = document.toObject(ShoppingCartsProductModel.class);
                             if (product != null && product.isAvailable()) {
                                 products.add(product);
                             }

@@ -7,71 +7,128 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+
 
 public class ProductModel implements Parcelable {
-    private String productId;
+    private boolean isAvailable; //
+    private String productId; // id
     private String productName;
     private String productDescription;
     private String Brand;
     private String category;
+    private String subCategory;
     private double price;
     private double mrp;
-    private String unit;
-    private String SubUnit; // Unit of measurement (e.g., kg, gram, litre, pack)
-    private String ProductType; // Unit of measurement (e.g., kg, gram, litre, pack)
-    private int DefaultQuantity; // Quantity available
-    private int quantity;
-    private ArrayList<String> imageURL; // URL of the product image
-    private boolean isAvailable; // Indicates whether the product is available or not
-    // Sales data
-    private int totalSales;
-    private String EditDate;
-    private String whoEdit;
+    private double discount; // this discount on product
+    private int stockCount; // Stock
+    private int minSelectableQuantity; // number of min select quantity of product
+    private int MaxSelectableQuantity; // number of max select quantity of product
+    private int SelectableQuantity; // number of max select quantity of product
+    private String weight;
+    private String weightSIUnit;
+    private String productLife; // product life, expiry date
+    private String productType; // productType is eg home , etc
+    private String productIsFoodItem; // is veg or non veg or something else
+    private ArrayList<String> keywords; // for SEO
+    private ArrayList<String> ProductImage;
+    @Nullable
+    private ArrayList<Variations> variations;
+    @Nullable
+    private SponsorTypeModel sponsorTypeModel;
+    private ArrayList<StockEntryModel> stockEntries; // List of stock entries
 
-    private ArrayList<String> keywords;
+    public ProductModel() {
+        stockEntries = new ArrayList<>();
+    }
 
-    public ProductModel() {}
-
-    public ProductModel(@Nullable String productId, String productName, String productDescription, String category, String ProductType, double price, double mrp, String unit, String subUnit, int defaultQuantity, int quantity, ArrayList<String> imageURL, boolean isAvailable, int totalSales, String EditDate, String whoEdit,ArrayList<String> keywords,String Brand) {
+    public ProductModel(boolean isAvailable, String productId, String productName, String productDescription, String brand, String category, String subCategory, double price, double mrp, double discount, int stockCount, int minSelectableQuantity, int maxSelectableQuantity, String weight, String weightSIUnit, String productLife, String productType, String productIsFoodItem, ArrayList<String> keywords, ArrayList<String> productImage, @Nullable ArrayList<Variations> variations, @Nullable SponsorTypeModel sponsorTypeModel) {
+        this.isAvailable = isAvailable;
         this.productId = productId;
         this.productName = productName;
         this.productDescription = productDescription;
+        Brand = brand;
         this.category = category;
-        this.ProductType = ProductType;
+        this.subCategory = subCategory;
         this.price = price;
         this.mrp = mrp;
-        this.unit = unit;
-        SubUnit = subUnit;
-        DefaultQuantity = defaultQuantity;
-        this.quantity = quantity;
-        this.imageURL = imageURL;
-        this.isAvailable = isAvailable;
-        this.totalSales = totalSales;
-        this.EditDate = EditDate;
-        this.whoEdit = whoEdit;
+        this.discount = discount;
+        this.stockCount = stockCount;
+        this.minSelectableQuantity = minSelectableQuantity;
+        MaxSelectableQuantity = maxSelectableQuantity;
+        this.SelectableQuantity = minSelectableQuantity;
+        this.weight = weight;
+        this.weightSIUnit = weightSIUnit;
+        this.productLife = productLife;
+        this.productType = productType;
+        this.productIsFoodItem = productIsFoodItem;
         this.keywords = keywords;
-        this.Brand = Brand;
+        ProductImage = productImage;
+        this.variations = variations;
+        this.sponsorTypeModel = sponsorTypeModel;
+        this.stockEntries = new ArrayList<>();
     }
 
     protected ProductModel(Parcel in) {
+        isAvailable = in.readByte() != 0;
         productId = in.readString();
         productName = in.readString();
         productDescription = in.readString();
+        Brand = in.readString();
         category = in.readString();
-        ProductType = in.readString();
+        subCategory = in.readString();
         price = in.readDouble();
         mrp = in.readDouble();
-        unit = in.readString();
-        SubUnit = in.readString();
-        DefaultQuantity = in.readInt();
-        quantity = in.readInt();
-        imageURL = in.createStringArrayList();
-        isAvailable = in.readByte() != 0;
-        totalSales = in.readInt();
-        EditDate = in.readString();
-        whoEdit = in.readString();
+        discount = in.readDouble();
+        stockCount = in.readInt();
+        minSelectableQuantity = in.readInt();
+        MaxSelectableQuantity = in.readInt();
+        SelectableQuantity = in.readInt();
+        weight = in.readString();
+        weightSIUnit = in.readString();
+        productLife = in.readString();
+        productType = in.readString();
+        productIsFoodItem = in.readString();
         keywords = in.createStringArrayList();
-        Brand = in.readString();
+        ProductImage = in.createStringArrayList();
+        variations = in.createTypedArrayList(Variations.CREATOR);
+        sponsorTypeModel = in.readParcelable(SponsorTypeModel.class.getClassLoader());
+        stockEntries = in.createTypedArrayList(StockEntryModel.CREATOR);
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeByte((byte) (isAvailable ? 1 : 0));
+        dest.writeString(productId);
+        dest.writeString(productName);
+        dest.writeString(productDescription);
+        dest.writeString(Brand);
+        dest.writeString(category);
+        dest.writeString(subCategory);
+        dest.writeDouble(price);
+        dest.writeDouble(mrp);
+        dest.writeDouble(discount);
+        dest.writeInt(stockCount);
+        dest.writeInt(minSelectableQuantity);
+        dest.writeInt(MaxSelectableQuantity);
+        dest.writeInt(SelectableQuantity);
+        dest.writeString(weight);
+        dest.writeString(weightSIUnit);
+        dest.writeString(productLife);
+        dest.writeString(productType);
+        dest.writeString(productIsFoodItem);
+        dest.writeStringList(keywords);
+        dest.writeStringList(ProductImage);
+        dest.writeTypedList(variations);
+        dest.writeParcelable(sponsorTypeModel, flags);
+        dest.writeTypedList(stockEntries);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     public static final Creator<ProductModel> CREATOR = new Creator<ProductModel>() {
@@ -86,12 +143,22 @@ public class ProductModel implements Parcelable {
         }
     };
 
-    public ArrayList<String> getKeywords() {
-        return keywords;
+    // Getter and Setter methods
+
+    public boolean isAvailable() {
+        return isAvailable;
     }
 
-    public void setKeywords(ArrayList<String> keywords) {
-        this.keywords = keywords;
+    public int getSelectableQuantity() {
+        return SelectableQuantity;
+    }
+
+    public void setSelectableQuantity(int selectableQuantity) {
+        SelectableQuantity = selectableQuantity;
+    }
+
+    public void setAvailable(boolean available) {
+        isAvailable = available;
     }
 
     public String getProductId() {
@@ -114,16 +181,16 @@ public class ProductModel implements Parcelable {
         return productDescription;
     }
 
-    public String getEditDate() {
-        return EditDate;
-    }
-
-    public void setEditDate(String editDate) {
-        EditDate = editDate;
-    }
-
     public void setProductDescription(String productDescription) {
         this.productDescription = productDescription;
+    }
+
+    public String getBrand() {
+        return Brand;
+    }
+
+    public void setBrand(String brand) {
+        Brand = brand;
     }
 
     public String getCategory() {
@@ -132,6 +199,14 @@ public class ProductModel implements Parcelable {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getSubCategory() {
+        return subCategory;
+    }
+
+    public void setSubCategory(String subCategory) {
+        this.subCategory = subCategory;
     }
 
     public double getPrice() {
@@ -150,111 +225,134 @@ public class ProductModel implements Parcelable {
         this.mrp = mrp;
     }
 
-    public String getUnit() {
-        return unit;
+    public double getDiscount() {
+        return discount;
     }
 
-    public void setUnit(String unit) {
-        this.unit = unit;
+    public void setDiscount(double discount) {
+        this.discount = discount;
     }
 
-    public String getSubUnit() {
-        return SubUnit;
+    public int getStockCount() {
+        return stockCount;
     }
 
-    public void setSubUnit(String subUnit) {
-        SubUnit = subUnit;
+    public void setStockCount(int stockCount) {
+        this.stockCount = stockCount;
     }
 
-    public int getDefaultQuantity() {
-        return DefaultQuantity;
+    public int getMinSelectableQuantity() {
+        return minSelectableQuantity;
     }
 
-    public void setDefaultQuantity(int defaultQuantity) {
-        DefaultQuantity = defaultQuantity;
+    public void setMinSelectableQuantity(int minSelectableQuantity) {
+        this.minSelectableQuantity = minSelectableQuantity;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public int getMaxSelectableQuantity() {
+        return MaxSelectableQuantity;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setMaxSelectableQuantity(int maxSelectableQuantity) {
+        MaxSelectableQuantity = maxSelectableQuantity;
     }
 
-    public ArrayList<String> getImageURL() {
-        return imageURL;
+    public String getWeight() {
+        return weight;
     }
 
-
-    public void setImageURL(ArrayList<String> imageURL) {
-        this.imageURL = imageURL;
+    public void setWeight(String weight) {
+        this.weight = weight;
     }
 
-    public boolean isAvailable() {
-        return isAvailable;
+    public String getWeightSIUnit() {
+        return weightSIUnit;
     }
 
-    public void setAvailable(boolean available) {
-        isAvailable = available;
+    public void setWeightSIUnit(String weightSIUnit) {
+        this.weightSIUnit = weightSIUnit;
     }
 
-    public int getTotalSales() {
-        return totalSales;
+    public String getProductLife() {
+        return productLife;
     }
 
-    public String getBrand() {
-        return Brand;
-    }
-
-    public void setBrand(String brand) {
-        Brand = brand;
-    }
-
-    public void setTotalSales(int totalSales) {
-        this.totalSales = totalSales;
-    }
-
-    public String getWhoEdit() {
-        return whoEdit;
-    }
-
-    public void setWhoEdit(String whoEdit) {
-        this.whoEdit = whoEdit;
+    public void setProductLife(String productLife) {
+        this.productLife = productLife;
     }
 
     public String getProductType() {
-        return ProductType;
+        return productType;
     }
 
     public void setProductType(String productType) {
-        ProductType = productType;
+        this.productType = productType;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public String getProductIsFoodItem() {
+        return productIsFoodItem;
     }
 
-    @Override
-    public void writeToParcel(@NonNull Parcel dest, int flags) {
-        dest.writeString(productId);
-        dest.writeString(productName);
-        dest.writeString(productDescription);
-        dest.writeString(category);
-        dest.writeString(ProductType);
-        dest.writeDouble(price);
-        dest.writeDouble(mrp);
-        dest.writeString(unit);
-        dest.writeString(SubUnit);
-        dest.writeInt(DefaultQuantity);
-        dest.writeInt(quantity);
-        dest.writeStringList(imageURL);
-        dest.writeByte((byte) (isAvailable ? 1 : 0));
-        dest.writeInt(totalSales);
-        dest.writeString(EditDate);
-        dest.writeString(whoEdit);
-        dest.writeStringList(keywords);
-        dest.writeString(Brand);
+    public void setProductIsFoodItem(String productIsFoodItem) {
+        this.productIsFoodItem = productIsFoodItem;
+    }
+
+    public ArrayList<String> getKeywords() {
+        return keywords;
+    }
+
+    public void setKeywords(ArrayList<String> keywords) {
+        this.keywords = keywords;
+    }
+
+    public ArrayList<String> getProductImage() {
+        return ProductImage;
+    }
+
+    public void setProductImage(ArrayList<String> productImage) {
+        ProductImage = productImage;
+    }
+
+    public ArrayList<Variations> getVariations() {
+        return variations;
+    }
+
+    public void setVariations(ArrayList<Variations> variations) {
+        this.variations = variations;
+    }
+
+    public SponsorTypeModel getSponsorTypeModel() {
+        return sponsorTypeModel;
+    }
+
+    public void setSponsorTypeModel(SponsorTypeModel sponsorTypeModel) {
+        this.sponsorTypeModel = sponsorTypeModel;
+    }
+
+    public ArrayList<StockEntryModel> getStockEntries() {
+        return stockEntries;
+    }
+
+    public void setStockEntries(ArrayList<StockEntryModel> stockEntries) {
+        this.stockEntries = stockEntries;
+    }
+
+    public void addStock(int quantity, Date expiryDate) {
+        Date entryDate = new Date(); // Current date as entry date
+        stockEntries.add(new StockEntryModel(quantity, expiryDate, entryDate));
+        sortStockEntriesByDate();
+    }
+
+    private void sortStockEntriesByDate() {
+        Collections.sort(stockEntries, Comparator.comparing(StockEntryModel::getEntryDate));
+    }
+
+    public void removeExpiredStock() {
+        Date currentDate = new Date();
+        stockEntries.removeIf(entry -> entry.getExpiryDate().before(currentDate));
+    }
+
+    public int getTotalStock() {
+        return stockEntries.stream().mapToInt(StockEntryModel::getQuantity).sum();
     }
 }

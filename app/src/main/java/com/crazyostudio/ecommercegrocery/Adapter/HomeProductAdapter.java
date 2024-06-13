@@ -27,6 +27,8 @@ import com.crazyostudio.ecommercegrocery.javaClasses.CustomSmoothScroller;
 
 import java.util.ArrayList;
 
+
+
 public class HomeProductAdapter extends RecyclerView.Adapter<HomeProductAdapter.ViewHolder> {
     ArrayList<HomeProductModel> homeProductModel;
 //    showProductViewDialog(productModel);

@@ -1,6 +1,5 @@
 package com.crazyostudio.ecommercegrocery.HelperClass;
 
-import com.crazyostudio.ecommercegrocery.Model.ShoppingCartsProductFirebaseModel;
 import com.crazyostudio.ecommercegrocery.Model.ShoppingCartsProductModel;
 
 import java.util.ArrayList;
@@ -11,7 +10,7 @@ public class ShoppingCartHelper {
         double totalSavings = 0.0;
 
         for (ShoppingCartsProductModel product : products) {
-            double savingsForProduct = product.getMrp() * product.getDefaultQuantity();
+            double savingsForProduct = product.getMrp() * product.getSelectableQuantity();
             totalSavings += savingsForProduct;
         }
 
@@ -32,7 +31,7 @@ public class ShoppingCartHelper {
         double totalPrices = 00.0;
 
         for (ShoppingCartsProductModel product : productList) {
-            double totalPrice = product.getPrice() * (double) product.getDefaultQuantity();
+            double totalPrice = product.getPrice() * (double) product.getSelectableQuantity();
             totalPrices = totalPrices + totalPrice;
         }
 

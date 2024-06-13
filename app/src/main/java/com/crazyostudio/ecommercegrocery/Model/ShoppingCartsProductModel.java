@@ -3,6 +3,8 @@ package com.crazyostudio.ecommercegrocery.Model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.Nullable;
+
 import com.hishd.tinycart.model.Item;
 
 import java.io.Serializable;
@@ -13,84 +15,111 @@ import java.util.ArrayList;
 //ShoppingCartsProductFirebaseModel
 
 public class ShoppingCartsProductModel implements Parcelable {
-    private String productId;
+
+    private boolean isAvailable;
+    private String productId; // id
     private String productName;
     private String productDescription;
+    private String Brand;
     private String category;
+    private String subCategory;
     private double price;
     private double mrp;
-    private String unit;
-    private String SubUnit; // Unit of measurement (e.g., kg, gram, litre, pack)
-    private String ProductType; // Unit of measurement (e.g., kg, gram, litre, pack)
-    private int DefaultQuantity;// Quantity available
-    private int quantity;
-    private ArrayList<String> imageURL; // URL of the product image
-    private boolean isAvailable; // Indicates whether the product is available or not
-    // Sales data
-    private int totalSales;
-    private String EditDate;
-    private String whoEdit;
+    private double discount; // this discount on product
+    private int stockCount;
+    private int minSelectableQuantity; // number of min select quantity of product
+    private int MaxSelectableQuantity; // number of max select quantity of product
+    private int SelectableQuantity; // number of max select quantity of product
+    private String weight;
+    private String weightSIUnit;
+    private String productLife; // product life, expiry date
+    private String productType; // productType is eg home , etc
+    private String productIsFoodItem; // is veg or non veg or something else
+    private ArrayList<String> keywords; // for SEO
+    private ArrayList<String> ProductImage;
+    @Nullable
+    private ArrayList<Variations> variations;
 
 
-    public ShoppingCartsProductModel() {
-    }
 
-    public ShoppingCartsProductModel(String productId, String productName, String productDescription, String category, double price, double mrp, String unit, String subUnit, String productType, int defaultQuantity, int quantity, ArrayList<String> imageURL, boolean isAvailable, int totalSales, String editDate, String whoEdit) {
+
+
+    public ShoppingCartsProductModel(){}
+
+    public ShoppingCartsProductModel(boolean isAvailable, String productId, String productName, String productDescription, String brand, String category, String subCategory, double price, double mrp, double discount, int stockCount, int minSelectableQuantity, int maxSelectableQuantity, int selectableQuantity, String weight, String weightSIUnit, String productLife, String productType, String productIsFoodItem, ArrayList<String> keywords, ArrayList<String> productImage, @Nullable ArrayList<Variations> variations) {
+        this.isAvailable = isAvailable;
         this.productId = productId;
         this.productName = productName;
         this.productDescription = productDescription;
+        Brand = brand;
         this.category = category;
+        this.subCategory = subCategory;
         this.price = price;
         this.mrp = mrp;
-        this.unit = unit;
-        SubUnit = subUnit;
-        ProductType = productType;
-        DefaultQuantity = defaultQuantity;
-        this.quantity = quantity;
-        this.imageURL = imageURL;
-        this.isAvailable = isAvailable;
-        this.totalSales = totalSales;
-        EditDate = editDate;
-        this.whoEdit = whoEdit;
+        this.discount = discount;
+        this.stockCount = stockCount;
+        this.minSelectableQuantity = minSelectableQuantity;
+        MaxSelectableQuantity = maxSelectableQuantity;
+        SelectableQuantity = selectableQuantity;
+        this.weight = weight;
+        this.weightSIUnit = weightSIUnit;
+        this.productLife = productLife;
+        this.productType = productType;
+        this.productIsFoodItem = productIsFoodItem;
+        this.keywords = keywords;
+        ProductImage = productImage;
+        this.variations = variations;
     }
 
     protected ShoppingCartsProductModel(Parcel in) {
+        isAvailable = in.readByte() != 0;
         productId = in.readString();
         productName = in.readString();
         productDescription = in.readString();
+        Brand = in.readString();
         category = in.readString();
+        subCategory = in.readString();
         price = in.readDouble();
         mrp = in.readDouble();
-        unit = in.readString();
-        SubUnit = in.readString();
-        ProductType = in.readString();
-        DefaultQuantity = in.readInt();
-        quantity = in.readInt();
-        imageURL = in.createStringArrayList();
-        isAvailable = in.readByte() != 0;
-        totalSales = in.readInt();
-        EditDate = in.readString();
-        whoEdit = in.readString();
+        discount = in.readDouble();
+        stockCount = in.readInt();
+        minSelectableQuantity = in.readInt();
+        MaxSelectableQuantity = in.readInt();
+        SelectableQuantity = in.readInt();
+        weight = in.readString();
+        weightSIUnit = in.readString();
+        productLife = in.readString();
+        productType = in.readString();
+        productIsFoodItem = in.readString();
+        keywords = in.createStringArrayList();
+        ProductImage = in.createStringArrayList();
+        variations = in.createTypedArrayList(Variations.CREATOR);
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeByte((byte) (isAvailable ? 1 : 0));
         dest.writeString(productId);
         dest.writeString(productName);
         dest.writeString(productDescription);
+        dest.writeString(Brand);
         dest.writeString(category);
+        dest.writeString(subCategory);
         dest.writeDouble(price);
         dest.writeDouble(mrp);
-        dest.writeString(unit);
-        dest.writeString(SubUnit);
-        dest.writeString(ProductType);
-        dest.writeInt(DefaultQuantity);
-        dest.writeInt(quantity);
-        dest.writeStringList(imageURL);
-        dest.writeByte((byte) (isAvailable ? 1 : 0));
-        dest.writeInt(totalSales);
-        dest.writeString(EditDate);
-        dest.writeString(whoEdit);
+        dest.writeDouble(discount);
+        dest.writeInt(stockCount);
+        dest.writeInt(minSelectableQuantity);
+        dest.writeInt(MaxSelectableQuantity);
+        dest.writeInt(SelectableQuantity);
+        dest.writeString(weight);
+        dest.writeString(weightSIUnit);
+        dest.writeString(productLife);
+        dest.writeString(productType);
+        dest.writeString(productIsFoodItem);
+        dest.writeStringList(keywords);
+        dest.writeStringList(ProductImage);
+        dest.writeTypedList(variations);
     }
 
     @Override
@@ -109,6 +138,14 @@ public class ShoppingCartsProductModel implements Parcelable {
             return new ShoppingCartsProductModel[size];
         }
     };
+
+    public boolean isAvailable() {
+        return isAvailable;
+    }
+
+    public void setAvailable(boolean available) {
+        isAvailable = available;
+    }
 
     public String getProductId() {
         return productId;
@@ -134,12 +171,28 @@ public class ShoppingCartsProductModel implements Parcelable {
         this.productDescription = productDescription;
     }
 
+    public String getBrand() {
+        return Brand;
+    }
+
+    public void setBrand(String brand) {
+        Brand = brand;
+    }
+
     public String getCategory() {
         return category;
     }
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getSubCategory() {
+        return subCategory;
+    }
+
+    public void setSubCategory(String subCategory) {
+        this.subCategory = subCategory;
     }
 
     public double getPrice() {
@@ -158,86 +211,108 @@ public class ShoppingCartsProductModel implements Parcelable {
         this.mrp = mrp;
     }
 
-    public String getUnit() {
-        return unit;
+    public double getDiscount() {
+        return discount;
     }
 
-    public void setUnit(String unit) {
-        this.unit = unit;
+    public void setDiscount(double discount) {
+        this.discount = discount;
     }
 
-    public String getSubUnit() {
-        return SubUnit;
+    public int getStockCount() {
+        return stockCount;
     }
 
-    public void setSubUnit(String subUnit) {
-        SubUnit = subUnit;
+    public void setStockCount(int stockCount) {
+        this.stockCount = stockCount;
+    }
+
+    public int getMinSelectableQuantity() {
+        return minSelectableQuantity;
+    }
+
+    public void setMinSelectableQuantity(int minSelectableQuantity) {
+        this.minSelectableQuantity = minSelectableQuantity;
+    }
+
+    public int getMaxSelectableQuantity() {
+        return MaxSelectableQuantity;
+    }
+
+    public void setMaxSelectableQuantity(int maxSelectableQuantity) {
+        MaxSelectableQuantity = maxSelectableQuantity;
+    }
+
+    public int getSelectableQuantity() {
+        return SelectableQuantity;
+    }
+
+    public void setSelectableQuantity(int selectableQuantity) {
+        SelectableQuantity = selectableQuantity;
+    }
+
+    public String getWeight() {
+        return weight;
+    }
+
+    public void setWeight(String weight) {
+        this.weight = weight;
+    }
+
+    public String getWeightSIUnit() {
+        return weightSIUnit;
+    }
+
+    public void setWeightSIUnit(String weightSIUnit) {
+        this.weightSIUnit = weightSIUnit;
+    }
+
+    public String getProductLife() {
+        return productLife;
+    }
+
+    public void setProductLife(String productLife) {
+        this.productLife = productLife;
     }
 
     public String getProductType() {
-        return ProductType;
+        return productType;
     }
 
     public void setProductType(String productType) {
-        ProductType = productType;
+        this.productType = productType;
     }
 
-    public int getDefaultQuantity() {
-        return DefaultQuantity;
+    public String getProductIsFoodItem() {
+        return productIsFoodItem;
     }
 
-    public void setDefaultQuantity(int defaultQuantity) {
-        DefaultQuantity = defaultQuantity;
+    public void setProductIsFoodItem(String productIsFoodItem) {
+        this.productIsFoodItem = productIsFoodItem;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public ArrayList<String> getKeywords() {
+        return keywords;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setKeywords(ArrayList<String> keywords) {
+        this.keywords = keywords;
     }
 
-    public ArrayList<String> getImageURL() {
-        return imageURL;
+    public ArrayList<String> getProductImage() {
+        return ProductImage;
     }
 
-    public void setImageURL(ArrayList<String> imageURL) {
-        this.imageURL = imageURL;
+    public void setProductImage(ArrayList<String> productImage) {
+        ProductImage = productImage;
     }
 
-    public boolean isAvailable() {
-        return isAvailable;
+    @Nullable
+    public ArrayList<Variations> getVariations() {
+        return variations;
     }
 
-    public void setAvailable(boolean available) {
-        isAvailable = available;
+    public void setVariations(@Nullable ArrayList<Variations> variations) {
+        this.variations = variations;
     }
-
-    public int getTotalSales() {
-        return totalSales;
-    }
-
-    public void setTotalSales(int totalSales) {
-        this.totalSales = totalSales;
-    }
-
-    public String getEditDate() {
-        return EditDate;
-    }
-
-    public void setEditDate(String editDate) {
-        EditDate = editDate;
-    }
-
-    public String getWhoEdit() {
-        return whoEdit;
-    }
-
-    public void setWhoEdit(String whoEdit) {
-        this.whoEdit = whoEdit;
-    }
-
-
-
 }

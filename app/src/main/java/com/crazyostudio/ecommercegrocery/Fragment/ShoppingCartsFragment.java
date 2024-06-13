@@ -136,6 +136,6 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
     @Override
     public void UpdateQuantity(ShoppingCartsProductModel UpdateModel, String id) {
         binding.progressCircular.setVisibility(View.VISIBLE);
-        service.UpdateCartQuantityById(uid,id,UpdateModel.getDefaultQuantity());
+        service.UpdateCartQuantityById(uid,id,UpdateModel.getSelectableQuantity());
     }
 }

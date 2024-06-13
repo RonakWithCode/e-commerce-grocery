@@ -212,11 +212,6 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
 
 
 
-
-
-
-
-
         });
 
 
@@ -328,7 +323,7 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
     @Override
     public void UpdateQuantity(ShoppingCartsProductModel UpdateModel, String id) {
         binding.progressCircular.setVisibility(View.VISIBLE);
-        databaseService.UpdateCartQuantityById(uid,id,UpdateModel.getDefaultQuantity());
+        databaseService.UpdateCartQuantityById(uid,id,UpdateModel.getSelectableQuantity());
         binding.progressCircular.setVisibility(View.GONE);
         updateSubTotalPrice();
 

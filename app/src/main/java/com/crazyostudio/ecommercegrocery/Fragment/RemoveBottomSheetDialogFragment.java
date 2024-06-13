@@ -95,26 +95,26 @@ public class RemoveBottomSheetDialogFragment  extends BottomSheetDialogFragment 
         });
 
         binding.productName.setText(model.getProductName());
-        Glide.with(requireContext()).load(model.getImageURL().get(0)).into(binding.productImage);
-        binding.productQty.setText(model.getDefaultQuantity()+"");
+        Glide.with(requireContext()).load(model.getProductImage().get(0)).into(binding.productImage);
+        binding.productQty.setText(model.getSelectableQuantity()+"");
         binding.productPrice.setText("₹"+model.getPrice());
         binding.productQtyUp.setOnClickListener(up->{
-            int quantity = model.getDefaultQuantity();
+            int quantity = model.getSelectableQuantity();
             quantity++;
-            if(quantity>model.getQuantity()) {
-                Toast.makeText(requireContext(), "Max stock available: "+ model.getQuantity(), Toast.LENGTH_SHORT).show();
+            if(quantity>model.getStockCount()) {
+                Toast.makeText(requireContext(), "Max stock available: "+ model.getStockCount(), Toast.LENGTH_SHORT).show();
             } else {
-                model.setDefaultQuantity(quantity);
+                model.setSelectableQuantity(quantity);
                 UpdateQuantity(model, model.getProductId());
                 binding.productPrice.setText("₹"+model.getPrice());
 
             }
         });
         binding.productQtyDown.setOnClickListener(Down->{
-            int quantity = model.getDefaultQuantity();
+            int quantity = model.getSelectableQuantity();
             if(quantity > 1) {
                 quantity--;
-                model.setDefaultQuantity(quantity);
+                model.setSelectableQuantity(quantity);
                 UpdateQuantity(model, model.getProductId());
                 binding.productPrice.setText("₹"+model.getPrice());
             }else {
@@ -142,8 +142,8 @@ public class RemoveBottomSheetDialogFragment  extends BottomSheetDialogFragment 
 
     public void UpdateQuantity(ShoppingCartsProductModel UpdateModel, String id) {
         binding.progressCircular.setVisibility(View.VISIBLE);
-        new DatabaseService().UpdateCartQuantityById(uid,id,UpdateModel.getDefaultQuantity());
-        binding.productQty.setText(""+UpdateModel.getDefaultQuantity());
+        new DatabaseService().UpdateCartQuantityById(uid,id,UpdateModel.getSelectableQuantity());
+        binding.productQty.setText(""+UpdateModel.getSelectableQuantity());
         binding.progressCircular.setVisibility(View.GONE);
 
     }

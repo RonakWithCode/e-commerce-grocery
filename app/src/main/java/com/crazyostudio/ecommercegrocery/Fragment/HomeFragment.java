@@ -104,7 +104,7 @@ public class HomeFragment extends Fragment {
             actionBar.hide();
         }
 
-//        // Change Status Bar color
+//       // Change Status Bar color
         Window window = requireActivity().getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(ContextCompat.getColor(requireContext(), R.color.OrderYellowColor));
@@ -132,7 +132,6 @@ public class HomeFragment extends Fragment {
 
 
         return binding.getRoot();
-
     }
 
 
@@ -179,8 +178,8 @@ public class HomeFragment extends Fragment {
         LoadProductCategory();
 
 //        loadProductsMultiViewForLoop(new String[]{"chips and Snacks"});
-        loadProductsMultiViewForLoop(new String[]{"chips and Snacks", "toothpaste", "hair oil ", "drinks"});
-        loadProductsForCategories(new String[]{"chips and Snacks", "toothpaste", "hair oil ", "drinks"});
+        loadProductsMultiViewForLoop(new String[]{"ha","chips and Snacks", "toothpaste", "hair oil ", "drinks"});
+        loadProductsForCategories(new String[]{"ha","chips and Snacks", "toothpaste", "hair oil ", "drinks"});
         loadProductsForCategoriesByBoysSkin(new String[]{"toothpaste", "drinks"});
     }
 
@@ -213,6 +212,7 @@ public class HomeFragment extends Fragment {
     }
 
 
+
     private void LoadProductCategory() {
         Glide.with(requireContext()).load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/all_category%2Fskin%20care.png?alt=media&token=6edf6d22-e31e-4935-abfd-6b5ddde4ea28").placeholder(R.drawable.skeleton_shape).into(binding.skin);
         Glide.with(requireContext()).load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/all_category%2F6.png?alt=media&token=032ccdeb-9a48-4d2e-976d-238b20172b1a").placeholder(R.drawable.skeleton_shape).into(binding.AttaRiceDal);
@@ -231,7 +231,6 @@ public class HomeFragment extends Fragment {
 
 
     }
-
 
 
     void LoadCarousel() {
@@ -324,50 +323,50 @@ public class HomeFragment extends Fragment {
 
             }
         });
-        Image_CarouselCenter.setCarouselListener(new CarouselListener() {
-            @Nullable
-            @Override
-            public ViewBinding onCreateViewHolder(@NonNull LayoutInflater layoutInflater, @NonNull ViewGroup viewGroup) {
-                return null;
-            }
-
-            @Override
-            public void onBindViewHolder(@NonNull ViewBinding viewBinding, @NonNull CarouselItem carouselItem, int i) {
-            }
-
-            @Override
-            public void onClick(int position, @NonNull CarouselItem carouselItem) {
-                if (modelsCenter.get(position).isByCategory()) {
-                    FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-                    Bundle bundle = new Bundle();
-                    bundle.putString("filter",modelsCenter.get(position).getFilterQuery());
-                    ProductFilterFragment fragment = new ProductFilterFragment();
-                    fragment.setArguments(bundle);
-                    transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
-                    transaction.addToBackStack("ProductFilterFragment");
-                    transaction.commit();
-                }else {
-                    //TODO : ---------------------------------------------------------
-                    FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-                    Bundle bundle = new Bundle();
-                    bundle.putString("filter",modelsCenter.get(position).getFilterQuery());
-                    bundle.putString("filterName",modelsCenter.get(position).getBannerCaption());
-                    ProductFilterByQueryFragment fragment = new ProductFilterByQueryFragment();
-                    fragment.setArguments(bundle);
-                    transaction.replace(R.id.loader, fragment, "ProductFilterByQueryFragment");
-                    transaction.addToBackStack("ProductFilterByQueryFragment");
-                    transaction.commit();
-
-                }
-
-
-            }
-
-            @Override
-            public void onLongClick(int position, @NonNull CarouselItem carouselItem) {
-
-            }
-        });
+//        Image_CarouselCenter.setCarouselListener(new CarouselListener() {
+//            @Nullable
+//            @Override
+//            public ViewBinding onCreateViewHolder(@NonNull LayoutInflater layoutInflater, @NonNull ViewGroup viewGroup) {
+//                return null;
+//            }
+//
+//            @Override
+//            public void onBindViewHolder(@NonNull ViewBinding viewBinding, @NonNull CarouselItem carouselItem, int i) {
+//            }
+//
+//            @Override
+//            public void onClick(int position, @NonNull CarouselItem carouselItem) {
+//                if (modelsCenter.get(position).isByCategory()) {
+//                    FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+//                    Bundle bundle = new Bundle();
+//                    bundle.putString("filter",modelsCenter.get(position).getFilterQuery());
+//                    ProductFilterFragment fragment = new ProductFilterFragment();
+//                    fragment.setArguments(bundle);
+//                    transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
+//                    transaction.addToBackStack("ProductFilterFragment");
+//                    transaction.commit();
+//                }else {
+//                    //TODO : ---------------------------------------------------------
+//                    FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+//                    Bundle bundle = new Bundle();
+//                    bundle.putString("filter",modelsCenter.get(position).getFilterQuery());
+//                    bundle.putString("filterName",modelsCenter.get(position).getBannerCaption());
+//                    ProductFilterByQueryFragment fragment = new ProductFilterByQueryFragment();
+//                    fragment.setArguments(bundle);
+//                    transaction.replace(R.id.loader, fragment, "ProductFilterByQueryFragment");
+//                    transaction.addToBackStack("ProductFilterByQueryFragment");
+//                    transaction.commit();
+//
+//                }
+//
+//
+//            }
+//
+//            @Override
+//            public void onLongClick(int position, @NonNull CarouselItem carouselItem) {
+//
+//            }
+//        });
 
     }
 
@@ -417,9 +416,9 @@ public class HomeFragment extends Fragment {
 
     @SuppressLint("SetTextI18n")
     private void showProductViewDialog(ProductModel productModel,ArrayList<ProductModel> sameProducts) {
+//        ProductModel model = new ProductModel();
         Dialog bottomSheetDialog = new Dialog(requireContext());
         ProductViewDialogBinding productViewDialogBinding = ProductViewDialogBinding.inflate(getLayoutInflater());
-
         if (FirebaseAuth.getInstance().getCurrentUser() !=null) {
             String userId = FirebaseAuth.getInstance().getUid();
             assert userId != null;
@@ -449,7 +448,7 @@ public class HomeFragment extends Fragment {
 
         productViewDialogBinding.ProductName.setText(productModel.getProductName());
         productViewDialogBinding.closeButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
-        for (String imageUrl : productModel.getImageURL()) {
+        for (String imageUrl : productModel.getProductImage()) {
             CarouselItem carouselItem = new CarouselItem(imageUrl);
             productViewDialogBinding.productsImages.addData(carouselItem);
         }
@@ -466,11 +465,11 @@ public class HomeFragment extends Fragment {
 
         productViewDialogBinding.discount.setText("₹" + discountPercentage + "% off");
         productViewDialogBinding.Price.setText("₹" + productModel.getPrice());
-        productViewDialogBinding.quantitySmail.setText("(₹" + productModel.getPrice() + " / " + productModel.getSubUnit() + productModel.getUnit() + ")");
+        productViewDialogBinding.quantitySmail.setText("(₹" + productModel.getPrice() + " / " + productModel.getWeight() + productModel.getWeightSIUnit() + ")");
         productViewDialogBinding.MRP.setText(":" + productModel.getMrp());
         productViewDialogBinding.MRP.setPaintFlags(productViewDialogBinding.MRP.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
-        if (productModel.getQuantity() == 0) {
+        if (productModel.getStockCount() == 0) {
             productViewDialogBinding.OutOfStockBuyOptions.setVisibility(View.VISIBLE);
             productViewDialogBinding.quantity.setText("0");
             productViewDialogBinding.TextInStock.setText("Out of Stock");
@@ -480,7 +479,7 @@ public class HomeFragment extends Fragment {
         }
 
         productViewDialogBinding.categoryType.setText(productModel.getCategory());
-        productViewDialogBinding.netQuantity.setText(productModel.getSubUnit() + productModel.getUnit());
+        productViewDialogBinding.netQuantity.setText(productModel.getWeight() + productModel.getWeightSIUnit());
 
         String diet;
         if (productModel.getProductType().equals("FoodVeg")) {
@@ -493,11 +492,10 @@ public class HomeFragment extends Fragment {
             productViewDialogBinding.diet.setVisibility(View.GONE);
         }
         productViewDialogBinding.dietType.setText(diet);
-        productViewDialogBinding.ExpiryDate.setText(productModel.getEditDate());
+        productViewDialogBinding.ExpiryDate.setText(productModel.getProductLife());
 
         productViewDialogBinding.AddTOCart.setOnClickListener(v -> {
             addToCart(productModel,productViewDialogBinding.AddTOCart,bottomSheetDialog,productViewDialogBinding.quantityBox);
-
         });
         sameProducts.remove(productModel);
         if (sameProducts.isEmpty()){
@@ -512,21 +510,24 @@ public class HomeFragment extends Fragment {
 
 
         productViewDialogBinding.plusBtn.setOnClickListener(view -> {
-            int quantity = productModel.getDefaultQuantity();
+            int quantity = productModel.getSelectableQuantity();
             quantity++;
-            if (quantity > productModel.getQuantity()) {
-                Toast.makeText(requireContext(), "Max stock available: " + productModel.getQuantity(), Toast.LENGTH_SHORT).show();
-            } else {
-                productModel.setDefaultQuantity(quantity);
-                productViewDialogBinding.quantity.setText(String.valueOf(quantity));
+            if (quantity > productModel.getStockCount()) {
+                Toast.makeText(requireContext(), "Max stock available: " + productModel.getStockCount(), Toast.LENGTH_SHORT).show();
             }
+            else {
+                productModel.setSelectableQuantity(quantity);
+                productViewDialogBinding.quantity.setText(String.valueOf(productModel.getSelectableQuantity()));
+            }
+
         });
         productViewDialogBinding.minusBtn.setOnClickListener(view -> {
-            int quantity = productModel.getDefaultQuantity();
+            int quantity = productModel.getSelectableQuantity();
             if (quantity > 1)
                 quantity--;
-            productModel.setDefaultQuantity(quantity);
-            productViewDialogBinding.quantity.setText(String.valueOf(quantity));
+//            selectQTY = quantity;
+            productModel.setSelectableQuantity(quantity);
+            productViewDialogBinding.quantity.setText(String.valueOf(productModel.getSelectableQuantity()));
 
         });
 
@@ -544,7 +545,7 @@ public class HomeFragment extends Fragment {
 
     public void addToCart(ProductModel productModel, MaterialButton addTOCart, Dialog bottomSheetDialog, CardView quantityBox) {
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            ShoppingCartFirebaseModel shoppingCartFirebaseModel = new ShoppingCartFirebaseModel(productModel.getProductId(), productModel.getDefaultQuantity());
+            ShoppingCartFirebaseModel shoppingCartFirebaseModel = new ShoppingCartFirebaseModel(productModel.getProductId(), productModel.getSelectableQuantity());
             DatabaseReference productsRef = FirebaseDatabase.getInstance().getReference().child("Cart").child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
             String productNameToFind = productModel.getProductId();
             Query query = productsRef.orderByKey().equalTo(productNameToFind);

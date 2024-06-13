@@ -43,7 +43,7 @@ public class SuggestionsAdapter extends ArrayAdapter<ProductModel> {
         ProductModel suggestion = getItem(position);
 
         if (suggestion != null) {
-            Glide.with(getContext()).load(suggestion.getImageURL().get(0)).placeholder(R.drawable.placeholder).into(holder.productImageView);
+            Glide.with(getContext()).load(suggestion.getProductImage().get(0)).placeholder(R.drawable.placeholder).into(holder.productImageView);
             holder.productNameTextView.setText(suggestion.getProductName());
             holder.productPriceTextView.setText("₹" + suggestion.getPrice());
         }

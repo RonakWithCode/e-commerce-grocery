@@ -42,7 +42,7 @@ public class RecommendationsAdapter extends RecyclerView.Adapter<Recommendations
     public void onBindViewHolder(@NonNull RecommendationsAdapter.RecommendationsAdapterViewHolder holder, int position) {
         ProductModel product = productModels.get(position);
         Glide.with(context)
-                .load(product.getImageURL().get(0))
+                .load(product.getProductImage().get(0))
                 .into(holder.binding.productImage);
         holder.binding.productName.setText(product.getProductName());
         holder.binding.productPrice.setText("₹" + product.getPrice());

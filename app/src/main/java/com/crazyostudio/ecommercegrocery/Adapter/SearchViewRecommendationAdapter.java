@@ -94,7 +94,7 @@ public class SearchViewRecommendationAdapter extends RecyclerView.Adapter<Search
     public void onBindViewHolder(@NonNull SearchViewRecommendationAdapter.SearchViewRecommendationAdapterViewHolder holder, int position) {
         ProductModel model = productModels.get(position);
 
-        Glide.with(context).load(model.getImageURL()
+        Glide.with(context).load(model.getProductImage()
                 .get(0))
                 .placeholder(R.drawable.skeleton_shape).into(holder.binding.productImage);
         holder.binding.productName.setText(model.getProductName());
@@ -134,7 +134,7 @@ public class SearchViewRecommendationAdapter extends RecyclerView.Adapter<Search
         holder.binding.addToCartButton.setOnClickListener(v -> {
             if (FirebaseAuth.getInstance().getCurrentUser() != null) {
 //                    ShoppingCartFirebaseModel shoppingCartFirebaseModel = new ShoppingCartFirebaseModel(productModel.getProductId(), productModel.getDefaultQuantity());
-                new DatabaseService().checkCartByIdAndAdd(model.getProductId(), model.getDefaultQuantity(), new DatabaseService.AddCartByIdAndADD() {
+                new DatabaseService().checkCartByIdAndAdd(model.getProductId(), model.getMinSelectableQuantity(), new DatabaseService.AddCartByIdAndADD() {
                     @Override
                     public void added() {
                         holder.binding.addToCartButton.setVisibility(View.GONE);

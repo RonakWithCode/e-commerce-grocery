@@ -1,7 +1,6 @@
 package com.crazyostudio.ecommercegrocery.Fragment;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,19 +13,15 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.crazyostudio.ecommercegrocery.Activity.OrderDetailsActivity;
 import com.crazyostudio.ecommercegrocery.Adapter.ShoppingCartsProductAdapter;
 import com.crazyostudio.ecommercegrocery.HelperClass.ShoppingCartHelper;
 import com.crazyostudio.ecommercegrocery.Model.AddressModel;
-import com.crazyostudio.ecommercegrocery.Model.OrderModel;
-import com.crazyostudio.ecommercegrocery.Model.ShoppingCartsProductFirebaseModel;
 import com.crazyostudio.ecommercegrocery.Model.ShoppingCartsProductModel;
 import com.crazyostudio.ecommercegrocery.Model.UserinfoModels;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentPaymentScreenBinding;
 import com.crazyostudio.ecommercegrocery.interfaceClass.OrderProductInterface;
-import com.crazyostudio.ecommercegrocery.javaClasses.basicFun;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;

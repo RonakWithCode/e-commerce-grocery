@@ -50,7 +50,7 @@ public class HomeCategoryAdapter extends RecyclerView.Adapter<HomeCategoryAdapte
         int productSize = homeCategoryModel.getProduct().size();
 
         if (productSize > 0) {
-            Glide.with(context).load(homeCategoryModel.getProduct().get(0).getImageURL().get(0))
+            Glide.with(context).load(homeCategoryModel.getProduct().get(0).getProductImage().get(0))
                     .placeholder(R.drawable.product_image_shimmee_effect) // Placeholder image while loading
                     .error(R.drawable.product_image_shimmee_effect) // Error image if loading fails
                     .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL) // Resize the image
@@ -58,7 +58,7 @@ public class HomeCategoryAdapter extends RecyclerView.Adapter<HomeCategoryAdapte
                     .into(holder.binding.View1);
         }
         if (productSize > 1) {
-            Glide.with(context).load(homeCategoryModel.getProduct().get(1).getImageURL().get(0))
+            Glide.with(context).load(homeCategoryModel.getProduct().get(1).getProductImage().get(0))
                     .placeholder(R.drawable.product_image_shimmee_effect) // Placeholder image while loading
                     .error(R.drawable.product_image_shimmee_effect) // Error image if loading fails
                     .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL) // Resize the image
@@ -66,7 +66,7 @@ public class HomeCategoryAdapter extends RecyclerView.Adapter<HomeCategoryAdapte
                     .into(holder.binding.View2); // Fix: Using index 0 for the second product's image URL
         }
         if (productSize > 2) {
-            Glide.with(context).load(homeCategoryModel.getProduct().get(2).getImageURL().get(0))
+            Glide.with(context).load(homeCategoryModel.getProduct().get(2).getProductImage().get(0))
                     .placeholder(R.drawable.product_image_shimmee_effect) // Placeholder image while loading
                     .error(R.drawable.product_image_shimmee_effect) // Error image if loading fails
                     .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL) // Resize the image

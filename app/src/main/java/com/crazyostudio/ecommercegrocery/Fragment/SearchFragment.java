@@ -79,9 +79,9 @@ public class SearchFragment extends Fragment implements SearchAdapterInterface {
         binding.Recommendation.setAdapter(adapterSearchViewRecommendation);
 
         adapter = new SearchAdapter(requireContext(),this);
-
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.recyclerView.setAdapter(adapter);
+
 
 
 //        binding.backBtn.setOnClickListener(view-> requireActivity().onBackPressed());

@@ -44,29 +44,30 @@ public class ShoppingCartsAdapter extends RecyclerView.Adapter<ShoppingCartsAdap
     public void onBindViewHolder(@NonNull ShoppingCartsAdapter.ShoppingCartsAdapterViewHolder holder, int position) {
         ShoppingCartsProductModel model  = productModels.get(position);
         holder.binding.productName.setText(model.getProductName());
-        Glide.with(context).load(model.getImageURL().get(0))
+        Glide.with(context).load(model.getProductImage().get(0))
                 .placeholder(R.drawable.product_image_shimmee_effect)
                 .into(holder.binding.productImage);
 //        holder.binding.productImage.setZoomable(false);
 
-        holder.binding.productQty.setText(model.getDefaultQuantity()+"");
+        holder.binding.productQty.setText(model.getSelectableQuantity()+"");
         holder.binding.productPrice.setText("₹"+model.getPrice());
+//
         holder.binding.productQtyUp.setOnClickListener(up->{
-            int quantity = model.getDefaultQuantity();
+            int quantity = model.getSelectableQuantity();
             quantity++;
-            if(quantity>model.getQuantity()) {
-                Toast.makeText(context, "Max stock available: "+ model.getQuantity(), Toast.LENGTH_SHORT).show();
+            if(quantity>model.getStockCount()) {
+                Toast.makeText(context, "Max stock available: "+ model.getStockCount(), Toast.LENGTH_SHORT).show();
             } else {
-                model.setDefaultQuantity(quantity);
+                model.setSelectableQuantity(quantity);
                 shoppingCartsInterface.UpdateQuantity(model, model.getProductId());
                 holder.binding.productPrice.setText("₹"+model.getPrice());
             }
         });
         holder.binding.productQtyDown.setOnClickListener(Down->{
-            int quantity = model.getDefaultQuantity();
+            int quantity = model.getSelectableQuantity();
             if(quantity > 1) {
                 quantity--;
-                model.setDefaultQuantity(quantity);
+                model.setSelectableQuantity(quantity);
                 shoppingCartsInterface.UpdateQuantity(model, model.getProductId());
                 holder.binding.productPrice.setText("₹"+model.getPrice());
             }else {

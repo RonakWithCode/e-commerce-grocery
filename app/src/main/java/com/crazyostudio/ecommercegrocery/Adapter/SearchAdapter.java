@@ -55,7 +55,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         // Bind data to ViewHolder
         ProductModel data = dataList.get(position);
-        Glide.with(context).load(data.getImageURL().get(0)).placeholder(R.drawable.placeholder).into(holder.binding.productImage);
+        Glide.with(context).load(data.getProductImage().get(0)).placeholder(R.drawable.placeholder).into(holder.binding.productImage);
         holder.binding.productName.setText(data.getProductName());
         holder.binding.productPrice.setText("₹"+data.getPrice());
         holder.binding.getRoot().setOnClickListener(v -> searchAdapterInterface.onclick(data));

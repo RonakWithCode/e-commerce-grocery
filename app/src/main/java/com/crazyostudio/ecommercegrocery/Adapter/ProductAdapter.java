@@ -79,7 +79,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
 
 
         Glide.with(context)
-                .load(product.getImageURL().get(0))
+                .load(product.getProductImage().get(0))
                 .placeholder(R.drawable.product_image_shimmee_effect) // Placeholder image while loading
                 .error(R.drawable.product_image_shimmee_effect) // Error image if loading fails
                 .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL) // Resize the image
@@ -94,6 +94,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
 
     public static class ProductAdapterViewHolder extends RecyclerView.ViewHolder {
 //        recommendations_view
+
         RecommendationsViewBinding binding;
         public ProductAdapterViewHolder(@NonNull View itemView) {
             super(itemView);

@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
         //        // Change Status Bar color
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(this, R.color.green_primary_variant));
+        window.setStatusBarColor(ContextCompat.getColor(this, R.color.OrderYellowColor));
 
     }
 
