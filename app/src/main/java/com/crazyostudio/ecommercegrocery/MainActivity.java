@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
@@ -22,6 +23,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.crazyostudio.ecommercegrocery.Activity.OrderDetailsActivity;
 import com.crazyostudio.ecommercegrocery.DAO.CartDAOHelper;
+import com.crazyostudio.ecommercegrocery.DAO.ShoppingCartFirebaseModelDAO;
 import com.crazyostudio.ecommercegrocery.Fragment.HomeFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.MapFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.MoreFragment;
@@ -32,6 +34,8 @@ import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
 import com.crazyostudio.ecommercegrocery.databinding.ActivityMainBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
@@ -95,7 +99,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void  CartManger(String id)  {
-        new DatabaseService().updateRoomDatabase(this,id);
+        CartDAOHelper databaseHelper = CartDAOHelper.getDB(this);
+        List<ShoppingCartFirebaseModelDAO> data =  databaseHelper.ModelDAO().getAllModel();
+
+        for (int i = 0; i < data.size(); i++) {
+            Log.i("MAIN", "CartManger: "+ data.get(i).getProductId() + "QTY" + data.get(i).getProductSelectQuantity());
+
+
+        }
+
+//        new DatabaseService().updateRoomDatabase(this,id);
     }
 
 

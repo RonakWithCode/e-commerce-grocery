@@ -18,6 +18,7 @@ import com.crazyostudio.ecommercegrocery.Activity.AuthMangerActivity;
 import com.crazyostudio.ecommercegrocery.Activity.OderActivity;
 import com.crazyostudio.ecommercegrocery.Adapter.ShoppingCartsAdapter;
 import com.crazyostudio.ecommercegrocery.HelperClass.ShoppingCartHelper;
+import com.crazyostudio.ecommercegrocery.Manager.ProductManager;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
 import com.crazyostudio.ecommercegrocery.Model.ShoppingCartsProductModel;
 import com.crazyostudio.ecommercegrocery.Services.AuthService;
@@ -64,8 +65,6 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
             }
         });
         binding.linearLayoutPlaceHolder.startShimmer();
-
-
 
         if (authService.IsLogin()) {
             binding.relativeNotAuth.setVisibility(View.VISIBLE);
@@ -136,6 +135,7 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
     @Override
     public void UpdateQuantity(ShoppingCartsProductModel UpdateModel, String id) {
         binding.progressCircular.setVisibility(View.VISIBLE);
-        service.UpdateCartQuantityById(uid,id,UpdateModel.getSelectableQuantity());
+        new ProductManager(requireActivity()).UpdateCartQuantityById(uid,id, UpdateModel.getSelectableQuantity());
+//        service.UpdateCartQuantityById(uid,id,UpdateModel.getSelectableQuantity());
     }
 }

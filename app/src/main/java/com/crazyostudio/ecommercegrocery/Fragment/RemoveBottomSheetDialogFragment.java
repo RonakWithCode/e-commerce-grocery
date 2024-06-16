@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.crazyostudio.ecommercegrocery.Adapter.ShoppingCartsAdapter;
+import com.crazyostudio.ecommercegrocery.Manager.ProductManager;
 import com.crazyostudio.ecommercegrocery.Model.ShoppingCartsProductModel;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
@@ -27,13 +28,13 @@ public class RemoveBottomSheetDialogFragment  extends BottomSheetDialogFragment 
     String uid;
     String id;
     ShoppingCartsProductModel model;
-
-
+    ProductManager productManager;
     public RemoveBottomSheetDialogFragment(String uid, String id, ShoppingCartsAdapter cartsAdapter,ShoppingCartsProductModel model) {
         this.uid = uid;
         this.id = id;
         this.cartsAdapter = cartsAdapter;
         this.model = model;
+
     }
 
 //    @NonNull
@@ -74,6 +75,8 @@ public class RemoveBottomSheetDialogFragment  extends BottomSheetDialogFragment 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = RemoveProductBoxBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
+        productManager =  new ProductManager(requireActivity());
+
 //        view.s
 //        view.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT)); // Set background transparent
 
@@ -88,7 +91,8 @@ public class RemoveBottomSheetDialogFragment  extends BottomSheetDialogFragment 
 
         binding.btnRemove.setOnClickListener(v->{
             binding.progressCircular.setVisibility(View.VISIBLE);
-            new DatabaseService().removeCartItemById(uid,id);
+            productManager.RemoveCartProductById(uid,id);
+//            new DatabaseService().removeCartItemById(uid,id);
             cartsAdapter.notifyDataSetChanged();
             binding.progressCircular.setVisibility(View.GONE);
             dismiss();
@@ -117,8 +121,6 @@ public class RemoveBottomSheetDialogFragment  extends BottomSheetDialogFragment 
                 model.setSelectableQuantity(quantity);
                 UpdateQuantity(model, model.getProductId());
                 binding.productPrice.setText("₹"+model.getPrice());
-            }else {
-//                shoppingCartsInterface.remove(position,model.getProductId(),model);
             }
         });
 
@@ -142,7 +144,7 @@ public class RemoveBottomSheetDialogFragment  extends BottomSheetDialogFragment 
 
     public void UpdateQuantity(ShoppingCartsProductModel UpdateModel, String id) {
         binding.progressCircular.setVisibility(View.VISIBLE);
-        new DatabaseService().UpdateCartQuantityById(uid,id,UpdateModel.getSelectableQuantity());
+        productManager.UpdateCartQuantityById(uid,id,UpdateModel.getSelectableQuantity());
         binding.productQty.setText(""+UpdateModel.getSelectableQuantity());
         binding.progressCircular.setVisibility(View.GONE);
 

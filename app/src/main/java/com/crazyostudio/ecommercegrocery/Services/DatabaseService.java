@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.crazyostudio.ecommercegrocery.DAO.CartDAOHelper;
 import com.crazyostudio.ecommercegrocery.DAO.ShoppingCartFirebaseModelDAO;
+import com.crazyostudio.ecommercegrocery.Manager.ProductManager;
 import com.crazyostudio.ecommercegrocery.Model.AddressModel;
 import com.crazyostudio.ecommercegrocery.Model.OffersModel;
 import com.crazyostudio.ecommercegrocery.Model.OrderModel;
@@ -136,7 +137,7 @@ public class DatabaseService {
     public void getAllProductsByCategoryOnly(String category, GetAllProductsCallback callback) {
         database.collection("Product")
                 .whereEqualTo("category", category) // Filter by category
-                .limit(10)
+//                .limit(10)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -469,16 +470,18 @@ public class DatabaseService {
 
     }
 
+//    This use for remove all cart product's
     public void removeCartItems(String uid) {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseDatabase.getReference().child("Cart").child(Objects.requireNonNull(uid)).removeValue();
 
     }
 
-
     public void UpdateCartQuantityById(String uid,String itemId,int Quantity){
+//        new ProductManager()
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseDatabase.getReference().child("Cart").child(uid).child(itemId).child("productSelectQuantity").setValue(Quantity);
+
     }
 
 
@@ -765,8 +768,6 @@ public class DatabaseService {
     }
 
 
-
-
     public void updateRoomDatabase(Context context,String id) {
         CartDAOHelper databaseHelper = CartDAOHelper.getDB(context);
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -817,4 +818,17 @@ public class DatabaseService {
             callback.Found(daoList);
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

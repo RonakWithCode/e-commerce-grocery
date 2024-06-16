@@ -2,7 +2,6 @@ package com.crazyostudio.ecommercegrocery.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,51 +12,32 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.crazyostudio.ecommercegrocery.Activity.AuthMangerActivity;
+import com.crazyostudio.ecommercegrocery.DAO.CartDAOHelper;
 import com.crazyostudio.ecommercegrocery.DAO.ShoppingCartFirebaseModelDAO;
-import com.crazyostudio.ecommercegrocery.Model.HomeProductModel;
+import com.crazyostudio.ecommercegrocery.Manager.ProductManager;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
-import com.crazyostudio.ecommercegrocery.Model.ShoppingCartFirebaseModel;
-import com.crazyostudio.ecommercegrocery.Model.ShoppingCartsProductModel;
 import com.crazyostudio.ecommercegrocery.R;
+import com.crazyostudio.ecommercegrocery.Services.AuthService;
 import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
 import com.crazyostudio.ecommercegrocery.databinding.ProductViewSerachBinding;
-import com.crazyostudio.ecommercegrocery.interfaceClass.onClickProductAdapter;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class SearchViewRecommendationAdapter extends RecyclerView.Adapter<SearchViewRecommendationAdapter.SearchViewRecommendationAdapterViewHolder> {
-    ArrayList<ProductModel> productModels;
-    Context context;
+    private ArrayList<ProductModel> dataList;
+     Context context;
+//    SearchAdapterInterface searchAdapterInterface;
+    List<ShoppingCartFirebaseModelDAO> daoList;
+    ProductManager productManager;
 
-    com.crazyostudio.ecommercegrocery.interfaceClass.onClickProductAdapter onClickProductAdapter;
-    List<ShoppingCartFirebaseModelDAO> daoList = new ArrayList<>();
-
-
-    public SearchViewRecommendationAdapter(ArrayList<ProductModel> productModels, Context context, com.crazyostudio.ecommercegrocery.interfaceClass.onClickProductAdapter onClickProductAdapter) {
-        this.productModels = productModels;
+    public SearchViewRecommendationAdapter(ArrayList<ProductModel> modelArrayList ,Context context) {
+        this.dataList = modelArrayList;
         this.context = context;
-        this.onClickProductAdapter = onClickProductAdapter;
-        new DatabaseService().getCartRoomDatabase(context, new DatabaseService.addCartRoomDatabase() {
-            @Override
-            public void Found(List<ShoppingCartFirebaseModelDAO> list) {
-                daoList.clear();
-                daoList.addAll(list);
-            }
-
-            @Override
-            public void notFound() {
-
-            }
-        });
+//        this.searchAdapterInterface = searchAdapterInterface;
+        productManager = new ProductManager(context);
+        daoList = productManager.getAllRoomCartData();
 
     }
 
@@ -69,15 +49,14 @@ public class SearchViewRecommendationAdapter extends RecyclerView.Adapter<Search
     }
 
 
-
-
-    interface checkInCartCallback{
+    public interface checkInCartCall{
         void notFound();
         void found(int selectQTY);
     }
 
 
-    void checkInCart(String checkId ,checkInCartCallback callback){
+
+    void checkInCart(String checkId , checkInCartCall callback){
         for (int i = 0; i < daoList.size(); i++) {
             ShoppingCartFirebaseModelDAO id = daoList.get(i);
             if (id.getProductId().equals(checkId)) {
@@ -92,7 +71,7 @@ public class SearchViewRecommendationAdapter extends RecyclerView.Adapter<Search
 
     @Override
     public void onBindViewHolder(@NonNull SearchViewRecommendationAdapter.SearchViewRecommendationAdapterViewHolder holder, int position) {
-        ProductModel model = productModels.get(position);
+        ProductModel model = dataList.get(position);
 
         Glide.with(context).load(model.getProductImage()
                 .get(0))
@@ -105,47 +84,39 @@ public class SearchViewRecommendationAdapter extends RecyclerView.Adapter<Search
 //            holder.binding.quantityController.setVisibility(View.VISIBLE);
 //        }
 
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            checkInCart(model.getProductId(), new checkInCartCall() {
+                @Override
+                public void notFound() {
+    //
+                }
 
-        checkInCart(model.getProductId(), new checkInCartCallback() {
-            @Override
-            public void notFound() {
-//
-            }
+                @Override
+                public void found(int selectQTY) {
+                    holder.binding.addToCartButton.setVisibility(View.GONE);
+                    holder.binding.productQtyLayout.setVisibility(View.VISIBLE);
+                    holder.binding.productQty.setText(String.valueOf(selectQTY));
+                }
+            });
+        }
 
-            @Override
-            public void found(int selectQTY) {
-                holder.binding.addToCartButton.setVisibility(View.GONE);
-                holder.binding.quantityController.setVisibility(View.VISIBLE);
-                holder.binding.currentQuantity.setText(String.valueOf(selectQTY));
-            }
-        });
-        holder.binding.increaseQuantityButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-            }
-        });
-        holder.binding.decreaseQuantityButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-            }
-        });
         holder.binding.addToCartButton.setOnClickListener(v -> {
             if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-//                    ShoppingCartFirebaseModel shoppingCartFirebaseModel = new ShoppingCartFirebaseModel(productModel.getProductId(), productModel.getDefaultQuantity());
                 new DatabaseService().checkCartByIdAndAdd(model.getProductId(), model.getMinSelectableQuantity(), new DatabaseService.AddCartByIdAndADD() {
                     @Override
                     public void added() {
                         holder.binding.addToCartButton.setVisibility(View.GONE);
-                        holder.binding.quantityController.setVisibility(View.VISIBLE);
+                        holder.binding.productQtyLayout.setVisibility(View.VISIBLE);
+                        holder.binding.productQty.setText(model.getSelectableQuantity()+"");
                     }
 
                     @Override
                     public void ExistsInCart(int DefaultQuantity) {
                         holder.binding.addToCartButton.setVisibility(View.GONE);
-                        holder.binding.quantityController.setVisibility(View.VISIBLE);
-                        holder.binding.currentQuantity.setText(DefaultQuantity+"");
+                        holder.binding.productQtyLayout.setVisibility(View.VISIBLE);
+                        holder.binding.productQty.setText(DefaultQuantity+"");
 
                     }
 
@@ -156,18 +127,58 @@ public class SearchViewRecommendationAdapter extends RecyclerView.Adapter<Search
 
                 });
             } else {
-                // User not authenticated, navigate to authentication screen
-//                    startActivity(new Intent(getContext(), AuthMangerActivity.class));
+                context.startActivity(new Intent(context, AuthMangerActivity.class));
             }
+        });
 
+        holder.binding.productQtyUp.setOnClickListener(up -> {
+            int quantity = model.getSelectableQuantity();
+            int maxSelected = model.getMaxSelectableQuantity();
+            quantity++;
+            if (quantity > model.getStockCount() || quantity > maxSelected) {
+                holder.binding.productQty.setText(String.valueOf(model.getSelectableQuantity()));
+                String message = quantity > model.getStockCount() ? "Max stock available: " + model.getStockCount() : "Hey Alwar Mart set the limit of " + maxSelected;
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+            } else {
+                model.setSelectableQuantity(quantity);
+//                searchAdapterInterface.UpdateQTY(data);
+                UpdateQTY(model);
+                holder.binding.productQty.setText(String.valueOf(model.getSelectableQuantity()));
+            }
+        });
+
+        holder.binding.productQtyDown.setOnClickListener(Down -> {
+            int quantity = model.getSelectableQuantity();
+            int minSelected = model.getMinSelectableQuantity();
+            if (quantity > minSelected) {
+                quantity--;
+                model.setSelectableQuantity(quantity);
+                UpdateQTY(model);
+//                searchAdapterInterface.UpdateQTY(model);
+
+                holder.binding.productQty.setText(String.valueOf(model.getSelectableQuantity()));
+            } else if (quantity == minSelected) {
+                productManager.RemoveCartProductById(new AuthService().getUserId(), model.getProductId());
+//                searchAdapterInterface.Remove(model);
+            } else {
+                Toast.makeText(context, "Alwar Mart set this limit min select " + minSelected, Toast.LENGTH_SHORT).show();
+            }
         });
 
     }
 
     @Override
     public int getItemCount() {
-        return productModels.size();
+        return dataList.size();
     }
+
+
+    private void UpdateQTY(ProductModel newModel){
+        productManager.UpdateCartQuantityById(new AuthService().getUserId(),newModel.getProductId(),newModel.getSelectableQuantity());
+
+//        return false;
+    }
+
 
     public static class SearchViewRecommendationAdapterViewHolder extends RecyclerView.ViewHolder {
         ProductViewSerachBinding binding;

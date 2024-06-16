@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:minWidth="@dimen/_90sdp"
+    android:padding="@dimen/_8sdp"
+    android:layout_alignParentStart="true"
+    android:layout_marginStart="@dimen/_5sdp"
+    android:layout_marginTop="@dimen/_5ssp"
+    android:background="@drawable/border_background"
+    android:gravity="center_vertical"
+    android:baselineAligned="false">
+
+
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/variation_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="3 * 80 g"
+            android:textAlignment="center"
+            android:textSize="@dimen/_16ssp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/variation_weight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="@color/FixBlack"
+            android:textStyle="bold"
+            android:text="₹45 ₹60"
+            android:textSize="@dimen/_14ssp" />
+    </LinearLayout>
+</LinearLayout>

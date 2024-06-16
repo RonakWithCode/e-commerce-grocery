@@ -1,0 +1,46 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="@dimen/_8sdp">
+
+    <ImageView
+        android:id="@+id/icon_customer_support"
+        android:layout_width="@dimen/_80sdp"
+        android:scaleType="fitXY"
+        android:layout_gravity="center_vertical"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_customer_support" />
+
+    <LinearLayout
+        android:layout_marginStart="@dimen/_7sdp"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/title_customer_support"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/customer_support"
+            android:textSize="@dimen/_18ssp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/description_customer_support"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/our_customer_support"
+            android:textSize="@dimen/_14ssp" />
+
+        <TextView
+            android:id="@+id/email_customer_support"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/customer_support_email"
+            android:textSize="@dimen/_14ssp"
+            android:textColor="@color/Link"
+            android:textStyle="bold" />
+    </LinearLayout>
+</LinearLayout>

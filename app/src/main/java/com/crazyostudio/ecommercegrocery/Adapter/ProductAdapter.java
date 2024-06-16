@@ -77,6 +77,14 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
 //                .into(holder.binding.productImage);
 
 
+//
+//        holder.binding.AddTOCart.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
+
 
         Glide.with(context)
                 .load(product.getProductImage().get(0))

@@ -1,6 +1,5 @@
 package com.crazyostudio.ecommercegrocery.Adapter;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,17 +9,15 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.crazyostudio.ecommercegrocery.DAO.ShoppingCartFirebaseModelDAO;
 import com.crazyostudio.ecommercegrocery.Model.HomeProductModel;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
+import com.crazyostudio.ecommercegrocery.Model.ShoppingCartFirebaseModel;
 import com.crazyostudio.ecommercegrocery.R;
-import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
 import com.crazyostudio.ecommercegrocery.databinding.HomeProductViewBinding;
+import com.crazyostudio.ecommercegrocery.databinding.SearchProductViewBinding;
 import com.crazyostudio.ecommercegrocery.interfaceClass.HomeProductInterface;
-import com.crazyostudio.ecommercegrocery.interfaceClass.onClickProductAdapter;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ViewAdapterSearchViewRecommendation extends RecyclerView.Adapter<ViewAdapterSearchViewRecommendation.ViewAdapterSearchViewRecommendationViewHolder> {
     ArrayList<HomeProductModel> homeProductModels;
@@ -36,7 +33,7 @@ public class ViewAdapterSearchViewRecommendation extends RecyclerView.Adapter<Vi
     @NonNull
     @Override
     public ViewAdapterSearchViewRecommendation.ViewAdapterSearchViewRecommendationViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewAdapterSearchViewRecommendation.ViewAdapterSearchViewRecommendationViewHolder(LayoutInflater.from(context).inflate(R.layout.home_product_view, parent, false));
+        return new ViewAdapterSearchViewRecommendation.ViewAdapterSearchViewRecommendationViewHolder(LayoutInflater.from(context).inflate(R.layout.search_product_view, parent, false));
 
     }
 
@@ -57,11 +54,7 @@ public class ViewAdapterSearchViewRecommendation extends RecyclerView.Adapter<Vi
             } else {
                 subList = productList; // Get the whole list if it's less than or equal to 4
             }
-
-            holder.binding.recycler.setAdapter(new SearchViewRecommendationAdapter(subList, context, (productModel, sameProducts) -> {
-                // Your callback implementation here
-
-            }));
+            holder.binding.recycler.setAdapter(new SearchViewRecommendationAdapter(subList, context));
         }
 
     }
@@ -72,16 +65,16 @@ public class ViewAdapterSearchViewRecommendation extends RecyclerView.Adapter<Vi
     }
 
     public static class ViewAdapterSearchViewRecommendationViewHolder extends RecyclerView.ViewHolder {
-        HomeProductViewBinding binding;
+        SearchProductViewBinding binding;
         public ViewAdapterSearchViewRecommendationViewHolder(@NonNull View itemView) {
             super(itemView);
-            binding = HomeProductViewBinding.bind(itemView);
+            binding = SearchProductViewBinding.bind(itemView);
             // Set the width of the root view to wrap_content programmatically
-            ViewGroup.LayoutParams layoutParams = itemView.getLayoutParams();
-            if (layoutParams != null) {
-//                layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT;
-//                itemView.setLayoutParams(layoutParams);
-            }
+//            ViewGroup.LayoutParams layoutParams = itemView.getLayoutParams();
+//            if (layoutParams != null) {
+////                layoutParams.width = ViewGroup.LayoutParams.WRAP_CONTENT;
+////                itemView.setLayoutParams(layoutParams);
+//            }
         }
     }
 }

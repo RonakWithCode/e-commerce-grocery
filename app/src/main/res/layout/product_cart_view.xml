@@ -3,9 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginTop="@dimen/_6sdp">
-    <com.github.chrisbanes.photoview.PhotoView
+    <ImageView
         android:scaleType="fitXY"
         android:layout_marginStart="@dimen/_5sdp"
         android:layout_alignParentTop="true"
@@ -14,9 +13,7 @@
         android:layout_width="@dimen/_80sdp"
         android:background="@drawable/rounded_corners"
         android:layout_height="@dimen/_80sdp"
-        android:paddingEnd="@dimen/_5sdp"
-        android:src="@drawable/banner2"
-        tools:ignore="RtlSymmetry"/>
+        android:src="@drawable/placeholder" />
 
     <TextView
         android:id="@+id/product_name"

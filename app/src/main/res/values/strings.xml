@@ -218,5 +218,25 @@
     <string name="itc">ITC</string>
     <string name="go_to_current_location">Go to current location</string>
     <string name="welcome_to">Welcome to</string>
+    <string name="explore_all_products">Explore all products</string>
+    <string name="inclusive_of_all_taxes">(Inclusive of all taxes)</string>
+    <string name="similar_products">Similar products</string>
+    <string name="secure_delivery">Secure Delivery</string>
+    <string name="fast_delivery">Fast Delivery</string>
+    <string name="get_your_products_delivered_swiftly_and_on_time_every_time">Get your products delivered swiftly and on time, every time.</string>
+    <string name="genuine_products">Genuine Products</string>
+    <string name="our_products_are_100_authentic_sourced_from_trusted_brands_and_suppliers">Our products are 100% authentic, sourced from trusted brands and suppliers.</string>
+    <string name="customer_reviews">Customer Reviews</string>
+    <string name="see_what_our_customers_have_to_say_about_our_products_and_services">See what our customers have to say about our products and services.</string>
+    <string name="related_products">Related Products</string>
+    <string name="explore_other_products_that_might_interest_you">Explore other products that might interest you.</string>
+    <string name="detailed_information_about_the_product_including_specifications_and_features">Detailed information about the product, including specifications and features.</string>
+    <string name="product_details_">Product Details</string>
+    <string name="brands_in_this_category">Brands in this category</string>
+    <string name="our_customer_support">Our customer support is available 24/7 to assist you with any queries or issues.</string>
+    <string name="customer_support">Customer Support</string>
+    <string name="customer_support_email">Email: help@alwarmart.com</string>
+    <string name="product_policy">Product policy</string>
+    <string name="add_item_search_result_hint">ADD</string>
 
 </resources>

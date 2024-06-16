@@ -1,0 +1,36 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="@dimen/_8sdp">
+    <ImageView
+        android:id="@+id/icon_product_details"
+        android:layout_width="@dimen/_50sdp"
+        android:scaleType="fitXY"
+        android:layout_gravity="center_vertical"
+        android:layout_height="@dimen/_50sdp"
+        android:src="@drawable/placeholder" />
+    <LinearLayout
+        android:layout_marginStart="@dimen/_2sdp"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/title_product_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/product_details_"
+            android:textSize="@dimen/_18ssp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/description_product_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/detailed_information_about_the_product_including_specifications_and_features"
+            android:textSize="@dimen/_14ssp" />
+    </LinearLayout>
+
+</LinearLayout>

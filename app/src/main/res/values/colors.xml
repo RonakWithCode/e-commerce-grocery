@@ -102,5 +102,6 @@
     <color name="OrderblackTextColor">#000000</color>
     <color name="light_gray">#e5f3f3</color>
     <color name="dark_gray">#777684</color>
+    <color name="item_search_result_hint">#727780</color>
 
 </resources>

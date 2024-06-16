@@ -75,8 +75,6 @@ public class ShoppingCartsAdapter extends RecyclerView.Adapter<ShoppingCartsAdap
             }
         });
 
-
-
     }
 
     @Override

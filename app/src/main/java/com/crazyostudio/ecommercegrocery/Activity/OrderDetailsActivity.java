@@ -150,7 +150,7 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
         ProductModel productModel = new ProductModel(model.isAvailable(),model.getProductId(),model.getProductName(),model.getProductDescription(),model.getBrand(),model.getCategory(),model.getSubCategory(),model.getPrice(),model.getMrp(),model.getDiscount(),model.getStockCount(),model.getMinSelectableQuantity(),model.getMaxSelectableQuantity(),model.getWeight(),model.getWeightSIUnit(),model.getProductLife(),model.getProductType(),model.getProductIsFoodItem(),model.getKeywords(),model.getProductImage(),model.getVariations(),null);
 //    public ProductModel(boolean isAvailable, String productId, String productName, String productDescription, String brand, String category, String subCategory, double price, double mrp, double discount, int stockCount, int minSelectableQuantity, int maxSelectableQuantity, String weight, String weightSIUnit, String productLife, String productType, String productIsFoodItem, ArrayList<String> keywords, ArrayList<String> productImage, @Nullable ArrayList<Variations> variations, @Nullable SponsorTypeModel sponsorTypeModel) {
 
-        showProductViewDialog(productModel);
+//        showProductViewDialog(productModel);
         
 
 
@@ -159,296 +159,296 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
 
 
 
-    @SuppressLint("SetTextI18n")
-    private void showProductViewDialog(ProductModel productModel) {
-//        ProductModel model = new ProductModel();
-        Dialog bottomSheetDialog = new Dialog(this);
-        ProductViewDialogBinding productViewDialogBinding = ProductViewDialogBinding.inflate(getLayoutInflater());
-        if (FirebaseAuth.getInstance().getCurrentUser() !=null) {
-            String userId = FirebaseAuth.getInstance().getUid();
-            assert userId != null;
-            DatabaseReference productsRef = FirebaseDatabase.getInstance().getReference().child("Cart").child(userId);
-            String productNameToFind = productModel.getProductId();
-            Query query = productsRef.orderByKey().equalTo(productNameToFind);
-            query.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        productViewDialogBinding.AddTOCart.setText("Go to Cart");
-                        productViewDialogBinding.quantityBox.setVisibility(View.GONE);
-//                        addTOCart.setText("Go to Cart");
-                        productViewDialogBinding.AddTOCart.setBackgroundColor(ContextCompat.getColor(OrderDetailsActivity.this, R.color.white));
-                        productViewDialogBinding.AddTOCart.setTextColor(ContextCompat.getColor(OrderDetailsActivity.this, R.color.FixBlack));
-
-                    }
-                }
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    // Handle the error in case of a database error.
-                    Toast.makeText(OrderDetailsActivity.this, "Database error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-
-
-        productViewDialogBinding.ProductName.setText(productModel.getProductName());
-        productViewDialogBinding.closeButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
-        for (String imageUrl : productModel.getProductImage()) {
-            CarouselItem carouselItem = new CarouselItem(imageUrl);
-            productViewDialogBinding.productsImages.addData(carouselItem);
-        }
-
-        if (!Objects.equals(productModel.getProductDescription(), "")) {
-            productViewDialogBinding.productDescription.setVisibility(View.VISIBLE);
-            productViewDialogBinding.Description.setVisibility(View.VISIBLE);
-            productViewDialogBinding.productDescription.setText(productModel.getProductDescription());
-        }
-
-        double mrp = productModel.getMrp();
-        double sellingPrice = productModel.getPrice();
-        double discountPercentage = mrp - sellingPrice;
-
-        productViewDialogBinding.discount.setText("₹" + discountPercentage + "% off");
-        productViewDialogBinding.Price.setText("₹" + productModel.getPrice());
-        productViewDialogBinding.quantitySmail.setText("(₹" + productModel.getPrice() + " / " + productModel.getWeight() + productModel.getWeightSIUnit() + ")");
-        productViewDialogBinding.MRP.setText(":" + productModel.getMrp());
-        productViewDialogBinding.MRP.setPaintFlags(productViewDialogBinding.MRP.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-
-        if (productModel.getStockCount() == 0) {
-            productViewDialogBinding.OutOfStockBuyOptions.setVisibility(View.VISIBLE);
-            productViewDialogBinding.quantity.setText("0");
-            productViewDialogBinding.TextInStock.setText("Out of Stock");
-            productViewDialogBinding.quantityBox.setVisibility(View.INVISIBLE);
-            productViewDialogBinding.TextInStock.setTextColor(ContextCompat.getColor(this, R.color.FixRed));
-            productViewDialogBinding.AddTOCart.setVisibility(View.INVISIBLE);
-        }
-
-        productViewDialogBinding.categoryType.setText(productModel.getCategory());
-        productViewDialogBinding.netQuantity.setText(productModel.getWeight() + productModel.getWeightSIUnit());
-
-        String diet;
-        if (productModel.getProductType().equals("FoodVeg")) {
-            diet = "Veg";
-        } else if (productModel.getProductType().equals("FoodNonVeg")) {
-            diet = "NonVeg";
-        } else {
-            diet = "not food item.";
-            productViewDialogBinding.dietType.setVisibility(View.GONE);
-            productViewDialogBinding.diet.setVisibility(View.GONE);
-        }
-        productViewDialogBinding.dietType.setText(diet);
-        productViewDialogBinding.ExpiryDate.setText(productModel.getProductLife());
-
-        productViewDialogBinding.AddTOCart.setOnClickListener(v -> {
-//            addToCart(productModel,productViewDialogBinding.AddTOCart,bottomSheetDialog,productViewDialogBinding.quantityBox);
-
-        });
-
-         new DatabaseService().getAllProductsByCategoryOnly(productModel.getCategory(), new DatabaseService.GetAllProductsCallback() {
-            @Override
-            public void onSuccess(ArrayList<ProductModel> sameProducts) {
-                sameProducts.remove(productModel);
-                if (sameProducts.isEmpty()){
-                    productViewDialogBinding.product.setVisibility(View.GONE);
-                    productViewDialogBinding.itemCategory.setVisibility(View.GONE);
-                }else {
-                    LinearLayoutManager LayoutManager = new LinearLayoutManager(OrderDetailsActivity.this, LinearLayoutManager.HORIZONTAL, false);
-                    productViewDialogBinding.itemCategory.setLayoutManager(LayoutManager);
-                    productViewDialogBinding.itemCategory.setAdapter(new ProductAdapter(sameProducts, new onClickProductAdapter() {
-                        @Override
-                        public void onClick(ProductModel productModel, ArrayList<ProductModel> sameProducts) {
-                            showProductViewDialogs(productModel,sameProducts);
-                        }
-                    }, OrderDetailsActivity.this, "Main"));
-                }
-
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-
-            }
-        });
-
-
-
-
-
-
-
-        productViewDialogBinding.plusBtn.setOnClickListener(view -> {
-            int quantity = productModel.getSelectableQuantity();
-            quantity++;
-            if (quantity > productModel.getStockCount()) {
-                Toast.makeText(this, "Max stock available: " + productModel.getStockCount(), Toast.LENGTH_SHORT).show();
-            }
-            else {
-                productModel.setSelectableQuantity(quantity);
-                productViewDialogBinding.quantity.setText(String.valueOf(productModel.getSelectableQuantity()));
-            }
-
-        });
-        productViewDialogBinding.minusBtn.setOnClickListener(view -> {
-            int quantity = productModel.getSelectableQuantity();
-            if (quantity > 1)
-                quantity--;
-//            selectQTY = quantity;
-            productModel.setSelectableQuantity(quantity);
-            productViewDialogBinding.quantity.setText(String.valueOf(productModel.getSelectableQuantity()));
-
-        });
-
-
-
-
-        bottomSheetDialog.setContentView(productViewDialogBinding.getRoot());
-        bottomSheetDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        bottomSheetDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        bottomSheetDialog.getWindow().getAttributes().windowAnimations = R.style.bottom_sheet_dialogAnimation;
-        bottomSheetDialog.getWindow().setGravity(Gravity.BOTTOM);
-
-        bottomSheetDialog.show();
-    }
-
-
-
-
-
-
-
-    @SuppressLint("SetTextI18n")
-    private void showProductViewDialogs(ProductModel productModel,ArrayList<ProductModel> sameProducts) {
-//        ProductModel model = new ProductModel();
-        Dialog bottomSheetDialog = new Dialog(this);
-        ProductViewDialogBinding productViewDialogBinding = ProductViewDialogBinding.inflate(getLayoutInflater());
-        if (FirebaseAuth.getInstance().getCurrentUser() !=null) {
-            String userId = FirebaseAuth.getInstance().getUid();
-            assert userId != null;
-            DatabaseReference productsRef = FirebaseDatabase.getInstance().getReference().child("Cart").child(userId);
-            String productNameToFind = productModel.getProductId();
-            Query query = productsRef.orderByKey().equalTo(productNameToFind);
-            query.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        productViewDialogBinding.AddTOCart.setText("Go to Cart");
-                        productViewDialogBinding.quantityBox.setVisibility(View.GONE);
-//                        addTOCart.setText("Go to Cart");
-                        productViewDialogBinding.AddTOCart.setBackgroundColor(ContextCompat.getColor(OrderDetailsActivity.this, R.color.white));
-                        productViewDialogBinding.AddTOCart.setTextColor(ContextCompat.getColor(OrderDetailsActivity.this, R.color.FixBlack));
-
-                    }
-                }
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    // Handle the error in case of a database error.
-                    Toast.makeText(OrderDetailsActivity.this, "Database error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-
-
-        productViewDialogBinding.ProductName.setText(productModel.getProductName());
-        productViewDialogBinding.closeButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
-        for (String imageUrl : productModel.getProductImage()) {
-            CarouselItem carouselItem = new CarouselItem(imageUrl);
-            productViewDialogBinding.productsImages.addData(carouselItem);
-        }
-
-        if (!Objects.equals(productModel.getProductDescription(), "")) {
-            productViewDialogBinding.productDescription.setVisibility(View.VISIBLE);
-            productViewDialogBinding.Description.setVisibility(View.VISIBLE);
-            productViewDialogBinding.productDescription.setText(productModel.getProductDescription());
-        }
-
-        double mrp = productModel.getMrp();
-        double sellingPrice = productModel.getPrice();
-        double discountPercentage = mrp - sellingPrice;
-
-        productViewDialogBinding.discount.setText("₹" + discountPercentage + "% off");
-        productViewDialogBinding.Price.setText("₹" + productModel.getPrice());
-        productViewDialogBinding.quantitySmail.setText("(₹" + productModel.getPrice() + " / " + productModel.getWeight() + productModel.getWeightSIUnit() + ")");
-        productViewDialogBinding.MRP.setText(":" + productModel.getMrp());
-        productViewDialogBinding.MRP.setPaintFlags(productViewDialogBinding.MRP.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-
-        if (productModel.getStockCount() == 0) {
-            productViewDialogBinding.OutOfStockBuyOptions.setVisibility(View.VISIBLE);
-            productViewDialogBinding.quantity.setText("0");
-            productViewDialogBinding.TextInStock.setText("Out of Stock");
-            productViewDialogBinding.quantityBox.setVisibility(View.INVISIBLE);
-            productViewDialogBinding.TextInStock.setTextColor(ContextCompat.getColor(this, R.color.FixRed));
-            productViewDialogBinding.AddTOCart.setVisibility(View.INVISIBLE);
-        }
-
-        productViewDialogBinding.categoryType.setText(productModel.getCategory());
-        productViewDialogBinding.netQuantity.setText(productModel.getWeight() + productModel.getWeightSIUnit());
-
-        String diet;
-        if (productModel.getProductType().equals("FoodVeg")) {
-            diet = "Veg";
-        } else if (productModel.getProductType().equals("FoodNonVeg")) {
-            diet = "NonVeg";
-        } else {
-            diet = "not food item.";
-            productViewDialogBinding.dietType.setVisibility(View.GONE);
-            productViewDialogBinding.diet.setVisibility(View.GONE);
-        }
-        productViewDialogBinding.dietType.setText(diet);
-        productViewDialogBinding.ExpiryDate.setText(productModel.getProductLife());
-
-        productViewDialogBinding.AddTOCart.setOnClickListener(v -> {
-//            addToCart(productModel,productViewDialogBinding.AddTOCart,bottomSheetDialog,productViewDialogBinding.quantityBox);
-        });
-        sameProducts.remove(productModel);
-        if (sameProducts.isEmpty()){
-            productViewDialogBinding.product.setVisibility(View.GONE);
-            productViewDialogBinding.itemCategory.setVisibility(View.GONE);
-        }else {
-            LinearLayoutManager LayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-            productViewDialogBinding.itemCategory.setLayoutManager(LayoutManager);
-            productViewDialogBinding.itemCategory.setAdapter(new ProductAdapter(sameProducts, new onClickProductAdapter() {
-                @Override
-                public void onClick(ProductModel productModel, ArrayList<ProductModel> sameProducts) {
-                    showProductViewDialogs(productModel,sameProducts);
-                }
-            }, this, "Main"));
-        }
-
-
-
-        productViewDialogBinding.plusBtn.setOnClickListener(view -> {
-            int quantity = productModel.getSelectableQuantity();
-            quantity++;
-            if (quantity > productModel.getStockCount()) {
-                Toast.makeText(this, "Max stock available: " + productModel.getStockCount(), Toast.LENGTH_SHORT).show();
-            }
-            else {
-                productModel.setSelectableQuantity(quantity);
-                productViewDialogBinding.quantity.setText(String.valueOf(productModel.getSelectableQuantity()));
-            }
-
-        });
-        productViewDialogBinding.minusBtn.setOnClickListener(view -> {
-            int quantity = productModel.getSelectableQuantity();
-            if (quantity > 1)
-                quantity--;
-//            selectQTY = quantity;
-            productModel.setSelectableQuantity(quantity);
-            productViewDialogBinding.quantity.setText(String.valueOf(productModel.getSelectableQuantity()));
-
-        });
+//    @SuppressLint("SetTextI18n")
+//    private void showProductViewDialog(ProductModel productModel) {
+////        ProductModel model = new ProductModel();
+//        Dialog bottomSheetDialog = new Dialog(this);
+//        ProductViewDialogBinding productViewDialogBinding = ProductViewDialogBinding.inflate(getLayoutInflater());
+//        if (FirebaseAuth.getInstance().getCurrentUser() !=null) {
+//            String userId = FirebaseAuth.getInstance().getUid();
+//            assert userId != null;
+//            DatabaseReference productsRef = FirebaseDatabase.getInstance().getReference().child("Cart").child(userId);
+//            String productNameToFind = productModel.getProductId();
+//            Query query = productsRef.orderByKey().equalTo(productNameToFind);
+//            query.addListenerForSingleValueEvent(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                    if (dataSnapshot.exists()) {
+//                        productViewDialogBinding.AddTOCart.setText("Go to Cart");
+//                        productViewDialogBinding.quantityBox.setVisibility(View.GONE);
+////                        addTOCart.setText("Go to Cart");
+//                        productViewDialogBinding.AddTOCart.setBackgroundColor(ContextCompat.getColor(OrderDetailsActivity.this, R.color.white));
+//                        productViewDialogBinding.AddTOCart.setTextColor(ContextCompat.getColor(OrderDetailsActivity.this, R.color.FixBlack));
+//
+//                    }
+//                }
+//                @Override
+//                public void onCancelled(@NonNull DatabaseError databaseError) {
+//                    // Handle the error in case of a database error.
+//                    Toast.makeText(OrderDetailsActivity.this, "Database error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+//                }
+//            });
+//        }
+//
+//
+//        productViewDialogBinding.ProductName.setText(productModel.getProductName());
+//        productViewDialogBinding.closeButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
+//        for (String imageUrl : productModel.getProductImage()) {
+//            CarouselItem carouselItem = new CarouselItem(imageUrl);
+//            productViewDialogBinding.productsImages.addData(carouselItem);
+//        }
+//
+//        if (!Objects.equals(productModel.getProductDescription(), "")) {
+//            productViewDialogBinding.productDescription.setVisibility(View.VISIBLE);
+//            productViewDialogBinding.Description.setVisibility(View.VISIBLE);
+//            productViewDialogBinding.productDescription.setText(productModel.getProductDescription());
+//        }
+//
+//        double mrp = productModel.getMrp();
+//        double sellingPrice = productModel.getPrice();
+//        double discountPercentage = mrp - sellingPrice;
+//
+//        productViewDialogBinding.discount.setText("₹" + discountPercentage + "% off");
+//        productViewDialogBinding.Price.setText("₹" + productModel.getPrice());
+//        productViewDialogBinding.quantitySmail.setText("(₹" + productModel.getPrice() + " / " + productModel.getWeight() + productModel.getWeightSIUnit() + ")");
+//        productViewDialogBinding.MRP.setText(":" + productModel.getMrp());
+//        productViewDialogBinding.MRP.setPaintFlags(productViewDialogBinding.MRP.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+//
+//        if (productModel.getStockCount() == 0) {
+//            productViewDialogBinding.OutOfStockBuyOptions.setVisibility(View.VISIBLE);
+//            productViewDialogBinding.quantity.setText("0");
+//            productViewDialogBinding.TextInStock.setText("Out of Stock");
+//            productViewDialogBinding.quantityBox.setVisibility(View.INVISIBLE);
+//            productViewDialogBinding.TextInStock.setTextColor(ContextCompat.getColor(this, R.color.FixRed));
+//            productViewDialogBinding.AddTOCart.setVisibility(View.INVISIBLE);
+//        }
+//
+//        productViewDialogBinding.categoryType.setText(productModel.getCategory());
+//        productViewDialogBinding.netQuantity.setText(productModel.getWeight() + productModel.getWeightSIUnit());
+//
+//        String diet;
+//        if (productModel.getProductType().equals("FoodVeg")) {
+//            diet = "Veg";
+//        } else if (productModel.getProductType().equals("FoodNonVeg")) {
+//            diet = "NonVeg";
+//        } else {
+//            diet = "not food item.";
+//            productViewDialogBinding.dietType.setVisibility(View.GONE);
+//            productViewDialogBinding.diet.setVisibility(View.GONE);
+//        }
+//        productViewDialogBinding.dietType.setText(diet);
+//        productViewDialogBinding.ExpiryDate.setText(productModel.getProductLife());
+//
+//        productViewDialogBinding.AddTOCart.setOnClickListener(v -> {
+////            addToCart(productModel,productViewDialogBinding.AddTOCart,bottomSheetDialog,productViewDialogBinding.quantityBox);
+//
+//        });
+//
+//         new DatabaseService().getAllProductsByCategoryOnly(productModel.getCategory(), new DatabaseService.GetAllProductsCallback() {
+//            @Override
+//            public void onSuccess(ArrayList<ProductModel> sameProducts) {
+//                sameProducts.remove(productModel);
+//                if (sameProducts.isEmpty()){
+//                    productViewDialogBinding.product.setVisibility(View.GONE);
+//                    productViewDialogBinding.itemCategory.setVisibility(View.GONE);
+//                }else {
+//                    LinearLayoutManager LayoutManager = new LinearLayoutManager(OrderDetailsActivity.this, LinearLayoutManager.HORIZONTAL, false);
+//                    productViewDialogBinding.itemCategory.setLayoutManager(LayoutManager);
+//                    productViewDialogBinding.itemCategory.setAdapter(new ProductAdapter(sameProducts, new onClickProductAdapter() {
+//                        @Override
+//                        public void onClick(ProductModel productModel, ArrayList<ProductModel> sameProducts) {
+//                            showProductViewDialogs(productModel,sameProducts);
+//                        }
+//                    }, OrderDetailsActivity.this, "Main"));
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onError(String errorMessage) {
+//
+//            }
+//        });
+//
+//
+//
+//
+//
+//
+//
+//        productViewDialogBinding.plusBtn.setOnClickListener(view -> {
+//            int quantity = productModel.getSelectableQuantity();
+//            quantity++;
+//            if (quantity > productModel.getStockCount()) {
+//                Toast.makeText(this, "Max stock available: " + productModel.getStockCount(), Toast.LENGTH_SHORT).show();
+//            }
+//            else {
+//                productModel.setSelectableQuantity(quantity);
+//                productViewDialogBinding.quantity.setText(String.valueOf(productModel.getSelectableQuantity()));
+//            }
+//
+//        });
+//        productViewDialogBinding.minusBtn.setOnClickListener(view -> {
+//            int quantity = productModel.getSelectableQuantity();
+//            if (quantity > 1)
+//                quantity--;
+////            selectQTY = quantity;
+//            productModel.setSelectableQuantity(quantity);
+//            productViewDialogBinding.quantity.setText(String.valueOf(productModel.getSelectableQuantity()));
+//
+//        });
+//
+//
+//
+//
+//        bottomSheetDialog.setContentView(productViewDialogBinding.getRoot());
+//        bottomSheetDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//        bottomSheetDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//        bottomSheetDialog.getWindow().getAttributes().windowAnimations = R.style.bottom_sheet_dialogAnimation;
+//        bottomSheetDialog.getWindow().setGravity(Gravity.BOTTOM);
+//
+//        bottomSheetDialog.show();
+//    }
+//
+//
 
 
 
 
-        bottomSheetDialog.setContentView(productViewDialogBinding.getRoot());
-        bottomSheetDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        bottomSheetDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        bottomSheetDialog.getWindow().getAttributes().windowAnimations = R.style.bottom_sheet_dialogAnimation;
-        bottomSheetDialog.getWindow().setGravity(Gravity.BOTTOM);
-
-        bottomSheetDialog.show();
-    }
-
+//
+//    @SuppressLint("SetTextI18n")
+//    private void showProductViewDialogs(ProductModel productModel,ArrayList<ProductModel> sameProducts) {
+////        ProductModel model = new ProductModel();
+//        Dialog bottomSheetDialog = new Dialog(this);
+//        ProductViewDialogBinding productViewDialogBinding = ProductViewDialogBinding.inflate(getLayoutInflater());
+//        if (FirebaseAuth.getInstance().getCurrentUser() !=null) {
+//            String userId = FirebaseAuth.getInstance().getUid();
+//            assert userId != null;
+//            DatabaseReference productsRef = FirebaseDatabase.getInstance().getReference().child("Cart").child(userId);
+//            String productNameToFind = productModel.getProductId();
+//            Query query = productsRef.orderByKey().equalTo(productNameToFind);
+//            query.addListenerForSingleValueEvent(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                    if (dataSnapshot.exists()) {
+//                        productViewDialogBinding.AddTOCart.setText("Go to Cart");
+//                        productViewDialogBinding.quantityBox.setVisibility(View.GONE);
+////                        addTOCart.setText("Go to Cart");
+//                        productViewDialogBinding.AddTOCart.setBackgroundColor(ContextCompat.getColor(OrderDetailsActivity.this, R.color.white));
+//                        productViewDialogBinding.AddTOCart.setTextColor(ContextCompat.getColor(OrderDetailsActivity.this, R.color.FixBlack));
+//
+//                    }
+//                }
+//                @Override
+//                public void onCancelled(@NonNull DatabaseError databaseError) {
+//                    // Handle the error in case of a database error.
+//                    Toast.makeText(OrderDetailsActivity.this, "Database error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+//                }
+//            });
+//        }
+//
+//
+//        productViewDialogBinding.ProductName.setText(productModel.getProductName());
+//        productViewDialogBinding.closeButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
+//        for (String imageUrl : productModel.getProductImage()) {
+//            CarouselItem carouselItem = new CarouselItem(imageUrl);
+//            productViewDialogBinding.productsImages.addData(carouselItem);
+//        }
+//
+//        if (!Objects.equals(productModel.getProductDescription(), "")) {
+//            productViewDialogBinding.productDescription.setVisibility(View.VISIBLE);
+//            productViewDialogBinding.Description.setVisibility(View.VISIBLE);
+//            productViewDialogBinding.productDescription.setText(productModel.getProductDescription());
+//        }
+//
+//        double mrp = productModel.getMrp();
+//        double sellingPrice = productModel.getPrice();
+//        double discountPercentage = mrp - sellingPrice;
+//
+//        productViewDialogBinding.discount.setText("₹" + discountPercentage + "% off");
+//        productViewDialogBinding.Price.setText("₹" + productModel.getPrice());
+//        productViewDialogBinding.quantitySmail.setText("(₹" + productModel.getPrice() + " / " + productModel.getWeight() + productModel.getWeightSIUnit() + ")");
+//        productViewDialogBinding.MRP.setText(":" + productModel.getMrp());
+//        productViewDialogBinding.MRP.setPaintFlags(productViewDialogBinding.MRP.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+//
+//        if (productModel.getStockCount() == 0) {
+//            productViewDialogBinding.OutOfStockBuyOptions.setVisibility(View.VISIBLE);
+//            productViewDialogBinding.quantity.setText("0");
+//            productViewDialogBinding.TextInStock.setText("Out of Stock");
+//            productViewDialogBinding.quantityBox.setVisibility(View.INVISIBLE);
+//            productViewDialogBinding.TextInStock.setTextColor(ContextCompat.getColor(this, R.color.FixRed));
+//            productViewDialogBinding.AddTOCart.setVisibility(View.INVISIBLE);
+//        }
+//
+//        productViewDialogBinding.categoryType.setText(productModel.getCategory());
+//        productViewDialogBinding.netQuantity.setText(productModel.getWeight() + productModel.getWeightSIUnit());
+//
+//        String diet;
+//        if (productModel.getProductType().equals("FoodVeg")) {
+//            diet = "Veg";
+//        } else if (productModel.getProductType().equals("FoodNonVeg")) {
+//            diet = "NonVeg";
+//        } else {
+//            diet = "not food item.";
+//            productViewDialogBinding.dietType.setVisibility(View.GONE);
+//            productViewDialogBinding.diet.setVisibility(View.GONE);
+//        }
+//        productViewDialogBinding.dietType.setText(diet);
+//        productViewDialogBinding.ExpiryDate.setText(productModel.getProductLife());
+//
+//        productViewDialogBinding.AddTOCart.setOnClickListener(v -> {
+////            addToCart(productModel,productViewDialogBinding.AddTOCart,bottomSheetDialog,productViewDialogBinding.quantityBox);
+//        });
+//        sameProducts.remove(productModel);
+//        if (sameProducts.isEmpty()){
+//            productViewDialogBinding.product.setVisibility(View.GONE);
+//            productViewDialogBinding.itemCategory.setVisibility(View.GONE);
+//        }else {
+//            LinearLayoutManager LayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+//            productViewDialogBinding.itemCategory.setLayoutManager(LayoutManager);
+//            productViewDialogBinding.itemCategory.setAdapter(new ProductAdapter(sameProducts, new onClickProductAdapter() {
+//                @Override
+//                public void onClick(ProductModel productModel, ArrayList<ProductModel> sameProducts) {
+//                    showProductViewDialogs(productModel,sameProducts);
+//                }
+//            }, this, "Main"));
+//        }
+//
+//
+//
+//        productViewDialogBinding.plusBtn.setOnClickListener(view -> {
+//            int quantity = productModel.getSelectableQuantity();
+//            quantity++;
+//            if (quantity > productModel.getStockCount()) {
+//                Toast.makeText(this, "Max stock available: " + productModel.getStockCount(), Toast.LENGTH_SHORT).show();
+//            }
+//            else {
+//                productModel.setSelectableQuantity(quantity);
+//                productViewDialogBinding.quantity.setText(String.valueOf(productModel.getSelectableQuantity()));
+//            }
+//
+//        });
+//        productViewDialogBinding.minusBtn.setOnClickListener(view -> {
+//            int quantity = productModel.getSelectableQuantity();
+//            if (quantity > 1)
+//                quantity--;
+////            selectQTY = quantity;
+//            productModel.setSelectableQuantity(quantity);
+//            productViewDialogBinding.quantity.setText(String.valueOf(productModel.getSelectableQuantity()));
+//
+//        });
+//
+//
+//
+//
+//        bottomSheetDialog.setContentView(productViewDialogBinding.getRoot());
+//        bottomSheetDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//        bottomSheetDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//        bottomSheetDialog.getWindow().getAttributes().windowAnimations = R.style.bottom_sheet_dialogAnimation;
+//        bottomSheetDialog.getWindow().setGravity(Gravity.BOTTOM);
+//
+//        bottomSheetDialog.show();
+//    }
+//
 
 }

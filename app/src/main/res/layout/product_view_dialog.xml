@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#3C000000"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="#3C000000">
 
     <ImageView
         android:layout_marginTop="@dimen/_15sdp"
@@ -15,380 +14,393 @@
         android:layout_alignParentTop="true"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/ic_close" />
+        android:src="@drawable/ic_close"
+        android:contentDescription="TODO" />
     <RelativeLayout
         android:layout_below="@id/close_button"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
-
         android:layout_width="match_parent"
         android:background="@drawable/rounded_corners"
         android:layout_height="wrap_content">
-
-    <androidx.core.widget.NestedScrollView
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="@dimen/_5sdp"
-        android:background="@drawable/rounded_corners"
-        android:layout_alignParentStart="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <LinearLayout
+        <androidx.core.widget.NestedScrollView
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:id="@+id/NestedScrollView"
             android:background="@drawable/rounded_corners"
-            android:orientation="vertical"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
             android:layout_width="match_parent"
+            android:layout_above="@+id/PriceBox"
+            android:layout_height="wrap_content">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:background="@drawable/rounded_corners"
             android:layout_height="wrap_content">
 
-        <org.imaginativeworld.whynotimagecarousel.ImageCarousel
-            android:id="@+id/productsImages"
-            android:background="@drawable/rounded_corners"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_220sdp"
-            android:minHeight="@dimen/_200sdp"
-            app:showTopShadow="false"
-            app:topShadowAlpha="0.6"
-            app:topShadowHeight="32dp"
-            app:showBottomShadow="false"
-            app:bottomShadowAlpha="0.6"
-            app:bottomShadowHeight="64dp"
-            app:showCaption="false"
-            app:captionMargin="0dp"
-            app:captionTextSize="14sp"
-            app:showIndicator="true"
-            app:indicatorMargin="0dp"
-            app:imageScaleType="fitCenter"
-            app:carouselBackground="#00000000"
-            app:imagePlaceholder="@drawable/placeholder"
-            app:carouselPadding="0dp"
-            app:carouselPaddingBottom="0dp"
-            app:carouselPaddingEnd="0dp"
-            app:carouselPaddingStart="0dp"
-            app:carouselPaddingTop="0dp"
-            app:showNavigationButtons="true"
-            app:previousButtonMargin="4dp"
-            app:nextButtonMargin="4dp"
-            app:carouselType="BLOCK"
-            app:carouselGravity="CENTER"
-            app:scaleOnScroll="true"
-            app:autoWidthFixing="true" />
-
-
-        <TextView
-            android:text="Brand name"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:textColor="@color/green_primary"
-            android:textStyle="bold"
-            android:id="@+id/brandName"
-            android:textSize="@dimen/_15ssp"
-            android:maxLines="1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-
-        <TextView
-            android:text=""
-            android:id="@+id/ProductName"
-            android:layout_marginEnd="@dimen/_25sdp"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:textColor="@color/MainTextColor"
-            android:textStyle="normal"
-            android:maxLines="3"
-            android:textSize="@dimen/_15ssp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-
-        <TextView
-            android:textStyle="normal"
-            android:textColor="@color/MainTextColor"
-            android:layout_marginTop="@dimen/_1sdp"
-            android:layout_marginStart="@dimen/_8sdp"
-            android:textSize="@dimen/_10ssp"
-            android:text="@string/add_a_new_category"
-            android:id="@+id/quantity_smail"
-            android:maxLines="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <LinearLayout
-            android:id="@+id/ProductPrice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:id="@+id/TextViewMRP"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="MRP"
-                android:textColor="@color/HintMainTextColor"
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPager"
+                android:background="@drawable/rounded_corners"
                 android:layout_marginStart="@dimen/_5sdp"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:textSize="@dimen/_20ssp" />
-            <TextView
-                android:id="@+id/MRP"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="168"
-                android:layout_marginStart="@dimen/_1sdp"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:textColor="@color/HintMainTextColor"
-                android:textSize="@dimen/_20ssp"/>
-            <TextView
-                android:id="@+id/Price"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="₹149"
-                android:layout_marginStart="@dimen/_7sdp"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:textColor="@color/HintMainTextColor"
-                android:textSize="@dimen/_20ssp"/>
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_200sdp" />
 
             <TextView
-                android:id="@+id/discount"
+                android:id="@+id/categoryName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_7sdp"
+                android:layout_below="@+id/viewPager"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_toStartOf="@+id/FoodTypeIcon"
+                android:maxLines="1"
+                android:text="Brand name"
+                android:textColor="@color/green_primary"
+                android:textSize="@dimen/_15ssp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:layout_below="@id/viewPager"
                 android:layout_marginTop="@dimen/_5sdp"
-                android:background="@color/green_primary"
-                android:paddingStart="@dimen/_2sdp"
-                android:paddingEnd="@dimen/_2sdp"
-                android:text="₹149% off"
-                android:textColor="@color/FixColorWhite"
+                android:id="@+id/FoodTypeIcon"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:src="@drawable/food_green"
+                android:layout_width="@dimen/_20ssp"
+                android:layout_height="@dimen/_20ssp"/>
+
+
+
+            <TextView
+                android:id="@+id/ProductName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="3"
+                android:text="Potato Chipsngo Potato  v Chips"
+                android:textAlignment="textStart"
                 android:textSize="@dimen/_20ssp"
-                tools:ignore="TextContrastCheck" />
+                android:layout_alignParentStart="true"
+                android:layout_toStartOf="@+id/shareIcon"
+                android:layout_marginEnd="@dimen/_2ssp"
+                android:layout_below="@+id/categoryName"
+                app:layout_constraintStart_toStartOf="parent"/>
 
-        </LinearLayout>
-
-
-        <TextView
-            android:id="@+id/TextInStock"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_9sdp"
-            android:layout_marginTop="@dimen/_4sdp"
-            android:text="@string/in_stock"
-            android:textColor="@color/green_primary" />
-
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/quantityBox"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:layout_width="@dimen/_200sdp"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/TextInStock"
-            android:layout_marginTop="10dp"
-            android:background="@color/MainBackgroundColor"
-            android:orientation="horizontal"
-            android:padding="5dp"
-            tools:ignore="UselessParent">
+            <ImageView
+                android:layout_below="@id/FoodTypeIcon"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:id="@+id/shareIcon"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:src="@drawable/share_icon_for_product"
+                android:layout_width="@dimen/_40ssp"
+                android:layout_height="@dimen/_40ssp"/>
 
             <LinearLayout
+                android:id="@+id/brandView"
+                android:layout_marginTop="@dimen/_9sdp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_below="@id/ProductName"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:background="@drawable/rounded_border_with_brand">
 
-                <Button
-                    android:id="@+id/minusBtn"
-                    android:layout_width="@dimen/_50sdp"
-                    android:layout_height="wrap_content"
-                    android:text="-"
-                    android:textSize="22sp" />
+                <ImageView
+                    android:id="@+id/brandIcon"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/placeholder"
+                    android:layout_gravity="center_vertical"/>
 
-                <TextView
-                    android:id="@+id/quantity"
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="1"
-                    android:textColor="@color/MainTextColor"
-                    android:textSize="22sp" />
+                    android:orientation="vertical"
+                    android:layout_marginStart="16dp"
+                    android:gravity="center_vertical">
 
-                <Button
-                    android:id="@+id/plusBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="+"
-                    android:textSize="22sp" />
+                    <TextView
+                        android:id="@+id/brandNameInBox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Bingo Tedhe Medhe"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:textColor="@android:color/black"/>
+
+                    <TextView
+                        android:id="@+id/exploreMore"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/explore_all_products"
+                        android:textSize="14sp"
+                        android:textColor="@color/green_primary"/>
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/baseline_arrow_right_alt_24"
+                    android:layout_gravity="center_vertical"/>
+
             </LinearLayout>
 
 
-
-        </androidx.cardview.widget.CardView>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/AddTOCart"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_15sdp"
-            android:layout_marginEnd="@dimen/_15sdp"
-            android:text="Add to Cart"
-            android:textSize="@dimen/_21ssp" />
-
-        <LinearLayout
-            android:id="@+id/OutOfStockBuy_Options"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_5ssp"
-            android:orientation="vertical"
-            android:visibility="gone">
-
             <TextView
-                android:id="@+id/text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_15sdp"
-                android:layout_marginEnd="@dimen/_15sdp"
-                android:text="Out of Stock"
-                android:textColor="@color/FixRed"
-                android:textSize="@dimen/_21ssp" />
-        </LinearLayout>
-
-
-
-
-        <TextView
-            android:visibility="gone"
-            android:id="@+id/Description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textStyle="italic"
-            android:textAlignment="textStart"
-            android:text="@string/description"
-            android:layout_marginStart="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_15sdp"
-            android:textColor="@color/MainTextColor"
-            android:textSize="@dimen/_18ssp" />
-
-        <TextView
-            android:visibility="gone"
-            android:id="@+id/productDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textStyle="italic"
-            android:textAlignment="textStart"
-            android:text="@string/product_recommendations"
-            android:layout_marginTop="@dimen/_2sdp"
-            android:layout_marginStart="@dimen/_10sdp"
-            android:textColor="@color/MainTextColor"
-            android:textSize="@dimen/_15ssp" />
-
-
-            <TextView
-                android:id="@+id/product_"
+                android:layout_below="@id/brandView"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/product_recommendations"
-                android:layout_marginTop="@dimen/_15sdp"
+                android:layout_alignParentStart="true"
+                android:text="Select Unit"
+                android:textColor="@color/FixBlack"
+                android:textStyle="bold"
+                android:id="@+id/SIunitTextView"
+                android:layout_marginTop="@dimen/_5sdp"
                 android:layout_marginStart="@dimen/_10sdp"
-                android:textColor="@color/MainTextColor"
-                android:textSize="@dimen/_20ssp" />
+                android:textSize="@dimen/_24ssp"
+                android:layout_height="wrap_content"/>
+
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/item_category"
-                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_below="@+id/SIunitTextView"
+                android:id="@+id/variants_list"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
 
 
-
             <TextView
-            android:id="@+id/Product_d"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/product_details"
-            android:layout_marginTop="@dimen/_5sdp"
-                android:layout_marginStart="@dimen/_10sdp"
-            android:textColor="@color/MainTextColor"
-            android:textSize="@dimen/_20ssp" />
-
-        <LinearLayout
-            android:layout_marginStart="@dimen/_10sdp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <LinearLayout
+                android:layout_below="@id/variants_list"
                 android:layout_width="wrap_content"
-                android:orientation="vertical"
-                android:id="@id/Product_details"
-                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_alignParentStart="true"
+                android:text="@string/similar_products"
+                android:textColor="@color/FixBlack"
+                android:textStyle="bold"
+                android:id="@+id/similar_products"
                 android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:textSize="@dimen/_24ssp"
+                android:layout_height="wrap_content"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/similar_products_recyclerView"
+                android:layout_below="@+id/similar_products"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+
+
+            <LinearLayout
+                android:layout_below="@+id/similar_products_recyclerView"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <TextView
-                    android:textSize="@dimen/_15ssp"
-                    android:textColor="@color/MainTextColor"
-                    android:text="@string/category"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+
 
                 <TextView
-                    android:textSize="@dimen/_15ssp"
-                    android:textColor="@color/MainTextColor"
-                    android:text="@string/net_quantity"
-                    android:layout_marginTop="@dimen/_5sdp"
                     android:layout_width="wrap_content"
+                    android:text="@string/product_policy"
+                    android:textColor="@color/FixBlack"
+                    android:textStyle="bold"
+                    android:id="@+id/brandTextview"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:textSize="@dimen/_24ssp"
                     android:layout_height="wrap_content"/>
+
+
+
+                <include layout="@layout/secure_delivery_section" />
+                <include layout="@layout/fast_delivery_section" />
+                <include layout="@layout/product_authenticity_section" />
+                <include layout="@layout/customer_reviews_section" />
+
                 <TextView
-                    android:textSize="@dimen/_15ssp"
-                    android:textColor="@color/MainTextColor"
-                    android:text="@string/expiry_date"
-                    android:layout_marginTop="@dimen/_5sdp"
                     android:layout_width="wrap_content"
+                    android:textColor="@color/FixBlack"
+                    android:textStyle="bold"
+                    android:text="Description"
+                    android:id="@+id/DescriptionTextView"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:visibility="gone"
+                    android:textSize="@dimen/_24ssp"
                     android:layout_height="wrap_content"/>
+
+
+
                 <TextView
-                    android:textSize="@dimen/_15ssp"
-                    android:id="@+id/diet"
-                    android:textColor="@color/MainTextColor"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:text="@string/diet_type"
+                    android:visibility="gone"
                     android:layout_width="wrap_content"
+                    android:textColor="@color/FixBlack"
+                    android:textStyle="bold"
+                    android:id="@+id/Description"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:textSize="@dimen/_19ssp"
                     android:layout_height="wrap_content"/>
+
 
 
             </LinearLayout>
 
+
+        </RelativeLayout>
+
+
+
+    </androidx.core.widget.NestedScrollView>
+
+        <LinearLayout
+            android:background="@color/white"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:id="@+id/PriceBox"
+            android:baselineAligned="false">
+
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_10sdp"
-                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_weight="1"
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/size"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/categoryType"
-                    android:textColor="@color/MainTextColor"
-                    android:textSize="@dimen/_15ssp" />
+                    android:text="40 g"
+                    android:textSize="@dimen/_16ssp"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/TextViewMRP"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="MRP"
+                        android:textColor="@color/HintMainTextColor"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:textSize="@dimen/_17ssp"/>
+                    <TextView
+                        android:id="@+id/MRP"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="168"
+                        android:layout_marginStart="@dimen/_1sdp"
+                        android:textColor="@color/HintMainTextColor"
+                        android:textSize="@dimen/_17ssp"/>
+                    <TextView
+                        android:id="@+id/Price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="₹149"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:textColor="@color/HintMainTextColor"
+                        android:textSize="@dimen/_17ssp"/>
+                </LinearLayout>
 
                 <TextView
+                    android:id="@+id/variant_inclusive_taxes"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:id="@+id/net_quantity"
-                    android:textColor="@color/MainTextColor"
-                    android:textSize="@dimen/_15ssp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:id="@+id/ExpiryDate"
-                    android:textColor="@color/MainTextColor"
-                    android:textSize="@dimen/_15ssp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:id="@+id/diet_type"
-                    android:textColor="@color/MainTextColor"
-                    android:textSize="@dimen/_15ssp" />
+                    android:text="@string/inclusive_of_all_taxes"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="@dimen/_12ssp" />
             </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/AddTOCart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add to cart"
+                android:visibility="visible"
+                android:textStyle="bold"
+                android:background="@drawable/button_background"
+                android:textColor="@android:color/black"
+                android:backgroundTint="@color/green_primary" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/quantityBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_marginTop="10dp"
+                app:cardBackgroundColor="@color/green_primary"
+                android:orientation="horizontal"
+                tools:ignore="UselessParent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/minusBtn"
+                        android:layout_width="@dimen/_50sdp"
+                        android:layout_height="wrap_content"
+                        android:text="-"
+                        android:textAlignment="center"
+                        android:textColor="@color/FixColorWhite"
+                        android:textSize="@dimen/_22ssp" />
+
+                    <TextView
+                        android:id="@+id/quantity"
+                        android:layout_width="wrap_content"
+                        android:maxWidth="@dimen/_40sdp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="1"
+                        android:textColor="@color/FixColorWhite"
+                        android:textSize="@dimen/_22ssp" />
+
+                    <TextView
+                        android:id="@+id/plusBtn"
+                        android:layout_width="@dimen/_50sdp"
+                        android:layout_height="wrap_content"
+                        android:text="+"
+                        android:layout_weight="1"
+                        android:textAlignment="center"
+                        android:textColor="@color/FixColorWhite"
+                        android:textSize="@dimen/_22ssp" />
+                </LinearLayout>
+
+
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/OutOfStockBuyOptions"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:layout_gravity="center"
+                android:textColor="@color/errorRed"
+                android:textStyle="bold"
+                android:visibility="gone"
+                android:textSize="@dimen/_26ssp"
+                android:text="Out of Stock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+
+
         </LinearLayout>
 
 
-    </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
     </RelativeLayout>
 
 

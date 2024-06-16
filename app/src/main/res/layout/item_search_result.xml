@@ -1,35 +1,138 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="10dp">
+    android:layout_marginTop="@dimen/_8sdp"
+    android:background="@android:color/white"
+    android:elevation="2dp"
+    android:padding="@dimen/_8sdp">
+
     <ImageView
-        android:id="@+id/productImage"
-        android:layout_width="80dp"
+        android:id="@+id/product_image"
+        android:layout_width="@dimen/_100sdp"
+        android:layout_height="@dimen/_100sdp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:background="@drawable/rounded_corners"
         android:scaleType="fitXY"
-        android:layout_height="70dp"
-        android:src="@drawable/placeholder" />
+        android:src="@drawable/placeholder"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/product_name"
+        android:layout_width="@dimen/_200sdp"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/product_image"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:text="Fortune Sun Lite Refined Sunflower Oil"
+        android:textColor="@color/green_primary"
+        android:textSize="@dimen/_16ssp"
+        android:textStyle="bold"
+        android:maxLines="2"
+        tools:ignore="SmallSp" />
+
+    <TextView
+        android:id="@+id/productSiUnit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/product_name"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_toEndOf="@id/product_image"
+        android:text="50 kg"
+        android:textColor="@color/FixBlack"
+        android:textSize="@dimen/_14ssp"
+        android:textStyle="bold"
+        tools:ignore="SmallSp" />
 
     <LinearLayout
-    android:layout_width="0dp"
-    android:layout_height="match_parent"
-    android:layout_weight="1"
-    android:orientation="vertical"
-    android:layout_marginStart="15dp">
-    <TextView
-    android:id="@+id/productName"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:text="Product Name"
-    android:textSize="16sp"
-    android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/productPrice"
+        android:id="@+id/product_pricing_box"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="$100" />
-</LinearLayout>
+        android:layout_below="@id/productSiUnit"
+        android:layout_toEndOf="@id/product_image"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/_5sdp"
+        android:paddingBottom="@dimen/_5sdp">
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/product_price"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="₹112.50"
+            android:textColor="@color/MainTextColor"
+            android:textSize="@dimen/_14ssp"
+            android:textStyle="bold"
+            tools:ignore="SmallSp" />
+
+        <RelativeLayout
+            android:id="@+id/AddTOCartLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/AddTOCart"
+                android:layout_width="@dimen/_70sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:background="@drawable/button_background"
+                android:backgroundTint="@color/white"
+                android:text="ADD"
+                android:textColor="@color/green_primary"
+                android:textSize="@dimen/_10ssp"
+                android:textStyle="bold"
+                android:visibility="visible"
+                tools:ignore="SmallSp" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/product_qty_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/product_qty_down"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_25sdp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_baseline_remove_circle_outline_24"
+                tools:ignore="NestedWeights" />
+
+            <TextView
+                android:id="@+id/product_qty"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="15"
+                android:textColor="@color/secondary"
+                android:textSize="@dimen/_14ssp"
+                android:textStyle="bold"
+                tools:ignore="SmallSp" />
+
+            <ImageView
+                android:id="@+id/product_qty_up"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_25sdp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_baseline_add_circle_outline_24"
+                tools:ignore="NestedWeights" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/line2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="@dimen/_2sdp"
+        android:background="@color/MainBorderColor"
+        android:alpha="0.9" />
+</RelativeLayout>
