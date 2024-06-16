@@ -7,19 +7,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.crazyostudio.ecommercegrocery.Activity.AuthMangerActivity;
 import com.crazyostudio.ecommercegrocery.DAO.CartDAOHelper;
 import com.crazyostudio.ecommercegrocery.DAO.ShoppingCartFirebaseModelDAO;
-import com.crazyostudio.ecommercegrocery.Manager.ProductManager;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
 import com.crazyostudio.ecommercegrocery.Model.ShoppingCartFirebaseModel;
 import com.crazyostudio.ecommercegrocery.R;
-import com.crazyostudio.ecommercegrocery.Services.AuthService;
 import com.crazyostudio.ecommercegrocery.databinding.ItemSearchResultBinding;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -97,7 +93,9 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
                     holder.binding.AddTOCartLayout.setVisibility(View.GONE);
                     holder.binding.productQtyLayout.setVisibility(View.VISIBLE);
                     data.setSelectableQuantity(selectQTY);
+//                    holder.binding.productQty.setText(""+selectQTY);
                     holder.binding.productQty.setText(""+data.getSelectableQuantity());
+
                 }
             });
         }
@@ -106,7 +104,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         holder.binding.productName.setText(data.getProductName());
         holder.binding.productPrice.setText("₹"+data.getPrice());
         holder.binding.productSiUnit.setText(data.getWeight()+" "+data.getWeightSIUnit());
-        holder.binding.productQty.setText(""+data.getMinSelectableQuantity());
+        holder.binding.productQty.setText(""+data.getSelectableQuantity());
         holder.binding.AddTOCart.setOnClickListener(v -> {
             if (FirebaseAuth.getInstance().getCurrentUser()!=null) {
                 searchAdapterInterface.AddProduct(new ShoppingCartFirebaseModel(data.getProductId(),data.getMinSelectableQuantity()));
@@ -143,6 +141,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
                 holder.binding.productQty.setText(String.valueOf(data.getSelectableQuantity()));
             } else if (quantity == minSelected) {
                 searchAdapterInterface.Remove(data);
+                holder.binding.AddTOCartLayout.setVisibility(View.VISIBLE);
+                holder.binding.productQtyLayout.setVisibility(View.GONE);
             } else {
                 Toast.makeText(context, "Alwar Mart set this limit min select " + minSelected, Toast.LENGTH_SHORT).show();
             }
