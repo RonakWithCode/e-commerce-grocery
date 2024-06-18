@@ -74,14 +74,17 @@ public class MoreFragment extends Fragment {
             startActivity(new Intent(requireContext(), MainActivity.class));
 
         });
+  /*             <Button style="@style/MoreButtonLight"
+        android:id="@+id/language"
+        android:padding="@dimen/_1sdp"
+        android:text="@string/language"
+                />
         binding.language.setOnClickListener(view -> {
             FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.loader, new SelectLanguageFragment(), "CategoryFragment");
             transaction.addToBackStack("SelectLanguageFragment");
             transaction.commit();
-
-
-        });
+        });*/
         binding.settings.setOnClickListener(view -> {
             Intent intent = new Intent(requireContext(), SettingsActivity.class);
 //            intent.putExtra("LoadID","SettingsFragment");

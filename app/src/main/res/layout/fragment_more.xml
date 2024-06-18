@@ -61,11 +61,7 @@
                         android:id="@+id/order"
                         android:text="@string/check_order"
                         />
-                    <Button style="@style/MoreButtonLight"
-                        android:id="@+id/language"
-                        android:padding="@dimen/_1sdp"
-                        android:text="@string/language"
-                        />
+
                     <Button style="@style/MoreButtonLight"
                         android:id="@+id/settings"
                         android:padding="@dimen/_1sdp"

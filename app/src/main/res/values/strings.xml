@@ -13,10 +13,10 @@
     <string name="otp">OTP</string>
 
 
-    <string name="otp_title">Please enter the 6 digit verification code</string>
+    <string name="otp_title">OTP Verification</string>
     <string name="otp_button_text">VERIFY</string>
-    <string name="resend_msg">Didn’t receive the OTP?</string>
-    <string name="resend_again_msg">Resend again</string>
+    <string name="resend_msg">Did’t you receive the OTP?</string>
+    <string name="resend_again_msg">Resend OTP</string>
     <string name="change">Change</string>
     <string name="phone_number">Phone Number</string>
     <string name="sent_to">Sent to</string>
