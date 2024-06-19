@@ -1,111 +1,126 @@
 package com.crazyostudio.ecommercegrocery.Services;
 
 import android.net.Uri;
-import android.widget.Toast;
 
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-
-import java.util.Objects;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class AuthService {
     FirebaseAuth auth = FirebaseAuth.getInstance();
-    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-    public boolean IsLogin(){
+    public boolean IsLogin() {
         return auth.getCurrentUser() == null;
     }
 
-    public String getUserId(){
-        return auth.getUid();
-    }
-    public String getUserName(){
-        return auth.getCurrentUser().getDisplayName();
-    }
-    public String getUserUrl(){
-        return Objects.requireNonNull(Objects.requireNonNull(auth.getCurrentUser()).getPhotoUrl()).toString();
-    }
-    public String getUserPhoneNumber(){
-        return auth.getCurrentUser().getPhoneNumber();
-    }
-    public String getUserEmail(){
-        return auth.getCurrentUser().getEmail();
+    public String getUserId() {
+        FirebaseUser currentUser = auth.getCurrentUser();
+        return currentUser != null ? currentUser.getUid() : null;
     }
 
-
-
-    public void setUserUrl(String url){
-        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                .setPhotoUri(Uri.parse(url))
-                .build();
-        Objects.requireNonNull(auth.getCurrentUser()).updateProfile(profileUpdates);
-
+    public String getUserName() {
+        FirebaseUser currentUser = auth.getCurrentUser();
+        return currentUser != null ? currentUser.getDisplayName() : null;
     }
 
-
-
-
-
-    // ...
-
-    // Step 4: Implement the method to link the email credential
-
-    public interface LinkEmailCallback{
-        void onSuccess();
-
-        void onError(Exception errorMessage);
+    public String getUserUrl() {
+        FirebaseUser currentUser = auth.getCurrentUser();
+        return currentUser != null && currentUser.getPhotoUrl() != null ? currentUser.getPhotoUrl().toString() : null;
     }
-    public void linkEmailCredential(String name,String image ,String email, String password , LinkEmailCallback callback) {
-        if (user != null) {
-            AuthCredential emailCredential = EmailAuthProvider.getCredential(email, password);
-            user.linkWithCredential(emailCredential)
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            // Email credential successfully linked
-//                            Log.d("TAG", "Email credential linked.");
-                            // Step 5: Send email verification
-                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setPhotoUri(Uri.parse(image))
-                                    .setDisplayName(name).build();
-                            user.updateProfile(profileUpdates);
-                            sendEmailVerification(callback);
-                        } else {
-                            // If the link fails, display a message to the user.
-                            callback.onError(task.getException());
-//                            Log.w("TAG", "Linking email credential failed", task.getException());
-                        }
-                    });
+
+    public String getUserPhoneNumber() {
+        FirebaseUser currentUser = auth.getCurrentUser();
+        return currentUser != null ? currentUser.getPhoneNumber() : null;
+    }
+
+    public String getUserEmail() {
+        FirebaseUser currentUser = auth.getCurrentUser();
+        return currentUser != null ? currentUser.getEmail() : null;
+    }
+
+    public void setUserUrl(String url) {
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if (currentUser != null) {
+            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                    .setPhotoUri(Uri.parse(url))
+                    .build();
+            currentUser.updateProfile(profileUpdates);
         }
     }
 
-    // Step 6: Implement the method to send email verification
-    public void sendEmailVerification(LinkEmailCallback callback) {
+    public interface UpdateNameListenerCallback {
+        void failureListener(Exception e);
+        void Success();
+    }
 
-        if (user != null) {
-            user.sendEmailVerification()
+    public void updateName(String name, UpdateNameListenerCallback callback) {
+        String userId = getUserId();
+        if (userId != null) {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            DocumentReference userRef = db.collection("UserInfo").document(userId);
+            userRef.update("username", name)
+                    .addOnSuccessListener(aVoid -> {
+                        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                .setDisplayName(name).build();
+                        FirebaseUser currentUser = auth.getCurrentUser();
+                        if (currentUser != null) {
+                            currentUser.updateProfile(profileUpdates).addOnCompleteListener(task -> callback.Success()).addOnFailureListener(callback::failureListener);
+                        }
+                    })
+                    .addOnFailureListener(callback::failureListener);
+        } else {
+            callback.failureListener(new NullPointerException("User ID is null"));
+        }
+    }
+
+    public interface LinkEmailCallback {
+        void onSuccess();
+        void onError(Exception errorMessage);
+    }
+
+    public void linkEmailCredential(String name, String image, String email, String password, LinkEmailCallback callback) {
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if (currentUser != null) {
+            AuthCredential emailCredential = EmailAuthProvider.getCredential(email, password);
+            currentUser.linkWithCredential(emailCredential)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            // Email verification sent
-//                            Log.d("TAG", "Email verification sent.");
-                            callback.onSuccess();
-                            // You can add your own logic here, such as showing a message to the user.
+                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                    .setPhotoUri(Uri.parse(image))
+                                    .setDisplayName(name).build();
+                            currentUser.updateProfile(profileUpdates);
+                            sendEmailVerification(callback);
                         } else {
-                            // If the email verification fails, display a message to the user.
-//                            Log.w("TAG", "Email verification failed to send", task.getException());
                             callback.onError(task.getException());
                         }
                     });
+        } else {
+            callback.onError(new NullPointerException("Current user is null"));
+        }
+    }
+
+    public void sendEmailVerification(LinkEmailCallback callback) {
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if (currentUser != null) {
+            currentUser.sendEmailVerification()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            callback.onSuccess();
+                        } else {
+                            callback.onError(task.getException());
+                        }
+                    });
+        } else {
+            callback.onError(new NullPointerException("Current user is null"));
         }
     }
 
     public boolean checkEmailVerificationStatus() {
-        return user.isEmailVerified();
+        FirebaseUser currentUser = auth.getCurrentUser();
+        return currentUser != null && currentUser.isEmailVerified();
     }
-
-
-
-
-
 }

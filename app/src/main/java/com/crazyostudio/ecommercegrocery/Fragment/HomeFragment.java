@@ -98,6 +98,7 @@ public class HomeFragment extends Fragment {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = auth.getCurrentUser();
         if (currentUser != null){
+//            String defaultUserName = ValuesHelper.DEFAULT_USER_NAME;
             String displayName = currentUser.getDisplayName() != null ? currentUser.getDisplayName() : "Hi user";
             String phoneNumber = currentUser.getPhoneNumber() != null ? currentUser.getPhoneNumber() : "No phone number";
             userId = currentUser.getUid();
@@ -377,13 +378,6 @@ public class HomeFragment extends Fragment {
 //        });
 
     }
-
-
-
-
-
-
-
 
 
 

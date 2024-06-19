@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -359,6 +360,8 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
 //    public OrderModel(String orderId, Customer customer, ArrayList< ShoppingCartsProductFirebaseModel > orderItems, double orderTotalPrice, String couponCode, String orderStatus, Payment
 //        payment, Shipping shipping, Date orderDate, String notes, String token) {
         String deliveryState = ValuesHelper.PROCESSING;
+//        String defaultUserName  = ValuesHelper.DEFAULT_USER_NAME;
+
         Customer customer = new Customer(authService.getUserId(), authService.getUserName(), addressModel.getMobileNumber() , authService.getUserPhoneNumber());
         Payment payment = new Payment(paymentMethod,paymentStatus);
         Shipping shipping = new Shipping("Standing","free",null,addressModel, deliveryState);

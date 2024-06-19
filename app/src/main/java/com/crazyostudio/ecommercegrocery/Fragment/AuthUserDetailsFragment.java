@@ -1,26 +1,27 @@
 package com.crazyostudio.ecommercegrocery.Fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import com.crazyostudio.ecommercegrocery.Model.UserinfoModels;
+import com.crazyostudio.ecommercegrocery.MainActivity;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.Services.AuthService;
 import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentAuthUserDetailsBinding;
-import com.crazyostudio.ecommercegrocery.javaClasses.TokenManager;
-import com.crazyostudio.ecommercegrocery.javaClasses.basicFun;
-import com.google.android.gms.tasks.Task;
-
-import java.util.Objects;
+import com.crazyostudio.ecommercegrocery.javaClasses.LoadingDialog;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 
 public class AuthUserDetailsFragment extends Fragment {
@@ -30,6 +31,7 @@ public class AuthUserDetailsFragment extends Fragment {
     DatabaseService service;
     AuthService authService;
     String uid;
+    LoadingDialog loadingDialog;
 
     public AuthUserDetailsFragment() {
         // Required empty public constructor
@@ -49,38 +51,37 @@ public class AuthUserDetailsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentAuthUserDetailsBinding.inflate(inflater,container,false);
+        loadingDialog = new LoadingDialog(requireActivity());
         navController = Navigation.findNavController(requireActivity(),R.id.nav_host_fragment);
         service = new DatabaseService();
         authService = new AuthService();
         uid = authService.getUserId();
+
+        binding.number.setText("+91 "+number);
+        binding.number.setEnabled(false);
+
 //        binding.userImage.setOnClickListener(view -> ShowDialog());
         binding.nextBtn.setOnClickListener(onclick->{
-            service.CheckNotificationToken(new DatabaseService.UpdateTokenCallback() {
-                @Override
-                public void onSuccess(String token) {
-                    TokenManager.getInstance(requireContext()).saveToken(token);
-                    setupUser(token);
-
-                }
-
-                @Override
-                public void onError(String errorMessage) {
-                    Log.i("onError", "onError: "+errorMessage);
-                }
-            });
+            if (!binding.Name.getText().toString().isEmpty()) {
+                loadingDialog.startLoadingDialog(); // Show loading dialog
+                setupUser(binding.Name.getText().toString());
+            }
         });
         return binding.getRoot();
     }
-    void setupUser(String token){
-        UserinfoModels UserinfoModels = new UserinfoModels(token,uid, Objects.requireNonNull(binding.Name.getText()).toString(),number,true);
-        service.setUserInfo(UserinfoModels, new DatabaseService.SetUserInfoCallback() {
+    void setupUser(String name){
+        authService.updateName(name, new AuthService.UpdateNameListenerCallback() {
             @Override
-            public void onSuccess(Task<Void> task) {
-                requireActivity().finish();
+            public void failureListener(Exception e) {
+                loadingDialog.dismissDialog(); // Show loading dialog
             }
+
             @Override
-            public void onError(String errorMessage) {
-                basicFun.AlertDialog(requireContext(),errorMessage);
+            public void Success() {
+                loadingDialog.dismissDialog(); // Show loading dialog
+
+                requireActivity().finish();
+//                startActivity(new Intent(requireContext(), MainActivity.class));
             }
         });
     }

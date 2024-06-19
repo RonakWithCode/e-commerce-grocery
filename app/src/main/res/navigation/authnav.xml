@@ -24,12 +24,12 @@
         android:name="com.crazyostudio.ecommercegrocery.Fragment.AuthOTP"
         android:label="fragment_auth_o_t_p"
         tools:layout="@layout/fragment_auth_o_t_p" >
-        <action
-            android:id="@+id/action_authOTP_to_pinCodeFragment"
-            app:destination="@id/pinCodeFragment" />
         <argument
             android:name="number"
             app:argType="string" />
+        <action
+            android:id="@+id/action_authOTP_to_authUserDetailsFragment"
+            app:destination="@id/authUserDetailsFragment" />
     </fragment>
 
     <fragment
@@ -37,32 +37,6 @@
         android:name="com.crazyostudio.ecommercegrocery.Fragment.AuthUserDetailsFragment"
         android:label="fragment_auth_user_details"
         tools:layout="@layout/fragment_auth_user_details" >
-        <argument
-            android:name="number"
-            app:argType="string" />
-        <argument
-            android:name="token"
-            app:argType="string" />
-    </fragment>
-    <fragment
-        android:id="@+id/pinCodeFragment"
-        android:name="com.crazyostudio.ecommercegrocery.Fragment.PinCodeFragment"
-        android:label="fragment_pin_code"
-        tools:layout="@layout/fragment_pin_code" >
-        <action
-            android:id="@+id/action_pinCodeFragment_to_authUserDetailsFragment"
-            app:destination="@id/authUserDetailsFragment" >
-
-            <argument android:name="name"
-                app:argType="string"
-                />
-            <argument
-                android:name="number"
-                app:argType="string" />
-            <argument
-                android:name="token"
-                app:argType="string" />
-        </action>
         <argument
             android:name="number"
             app:argType="string" />

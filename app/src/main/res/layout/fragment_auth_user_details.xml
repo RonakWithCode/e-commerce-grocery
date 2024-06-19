@@ -1,75 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/MainBackgroundColor"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/MainBackgroundColor"
     tools:context=".Fragment.AuthUserDetailsFragment">
 
-    <TextView
-        android:layout_marginStart="@dimen/_25sdp"
-        android:layout_marginEnd="@dimen/_25sdp"
-        android:layout_marginTop="@dimen/_35sdp"
-        android:textColor="@color/MainTextColor"
-        android:text="@string/information"
-        android:textAlignment="center"
-        android:textSize="@dimen/_25ssp"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:id="@+id/ViewText"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content">
 
+        <LinearLayout
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/imageBgLayout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_340sdp"
+            android:background="@drawable/truck_bg">
 
-    <TextView
-        android:textColor="@color/HintMainTextColor"
-        android:text="@string/give_some_basic_information"
-        android:textAlignment="center"
-        android:textSize="@dimen/_15ssp"
-        android:layout_below="@id/ViewText"
-        android:id="@+id/hintView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+            <ImageView
+                android:id="@+id/IamgeView"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_280sdp"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_marginTop="@dimen/_25sdp"
+                android:layout_marginEnd="@dimen/_15sdp"
+                android:contentDescription="@string/delivery_image"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_customer_support" />
+        </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/Field"
-        android:layout_marginTop="@dimen/_18sdp"
-        android:layout_below="@id/hintView"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_25sdp"
-        android:layout_marginEnd="@dimen/_25sdp">
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/NameField"
+        <LinearLayout
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/Field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/name"
-            app:hintTextColor="@color/HintMainTextColor">
+            android:layout_below="@id/imageBgLayout"
+            android:layout_marginStart="@dimen/_25sdp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_marginEnd="@dimen/_25sdp"
+            android:orientation="vertical">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/Name"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/NameField"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:autofillHints="username"
-                android:inputType="textPersonName"
-                android:background="@drawable/number"
-                android:textColor="@color/MainTextColor"
-                android:textColorHint="@color/MainTextColor" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:hint="@string/name"
+                app:hintTextColor="@color/HintMainTextColor">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/Name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autofillHints="username"
+                    android:background="@drawable/number"
+                    android:inputType="textPersonName"
+                    android:textColor="@color/MainTextColor"
+                    android:textColorHint="@color/MainTextColor" />
+            </com.google.android.material.textfield.TextInputLayout>
 
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/NumberField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:hint="@string/phone_no"
+                app:hintTextColor="@color/HintMainTextColor">
 
-        <com.google.android.material.button.MaterialButton
-            android:layout_marginTop="@dimen/_15sdp"
-            android:text="@string/continue_text"
-            android:textSize="@dimen/_13ssp"
-            android:enabled="true"
-            android:id="@+id/next_btn"
-            android:textColor="@color/FixColorWhite"
-            android:backgroundTint="@color/green_primary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autofillHints="phone"
+                    android:background="@drawable/number"
+                    android:inputType="phone"
+                    android:textColor="@color/MainTextColor"
+                    android:textColorHint="@color/MainTextColor" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-</RelativeLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/next_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:backgroundTint="@color/green_primary"
+                android:enabled="true"
+                android:text="@string/continue_text"
+                android:textColor="@color/FixColorWhite"
+                android:textSize="@dimen/_13ssp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</ScrollView>

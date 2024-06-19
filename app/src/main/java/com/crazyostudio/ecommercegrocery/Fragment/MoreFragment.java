@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.Target;
 import com.crazyostudio.ecommercegrocery.Activity.AllOrderActivity;
 import com.crazyostudio.ecommercegrocery.Activity.AuthMangerActivity;
 import com.crazyostudio.ecommercegrocery.Activity.FragmentLoader;
@@ -42,12 +43,14 @@ public class MoreFragment extends Fragment {
         }else {
             binding.mainLayout.setVisibility(View.VISIBLE);
             binding.Username.setText(authService.getUserName());
-//            binding.Email.setText(authService.getUserEmail());
 
-//            if (authService.getUserUrl()!=null) {
-
-                Glide.with(requireContext()).load(R.drawable.adduser).into(binding.userImage);
-//            }
+            Glide.with(requireContext())
+                    .load(R.drawable.ic_profile)
+                    .placeholder(R.drawable.product_image_shimmee_effect) // Placeholder image while loading
+                    .error(R.drawable.ic_profile) // Error image if loading fails
+                    .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL) // Resize the image
+                    .centerCrop() // Scale type for resizing
+                    .into(binding.userImage);
         }
 
 

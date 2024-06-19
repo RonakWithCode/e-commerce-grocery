@@ -21,11 +21,15 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.crazyostudio.ecommercegrocery.HelperClass.ValuesHelper;
+import com.crazyostudio.ecommercegrocery.Model.UserinfoModels;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentAuthOTPBinding;
 import com.crazyostudio.ecommercegrocery.javaClasses.LoadingDialog;
 import com.crazyostudio.ecommercegrocery.javaClasses.TokenManager;
+import com.crazyostudio.ecommercegrocery.javaClasses.basicFun;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
@@ -51,8 +55,7 @@ public class AuthOTP extends Fragment {
     private String number;
     private Context context;
     private LoadingDialog loadingDialog;
-
-
+    DatabaseService databaseService;
     public AuthOTP() {
         // Required empty public constructor
     }
@@ -75,8 +78,10 @@ public class AuthOTP extends Fragment {
             navController.popBackStack();
             return binding.getRoot();
         }
+
         loadingDialog = new LoadingDialog(requireActivity()); // Initialize LoadingDialog
         loadingDialog.startLoadingDialog(); // Show loading dialog
+        databaseService = new DatabaseService();
 
         firebaseAuth = FirebaseAuth.getInstance();
         binding.fullNumber.setText("+91" + number + " ");
@@ -227,16 +232,49 @@ public class AuthOTP extends Fragment {
 
     private void navigateToNextScreen() {
         if (firebaseAuth.getCurrentUser() != null && firebaseAuth.getCurrentUser().getDisplayName() == null) {
-            Bundle bundle = new Bundle();
-            bundle.putString("number", number);
-            navController.navigate(R.id.action_authOTP_to_pinCodeFragment, bundle);
+
+            databaseService.CheckNotificationToken(new DatabaseService.UpdateTokenCallback() {
+                @Override
+                public void onSuccess(String token) {
+                    TokenManager.getInstance(requireContext()).saveToken(token);
+                    setupUser(token);
+                }
+
+                @Override
+                public void onError(String errorMessage) {
+                    Log.i("onError", "onError: "+errorMessage);
+                }
+            });
         } else {
             updateToken();
         }
     }
 
+
+
+    void setupUser(String token){
+        String defaultUserName = ValuesHelper.DEFAULT_USER_NAME;
+        UserinfoModels UserinfoModels = new UserinfoModels(token,FirebaseAuth.getInstance().getUid(), defaultUserName,number,true);
+        databaseService.setUserInfo(UserinfoModels, new DatabaseService.SetUserInfoCallback() {
+            @Override
+            public void onSuccess(Task<Void> task) {
+                Bundle bundle = new Bundle();
+                bundle.putString("number", number);
+                navController.navigate(R.id.action_authOTP_to_authUserDetailsFragment, bundle);
+                loadingDialog.dismissDialog(); // Show loading dialog
+
+            }
+            @Override
+            public void onError(String errorMessage) {
+                basicFun.AlertDialog(requireContext(),errorMessage);
+            }
+        });
+    }
+
+
+
     private void updateToken() {
-        new DatabaseService().CheckNotificationToken(new DatabaseService.UpdateTokenCallback() {
+        databaseService.CheckNotificationToken(new DatabaseService.UpdateTokenCallback() {
             @Override
             public void onSuccess(String token) {
                 TokenManager.getInstance(requireContext()).saveToken(token);

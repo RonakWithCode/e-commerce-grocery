@@ -16,10 +16,13 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.crazyostudio.ecommercegrocery.HelperClass.ValuesHelper;
 import com.crazyostudio.ecommercegrocery.Model.AddressModel;
 import com.crazyostudio.ecommercegrocery.R;
+import com.crazyostudio.ecommercegrocery.Services.AuthService;
 import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentNewAddressBinding;
+import com.crazyostudio.ecommercegrocery.javaClasses.LoadingDialog;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,6 +35,7 @@ public class newAddressFragment extends Fragment {
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
     FusedLocationProviderClient fusedLocationProviderClient;
     FragmentNewAddressBinding binding;
+    LoadingDialog loadingDialog;
 
     public newAddressFragment() {
         // Required empty public constructor
@@ -43,6 +47,8 @@ public class newAddressFragment extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentNewAddressBinding.inflate(inflater, container, false);
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext());
+        loadingDialog = new LoadingDialog(requireActivity());
+
         binding.backButton.setOnClickListener(back -> requireActivity().onBackPressed());
         binding.house.setEndIconOnClickListener(currentLocation -> {
             if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -53,32 +59,34 @@ public class newAddressFragment extends Fragment {
                 //                                          int[] grantResults)
                 // to handle the case where the user grants the permission. See the documentation
                 requestLocationPermission();
-            }else {
-            fusedLocationProviderClient.getLastLocation()
-                    .addOnSuccessListener(location -> {
-                        if (location != null) {
-                            try {
-                                Geocoder geocoder = new Geocoder(requireContext(), Locale.getDefault());
-                                List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+            } else {
+                fusedLocationProviderClient.getLastLocation()
+                        .addOnSuccessListener(location -> {
+                            if (location != null) {
+                                try {
+                                    Geocoder geocoder = new Geocoder(requireContext(), Locale.getDefault());
+                                    List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
 //                                        binding.address.setText("Latitude: "+addresses.get(0).getLatitude());
 //                                        binding.house.setText("Longitude: "+addresses.get(0).getLongitude());
 //                                Log.i("addressesError", "onCreateView: "+ addresses.get(0).getAddressLine(0));
 //                                Log.i("addressesError", "addresses: "+ addresses);
-                                binding.address.setText(addresses.get(0).getAddressLine(0));
+                                    binding.address.setText(addresses.get(0).getAddressLine(0));
 //                                        bind.setText("City: "+addresses.get(0).getLocality());
 //                                        country.setText("Country: "+addresses.get(0).getCountryName());
-                            } catch (IOException e) {
-                                e.printStackTrace();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+
+
                             }
 
+                        });
 
-                        }
-
-                    });
-
-        }});
+            }
+        });
         binding.save.setOnClickListener(save -> {
-            binding.progressCircular.setVisibility(View.VISIBLE);
+//            binding.progressCircular.setVisibility(View.VISIBLE);
+            loadingDialog.startLoadingDialog();
             String fullName = binding.Name.getText().toString();
             String mobileNumber = binding.Phone.getText().toString();
             String flatHouse = binding.flatHouse.getText().toString();
@@ -96,28 +104,49 @@ public class newAddressFragment extends Fragment {
                 binding.address.setError("Address is required");
             } else if (landmark.isEmpty()) {
                 binding.landmark.setError("Landmark is required");
-            }else {
+            } else {
                 AddressModel addressModel = new AddressModel(fullName, mobileNumber, flatHouse, address, landmark, isHomeSelected);
                 new DatabaseService().setAdders(addressModel, FirebaseAuth.getInstance().getUid(), new DatabaseService.SetAddersCallback() {
-                @Override
-                public void onSuccess() {
-                    binding.progressCircular.setVisibility(View.INVISIBLE);
-                    requireActivity().onBackPressed();
-                }
+                    @Override
+                    public void onSuccess() {
+                        if (new AuthService().getUserName().equals(ValuesHelper.DEFAULT_USER_NAME)) {
+                            new AuthService().updateName(fullName, new AuthService.UpdateNameListenerCallback() {
+                                @Override
+                                public void failureListener(Exception e) {
+                                    loadingDialog.dismissDialog(); // Show loading dialog
+                                }
 
-                @SuppressLint("SetTextI18n")
-                @Override
-                public void onError(String errorMessage) {
-                    binding.hintView.setTextColor(ContextCompat.getColor(requireContext(), R.color.FixRed));
-                    binding.hintView.setText("Fulled to save Address error "+errorMessage);
-                    binding.progressCircular.setVisibility(View.GONE);
-                    Toast.makeText(requireContext(), "Fulled to save Address error " + errorMessage, Toast.LENGTH_SHORT).show();
-                }
-            });
+                                @Override
+                                public void Success() {
+                                    loadingDialog.dismissDialog(); // Show loading dialog
+
+                                    requireActivity().onBackPressed();
+//                startActivity(new Intent(requireContext(), MainActivity.class));
+                                }
+                            });
+
+                        } else {
+                            loadingDialog.dismissDialog();
+                            requireActivity().onBackPressed();
+                        }
+                    }
+
+                    @SuppressLint("SetTextI18n")
+                    @Override
+                    public void onError(String errorMessage) {
+                        binding.hintView.setTextColor(ContextCompat.getColor(requireContext(), R.color.FixRed));
+                        binding.hintView.setText("Fulled to save Address error " + errorMessage);
+//                    binding.progressCircular.setVisibility(View.GONE);
+                        loadingDialog.dismissDialog();
+
+                        Toast.makeText(requireContext(), "Fulled to save Address error " + errorMessage, Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
         return binding.getRoot();
     }
+
     void getLocation() {
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -129,7 +158,7 @@ public class newAddressFragment extends Fragment {
             // for ActivityCompat#requestPermissions for more details.
             requestLocationPermission();
 
-        }else {
+        } else {
             fusedLocationProviderClient.getLastLocation()
                     .addOnSuccessListener(location -> {
 
@@ -154,7 +183,7 @@ public class newAddressFragment extends Fragment {
 
     }
 
-//    @Override
+    //    @Override
 //    public void onPause() {
 //        super.onPause();
 //        // Stop receiving location updates
