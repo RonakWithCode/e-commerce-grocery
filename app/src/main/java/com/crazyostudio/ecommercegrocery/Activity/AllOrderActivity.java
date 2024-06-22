@@ -28,7 +28,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class AllOrderActivity extends AppCompatActivity implements OrderInterface {
+public class AllOrderActivity extends AppCompatActivity {
     ActivityAllOrderBinding binding;
     FirebaseDatabase database;
     ArrayList<OrderModel> orderModel;
@@ -54,12 +54,14 @@ public class AllOrderActivity extends AppCompatActivity implements OrderInterfac
         }
 
         binding.orderDetailsViewBack.setOnClickListener(view -> onBackPressed());
+
+
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 this,
                 R.array.typesSpinnerArray,
-                android.R.layout.simple_spinner_item
+                android.R.layout.simple_spinner_dropdown_item
         );
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
         binding.typesSpinner.setAdapter(adapter);
         binding.typesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -77,8 +79,14 @@ public class AllOrderActivity extends AppCompatActivity implements OrderInterfac
 
         layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         binding.itemRecycler.setLayoutManager(layoutManager);
+
         orderModel = new ArrayList<>();
-        orderProductAdapter = new ViewOrderProductAdapter(orderModel, this, this);
+        orderProductAdapter = new ViewOrderProductAdapter(orderModel, this, orderModel -> {
+            Intent i = new Intent(AllOrderActivity.this, OrderDetailsActivity.class);
+            i.putExtra("orderID", orderModel.getOrderId());
+            i.putExtra("orderModel", orderModel);
+            startActivity(i);
+        });
         binding.itemRecycler.setAdapter(orderProductAdapter);
 
         binding.itemRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -144,13 +152,6 @@ public class AllOrderActivity extends AppCompatActivity implements OrderInterfac
         getOrders(filter);
     }
 
-    @Override
-    public void onOrder(OrderModel orderModels) {
-        Intent i = new Intent(this, OrderDetailsActivity.class);
-        i.putExtra("orderID", orderModels.getOrderId());
-        i.putExtra("orderModel", orderModels);
-        startActivity(i);
-    }
 
     @Override
     protected void onDestroy() {

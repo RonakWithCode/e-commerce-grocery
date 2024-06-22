@@ -2,10 +2,10 @@ package com.crazyostudio.ecommercegrocery.HelperClass;
 
 public class ValuesHelper {
 //
-    public static final String PROCESSING = "Processing";
-    public static final String OUTFORDELIVERY = "Out for Delivery";
-    public static final String DELIVERED = "Delivered";
-    public static final String FAILED = "Failed";
+    public static final String PROCESSING = "Processing"; // this is before confirm order by admin
+    public static final String OUTFORDELIVERY = "Out for Delivery"; // this is out for Delivery
+    public static final String DELIVERED = "Delivered"; //  this is a when order successfully
+    public static final String FAILED = "Failed"; //  this is Failed
 
     public static final String RupeeSymbols = "₹";//  this is a rupee symbol for indian price
 
