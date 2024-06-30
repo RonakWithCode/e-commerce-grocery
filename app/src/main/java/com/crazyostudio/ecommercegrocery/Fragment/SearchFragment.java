@@ -680,7 +680,7 @@ public class SearchFragment extends Fragment implements SearchAdapterInterface {
                     .into(productViewDialogBinding.FoodTypeIcon);
 //            productViewDialogBinding.FoodTypeIcon.set
         }
-        else if (productModel.getProductType().equals("FoodNonVeg")) {
+        else if (productModel.getProductIsFoodItem().equals("FoodNonVeg")) {
             diet = "NonVeg";
             Glide.with(requireActivity())
                     .load(R.drawable.food_brown)

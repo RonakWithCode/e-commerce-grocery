@@ -48,6 +48,7 @@ public class VariantsAdapter extends RecyclerView.Adapter<VariantsAdapter.ViewHo
             holder.itemView.setBackgroundResource(R.drawable.border_background_black);
         }
         holder.variantName.setText(variation.getName());
+
         holder.variantWeight.setText("₹"+variation.getWeightWithSIUnit());
         holder.itemView.setOnClickListener(v -> callback.Product(variation.getId()));
     }

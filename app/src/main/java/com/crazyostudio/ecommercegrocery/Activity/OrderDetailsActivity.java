@@ -178,7 +178,7 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
 
     @Override
     public void onOrder(ShoppingCartsProductModel model) {
-        ProductModel productModel = new ProductModel(model.isAvailable(), model.getProductId(), model.getProductName(), model.getProductDescription(), model.getBrand(), model.getCategory(), model.getSubCategory(), model.getPrice(), model.getMrp(), model.getDiscount(), model.getStockCount(), model.getMinSelectableQuantity(), model.getMaxSelectableQuantity(), model.getWeight(), model.getWeightSIUnit(), model.getProductLife(), model.getProductType(), model.getProductIsFoodItem(), model.getKeywords(), model.getProductImage(), model.getVariations(), null);
+        ProductModel productModel = new ProductModel(model.isAvailable(), model.getProductId(), model.getProductName(), model.getProductDescription(), model.getBrand(), model.getCategory(), model.getSubCategory(), model.getPrice(), model.getMrp(), model.getDiscount(), model.getStockCount(), model.getMinSelectableQuantity(), model.getMaxSelectableQuantity(), model.getWeight(), model.getWeightSIUnit(), model.getProductLife(), model.getProductType(), model.getProductIsFoodItem(), model.getKeywords(), model.getProductImage(), model.getVariations());
         showProductViewDialog(productModel, this);
     }
 
@@ -312,7 +312,7 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
                     .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                     .centerCrop()
                     .into(productViewDialogBinding.FoodTypeIcon);
-        } else if ("FoodNonVeg".equals(productModel.getProductType())) {
+        } else if ("FoodNonVeg".equals(productModel.getProductIsFoodItem())) {
             diet = "NonVeg";
             Glide.with(context)
                     .load(R.drawable.food_brown)

@@ -3,13 +3,9 @@ package com.crazyostudio.ecommercegrocery.Model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 
 
 public class ProductModel implements Parcelable {
@@ -36,15 +32,12 @@ public class ProductModel implements Parcelable {
     private ArrayList<String> ProductImage;
     @Nullable
     private ArrayList<Variations> variations;
-    @Nullable
-    private SponsorTypeModel sponsorTypeModel;
-    private ArrayList<StockEntryModel> stockEntries; // List of stock entries
 
-    public ProductModel() {
-        stockEntries = new ArrayList<>();
-    }
 
-    public ProductModel(boolean isAvailable, String productId, String productName, String productDescription, String brand, String category, String subCategory, double price, double mrp, double discount, int stockCount, int minSelectableQuantity, int maxSelectableQuantity, String weight, String weightSIUnit, String productLife, String productType, String productIsFoodItem, ArrayList<String> keywords, ArrayList<String> productImage, @Nullable ArrayList<Variations> variations, @Nullable SponsorTypeModel sponsorTypeModel) {
+
+    public ProductModel() {}
+
+    public ProductModel(boolean isAvailable, String productId, String productName, String productDescription, String brand, String category, String subCategory, double price, double mrp, double discount, int stockCount, int minSelectableQuantity, int maxSelectableQuantity, String weight, String weightSIUnit, String productLife, String productType, String productIsFoodItem, ArrayList<String> keywords, ArrayList<String> productImage, @Nullable ArrayList<Variations> variations) {
         this.isAvailable = isAvailable;
         this.productId = productId;
         this.productName = productName;
@@ -67,8 +60,7 @@ public class ProductModel implements Parcelable {
         this.keywords = keywords;
         ProductImage = productImage;
         this.variations = variations;
-        this.sponsorTypeModel = sponsorTypeModel;
-        this.stockEntries = new ArrayList<>();
+
     }
 
     protected ProductModel(Parcel in) {
@@ -94,8 +86,7 @@ public class ProductModel implements Parcelable {
         keywords = in.createStringArrayList();
         ProductImage = in.createStringArrayList();
         variations = in.createTypedArrayList(Variations.CREATOR);
-        sponsorTypeModel = in.readParcelable(SponsorTypeModel.class.getClassLoader());
-        stockEntries = in.createTypedArrayList(StockEntryModel.CREATOR);
+
     }
 
     @Override
@@ -122,8 +113,7 @@ public class ProductModel implements Parcelable {
         dest.writeStringList(keywords);
         dest.writeStringList(ProductImage);
         dest.writeTypedList(variations);
-        dest.writeParcelable(sponsorTypeModel, flags);
-        dest.writeTypedList(stockEntries);
+
     }
 
     @Override
@@ -321,38 +311,6 @@ public class ProductModel implements Parcelable {
         this.variations = variations;
     }
 
-    public SponsorTypeModel getSponsorTypeModel() {
-        return sponsorTypeModel;
-    }
 
-    public void setSponsorTypeModel(SponsorTypeModel sponsorTypeModel) {
-        this.sponsorTypeModel = sponsorTypeModel;
-    }
 
-    public ArrayList<StockEntryModel> getStockEntries() {
-        return stockEntries;
-    }
-
-    public void setStockEntries(ArrayList<StockEntryModel> stockEntries) {
-        this.stockEntries = stockEntries;
-    }
-
-    public void addStock(int quantity, Date expiryDate) {
-        Date entryDate = new Date(); // Current date as entry date
-        stockEntries.add(new StockEntryModel(quantity, expiryDate, entryDate));
-        sortStockEntriesByDate();
-    }
-
-    private void sortStockEntriesByDate() {
-        Collections.sort(stockEntries, Comparator.comparing(StockEntryModel::getEntryDate));
-    }
-
-    public void removeExpiredStock() {
-        Date currentDate = new Date();
-        stockEntries.removeIf(entry -> entry.getExpiryDate().before(currentDate));
-    }
-
-    public int getTotalStock() {
-        return stockEntries.stream().mapToInt(StockEntryModel::getQuantity).sum();
-    }
 }
