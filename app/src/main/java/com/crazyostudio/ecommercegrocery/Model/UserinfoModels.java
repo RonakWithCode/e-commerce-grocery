@@ -22,6 +22,14 @@ public class UserinfoModels implements Parcelable {
     private boolean isPrivacy_modeBool;
     private boolean isDeal_notificationBool;
     private boolean isAccount_shipping_notificationBool;
+
+
+
+
+
+
+
+
 //    private boolean isActive;
 
     public UserinfoModels(){}

@@ -1,3 +1,4 @@
+
 package com.crazyostudio.ecommercegrocery.Fragment;
 
 import android.annotation.SuppressLint;
@@ -532,21 +533,21 @@ public class HomeFragment extends Fragment {
             productViewDialogBinding.Description.setText(productModel.getProductDescription());
         }
 
-         if (FirebaseAuth.getInstance().getCurrentUser() !=null) {
-             productManager.isProductInCart(productModel.getProductId(), new ProductManager.addListenerForIsProductInCart() {
-                 @Override
-                 public void FoundProduct(ShoppingCartFirebaseModel shoppingCartFirebaseModel) {
-                     productViewDialogBinding.quantityBox.setVisibility(View.VISIBLE);
-                     productViewDialogBinding.AddTOCart.setVisibility(View.GONE);
-                     productViewDialogBinding.quantity.setText(""+shoppingCartFirebaseModel.getProductSelectQuantity());
-                 }
+        if (FirebaseAuth.getInstance().getCurrentUser() !=null) {
+            productManager.isProductInCart(productModel.getProductId(), new ProductManager.addListenerForIsProductInCart() {
+                @Override
+                public void FoundProduct(ShoppingCartFirebaseModel shoppingCartFirebaseModel) {
+                    productViewDialogBinding.quantityBox.setVisibility(View.VISIBLE);
+                    productViewDialogBinding.AddTOCart.setVisibility(View.GONE);
+                    productViewDialogBinding.quantity.setText(""+shoppingCartFirebaseModel.getProductSelectQuantity());
+                }
 
-                 @Override
-                 public void notFoundInCart() {
-                     productViewDialogBinding.AddTOCart.setVisibility(View.VISIBLE);
-                     productViewDialogBinding.quantityBox.setVisibility(View.GONE);
-                 }
-             });
+                @Override
+                public void notFoundInCart() {
+                    productViewDialogBinding.AddTOCart.setVisibility(View.VISIBLE);
+                    productViewDialogBinding.quantityBox.setVisibility(View.GONE);
+                }
+            });
 
 
 //             String userId = FirebaseAuth.getInstance().getUid();
@@ -651,18 +652,18 @@ public class HomeFragment extends Fragment {
         productViewDialogBinding.AddTOCart.setOnClickListener(v -> {
             if (FirebaseAuth.getInstance().getCurrentUser()!=null) {
                 productManager.addToBothDatabase(new ShoppingCartFirebaseModel(productModel.getProductId(), productModel.getMinSelectableQuantity()), new ProductManager.AddListenerForAddToBothInDatabase() {
-                @Override
-                public void added(ShoppingCartFirebaseModel shoppingCartFirebaseModel) {
-                    productViewDialogBinding.AddTOCart.setVisibility(View.GONE);
-                    productViewDialogBinding.quantityBox.setVisibility(View.VISIBLE);
-                }
-                @Override
-                public void failure(Exception e) {
-                    productViewDialogBinding.AddTOCart.setVisibility(View.VISIBLE);
-                    productViewDialogBinding.quantityBox.setVisibility(View.GONE);
-                    Toast.makeText(requireContext(), "check your network connection and try again ", Toast.LENGTH_SHORT).show();
-                }
-            });
+                    @Override
+                    public void added(ShoppingCartFirebaseModel shoppingCartFirebaseModel) {
+                        productViewDialogBinding.AddTOCart.setVisibility(View.GONE);
+                        productViewDialogBinding.quantityBox.setVisibility(View.VISIBLE);
+                    }
+                    @Override
+                    public void failure(Exception e) {
+                        productViewDialogBinding.AddTOCart.setVisibility(View.VISIBLE);
+                        productViewDialogBinding.quantityBox.setVisibility(View.GONE);
+                        Toast.makeText(requireContext(), "check your network connection and try again ", Toast.LENGTH_SHORT).show();
+                    }
+                });
 
 //            addToCart(productModel,productViewDialogBinding.AddTOCart,bottomSheetDialog,productViewDialogBinding.quantityBox);
             }else {
@@ -1086,7 +1087,7 @@ public class HomeFragment extends Fragment {
     }
 
 
-//    void
+    //    void
 //
     private void openSearchFragment() {
         if (isAdded() && getActivity() != null) {
@@ -1100,10 +1101,7 @@ public class HomeFragment extends Fragment {
                     .commit();
 
 
+        }
     }
-}
 
 }
-
-
-

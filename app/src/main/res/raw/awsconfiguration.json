@@ -1,0 +1,12 @@
+{
+  "Version": "1.0",
+  "CredentialsProvider": {
+    "AWSCredentialsProvider": {
+      "AccessKey": "AKIA4MTWHEZRSWSWITWB",
+      "SecretKey": "K4Mib3uJL+eQHSuEuvNcwXKd7Ybro2XbeYk6dczf"
+    }
+  },
+  "Region": {
+    "Region": "YOUR_REGION"
+  }
+}

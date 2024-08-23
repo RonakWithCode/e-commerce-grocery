@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 
 import com.crazyostudio.ecommercegrocery.DAO.CartDAOHelper;
 import com.crazyostudio.ecommercegrocery.DAO.ShoppingCartFirebaseModelDAO;
-import com.crazyostudio.ecommercegrocery.Manager.ProductManager;
 import com.crazyostudio.ecommercegrocery.Model.AddressModel;
 import com.crazyostudio.ecommercegrocery.Model.OffersModel;
 import com.crazyostudio.ecommercegrocery.Model.OrderModel;

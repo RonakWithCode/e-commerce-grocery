@@ -178,8 +178,8 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
 
     @Override
     public void onOrder(ShoppingCartsProductModel model) {
-        ProductModel productModel = new ProductModel(model.isAvailable(), model.getProductId(), model.getProductName(), model.getProductDescription(), model.getBrand(), model.getCategory(), model.getSubCategory(), model.getPrice(), model.getMrp(), model.getDiscount(), model.getStockCount(), model.getMinSelectableQuantity(), model.getMaxSelectableQuantity(), model.getWeight(), model.getWeightSIUnit(), model.getProductLife(), model.getProductType(), model.getProductIsFoodItem(), model.getKeywords(), model.getProductImage(), model.getVariations());
-        showProductViewDialog(productModel, this);
+//        ProductModel productModel = new ProductModel(model.isAvailable(), model.getProductId(), model.getProductName(), model.getProductDescription(), model.getBrand(), model.getCategory(), model.getSubCategory(), model.getPrice(), model.getMrp(), model.getDiscount(), model.getStockCount(), model.getMinSelectableQuantity(), model.getMaxSelectableQuantity(), model.getWeight(), model.getWeightSIUnit(), model.getProductLife(), model.getProductType(), model.getProductIsFoodItem(), model.getKeywords(), model.getProductImage(), model.getVariations());
+//        showProductViewDialog(productModel, this);
     }
 
     private void showProductViewDialog(ProductModel productModel, Activity context) {
@@ -229,19 +229,19 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
         if (productModel.getVariations() != null) {
             for (int i = 0; i < productModel.getVariations().size(); i++) {
                 int finalI = i;
-                databaseService.getAllProductById(productModel.getVariations().get(i).getId(), new DatabaseService.GetAllProductsModelCallback() {
-                    @Override
-                    public void onSuccess(ProductModel oneProduct) {
-                        variationsList.add(new Variations(oneProduct.getProductId(), productModel.getVariations().get(finalI).getWeightWithSIUnit(), String.valueOf(oneProduct.getPrice())));
-                        productModels.add(oneProduct);
-                        variantsAdapter.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onError(String errorMessage) {
-                        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show();
-                    }
-                });
+//                databaseService.getAllProductById(productModel.getVariations().get(i).getId(), new DatabaseService.GetAllProductsModelCallback() {
+//                    @Override
+//                    public void onSuccess(ProductModel oneProduct) {
+//                        variationsList.add(new Variations(oneProduct.getProductId(), productModel.getVariations().get(finalI).getWeightWithSIUnit(), String.valueOf(oneProduct.getPrice())));
+//                        productModels.add(oneProduct);
+//                        variantsAdapter.notifyDataSetChanged();
+//                    }
+//
+//                    @Override
+//                    public void onError(String errorMessage) {
+//                        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show();
+//                    }
+//                });
             }
         }
 

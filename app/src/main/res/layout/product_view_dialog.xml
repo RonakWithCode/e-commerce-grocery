@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="#3C000000">
-
+<!--    ProductViewDialog-->
     <ImageView
         android:layout_marginTop="@dimen/_15sdp"
         android:id="@+id/close_button"

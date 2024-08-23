@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
@@ -15,7 +14,6 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.crazyostudio.ecommercegrocery.Fragment.ProductDetailsFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.ProductFilterFragment;
 import com.crazyostudio.ecommercegrocery.Model.HomeProductModel;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
@@ -69,10 +67,15 @@ public class HomeProductAdapter extends RecyclerView.Adapter<HomeProductAdapter.
 
         holder.binding.recycler.setAdapter(productAdapter);
         holder.binding.recycler.setLayoutManager(layoutManager);
+
         layoutManager.setSmoothScrollbarEnabled(true);
+
+
         CustomSmoothScroller smoothScroller = new CustomSmoothScroller(context);
         smoothScroller.setTargetPosition(0);
         layoutManager.startSmoothScroll(smoothScroller);
+
+
         holder.binding.seeMore.setOnClickListener(view->{
             FragmentTransaction transaction = context.getSupportFragmentManager().beginTransaction();
             Bundle bundle = new Bundle();

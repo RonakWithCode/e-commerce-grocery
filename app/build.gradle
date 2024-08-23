@@ -33,6 +33,23 @@ android {
 }
 
 dependencies {
+
+    implementation 'com.amazonaws:aws-android-sdk-core:2.76.0'
+    // AWS SDK DynamoDB library
+    implementation 'com.amazonaws:aws-android-sdk-ddb:2.76.0'
+    implementation 'com.amazonaws:aws-android-sdk-ddb-mapper:2.76.0'
+    implementation 'com.amazonaws:aws-android-sdk-ddb-document:2.76.0'
+    // AWS SDK S3 library
+    implementation 'com.amazonaws:aws-android-sdk-s3:2.76.0'
+
+
+
+
+
+
+
+
+
     def room_version = "2.6.1"
     //noinspection GradleDependency
     implementation "androidx.room:room-runtime:$room_version"
