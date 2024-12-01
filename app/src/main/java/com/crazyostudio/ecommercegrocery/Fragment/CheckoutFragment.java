@@ -380,7 +380,7 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
             @SuppressLint("SetTextI18n")
             @Override
             public void onSuccess() {
-                databaseService.removeCartItems(customer.getCustomerId());
+                databaseService.removeCartItems(getContext(),customer.getCustomerId());
                 String totalSaving = ValuesHelper.RupeeSymbols + totalSavings;
                 PlaceOrderFragment placeOrderFragment = new PlaceOrderFragment(orderId,totalSaving);
                 placeOrderFragment.show(requireActivity().getSupportFragmentManager(), "place_order_dialog");

@@ -40,6 +40,7 @@
                 tools:ignore="RelativeOverlap" />
 
             <ImageView
+                android:id="@+id/search_bta"
                 android:layout_centerVertical="true"
                 android:layout_alignParentEnd="true"
                 android:layout_width="@dimen/_24sdp"

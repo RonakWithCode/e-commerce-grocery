@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.crazyostudio.ecommercegrocery.DAO.CartDAOHelper;
 import com.crazyostudio.ecommercegrocery.DAO.ShoppingCartFirebaseModelDAO;
+import com.crazyostudio.ecommercegrocery.Manager.ProductManager;
 import com.crazyostudio.ecommercegrocery.Model.AddressModel;
 import com.crazyostudio.ecommercegrocery.Model.OffersModel;
 import com.crazyostudio.ecommercegrocery.Model.OrderModel;
@@ -470,9 +471,10 @@ public class DatabaseService {
     }
 
 //    This use for remove all cart product's
-    public void removeCartItems(String uid) {
+    public void removeCartItems(Context context,String uid) {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseDatabase.getReference().child("Cart").child(Objects.requireNonNull(uid)).removeValue();
+        new ProductManager(context).removeCartProducts();
 
     }
 

@@ -97,7 +97,7 @@ public class SearchFragment extends Fragment implements SearchAdapterInterface {
             }
         } else {
             // Handle the case where arguments are null
-            Log.e("FragmentName", "Arguments are null");
+//            Log.e("FragmentName", "Arguments are null");
             homeProductModels = new ArrayList<>(); // Initialize with an empty list
         }
 

@@ -100,6 +100,16 @@ public class ProductManager {
         });
     }
 
+    public void removeCartProducts(){
+//        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+//        firebaseDatabase.getReference().child("Cart").child(Objects.requireNonNull(uid)).child(itemId).removeValue().addOnCompleteListener(task -> {
+            databaseHelper.ModelDAO().deleteAll();
+//        }).addOnFailureListener(e -> {
+//            Log.e("ProductMnager","Remove " + e);
+//        });
+    }
+
+
     public interface addListenerForIsProductInCart{
         void FoundProduct(ShoppingCartFirebaseModel shoppingCartFirebaseModel);
         void notFoundInCart();

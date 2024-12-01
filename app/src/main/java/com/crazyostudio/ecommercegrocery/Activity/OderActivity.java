@@ -16,11 +16,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Objects;
 
-
-
-
-
-
 public class OderActivity extends AppCompatActivity {
     ActivityOderBinding binding;
     @Override

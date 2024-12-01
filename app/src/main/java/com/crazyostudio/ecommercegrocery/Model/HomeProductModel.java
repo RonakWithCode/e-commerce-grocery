@@ -3,6 +3,9 @@ package com.crazyostudio.ecommercegrocery.Model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.ArrayList;
 
 public class HomeProductModel implements Parcelable {
