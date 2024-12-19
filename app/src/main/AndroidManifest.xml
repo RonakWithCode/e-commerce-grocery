@@ -4,6 +4,9 @@
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+x
+
+
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -110,6 +113,9 @@
             android:name="com.mapmyindia.sdk.apikey"
             android:value="92c446c1026304f56fa21f15dcd41be6" />
 
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAbgFyLxU2JhvS9ktQS20IoOdfXSZb_T04"/>
 
     </application>
 

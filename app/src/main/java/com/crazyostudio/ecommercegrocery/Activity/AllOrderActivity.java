@@ -1,23 +1,21 @@
 package com.crazyostudio.ecommercegrocery.Activity;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.crazyostudio.ecommercegrocery.Adapter.ViewOrderProductAdapter;
+import com.crazyostudio.ecommercegrocery.HelperClass.ValuesHelper;
 import com.crazyostudio.ecommercegrocery.Model.OrderModel;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.databinding.ActivityAllOrderBinding;
-import com.crazyostudio.ecommercegrocery.interfaceClass.OrderInterface;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -26,62 +24,113 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Objects;
 
 public class AllOrderActivity extends AppCompatActivity {
-    ActivityAllOrderBinding binding;
-    FirebaseDatabase database;
-    ArrayList<OrderModel> orderModel;
-    ViewOrderProductAdapter orderProductAdapter;
-    private ActionBar actionBar;
-    private int itemCount = 10; // Number of items to initially load
-    private int lastVisibleItemPosition;
+    private ActivityAllOrderBinding binding;
+    private FirebaseDatabase database;
+    private ArrayList<OrderModel> orderModels;
+    private ViewOrderProductAdapter orderProductAdapter;
+    private String currentFilter = "all";
+    private String currentDateFilter = "all_time";
     private boolean isLoading = false;
-    private int totalItemCount;
-    private LinearLayoutManager layoutManager;
-    private String filter = "all"; // Default filter value
-
+    private int pageSize = 10;
+    private Query lastQuery;
+    private DataSnapshot lastVisible;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityAllOrderBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        database = FirebaseDatabase.getInstance();
+        
+        setupViews();
+        setupRecyclerView();
+        setupFilters();
+        loadInitialData();
+    }
 
-        actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.hide();
+    private void setupViews() {
+        // Hide action bar
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
         }
 
-        binding.orderDetailsViewBack.setOnClickListener(view -> onBackPressed());
+        // Setup back button
+        binding.orderDetailsViewBack.setOnClickListener(v -> onBackPressed());
 
+        // Setup SwipeRefreshLayout
+        binding.swipeRefreshLayout.setOnRefreshListener(this::refreshData);
+        
+        // Setup empty state
+        binding.emptyStateText.setVisibility(View.GONE);
+    }
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                this,
-                R.array.typesSpinnerArray,
-                android.R.layout.simple_spinner_dropdown_item
-        );
-
-        binding.typesSpinner.setAdapter(adapter);
-        binding.typesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                filter = adapter.getItem(i).toString();
-                getOrders(filter);
+    private void setupFilters() {
+        // Setup order status filter
+        String[] filterOptions = getResources().getStringArray(R.array.order_status_options);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, 
+            com.google.android.material.R.layout.support_simple_spinner_dropdown_item, 
+            filterOptions);
+        
+        AutoCompleteTextView filterView = binding.typesSpinner;
+        filterView.setAdapter(adapter);
+        filterView.setText(filterOptions[0], false);
+        filterView.setOnItemClickListener((parent, view, position, id) -> {
+            // Convert filter option to match the status in database
+            String selectedFilter = filterOptions[position];
+            switch (selectedFilter.toLowerCase()) {
+                case "all orders":
+                    currentFilter = "all";
+                    break;
+                case "processing":
+                    currentFilter = ValuesHelper.PROCESSING;
+                    break;
+                case "confirmed":
+                    currentFilter = ValuesHelper.CONFIRMED;
+                    break;
+                case "out for delivery":
+                    currentFilter = ValuesHelper.OUTFORDELIVERY;
+                    break;
+                case "delivered":
+                    currentFilter = ValuesHelper.DELIVERED;
+                    break;
+                case "cancelled":
+                    currentFilter = ValuesHelper.CANCELLED;
+                    break;
+                case "customer rejected":
+                    currentFilter = ValuesHelper.CUSTOMER_REJECTED;
+                    break;
+                case "customer not available":
+                    currentFilter = ValuesHelper.CUSTOMER_NOT_AVAILABLE;
+                    break;
+                default:
+                    currentFilter = "all";
             }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-                filter = "all";
-                getOrders(filter);
-            }
+            refreshData();
         });
 
-        layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        // Setup date filter chips
+        binding.dateFilterChipGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == R.id.allTimeChip) {
+                currentDateFilter = "all_time";
+            } else if (checkedId == R.id.lastMonthChip) {
+                currentDateFilter = "last_month";
+            } else if (checkedId == R.id.last3MonthsChip) {
+                currentDateFilter = "last_3_months";
+            }
+            refreshData();
+        });
+    }
+
+    private void setupRecyclerView() {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         binding.itemRecycler.setLayoutManager(layoutManager);
 
-        orderModel = new ArrayList<>();
-        orderProductAdapter = new ViewOrderProductAdapter(orderModel, this, orderModel -> {
+        orderModels = new ArrayList<>();
+        orderProductAdapter = new ViewOrderProductAdapter(orderModels, this, orderModel -> {
             Intent i = new Intent(AllOrderActivity.this, OrderDetailsActivity.class);
             i.putExtra("orderID", orderModel.getOrderId());
             i.putExtra("orderModel", orderModel);
@@ -94,69 +143,103 @@ public class AllOrderActivity extends AppCompatActivity {
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
-                totalItemCount = layoutManager.getItemCount();
-                lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
+                int totalItemCount = layoutManager.getItemCount();
+                int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
 
-                if (!isLoading && totalItemCount <= (lastVisibleItemPosition + itemCount)) {
+                if (!isLoading && totalItemCount <= (lastVisibleItemPosition + pageSize)) {
                     // Load more data
                     isLoading = true;
-                    getMoreOrders(filter);
+                    getMoreOrders(currentFilter);
                 }
             }
         });
-
-        getOrders(filter);
     }
 
-
-    @SuppressLint("NotifyDataSetChanged")
-    private void getOrders(String filter) {
-        binding.progressCircular.setVisibility(View.VISIBLE);
+    private void loadInitialData() {
+        database = FirebaseDatabase.getInstance();
         Query query = database.getReference("Order")
                 .child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()))
-                .limitToLast(itemCount)
-                .orderByChild("orderStatus");
+                .limitToLast(pageSize);
 
-        if (!filter.equals("all")) {
-            query = query.equalTo(filter);
-        }
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                orderModel.clear();
+                orderModels.clear();
                 for (DataSnapshot snapshot1 : snapshot.getChildren()) {
                     OrderModel model = snapshot1.getValue(OrderModel.class);
                     if (model != null) {
-                        orderModel.add(model);
+                        // Apply filters
+                        boolean matchesStatusFilter = currentFilter.equals("all") || 
+                            model.getOrderStatus().equals(currentFilter);
+                        boolean matchesDateFilter = filterByDate(model.getOrderDate());
+                        
+                        if (matchesStatusFilter && matchesDateFilter) {
+                            orderModels.add(model);
+                        }
                     }
                 }
+                
+                // Show/hide empty state
+                if (orderModels.isEmpty()) {
+                    binding.emptyStateText.setVisibility(View.VISIBLE);
+                    binding.itemRecycler.setVisibility(View.GONE);
+                } else {
+                    binding.emptyStateText.setVisibility(View.GONE);
+                    binding.itemRecycler.setVisibility(View.VISIBLE);
+                }
+                
+                binding.swipeRefreshLayout.setRefreshing(false);
                 orderProductAdapter.notifyDataSetChanged();
-                binding.progressCircular.setVisibility(View.GONE);
                 isLoading = false;
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                binding.progressCircular.setVisibility(View.GONE);
+                binding.swipeRefreshLayout.setRefreshing(false);
                 isLoading = false;
+                // Show error message
+                // Toast.makeText(AllOrderActivity.this, getString(R.string.error_loading_orders), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+    private boolean filterByDate(Date orderDate) {
+        if (orderDate == null || currentDateFilter.equals("all_time")) {
+            return true;
+        }
 
+        Calendar calendar = Calendar.getInstance();
+        Calendar orderCalendar = Calendar.getInstance();
+        orderCalendar.setTime(orderDate);
 
+        switch (currentDateFilter) {
+            case "last_month":
+                calendar.add(Calendar.MONTH, -1);
+                return orderCalendar.after(calendar);
+                
+            case "last_3_months":
+                calendar.add(Calendar.MONTH, -3);
+                return orderCalendar.after(calendar);
+                
+            default:
+                return true;
+        }
+    }
+
+    private void refreshData() {
+        loadInitialData();
+    }
 
     private void getMoreOrders(String filter) {
         // Increase itemCount for loading more items
-        itemCount += 10;
-        getOrders(filter);
+        pageSize += 10;
+        loadInitialData();
     }
-
 
     @Override
     protected void onDestroy() {
-        if (actionBar != null) {
-            actionBar.show();
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().show();
         }
         super.onDestroy();
     }

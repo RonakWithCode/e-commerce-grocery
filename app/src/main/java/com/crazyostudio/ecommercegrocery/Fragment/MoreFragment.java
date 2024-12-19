@@ -40,6 +40,8 @@ public class MoreFragment extends Fragment {
         authService = new AuthService();
         if (authService.IsLogin()) {
             binding.relativeNotAuth.setVisibility(View.VISIBLE);
+            binding.mainLayout.setVisibility(View.GONE);
+
         }else {
             binding.mainLayout.setVisibility(View.VISIBLE);
             binding.Username.setText(authService.getUserName());
@@ -100,4 +102,5 @@ public class MoreFragment extends Fragment {
 
         return binding.getRoot();
     }
+
 }

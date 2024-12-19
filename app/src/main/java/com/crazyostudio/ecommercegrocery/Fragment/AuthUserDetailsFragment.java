@@ -1,28 +1,22 @@
 package com.crazyostudio.ecommercegrocery.Fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import com.crazyostudio.ecommercegrocery.MainActivity;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.Services.AuthService;
 import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentAuthUserDetailsBinding;
 import com.crazyostudio.ecommercegrocery.javaClasses.LoadingDialog;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 
+// this us add to fragment
 
 public class AuthUserDetailsFragment extends Fragment {
     FragmentAuthUserDetailsBinding binding;

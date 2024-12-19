@@ -3,8 +3,10 @@ package com.crazyostudio.ecommercegrocery.Adapter;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +18,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import com.crazyostudio.ecommercegrocery.HelperClass.ValuesHelper;
 import com.crazyostudio.ecommercegrocery.Model.AddressModel;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.Services.AuthService;
@@ -24,190 +25,341 @@ import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentNewAddressBinding;
 import com.crazyostudio.ecommercegrocery.javaClasses.LoadingDialog;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.Priority;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-public class newAddressFragment extends Fragment {
+public class newAddressFragment extends Fragment implements OnMapReadyCallback {
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
-    FusedLocationProviderClient fusedLocationProviderClient;
-    FragmentNewAddressBinding binding;
-    LoadingDialog loadingDialog;
-
-    public newAddressFragment() {
-        // Required empty public constructor
-    }
+    private static final LatLng WAREHOUSE_LOCATION = new LatLng(27.528944, 76.604944);
+    private static final float DELIVERY_RADIUS_KM = 15f;
+    
+    private FragmentNewAddressBinding binding;
+    private GoogleMap mMap;
+    private FusedLocationProviderClient fusedLocationClient;
+    private LocationCallback locationCallback;
+    private LoadingDialog loadingDialog;
+    private Circle deliveryRadiusCircle;
+    private Marker selectedLocationMarker;
+    private LatLng selectedLocation;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+                           Bundle savedInstanceState) {
         binding = FragmentNewAddressBinding.inflate(inflater, container, false);
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext());
-        loadingDialog = new LoadingDialog(requireActivity());
-
-        binding.backButton.setOnClickListener(back -> requireActivity().onBackPressed());
-        binding.house.setEndIconOnClickListener(currentLocation -> {
-            if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                requestLocationPermission();
-            } else {
-                fusedLocationProviderClient.getLastLocation()
-                        .addOnSuccessListener(location -> {
-                            if (location != null) {
-                                try {
-                                    Geocoder geocoder = new Geocoder(requireContext(), Locale.getDefault());
-                                    List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-//                                        binding.address.setText("Latitude: "+addresses.get(0).getLatitude());
-//                                        binding.house.setText("Longitude: "+addresses.get(0).getLongitude());
-//                                Log.i("addressesError", "onCreateView: "+ addresses.get(0).getAddressLine(0));
-//                                Log.i("addressesError", "addresses: "+ addresses);
-                                    binding.address.setText(addresses.get(0).getAddressLine(0));
-//                                        bind.setText("City: "+addresses.get(0).getLocality());
-//                                        country.setText("Country: "+addresses.get(0).getCountryName());
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-
-
-                            }
-
-                        });
-
-            }
-        });
-        binding.save.setOnClickListener(save -> {
-//            binding.progressCircular.setVisibility(View.VISIBLE);
-            loadingDialog.startLoadingDialog();
-            String fullName = binding.Name.getText().toString();
-            String mobileNumber = binding.Phone.getText().toString();
-            String flatHouse = binding.flatHouse.getText().toString();
-            String address = binding.address.getText().toString();
-            String landmark = binding.landmark.getText().toString();
-            boolean isHomeSelected = binding.home.isChecked();
-
-            if (fullName.isEmpty()) {
-                binding.Name.setError("Full name is required");
-            } else if (mobileNumber.isEmpty()) {
-                binding.Phone.setError("Mobile number is required");
-            } else if (flatHouse.isEmpty()) {
-                binding.flatHouse.setError("Flat/house number is required");
-            } else if (address.isEmpty()) {
-                binding.address.setError("Address is required");
-            } else if (landmark.isEmpty()) {
-                binding.landmark.setError("Landmark is required");
-            } else {
-                AddressModel addressModel = new AddressModel(fullName, mobileNumber, flatHouse, address, landmark, isHomeSelected);
-                new DatabaseService().setAdders(addressModel, FirebaseAuth.getInstance().getUid(), new DatabaseService.SetAddersCallback() {
-                    @Override
-                    public void onSuccess() {
-                        if (new AuthService().getUserName().equals(ValuesHelper.DEFAULT_USER_NAME)) {
-                            new AuthService().updateName(fullName, new AuthService.UpdateNameListenerCallback() {
-                                @Override
-                                public void failureListener(Exception e) {
-                                    loadingDialog.dismissDialog(); // Show loading dialog
-                                }
-
-                                @Override
-                                public void Success() {
-                                    loadingDialog.dismissDialog(); // Show loading dialog
-
-                                    requireActivity().onBackPressed();
-//                startActivity(new Intent(requireContext(), MainActivity.class));
-                                }
-                            });
-
-                        } else {
-                            loadingDialog.dismissDialog();
-                            requireActivity().onBackPressed();
-                        }
-                    }
-
-                    @SuppressLint("SetTextI18n")
-                    @Override
-                    public void onError(String errorMessage) {
-                        binding.hintView.setTextColor(ContextCompat.getColor(requireContext(), R.color.FixRed));
-                        binding.hintView.setText("Fulled to save Address error " + errorMessage);
-//                    binding.progressCircular.setVisibility(View.GONE);
-                        loadingDialog.dismissDialog();
-
-                        Toast.makeText(requireContext(), "Fulled to save Address error " + errorMessage, Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        });
+        initializeComponents();
+        setupLocationCallback();
+        setupClickListeners();
         return binding.getRoot();
     }
 
-    void getLocation() {
-        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            requestLocationPermission();
+    private void initializeComponents() {
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext());
+        loadingDialog = new LoadingDialog(requireActivity());
 
-        } else {
-            fusedLocationProviderClient.getLastLocation()
-                    .addOnSuccessListener(location -> {
-
-                        if (location != null) {
-                            try {
-                                Geocoder geocoder = new Geocoder(requireContext(), Locale.getDefault());
-                                List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-//                                        binding.address.setText("Latitude: "+addresses.get(0).getLatitude());
-//                                        binding.house.setText("Longitude: "+addresses.get(0).getLongitude());
-                                binding.address.setText(addresses.get(0).getAddressLine(0));
-//                                        bind.setText("City: "+addresses.get(0).getLocality());
-//                                        country.setText("Country: "+addresses.get(0).getCountryName());
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-
-
-                        }
-
-                    });
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
+                .findFragmentById(R.id.map);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
         }
-
     }
 
-    //    @Override
-//    public void onPause() {
-//        super.onPause();
-//        // Stop receiving location updates
-//        fusedLocationProviderClient.removeLocationUpdates(locationCallback);
-//    }
+    private void setupLocationCallback() {
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(@NonNull LocationResult locationResult) {
+                Location location = locationResult.getLastLocation();
+                if (location != null) {
+                    LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+                    handleLocationUpdate(currentLatLng);
+                }
+            }
+        };
+    }
+
+    private void setupClickListeners() {
+        binding.backButton.setOnClickListener(v -> requireActivity().onBackPressed());
+        
+        binding.house.setEndIconOnClickListener(v -> {
+            if (checkLocationPermission()) {
+                startLocationUpdates();
+            } else {
+                requestLocationPermission();
+            }
+        });
+        
+        binding.save.setOnClickListener(v -> saveAddress());
+    }
+
+    @SuppressLint("MissingPermission")
+    private void startLocationUpdates() {
+        loadingDialog.startLoadingDialog();
+        
+        LocationRequest locationRequest = LocationRequest.create()
+                .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
+                .setInterval(5000);
+
+        if (checkLocationPermission()) {
+            fusedLocationClient.requestLocationUpdates(locationRequest, 
+                locationCallback, 
+                null);
+            
+            fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(location -> {
+                    if (location != null) {
+                        LatLng currentLatLng = new LatLng(
+                            location.getLatitude(), 
+                            location.getLongitude()
+                        );
+                        handleLocationUpdate(currentLatLng);
+                    }
+                    loadingDialog.dismissDialog();
+                })
+                .addOnFailureListener(e -> {
+                    loadingDialog.dismissDialog();
+                    Toast.makeText(requireContext(), 
+                        "Failed to get location: " + e.getMessage(), 
+                        Toast.LENGTH_SHORT).show();
+                });
+        }
+    }
+
+    private void handleLocationUpdate(LatLng location) {
+        if (isLocationInDeliveryRadius(location)) {
+            updateSelectedLocation(location);
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 15f));
+        } else {
+            Toast.makeText(requireContext(), 
+                "Your location is outside our delivery area", 
+                Toast.LENGTH_SHORT).show();
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(WAREHOUSE_LOCATION, 12f));
+        }
+    }
+
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
+        mMap = googleMap;
+        setupMap();
+        
+        // Add click listener for map
+        mMap.setOnMapClickListener(this::handleMapClick);
+    }
+
+    private void setupMap() {
+        if (checkLocationPermission()) {
+            mMap.setMyLocationEnabled(true);
+            mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        }
+
+        // Draw delivery radius circle
+        deliveryRadiusCircle = mMap.addCircle(new CircleOptions()
+                .center(WAREHOUSE_LOCATION)
+                .radius(DELIVERY_RADIUS_KM * 1000) // Convert km to meters
+                .strokeColor(Color.GREEN)
+                .strokeWidth(2f)
+                .fillColor(Color.argb(70, 0, 255, 0)));
+
+        // Move camera to warehouse location
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(WAREHOUSE_LOCATION, 12f));
+    }
+
+    private void handleMapClick(LatLng latLng) {
+        if (isLocationInDeliveryRadius(latLng)) {
+            updateSelectedLocation(latLng);
+        } else {
+            Toast.makeText(requireContext(), 
+                "Selected location is outside our delivery area (15km radius)", 
+                Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private boolean isLocationInDeliveryRadius(LatLng location) {
+        float[] distance = new float[1];
+        Location.distanceBetween(
+            WAREHOUSE_LOCATION.latitude, WAREHOUSE_LOCATION.longitude,
+            location.latitude, location.longitude,
+            distance
+        );
+        return distance[0] <= DELIVERY_RADIUS_KM * 1000; // Convert km to meters
+    }
+
+    private void updateSelectedLocation(LatLng location) {
+        selectedLocation = location;
+        
+        // Remove previous marker if exists
+        if (selectedLocationMarker != null) {
+            selectedLocationMarker.remove();
+        }
+        
+        // Add new marker
+        selectedLocationMarker = mMap.addMarker(new MarkerOptions()
+                .position(location)
+                .title("Delivery Location"));
+
+        // Update address fields
+        updateAddressFromLocation(location);
+    }
+
+    private void updateAddressFromLocation(LatLng location) {
+        try {
+            Geocoder geocoder = new Geocoder(requireContext(), Locale.getDefault());
+            List<Address> addresses = geocoder.getFromLocation(
+                location.latitude, 
+                location.longitude, 
+                1
+            );
+            
+            if (addresses != null && !addresses.isEmpty()) {
+                Address address = addresses.get(0);
+                String fullAddress = address.getAddressLine(0);
+                binding.address.setText(fullAddress);
+            }
+        } catch (IOException e) {
+            Toast.makeText(requireContext(), 
+                "Could not get address details", 
+                Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void saveAddress() {
+        if (!validateInputs()) {
+            return;
+        }
+
+        AddressModel addressModel = new AddressModel(
+            binding.Name.getText().toString(),
+            binding.Phone.getText().toString(),
+            binding.flatHouse.getText().toString(),
+            binding.address.getText().toString(),
+            binding.landmark.getText().toString(),
+            binding.home.isChecked(),
+            selectedLocation.latitude,
+            selectedLocation.longitude
+        );
+
+        saveAddressToDatabase(addressModel);
+    }
+
+    private boolean validateInputs() {
+        if (selectedLocation == null) {
+            Toast.makeText(requireContext(), 
+                "Please select a delivery location", 
+                Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (binding.Name.getText().toString().isEmpty()) {
+            binding.Name.setError("Full name is required");
+            return false;
+        }
+
+        if (binding.Phone.getText().toString().isEmpty()) {
+            binding.Phone.setError("Mobile number is required");
+            return false;
+        }
+
+        if (binding.flatHouse.getText().toString().isEmpty()) {
+            binding.flatHouse.setError("Flat/house number is required");
+            return false;
+        }
+
+        if (binding.address.getText().toString().isEmpty()) {
+            binding.address.setError("Address is required");
+            return false;
+        }
+
+        if (binding.landmark.getText().toString().isEmpty()) {
+            binding.landmark.setError("Landmark is required");
+            return false;
+        }
+
+        return true;
+    }
+
+    private void saveAddressToDatabase(AddressModel addressModel) {
+        loadingDialog.startLoadingDialog();
+        new DatabaseService().setAdders(
+            addressModel,
+            FirebaseAuth.getInstance().getUid(),
+            new DatabaseService.SetAddersCallback() {
+                @Override
+                public void onSuccess() {
+                    loadingDialog.dismissDialog();
+                    Toast.makeText(requireContext(), 
+                        "Address saved successfully", 
+                        Toast.LENGTH_SHORT).show();
+                    requireActivity().onBackPressed();
+                }
+
+                @Override
+                public void onError(String errorMessage) {
+                    loadingDialog.dismissDialog();
+                    Toast.makeText(requireContext(), 
+                        "Failed to save address: " + errorMessage, 
+                        Toast.LENGTH_SHORT).show();
+                }
+            });
+    }
+
+    private boolean checkLocationPermission() {
+        return ContextCompat.checkSelfPermission(requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
     private void requestLocationPermission() {
-        // Request the location permission from the user
         ActivityCompat.requestPermissions(requireActivity(),
                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                 LOCATION_PERMISSION_REQUEST_CODE);
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, 
+                                         @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted, you can proceed with location-related tasks
-                getLocation();
+            if (grantResults.length > 0 && 
+                grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (mMap != null) {
+                    if (checkLocationPermission()) {
+                        mMap.setMyLocationEnabled(true);
+                        startLocationUpdates();
+                    }
+                }
             } else {
-                // Permission denied, handle it (e.g., show a message to the user)
+                Toast.makeText(requireContext(), 
+                    "Location permission denied", 
+                    Toast.LENGTH_SHORT).show();
             }
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (fusedLocationClient != null && locationCallback != null) {
+            fusedLocationClient.removeLocationUpdates(locationCallback);
+        }
+    }
 
-    // Other methods and code for your fragment...
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
 }

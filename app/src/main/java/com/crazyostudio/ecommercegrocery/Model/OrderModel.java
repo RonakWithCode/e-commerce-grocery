@@ -14,28 +14,34 @@ public class OrderModel implements Parcelable {
     private ArrayList<ShoppingCartsProductModel> orderItems;
     private double orderTotalPrice;
     private String CouponCode;
+    private double CouponCodeValue;
     private String orderStatus;
     private Payment payment;
     private Shipping shipping;
     private Date orderDate;
     private String notes;
     private String token;
+    private double Donate; ;
+    private double ProcessingFees;
 
     public OrderModel() {
     }
 
-    public OrderModel(String orderId, Customer customer, ArrayList<ShoppingCartsProductModel> orderItems, double orderTotalPrice, String couponCode, String orderStatus, Payment payment, Shipping shipping, Date orderDate, String notes, String token) {
+    public OrderModel(String orderId, Customer customer, ArrayList<ShoppingCartsProductModel> orderItems, double orderTotalPrice, String couponCode, String orderStatus, Payment payment, Shipping shipping, Date orderDate, String notes, String token,double CouponCodeValue,double Donate,double ProcessingFees) {
         this.orderId = orderId;
         this.customer = customer;
         this.orderItems = orderItems;
         this.orderTotalPrice = orderTotalPrice;
-        CouponCode = couponCode;
+        this.CouponCode = couponCode;
         this.orderStatus = orderStatus;
         this.payment = payment;
         this.shipping = shipping;
         this.orderDate = orderDate;
         this.notes = notes;
         this.token = token;
+        this.CouponCodeValue =CouponCodeValue;
+        this.Donate = Donate;
+        this.ProcessingFees = ProcessingFees;
     }
 
 
@@ -50,6 +56,9 @@ public class OrderModel implements Parcelable {
         shipping = in.readParcelable(Shipping.class.getClassLoader());
         notes = in.readString();
         token = in.readString();
+        CouponCodeValue = in.readDouble();
+        Donate = in.readDouble();
+        ProcessingFees = in.readDouble();
     }
 
     public static final Creator<OrderModel> CREATOR = new Creator<OrderModel>() {
@@ -152,6 +161,14 @@ public class OrderModel implements Parcelable {
         this.token = token;
     }
 
+    public double getCouponCodeValue() {
+        return CouponCodeValue;
+    }
+
+    public void setCouponCodeValue(double couponCodeValue) {
+        CouponCodeValue = couponCodeValue;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -170,5 +187,9 @@ public class OrderModel implements Parcelable {
         dest.writeLong(orderDate != null ? orderDate.getTime() : -1);
         dest.writeString(notes);
         dest.writeString(token);
+        dest.writeDouble(CouponCodeValue);
+        dest.writeDouble(Donate);
+        dest.writeDouble(ProcessingFees);
+
     }
 }

@@ -6,7 +6,6 @@ import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,13 +56,13 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
     ShoppingCartsAdapter cartsAdapter;
     ArrayList<ShoppingCartsProductModel> models;
     String uid;
-    String deliveryFee = "free";
+    double deliveryFee = 00;
     private boolean CouponValueIsApply = false;
     private String CouponCode;
     double Total =  00;
     double grandTotal = 00;
 
-    double processFee = 00;
+//    double deliveryFee = 00;
     private double newCouponValue;
     private double couponMin;
     private AddressModel addressModel;
@@ -99,6 +98,7 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
         binding.shimmerLayout.startShimmer();
         models = new ArrayList<>();
         cartsAdapter = new ShoppingCartsAdapter(models, this, requireContext());
+        binding.processFee.setText("00");
 //        productModels = new ArrayList<>();
 //        recommendationsAdapter = new RecommendationsAdapter(productModels,this,requireContext());
 //        binding.recommendationsProduct.setAdapter(recommendationsAdapter);
@@ -181,7 +181,7 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
 
 
 
-        binding.ShippingPrice.setText(deliveryFee);
+        binding.ShippingPrice.setText(""+deliveryFee);
 
         initAddress();
         loadProductFromCart();
@@ -284,16 +284,16 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
     private void updateSubTotalPrice() {
         Total = ShoppingCartHelper.calculateTotalPrices(models);
         if (Total < ValuesHelper.MIN_TOTAL_PRICE) {
-            processFee = ValuesHelper.MIN_TOTAL_PRICE_VALUE;
-            binding.processFee.setText(ValuesHelper.RupeeSymbols + processFee);
+            deliveryFee = ValuesHelper.MIN_TOTAL_PRICE_VALUE;
+            binding.ShippingPrice.setText(ValuesHelper.RupeeSymbols + deliveryFee);
         }else {
-            processFee = 00;
-            binding.processFee.setText(ValuesHelper.RupeeSymbols + processFee);
+            deliveryFee = 00;
+            binding.ShippingPrice.setText(ValuesHelper.RupeeSymbols + deliveryFee);
         }
 
         binding.SubTotalPrice.setText("₹" + Total);
 
-        grandTotal = Total - newCouponValue + processFee;
+        grandTotal = Total - newCouponValue + deliveryFee;
         binding.TotalPrice.setText(ValuesHelper.RupeeSymbols  + grandTotal);
 
     }
@@ -375,7 +375,7 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
         }
 
         OrderModel orderModel = new OrderModel(orderId,customer,models,finalTotal,couponCode,deliveryState,payment, shipping
-                ,currentDate , Objects.requireNonNull(binding.note.getEditText()).getText().toString(),token);
+                ,currentDate , Objects.requireNonNull(binding.note.getEditText()).getText().toString(),token,newCouponValue,00,00);
         databaseService.PlaceOder(orderModel, new DatabaseService.PlaceOrderCallback() {
             @SuppressLint("SetTextI18n")
             @Override

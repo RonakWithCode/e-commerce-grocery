@@ -5,9 +5,7 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
-import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBDocument;
 
-@DynamoDBDocument
 public class Variations implements Parcelable {
     private String id;
     private String name;

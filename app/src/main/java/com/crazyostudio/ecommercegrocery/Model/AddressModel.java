@@ -10,16 +10,24 @@ public class AddressModel implements Parcelable {
     private String address;
     private String landmark;
     private boolean isHomeSelected;
+    private double latitude;
+    private double longitude;
 
     public AddressModel() {}
 
-    public AddressModel(String fullName, String mobileNumber, String flatHouse, String address, String landmark, boolean isHomeSelected) {
+    // public AddressModel(String fullName, String mobileNumber, String flatHouse, String address, String landmark, boolean isHomeSelected) {
+    //     this(fullName, mobileNumber, flatHouse, address, landmark, isHomeSelected, 0.0, 0.0);
+    // }
+
+    public AddressModel(String fullName, String mobileNumber, String flatHouse, String address, String landmark, boolean isHomeSelected, double latitude, double longitude) {
         this.fullName = fullName;
         this.mobileNumber = mobileNumber;
         this.flatHouse = flatHouse;
         this.address = address;
         this.landmark = landmark;
         this.isHomeSelected = isHomeSelected;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     protected AddressModel(Parcel in) {
@@ -29,6 +37,8 @@ public class AddressModel implements Parcelable {
         address = in.readString();
         landmark = in.readString();
         isHomeSelected = in.readByte() != 0;
+        latitude = in.readDouble();
+        longitude = in.readDouble();
     }
 
     @Override
@@ -39,6 +49,8 @@ public class AddressModel implements Parcelable {
         dest.writeString(address);
         dest.writeString(landmark);
         dest.writeByte((byte) (isHomeSelected ? 1 : 0));
+        dest.writeDouble(latitude);
+        dest.writeDouble(longitude);
     }
 
     @Override
@@ -105,4 +117,21 @@ public class AddressModel implements Parcelable {
     public void setHomeSelected(boolean homeSelected) {
         isHomeSelected = homeSelected;
     }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+    
 }

@@ -1,43 +1,26 @@
 package com.crazyostudio.ecommercegrocery.Adapter;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
 import com.crazyostudio.ecommercegrocery.HelperClass.ValuesHelper;
 import com.crazyostudio.ecommercegrocery.Model.OrderModel;
-import com.crazyostudio.ecommercegrocery.Model.ProductModel;
 import com.crazyostudio.ecommercegrocery.Model.ShoppingCartsProductModel;
 import com.crazyostudio.ecommercegrocery.R;
-import com.crazyostudio.ecommercegrocery.databinding.OrderProductLayoutBinding;
 import com.crazyostudio.ecommercegrocery.databinding.OrdersViewLayoutBinding;
 import com.crazyostudio.ecommercegrocery.interfaceClass.OrderInterface;
-import com.crazyostudio.ecommercegrocery.interfaceClass.OrderProductInterface;
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.lang.annotation.Target;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
-import java.util.StringTokenizer;
 
 public class ViewOrderProductAdapter  extends RecyclerView.Adapter<ViewOrderProductAdapter.ViewOrderProductAdapterViewHolder> {
 
@@ -57,7 +40,6 @@ public class ViewOrderProductAdapter  extends RecyclerView.Adapter<ViewOrderProd
         return new ViewOrderProductAdapter.ViewOrderProductAdapterViewHolder(LayoutInflater.from(context).inflate(R.layout.orders_view_layout, parent, false));
     }
 
-    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewOrderProductAdapter.ViewOrderProductAdapterViewHolder holder, int position) {
         OrderModel model = orderModels.get(position);
@@ -69,18 +51,19 @@ public class ViewOrderProductAdapter  extends RecyclerView.Adapter<ViewOrderProd
         holder.binding.seeAllButton.setText("+" + model.getOrderItems().size() + " more");
         holder.binding.OrderPrice.setText("₹" + model.getOrderTotalPrice());
         holder.binding.OrderStatus.setText(model.getOrderStatus());
-        holder.binding.OrderId.setText("#"+model.getOrderId().replace(FirebaseAuth.getInstance().getUid(),""));
+        holder.binding.OrderId.setText("#" + model.getOrderId().replace(FirebaseAuth.getInstance().getUid(), ""));
+
         int textColor = ContextCompat.getColor(holder.itemView.getContext(), R.color.green_primary);
         int backgroundColor = R.drawable.round_status;
 
         switch (model.getOrderStatus()) {
-            case ValuesHelper.FAILED:
-                backgroundColor = R.drawable.round_status_failed;
-                textColor = ContextCompat.getColor(holder.itemView.getContext(), R.color.FixColorWhite);
-                break;
             case ValuesHelper.PROCESSING:
                 backgroundColor = R.drawable.round_status_yellow;
                 textColor = ContextCompat.getColor(holder.itemView.getContext(), R.color.FixBlack);
+                break;
+            case ValuesHelper.CONFIRMED:
+                backgroundColor = R.drawable.round_status_light_blue;
+                textColor = ContextCompat.getColor(holder.itemView.getContext(), R.color.black);
                 break;
             case ValuesHelper.OUTFORDELIVERY:
                 backgroundColor = R.drawable.round_status_yellow;
@@ -90,6 +73,18 @@ public class ViewOrderProductAdapter  extends RecyclerView.Adapter<ViewOrderProd
                 backgroundColor = R.drawable.round_status_delivered;
                 textColor = ContextCompat.getColor(holder.itemView.getContext(), R.color.green_primary);
                 break;
+            case ValuesHelper.CANCELLED:
+                backgroundColor = R.drawable.round_status_failed;
+                textColor = ContextCompat.getColor(holder.itemView.getContext(), R.color.white);
+                break;
+            case ValuesHelper.CUSTOMER_REJECTED:
+                backgroundColor = R.drawable.round_status_purple;
+                textColor = ContextCompat.getColor(holder.itemView.getContext(), R.color.white);
+                break;
+            case ValuesHelper.CUSTOMER_NOT_AVAILABLE:
+                backgroundColor = R.drawable.round_status_grey;
+                textColor = ContextCompat.getColor(holder.itemView.getContext(), R.color.FixBlack);
+                break;
         }
 
         holder.binding.OrderStatus.setTextColor(textColor);
@@ -97,36 +92,24 @@ public class ViewOrderProductAdapter  extends RecyclerView.Adapter<ViewOrderProd
 
         holder.binding.orderContactPhone.setText(model.getShipping().getShippingAddress().getMobileNumber());
 
-        holder.binding.Call.setOnClickListener(Call->{
-//          create the box layout for request for call
+        holder.binding.Call.setOnClickListener(Call -> {
+            // Create the box layout for request for call
         });
 
         SimpleDateFormat outputFormat = new SimpleDateFormat("dd MMM yyyy 'at' hh:mm a", Locale.ENGLISH);
         String date = outputFormat.format(model.getOrderDate());
         holder.binding.OrderDate.setText(date);
 
-
-//        OrderProductAdapter orderProductAdapter  = new OrderProductAdapter(model.getOrderItems(), context, new OrderProductInterface() {
-//            @Override
-//            public void onOrder(ShoppingCartsProductModel shoppingCartsProductModel) {
-//                orderProductInterface.onOrder(model);
-//            }
-//        });
-
         ArrayList<ShoppingCartsProductModel> firstThreeItems = new ArrayList<>(model.getOrderItems().subList(0, Math.min(3, model.getOrderItems().size())));
-
-        OrderProductAdapter orderProductAdapter  = new OrderProductAdapter(firstThreeItems, context, shoppingCartsProductModel -> orderProductInterface.onOrder(model));
-
-
-
+        OrderProductAdapter orderProductAdapter = new OrderProductAdapter(firstThreeItems, context, shoppingCartsProductModel -> orderProductInterface.onOrder(model));
 
         holder.binding.productRecyclerView.setAdapter(orderProductAdapter);
         holder.binding.productRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         orderProductAdapter.notifyDataSetChanged();
 
-
         holder.binding.getRoot().setOnClickListener(onclickRoot -> orderProductInterface.onOrder(model));
     }
+
 
     @Override
     public int getItemCount() {

@@ -33,6 +33,7 @@ public class ProductModel implements Parcelable {
     @Nullable
     private ArrayList<Variations> variations;
 
+    private String barcode;
 
 
     public ProductModel() {}
@@ -60,7 +61,6 @@ public class ProductModel implements Parcelable {
         this.keywords = keywords;
         ProductImage = productImage;
         this.variations = variations;
-
     }
 
     protected ProductModel(Parcel in) {

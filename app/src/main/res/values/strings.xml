@@ -83,12 +83,12 @@
     <string name="make_payment">Make Payment</string>
     <string name="buy_now">Buy Now</string>
     <string name="account">Account</string>
-    <string name="check_order">Check Order</string>
+    <string name="check_order">My Orders</string>
     <string name="set_up_fast_pickup">Set Up fast Pickup</string>
     <string name="settings">Settings</string>
-    <string name="continue_shipping">Continue shopping</string>
+    <string name="continue_shipping">Continue Shopping</string>
     <string name="you_want_to_sign_up">you want to Sign-up</string>
-    <string name="please_make_a_account_or_sign_up">Please make a account or Sign-Up</string>
+    <string name="please_make_a_account_or_sign_up">Please create an account or sign up to continue</string>
     <string name="e_mail">E-mail</string>
     <string name="phone_no">Phone No</string>
     <string name="male">Male</string>
@@ -114,10 +114,14 @@
     <string-array name="typesSpinnerArray">
         <item>all</item>
         <item>Processing</item>
+        <item>Confirmed</item>
         <item>Out for Delivery</item>
         <item>Delivered</item>
-        <item>Failed</item>
+        <item>Cancelled</item>
+        <item>Customer Rejected</item>
+        <item>Customer Not Available</item>
     </string-array>
+
 
 
     <!-- Preference Titles -->
@@ -156,7 +160,7 @@
     <string name="you_can_change_latter">You can change latter</string>
     <string name="continue_text">Continue</string>
     <string name="information">Information</string>
-    <string name="create_new_address">Add a new Address</string>
+    <string name="create_new_address">Create New Address</string>
     <string name="choose_your_language">choose your language</string>
     <string name="change_your_language">Change your language</string>
     <string name="english">English</string>
@@ -211,7 +215,6 @@
     <string name="description">Description</string>
     <string name="process_fee">process fee</string>
     <string name="request_to_call">Request to Call</string>
-    <string name="my_orders">My orders</string>
     <string name="language">language</string>
     <string name="see_all">see all</string>
     <string name="dabur">Dabur</string>
@@ -239,4 +242,91 @@
     <string name="product_policy">Product policy</string>
     <string name="add_item_search_result_hint">ADD</string>
 
+
+
+
+    <string name="my_orders">My Orders</string>
+    <string name="back_button">Back</string>
+
+    <!-- Filter Options -->
+    <string name="filter_orders">Filter Orders</string>
+    <string name="sort_by">Sort By</string>
+
+    <!-- Date Filter Chips -->
+    <string name="all_time">All Time</string>
+    <string name="last_month">Last Month</string>
+    <string name="last_3_months">Last 3 Months</string>
+    <string name="custom_date">Custom Date</string>
+
+    <!-- Order Status Options -->
+    <string-array name="order_status_options">
+        <item>All Orders</item>
+        <item>Processing</item>
+        <item>Confirmed</item>
+        <item>Out for Delivery</item>
+        <item>Delivered</item>
+        <item>Cancelled</item>
+        <item>Customer Rejected</item>
+        <item>Customer Not Available</item>
+    </string-array>
+
+    <!-- Sort Options -->
+    <string-array name="sort_options">
+        <item>Latest First</item>
+        <item>Oldest First</item>
+        <item>Price: High to Low</item>
+        <item>Price: Low to High</item>
+    </string-array>
+
+    <!-- Status Messages -->
+    <string name="no_orders_found">No orders found</string>
+    <string name="error_loading_orders">Error loading orders</string>
+    <string name="try_again">Try Again</string>
+
+    <!-- Order Details -->
+    <string name="order_id">Order #%1$s</string>
+    <string name="order_date">Ordered on %1$s</string>
+    <string name="order_amount">₹%1$s</string>
+    <string name="items_count">%1$d items</string>
+
+    <!-- Order Status -->
+    <string name="status_processing">Processing</string>
+    <string name="status_confirmed">Confirmed</string>
+    <string name="status_out_for_delivery">Out for Delivery</string>
+    <string name="status_delivered">Delivered</string>
+    <string name="status_cancelled">Cancelled</string>
+    <string name="status_rejected">Rejected</string>
+
+    <!-- Actions -->
+    <string name="view_details">View Details</string>
+    <string name="track_order">Track Order</string>
+    <string name="cancel_order">Cancel Order</string>
+    <string name="reorder">Reorder</string>
+
+    <!-- Loading States -->
+    <string name="loading_orders">Loading orders…</string>
+    <string name="loading_more">Loading more orders…</string>
+
+    <!-- Error Messages -->
+    <string name="network_error">Network error. Please check your connection.</string>
+    <string name="generic_error">Something went wrong. Please try again.</string>
+
+    <!-- Filter Descriptions -->
+    <string name="filter_description">Filter your orders by status</string>
+    <string name="date_filter_description">Filter orders by date range</string>
+
+    <!-- Accessibility -->
+    <string name="order_card_description">Order details card</string>
+    <string name="filter_button_description">Filter orders</string>
+    <string name="sort_button_description">Sort orders</string>
+    <string name="date_picker_description">Select date range</string>
+
+    <!-- Empty States -->
+    <string name="empty_state_title">No Orders Yet</string>
+    <string name="empty_state_message">Start shopping to see your orders here</string>
+    <string name="empty_state_action">Browse Products</string>
+
+    <!-- Filter Results -->
+    <string name="filter_results">Showing %1$d orders</string>
+    <string name="clear_filters">Clear Filters</string>
 </resources>

@@ -37,7 +37,7 @@ public class ShoppingCartsProductModel implements Parcelable {
     private String productIsFoodItem; // is veg or non veg or something else
     private ArrayList<String> keywords; // for SEO
     private ArrayList<String> ProductImage;
-    @Nullable
+//    @Nullable
     private ArrayList<Variations> variations;
 
 

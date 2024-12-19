@@ -236,6 +236,7 @@ public class AuthOTP extends Fragment {
             databaseService.CheckNotificationToken(new DatabaseService.UpdateTokenCallback() {
                 @Override
                 public void onSuccess(String token) {
+                    TokenManager.getInstance(requireContext()).clearToken();
                     TokenManager.getInstance(requireContext()).saveToken(token);
                     setupUser(token);
                 }
@@ -245,6 +246,7 @@ public class AuthOTP extends Fragment {
                     Log.i("onError", "onError: "+errorMessage);
                 }
             });
+
         } else {
             updateToken();
         }
@@ -260,8 +262,8 @@ public class AuthOTP extends Fragment {
             public void onSuccess(Task<Void> task) {
                 Bundle bundle = new Bundle();
                 bundle.putString("number", number);
-                navController.navigate(R.id.action_authOTP_to_authUserDetailsFragment, bundle);
                 loadingDialog.dismissDialog(); // Show loading dialog
+                navController.navigate(R.id.action_authOTP_to_authUserDetailsFragment, bundle);
 
             }
             @Override
@@ -277,6 +279,7 @@ public class AuthOTP extends Fragment {
         databaseService.CheckNotificationToken(new DatabaseService.UpdateTokenCallback() {
             @Override
             public void onSuccess(String token) {
+                TokenManager.getInstance(requireContext()).clearToken();
                 TokenManager.getInstance(requireContext()).saveToken(token);
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
                 DocumentReference userRef = db.collection("UserInfo").document(Objects.requireNonNull(firebaseAuth.getUid()));

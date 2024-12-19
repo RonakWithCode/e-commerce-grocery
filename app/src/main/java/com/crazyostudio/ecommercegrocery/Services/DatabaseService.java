@@ -97,6 +97,7 @@ public class DatabaseService {
 
         void onError(String errorMessage);
     }
+    
     public interface UpdateUserInfoCallback {
         void onSuccess();
 
@@ -545,15 +546,41 @@ public class DatabaseService {
 
 //    TODO write code Update Token in this code //-->
 
-    public void CheckNotificationToken(UpdateTokenCallback callback){
-        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                callback.onSuccess(task.getResult());
-                Log.i("ThisMainActivityLog", "onComplete: " + task.getResult());
-            }else {
-                callback.onError(Objects.requireNonNull(task.getException()).toString());
-            }
-        });
+    public void CheckNotificationToken(UpdateTokenCallback callback) {
+        // Get current user ID
+        String userId = FirebaseAuth.getInstance().getUid();
+        if (userId == null) {
+            callback.onError("User not authenticated");
+            return;
+        }
+
+        FirebaseMessaging.getInstance().getToken()
+            .addOnCompleteListener(task -> {
+                if (task.isSuccessful() && task.getResult() != null) {
+                    String token = task.getResult();
+                    
+                    // Update token in Firestore
+//                    database.collection("UserInfo")
+//                        .document(userId)
+//                        .update("fcmToken", token)
+//                        .addOnSuccessListener(aVoid -> {
+//                            Log.d("FCM_TOKEN", "Token updated successfully: " + token);
+                            callback.onSuccess(token);
+//                        })
+//                        .addOnFailureListener(e -> {
+//                            Log.e("FCM_TOKEN", "Failed to update token", e);
+//                            callback.onError("Failed to update token: " + e.getMessage());
+//                        });
+                } else {
+                    Log.e("FCM_TOKEN", "Failed to get token", task.getException());
+                    callback.onError("Failed to get FCM token: " + 
+                        (task.getException() != null ? task.getException().getMessage() : "Unknown error"));
+                }
+            })
+            .addOnFailureListener(e -> {
+                Log.e("FCM_TOKEN", "Exception while getting token", e);
+                callback.onError("Exception while getting FCM token: " + e.getMessage());
+            });
     }
 
 

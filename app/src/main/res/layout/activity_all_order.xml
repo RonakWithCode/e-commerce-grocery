@@ -1,78 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/OrderMainBackgroundColor"
     android:layout_height="match_parent"
+    android:background="@color/OrderMainBackgroundColor"
     tools:context=".Activity.AllOrderActivity">
-    <RelativeLayout
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <RelativeLayout
-            android:id="@+id/order_details_layout_top"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:elevation="0dp">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="@dimen/_5sdp">
-            <ImageView
-                android:id="@+id/order_details_view_back"
-                android:layout_width="@dimen/_25sdp"
-                android:layout_height="@dimen/_25sdp"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:layout_marginStart="@dimen/_10sdp"
-                android:src="@drawable/baseline_arrow_back_ios_new_24" />
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:layout_toEndOf="@id/order_details_view_back"
-                android:gravity="center"
-                android:text="@string/my_orders"
-                android:textColor="@color/green_primary"
-                android:textSize="@dimen/_20ssp"
-                android:textStyle="bold"
-                tools:ignore="RtlSymmetry" />
+                android:orientation="vertical"
+                android:padding="@dimen/_16sdp">
 
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-        </RelativeLayout>
+                    <ImageButton
+                        android:id="@+id/order_details_view_back"
+                        android:layout_width="@dimen/_32sdp"
+                        android:layout_height="@dimen/_32sdp"
+                        android:layout_centerVertical="true"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/baseline_arrow_back_ios_new_24"
+                        android:contentDescription="@string/back_button"/>
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="@string/my_orders"
+                        android:textColor="@color/green_primary"
+                        android:textSize="@dimen/_20ssp"
+                        android:textStyle="bold"/>
+                </RelativeLayout>
 
-        <LinearLayout
-            android:layout_below="@id/order_details_layout_top"
-            android:id="@+id/spinner_cantanir"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:layout_alignParentEnd="true"
-            android:layout_width="match_parent"
-            android:layout_marginStart="@dimen/_15sdp"
-            android:layout_height="wrap_content">
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_16sdp"
+                    android:hint="@string/filter_orders">
 
-            <Spinner
-                android:id="@+id/typesSpinner"
-                android:minWidth="@dimen/_100sdp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                    <AutoCompleteTextView
+                        android:id="@+id/typesSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
-        </LinearLayout>
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/dateFilterChipGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    app:singleSelection="true">
 
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/allTimeChip"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/all_time"/>
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/lastMonthChip"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/last_month"/>
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/last3MonthsChip"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/last_3_months"/>
+                </com.google.android.material.chip.ChipGroup>
+            </LinearLayout>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/itemRecycler"
             android:layout_width="match_parent"
-            android:layout_marginStart="@dimen/_10sdp"
-            android:layout_marginEnd="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_15sdp"
-            android:layout_below="@id/spinner_cantanir"
-            android:layout_height="wrap_content"/>
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:padding="@dimen/_8sdp"/>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/progressCircular"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:visibility="gone"/>
 
-        <ProgressBar
-            android:id="@+id/progressCircular"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true" />
-    </RelativeLayout>
+    <TextView
+        android:id="@+id/emptyStateText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/no_orders_found"
+        android:textSize="@dimen/_16ssp"
+        android:visibility="gone"/>
 
-</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
