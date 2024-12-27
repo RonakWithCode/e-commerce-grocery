@@ -329,4 +329,8 @@
     <!-- Filter Results -->
     <string name="filter_results">Showing %1$d orders</string>
     <string name="clear_filters">Clear Filters</string>
+
+
+    <string name="shop_by_top_category">Shop by Top Category</string>
+
 </resources>
