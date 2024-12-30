@@ -1,50 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- res/layout/remove_product_box_alert.xml -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:background="@color/white"
-    android:layout_marginStart="@dimen/_15sdp"
-    android:paddingStart="@dimen/_15sdp"
-    android:paddingEnd="@dimen/_15sdp"
-    android:layout_marginBottom="@dimen/_10sdp"
-    android:padding="16dp">
-
-    <TextView
-        android:id="@+id/remove_product_message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Do you want to remove this item?"
-        android:textSize="16sp"
-        android:layout_marginTop="8dp" />
+    android:layout_marginHorizontal="@dimen/_20sdp"
+    app:cardCornerRadius="@dimen/_16sdp"
+    app:cardElevation="@dimen/_4sdp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="16dp">
+        android:orientation="vertical"
+        android:padding="@dimen/_16sdp">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/cancel_remove_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:cornerRadius="16dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/white"
-            android:text="Cancel"
-            android:textColor="@android:color/black"
-            android:layout_marginEnd="8dp"/>
+        <!-- Alert Icon -->
+        <ImageView
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/ic_remove_shopping_cart"
+            app:tint="@color/red"/>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/confirm_remove_button"
-            android:layout_width="0dp"
+        <!-- Title -->
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Remove"
-            android:backgroundTint="#000000"
-            app:cornerRadius="16dp"
-            android:textColor="@color/white" />
+            android:layout_marginTop="@dimen/_12sdp"
+            android:gravity="center"
+            android:text="Remove Item"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_16ssp"
+            android:textStyle="bold"/>
+
+        <!-- Message -->
+        <TextView
+            android:id="@+id/remove_product_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:gravity="center"
+            android:text="Are you sure you want to remove this item from your cart?"
+            android:textColor="@color/gray"
+            android:textSize="@dimen/_12ssp"/>
+
+        <!-- Buttons Container -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:orientation="horizontal">
+
+            <!-- Cancel Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/cancel_remove_button"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:layout_weight="1"
+                android:text="Cancel"
+                android:textAllCaps="false"
+                android:textSize="@dimen/_12ssp"
+                app:cornerRadius="@dimen/_20sdp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
+            <!-- Remove Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/confirm_remove_button"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/red"
+                android:text="Remove"
+                android:textAllCaps="false"
+                android:textSize="@dimen/_12ssp"
+                app:cornerRadius="@dimen/_20sdp"/>
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</com.google.android.material.card.MaterialCardView>

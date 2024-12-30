@@ -3,14 +3,14 @@ package com.crazyostudio.ecommercegrocery.Model;
 
 public class BrandModel {
     String BrandName;
-    String BrandIcon;
+    String brandIcon;
 
 
     public BrandModel(){}
 
     public BrandModel(String brandName, String brandIcon) {
         BrandName = brandName;
-        BrandIcon = brandIcon;
+        this.brandIcon = brandIcon;
     }
 
     public String getBrandName() {
@@ -22,10 +22,10 @@ public class BrandModel {
     }
 
     public String getBrandIcon() {
-        return BrandIcon;
+        return brandIcon;
     }
 
     public void setBrandIcon(String brandIcon) {
-        BrandIcon = brandIcon;
+        this.brandIcon = brandIcon;
     }
 }

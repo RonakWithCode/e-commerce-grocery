@@ -64,7 +64,7 @@ public class HomeFragment extends Fragment {
     private HomeCategoryAdapter homeProductBoysSkinAdapter;
     private HomeProductAdapter MultiViewAdapter;
 
-    private ArrayList<HomeProductModel> MultiViewModel;
+    private ArrayList<HomeProductModel> MultiViewModel; // multiply product
     private ArrayList<HomeProductModel> homeProductModel;
     private ArrayList<HomeProductModel> homeProductModelBoysSkin;
     String userId;
@@ -112,12 +112,7 @@ public class HomeFragment extends Fragment {
 
         homeCategoryAdapter = new HomeCategoryAdapter(homeProductModel, requireContext(), this::ViewCat);
         homeProductBoysSkinAdapter = new HomeCategoryAdapter(homeProductModelBoysSkin, requireContext(), this::ViewCat);
-        MultiViewAdapter = new HomeProductAdapter(MultiViewModel, new HomeProductInterface() {
-            @Override
-            public void HomeProductOnclick(ProductModel productModel, ArrayList<ProductModel> sameProducts) {
-                new ProductViewCard(getActivity()).showProductViewDialog(productModel,sameProducts);
-            }
-        }, requireActivity());
+        MultiViewAdapter = new HomeProductAdapter(MultiViewModel, (productModel, sameProducts) -> new ProductViewCard(getActivity()).showProductViewDialog(productModel,sameProducts), requireActivity());
 
 
         binding.BestsellersSee.setOnClickListener(v -> SeeAll());
@@ -176,9 +171,9 @@ public class HomeFragment extends Fragment {
         LoadProductCategory();
 
 //        loadProductsMultiViewForLoop(new String[]{"chips and Snacks"});
-        loadProductsMultiViewForLoop(new String[]{"ha","chips and Snacks", "toothpaste", "hair oil ", "drinks"});
-        loadProductsForCategories(new String[]{"ha","hahahah","aw","oil","this is me new \uD83D\uDC08" });
-        loadProductsForCategoriesByBoysSkin(new String[]{"toothpaste", "drinks"});
+        loadProductsMultiViewForLoop(new String[]{"Detergent Powder & Bars","Soaps & Body Care", "snacks", "Dishwashing Bars & Tubs", "BISCUITS"});
+//        loadProductsForCategories(new String[]{"ha","hahahah","aw","oil","this is me new \uD83D\uDC08" });
+//        loadProductsForCategoriesByBoysSkin(new String[]{"toothpaste", "drinks"});
     }
     private void loadProductsMultiViewForLoop(String[] strings) {
         for (String s : strings) {

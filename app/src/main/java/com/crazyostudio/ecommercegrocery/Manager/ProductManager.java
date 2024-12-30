@@ -40,48 +40,56 @@ public class ProductManager {
     }
 
 
-    private interface addListenerForCheckProductInCartAndAddById{
-        void added(int DefaultQuantity);
-        void AlreadyExistsInCart(int DefaultQuantity);
-        void failure(Exception error);
+
+    public interface addListenerForIsProductInCart{
+        void FoundProduct(ShoppingCartFirebaseModel shoppingCartFirebaseModel);
+        void notFoundInCart();
     }
 
 
-//  This is use for check product in cart and also added product into Cart or room database
-    public void CheckProductInCartAndAddById(String ProductId,int DefaultQuantity , addListenerForCheckProductInCartAndAddById callback){
-        String UserId  = new AuthService().getUserId();
-
-        isProductInCart(ProductId, new addListenerForIsProductInCart() {
-            @Override
-            public void FoundProduct(ShoppingCartFirebaseModel shoppingCartFirebaseModel) {
-                callback.AlreadyExistsInCart(shoppingCartFirebaseModel.getProductSelectQuantity());
-            }
-
-            @Override
-            public void notFoundInCart() {
-//                Write code for add Product
-                DatabaseReference productsRef = FirebaseDatabase.getInstance().getReference().child("Cart").child(UserId);
-                ShoppingCartFirebaseModel firebaseModel = new ShoppingCartFirebaseModel(ProductId,DefaultQuantity);
-                productsRef.child(ProductId).setValue(firebaseModel)
-                            .addOnCompleteListener(task -> {
-                                if (task.isSuccessful()) {
-                                    ProductAddToRoom(firebaseModel);
-                                    callback.added(DefaultQuantity);
-                                }
-                            })
-                            .addOnFailureListener(callback::failure);
-            }
-        });
+    public interface AddListenerForAddToBothInDatabase{
+        void added(ShoppingCartFirebaseModel shoppingCartFirebaseModel);
+        void failure(Exception e);
     }
 
-//    public void CheckProductInCartInRoom(){
-//
-//    }
 
 
-//    public void UpdateQtyInBothQTY(){
-//
-//    }
+    public void isProductInCart(String id,addListenerForIsProductInCart callback) {
+
+        ShoppingCartFirebaseModelDAO product =  databaseHelper.ModelDAO().getProductById(id);
+        if (product != null) {
+            // Product found
+            callback.FoundProduct(new ShoppingCartFirebaseModel(product.getProductId(), product.getProductSelectQuantity()));
+
+//            System.out.println("Product Name: " + product.getProductName());
+        } else {
+            callback.notFoundInCart();
+        }
+    }
+
+
+
+    public void addToBothDatabase(ShoppingCartFirebaseModel shoppingCartsProductModel,AddListenerForAddToBothInDatabase listener){
+        String uId = new AuthService().getUserId();
+        DatabaseReference productsRef = FirebaseDatabase.getInstance().getReference().child("Cart").child(uId);
+//        String productNameToFind = shoppingCartsProductModel.getProductId();
+        productsRef.child(shoppingCartsProductModel.getProductId()).setValue(shoppingCartsProductModel)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        ShoppingCartFirebaseModelDAO modelDAO = new ShoppingCartFirebaseModelDAO(shoppingCartsProductModel.getProductId(),shoppingCartsProductModel.getProductSelectQuantity());
+                        databaseHelper.ModelDAO().insertAll(modelDAO);
+                        listener.added(shoppingCartsProductModel);
+                    }
+                })
+                .addOnFailureListener(listener::failure);
+//                .addOnFailureListener(error -> basicFun.AlertDialog(requireContext(), error.toString()));
+
+
+    }
+
+
+
+
     public void UpdateCartQuantityById(String uid,String itemId,int Quantity){
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseDatabase.getReference().child("Cart").child(uid).child(itemId).child("productSelectQuantity").setValue(Quantity).addOnCompleteListener(task -> {
@@ -103,61 +111,11 @@ public class ProductManager {
     public void removeCartProducts(){
 //        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
 //        firebaseDatabase.getReference().child("Cart").child(Objects.requireNonNull(uid)).child(itemId).removeValue().addOnCompleteListener(task -> {
-            databaseHelper.ModelDAO().deleteAll();
+        databaseHelper.ModelDAO().deleteAll();
 //        }).addOnFailureListener(e -> {
 //            Log.e("ProductMnager","Remove " + e);
 //        });
     }
-
-
-    public interface addListenerForIsProductInCart{
-        void FoundProduct(ShoppingCartFirebaseModel shoppingCartFirebaseModel);
-        void notFoundInCart();
-    }
-
-    public void isProductInCart(String id,addListenerForIsProductInCart callback) {
-        List<ShoppingCartFirebaseModelDAO> daoList = getAllRoomCartData();
-        for (ShoppingCartFirebaseModelDAO dao : daoList) {
-            if (dao.getProductId().equals(id)) {
-                callback.FoundProduct(new ShoppingCartFirebaseModel(dao.getProductId(),dao.getProductSelectQuantity()));
-            }
-        }
-//        callback.notFoundInCart();
-    }
-
-    public List<ShoppingCartFirebaseModelDAO> getAllRoomCartData(){
-        return databaseHelper.ModelDAO().getAllModel();
-    }
-
-    public void ProductAddToRoom(ShoppingCartFirebaseModel shoppingCartFirebaseModel) {
-        ShoppingCartFirebaseModelDAO cartFirebaseModelDAO = new ShoppingCartFirebaseModelDAO(shoppingCartFirebaseModel.getProductId(),shoppingCartFirebaseModel.getProductSelectQuantity());
-        databaseHelper.ModelDAO().insertAll(cartFirebaseModelDAO);
-    }
-
-    public interface AddListenerForAddToBothInDatabase{
-        void added(ShoppingCartFirebaseModel shoppingCartFirebaseModel);
-        void failure(Exception e);
-    }
-
-
-    public void addToBothDatabase(ShoppingCartFirebaseModel shoppingCartsProductModel,AddListenerForAddToBothInDatabase listener){
-        String uId = new AuthService().getUserId();
-        DatabaseReference productsRef = FirebaseDatabase.getInstance().getReference().child("Cart").child(uId);
-//        String productNameToFind = shoppingCartsProductModel.getProductId();
-        productsRef.child(shoppingCartsProductModel.getProductId()).setValue(shoppingCartsProductModel)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        ShoppingCartFirebaseModelDAO modelDAO = new ShoppingCartFirebaseModelDAO(shoppingCartsProductModel.getProductId(),shoppingCartsProductModel.getProductSelectQuantity());
-                        databaseHelper.ModelDAO().insertAll(modelDAO);
-                        listener.added(shoppingCartsProductModel);
-                    }
-                })
-                .addOnFailureListener(listener::failure);
-//                .addOnFailureListener(error -> basicFun.AlertDialog(requireContext(), error.toString()));
-
-
-    }
-
 
 
 

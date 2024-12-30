@@ -35,7 +35,6 @@ public class SearchViewRecommendationAdapter extends RecyclerView.Adapter<Search
     private Context context;
     private LoadingDialog loadingDialog;
     private ErrorBox errorBox;
-    private List<ShoppingCartFirebaseModelDAO> daoList;
     private ProductManager productManager;
 
     public SearchViewRecommendationAdapter(ArrayList<ProductModel> modelArrayList, Context context) {
@@ -44,7 +43,6 @@ public class SearchViewRecommendationAdapter extends RecyclerView.Adapter<Search
         this.loadingDialog = new LoadingDialog((Activity) context); // Initialize LoadingDialog
         this.errorBox = new ErrorBox((Activity) context); // Initialize ErrorBox
         this.productManager = new ProductManager(context);
-        this.daoList = productManager.getAllRoomCartData();
     }
 
     @NonNull
@@ -53,39 +51,25 @@ public class SearchViewRecommendationAdapter extends RecyclerView.Adapter<Search
         return new SearchViewRecommendationAdapter.SearchViewRecommendationAdapterViewHolder(LayoutInflater.from(context).inflate(R.layout.product_view_serach, parent, false));
     }
 
-    public interface checkInCartCall {
-        void notFound();
-        void found(int selectQTY);
-    }
-
-    void checkInCart(String checkId, checkInCartCall callback) {
-        for (int i = 0; i < daoList.size(); i++) {
-            ShoppingCartFirebaseModelDAO id = daoList.get(i);
-            if (id.getProductId().equals(checkId)) {
-                callback.found(id.getProductSelectQuantity());
-                return; // Exit loop if found
-            }
-        }
-        callback.notFound();
-    }
 
     @Override
     public void onBindViewHolder(@NonNull SearchViewRecommendationAdapter.SearchViewRecommendationAdapterViewHolder holder, int position) {
         ProductModel model = dataList.get(position);
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            checkInCart(model.getProductId(), new checkInCartCall() {
+            productManager.isProductInCart(model.getProductId(), new ProductManager.addListenerForIsProductInCart() {
                 @Override
-                public void notFound() {
-                    // No action required for not found case
+                public void FoundProduct(ShoppingCartFirebaseModel shoppingCartFirebaseModel) {
+                    holder.binding.addToCartButton.setVisibility(View.GONE);
+                    holder.binding.productQtyLayout.setVisibility(View.VISIBLE);
+                    model.setSelectableQuantity(shoppingCartFirebaseModel.getProductSelectQuantity());
+                    holder.binding.productQty.setText(String.valueOf(shoppingCartFirebaseModel.getProductId()));
+
                 }
 
                 @Override
-                public void found(int selectQTY) {
-                    holder.binding.addToCartButton.setVisibility(View.GONE);
-                    holder.binding.productQtyLayout.setVisibility(View.VISIBLE);
-                    model.setSelectableQuantity(selectQTY);
-                    holder.binding.productQty.setText(String.valueOf(selectQTY));
+                public void notFoundInCart() {
+
                 }
             });
         }

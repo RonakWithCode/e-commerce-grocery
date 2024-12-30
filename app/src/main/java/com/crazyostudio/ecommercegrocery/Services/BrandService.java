@@ -67,6 +67,7 @@ public class BrandService {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
+
                         BrandModel brandModel = document.toObject(BrandModel.class);
                         callback.onSuccess(brandModel);
                     } else {

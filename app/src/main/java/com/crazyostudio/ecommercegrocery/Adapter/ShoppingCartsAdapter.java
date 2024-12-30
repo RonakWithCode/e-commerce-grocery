@@ -11,9 +11,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.crazyostudio.ecommercegrocery.Manager.ProductManager;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
 import com.crazyostudio.ecommercegrocery.Model.ShoppingCartsProductModel;
 import com.crazyostudio.ecommercegrocery.R;
+import com.crazyostudio.ecommercegrocery.Services.AuthService;
 import com.crazyostudio.ecommercegrocery.databinding.ProductCartViewBinding;
 import com.crazyostudio.ecommercegrocery.interfaceClass.ShoppingCartsInterface;
 import com.hishd.tinycart.model.Cart;
@@ -25,11 +27,13 @@ public class ShoppingCartsAdapter extends RecyclerView.Adapter<ShoppingCartsAdap
     ArrayList<ShoppingCartsProductModel> productModels;
     ShoppingCartsInterface shoppingCartsInterface;
     Context context;
-
+    ProductManager productManager;
     public ShoppingCartsAdapter(ArrayList<ShoppingCartsProductModel> productModels, ShoppingCartsInterface shoppingCartsInterface, Context context) {
         this.productModels = productModels;
         this.shoppingCartsInterface = shoppingCartsInterface;
         this.context = context;
+        productManager = new ProductManager(context);
+
     }
 
     @NonNull
@@ -53,25 +57,41 @@ public class ShoppingCartsAdapter extends RecyclerView.Adapter<ShoppingCartsAdap
         holder.binding.productPrice.setText("₹"+model.getPrice());
 //
         holder.binding.productQtyUp.setOnClickListener(up->{
-            int quantity = model.getSelectableQuantity();
-            quantity++;
-            if(quantity>model.getStockCount()) {
-                Toast.makeText(context, "Max stock available: "+ model.getStockCount(), Toast.LENGTH_SHORT).show();
-            } else {
-                model.setSelectableQuantity(quantity);
-                shoppingCartsInterface.UpdateQuantity(model, model.getProductId());
-                holder.binding.productPrice.setText("₹"+model.getPrice());
+//            int quantity = model.getSelectableQuantity();
+//            quantity++;
+//            if(quantity>model.getStockCount()) {
+//                Toast.makeText(context, "Max stock available: "+ model.getStockCount(), Toast.LENGTH_SHORT).show();
+//            } else {
+//                model.setSelectableQuantity(quantity);
+//                shoppingCartsInterface.UpdateQuantity(model, model.getProductId());
+//                holder.binding.productPrice.setText("₹"+model.getPrice());
+//            }
+
+            int currentQty = model.getSelectableQuantity();
+            int newQty = currentQty + 1;
+            if (newQty <= model.getMaxSelectableQuantity()) {
+                holder.binding.productQty.setText(String.valueOf(newQty));
+                UpdateQTY(model.getProductId(), newQty);
             }
         });
         holder.binding.productQtyDown.setOnClickListener(Down->{
-            int quantity = model.getSelectableQuantity();
-            if(quantity > 1) {
-                quantity--;
-                model.setSelectableQuantity(quantity);
-                shoppingCartsInterface.UpdateQuantity(model, model.getProductId());
-                holder.binding.productPrice.setText("₹"+model.getPrice());
+//            int quantity = model.getSelectableQuantity();
+//            if(quantity > 1) {
+//                quantity--;
+//                model.setSelectableQuantity(quantity);
+//                shoppingCartsInterface.UpdateQuantity(model, model.getProductId());
+//                holder.binding.productPrice.setText("₹"+model.getPrice());
+//            }else {
+//                shoppingCartsInterface.remove(position,model.getProductId(),model);
+//            }
+            int currentQty = model.getSelectableQuantity();
+            int newQty = currentQty - 1;
+            if (newQty >= model.getMinSelectableQuantity()) {
+                holder.binding.productQty.setText(String.valueOf(newQty));
+                UpdateQTY(model.getProductId(), newQty);
             }else {
                 shoppingCartsInterface.remove(position,model.getProductId(),model);
+
             }
         });
 
@@ -85,6 +105,15 @@ public class ShoppingCartsAdapter extends RecyclerView.Adapter<ShoppingCartsAdap
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
+    }
+
+
+    private void UpdateQTY(String productId, int quantity) {
+        productManager.UpdateCartQuantityById(
+                new AuthService().getUserId(),
+                productId,
+                quantity
+        );
     }
 
     public static class ShoppingCartsAdapterViewHolder extends RecyclerView.ViewHolder {

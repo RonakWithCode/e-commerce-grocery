@@ -39,4 +39,9 @@ public interface CartDAO {
 
     @Query("DELETE FROM cart")
     void deleteAll();
+
+    // Get a product by its productId
+    @Query("SELECT * FROM cart WHERE productId = :productId")
+    ShoppingCartFirebaseModelDAO getProductById(String productId);
+
 }

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Handler;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,12 +50,13 @@ public class ProductViewCard {
     Activity context;
     DatabaseService databaseService;
     String userId;
-
+    ProductManager productManager;
     public ProductViewCard(Activity context1){
         context=context1;
         databaseService = new DatabaseService();
         FirebaseAuth auth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = auth.getCurrentUser();
+        productManager = new ProductManager(context1);
         if (currentUser != null){
 //            String defaultUserName = ValuesHelper.DEFAULT_USER_NAME;
 //            String displayName = currentUser.getDisplayName() != null ? currentUser.getDisplayName() : "Hi user";
@@ -64,7 +66,7 @@ public class ProductViewCard {
     }
     
     public void showProductViewDialog(ProductModel productModel, ArrayList<ProductModel> sameProducts) {
-        ProductManager productManager = new ProductManager(context);
+//        ProductManager productManager = new ProductManager(context);
         List<String> imageUrls = productModel.getProductImage(); // Add your image URLs here
         Dialog bottomSheetDialog = new Dialog(context);
         ProductViewDialogBinding productViewDialogBinding = ProductViewDialogBinding.inflate(context.getLayoutInflater());
@@ -326,152 +328,30 @@ public class ProductViewCard {
 
 
         productViewDialogBinding.plusBtn.setOnClickListener(view -> {
-            int quantity = productModel.getSelectableQuantity();
-            quantity++;
-            if (quantity > productModel.getStockCount()) {
-                Toast.makeText(context, "Max stock available: " + productModel.getStockCount(), Toast.LENGTH_SHORT).show();
+            int currentQty = Integer.parseInt(productViewDialogBinding.quantity.getText().toString());
+            int newQty = currentQty + 1;
+            
+            if (newQty <= productModel.getMaxSelectableQuantity() && newQty <= productModel.getStockCount()) {
+                productViewDialogBinding.quantity.setText(String.valueOf(newQty));
+                productManager.UpdateCartQuantityById(userId, productModel.getProductId(), newQty);
+            } else {
+                Toast.makeText(context, "Maximum quantity available: " + 
+                    Math.min(productModel.getMaxSelectableQuantity(), productModel.getStockCount()), 
+                    Toast.LENGTH_SHORT).show();
             }
-            else {
-                productModel.setSelectableQuantity(quantity);
-                productViewDialogBinding.quantity.setText(String.valueOf(productModel.getSelectableQuantity()));
-                productManager.UpdateCartQuantityById(userId,productModel.getProductId(),productModel.getSelectableQuantity());
-            }
-
         });
+
         productViewDialogBinding.minusBtn.setOnClickListener(view -> {
-            int quantity = productModel.getSelectableQuantity();
-            if (quantity > 1) {
-                quantity--;
-                productModel.setSelectableQuantity(quantity);
-                productViewDialogBinding.quantity.setText(String.valueOf(productModel.getSelectableQuantity()));
-                productManager.UpdateCartQuantityById(userId, productModel.getProductId(), productModel.getSelectableQuantity());
-            }else {
-                Dialog removeBottomSheetDialog = new Dialog(context);
-                RemoveProductBoxAlertBinding boxAlertBinding = RemoveProductBoxAlertBinding.inflate(context.getLayoutInflater());
-                removeBottomSheetDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                removeBottomSheetDialog.setContentView(boxAlertBinding.getRoot());
-                Window window = removeBottomSheetDialog.getWindow();
-                if (window != null) {
-                    window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                    WindowManager.LayoutParams layoutParams = window.getAttributes();
-                    layoutParams.windowAnimations = R.style.bottom_sheet_dialogAnimation;
-                    layoutParams.gravity = Gravity.CENTER_VERTICAL;
-                    window.setAttributes(layoutParams);
-                }
-
-                // Handle button clicks
-                boxAlertBinding.confirmRemoveButton.setOnClickListener(remove -> {
-                    // Handle remove action
-                    productManager.RemoveCartProductById(userId,productModel.getProductId());
-                    productViewDialogBinding.AddTOCart.setVisibility(View.VISIBLE);
-                    productViewDialogBinding.quantityBox.setVisibility(View.GONE);
-                    removeBottomSheetDialog.dismiss();
-                });
-
-                boxAlertBinding.cancelRemoveButton.setOnClickListener(remove -> removeBottomSheetDialog.dismiss());
-
-                if (!removeBottomSheetDialog.isShowing()) {removeBottomSheetDialog.show();}
+            int currentQty = Integer.parseInt(productViewDialogBinding.quantity.getText().toString());
+            int newQty = currentQty - 1;
+            
+            if (newQty >= productModel.getMinSelectableQuantity()) {
+                productViewDialogBinding.quantity.setText(String.valueOf(newQty));
+                productManager.UpdateCartQuantityById(userId, productModel.getProductId(), newQty);
+            } else {
+                // Show remove confirmation dialog
+                showRemoveConfirmationDialog(productModel, productViewDialogBinding);
             }
-//            else {
-//                Dialog removeBottomSheetDialog = new Dialog(context);
-//                RemoveProductBoxAlertBinding boxAlertBinding = RemoveProductBoxAlertBinding.inflate(getLayoutInflater());
-//                removeBottomSheetDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-//                removeBottomSheetDialog.setContentView(binding.getRoot());
-//
-//                Window window = removeBottomSheetDialog.getWindow();
-//                if (window != null) {
-//                    window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//                    window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//                    WindowManager.LayoutParams layoutParams = window.getAttributes();
-//                    layoutParams.windowAnimations = R.style.bottom_sheet_dialogAnimation;
-//                    layoutParams.gravity = Gravity.BOTTOM;
-//                    window.setAttributes(layoutParams);
-//                }
-//
-//                // Handle button clicks
-//                boxAlertBinding.confirmRemoveButton.setOnClickListener(remove -> {
-//                    // Handle remove action
-//                    productManager.RemoveCartProductById(userId,productModel.getProductId());
-//                    removeBottomSheetDialog.dismiss();
-//                });
-//
-//                boxAlertBinding.cancelRemoveButton.setOnClickListener(remove -> removeBottomSheetDialog.dismiss());
-//
-//                removeBottomSheetDialog.show();
-//
-////                Dialog removeBottomSheetDialog = new Dialog(context);
-////                RemoveProductBoxBinding removeProductBoxBinding = RemoveProductBoxBinding.inflate(getLayoutInflater());
-////                removeBottomSheetDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-////                removeBottomSheetDialog.setContentView(binding.getRoot());
-////                Window window = removeBottomSheetDialog.getWindow();
-////                if (window != null) {
-////                    window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-////                    window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-////                    WindowManager.LayoutParams layoutParams = window.getAttributes();
-////                    layoutParams.windowAnimations = R.style.bottom_sheet_dialogAnimation;
-////                    layoutParams.gravity = Gravity.BOTTOM;
-////                    window.setAttributes(layoutParams);
-////                }
-////
-////
-////                removeProductBoxBinding.btnRemove.setOnClickListener(v->{
-////                    removeProductBoxBinding.progressCircular.setVisibility(View.VISIBLE);
-////                    productManager.RemoveCartProductById(userId,productModel.getProductId());
-////
-////                    removeProductBoxBinding.progressCircular.setVisibility(View.GONE);
-////                    removeBottomSheetDialog.dismiss();
-////                });
-////
-////                removeProductBoxBinding.productName.setText(productModel.getProductName());
-////                Glide.with(context).load(productModel.getProductImage().get(0)).into(removeProductBoxBinding.productImage);
-////                removeProductBoxBinding.productQty.setText(productModel.getSelectableQuantity()+"");
-////                removeProductBoxBinding.productPrice.setText("₹"+productModel.getPrice());
-////                removeProductBoxBinding.productQtyUp.setOnClickListener(up->{
-////                    int quantity = productModel.getSelectableQuantity();
-////                    quantity++;
-////                    if(quantity>model.getStockCount()) {
-////                        Toast.makeText(context, "Max stock available: "+ model.getStockCount(), Toast.LENGTH_SHORT).show();
-////                    } else {
-////                        model.setSelectableQuantity(quantity);
-////                        UpdateQuantity(model, model.getProductId());
-////                        binding.productPrice.setText("₹"+model.getPrice());
-////
-////                    }
-////                });
-////                removeProductBoxBinding.productQtyDown.setOnClickListener(Down->{
-////                    int quantity = model.getSelectableQuantity();
-////                    if(quantity > 1) {
-////                        quantity--;
-////                        model.setSelectableQuantity(quantity);
-////                        UpdateQuantity(model, model.getProductId());
-////                        removeProductBoxBinding.productPrice.setText("₹"+model.getPrice());
-////                    }
-////                });
-////                removeProductBoxBinding.btnCancel.setOnClickListener(v -> {
-////                    removeBottomSheetDialog.dismiss();
-////                });
-////
-////
-////
-////                if (!removeBottomSheetDialog.isShowing()) {
-////                    removeBottomSheetDialog.show();
-////
-////                }
-////                if (context.getSupportFragmentManager().findFragmentByTag("bottom_sheet_fragment") == null) {
-////                    RemoveBottomSheetDialogFragment bottomSheet = new RemoveBottomSheetDialogFragment(uid, id, cartsAdapter, cartsProductModel);
-////                    bottomSheet.show(context.getSupportFragmentManager(), "bottom_sheet_fragment");
-//                }
-//                shoppingCartsInterface.remove(position,model.getProductId(),model);
-
-//
-//            if(quantity > 1) {
-//                quantity--;
-//                model.setSelectableQuantity(quantity);
-//                shoppingCartsInterface.UpdateQuantity(model, model.getProductId());
-//                holder.binding.productPrice.setText("₹"+model.getPrice());
-//            }else {
-//            }
         });
 
 
@@ -520,5 +400,53 @@ public class ProductViewCard {
 
     }
 
+    private void showRemoveConfirmationDialog(ProductModel productModel, ProductViewDialogBinding productViewDialogBinding) {
+        Dialog removeDialog = new Dialog(context);
+        RemoveProductBoxAlertBinding alertBinding = RemoveProductBoxAlertBinding.inflate(context.getLayoutInflater());
+        
+        removeDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        removeDialog.setContentView(alertBinding.getRoot());
+        
+        // Set up dialog window
+        Window window = removeDialog.getWindow();
+        if (window != null) {
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            WindowManager.LayoutParams params = window.getAttributes();
+            params.windowAnimations = android.R.style.Animation_Dialog;
+            params.gravity = Gravity.CENTER;
+            window.setAttributes(params);
+            
+            // Add dim background
+            window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+            window.setDimAmount(0.5f);
+        }
+
+        // Set custom message with product name
+        String message = "Are you sure you want to remove " + productModel.getProductName() + " from your cart?";
+        alertBinding.removeProductMessage.setText(message);
+
+        // Add click animations to buttons
+        alertBinding.cancelRemoveButton.setOnClickListener(v -> {
+            v.startAnimation(AnimationUtils.loadAnimation(context, R.anim.button_click));
+            new Handler().postDelayed(() -> {
+                removeDialog.dismiss();
+                // Reset quantity to minimum
+                productViewDialogBinding.quantity.setText(String.valueOf(productModel.getMinSelectableQuantity()));
+            }, 150);
+        });
+
+        alertBinding.confirmRemoveButton.setOnClickListener(v -> {
+            v.startAnimation(AnimationUtils.loadAnimation(context, R.anim.button_click));
+            new Handler().postDelayed(() -> {
+                productManager.RemoveCartProductById(userId, productModel.getProductId());
+                productViewDialogBinding.AddTOCart.setVisibility(View.VISIBLE);
+                productViewDialogBinding.quantityBox.setVisibility(View.GONE);
+                removeDialog.dismiss();
+            }, 150);
+        });
+
+        removeDialog.show();
+    }
 
 }

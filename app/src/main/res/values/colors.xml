@@ -7,7 +7,7 @@
     <color name="PintButtonEnd">#E87FFF</color>
     <color name="white">#ffffff</color>
     <color name="green">#005c4b</color>
-    <color name="red">#F70000</color>
+    <color name="red">#F44336</color>
     <color name="green_text">#24ba87</color>
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#D5A5A3A3</color>
@@ -104,6 +104,7 @@
     <color name="dark_gray">#777684</color>
     <color name="item_search_result_hint">#727780</color>
 
+    <color name="gray">#757575</color>
 
 
     <color name="greyColor">#607D8B</color>

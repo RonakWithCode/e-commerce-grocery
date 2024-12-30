@@ -1,4 +1,3 @@
-
 package com.crazyostudio.ecommercegrocery.Adapter;
 
 import android.annotation.SuppressLint;
@@ -89,6 +88,11 @@ public class HomeProductAdapter extends RecyclerView.Adapter<HomeProductAdapter.
         });
 
         productAdapter.notifyDataSetChanged();
+
+        // Add animations for smoother scrolling
+        holder.binding.recycler.setHasFixedSize(true);
+        holder.binding.recycler.setNestedScrollingEnabled(false);
+
     }
 
     @Override
