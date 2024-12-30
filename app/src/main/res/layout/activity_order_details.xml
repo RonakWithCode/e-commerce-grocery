@@ -131,7 +131,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="start"
-                        android:text="@string/order_delivery"
+                        android:text="@string/order_status"
                         android:textColor="@color/colorPrimary"
                         android:textSize="@dimen/_14ssp"
                         android:textStyle="bold" />
@@ -380,42 +380,42 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/save_box"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/shipping_fee_box"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="10dp">
+<!--            <LinearLayout-->
+<!--                android:id="@+id/save_box"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_below="@+id/shipping_fee_box"-->
+<!--                android:layout_marginLeft="10dp"-->
+<!--                android:layout_marginTop="5dp"-->
+<!--                android:layout_marginRight="10dp">-->
 
-                <TextView
-                    android:id="@+id/save_hint"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="start"
-                    android:text="@string/you_save_upto"
-                    android:textColor="@color/orange"
-                    android:textSize="14sp" />
+<!--                <TextView-->
+<!--                    android:id="@+id/save_hint"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:gravity="start"-->
+<!--                    android:text="@string/you_save_upto"-->
+<!--                    android:textColor="@color/orange"-->
+<!--                    android:textSize="14sp" />-->
 
-                <TextView
-                    android:id="@+id/save"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="end"
-                    android:text="00.00 INR"
-                    android:textColor="@color/MainTextColor"
-                    android:textSize="14sp" />
+<!--                <TextView-->
+<!--                    android:id="@+id/save"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:gravity="end"-->
+<!--                    android:text="00.00 INR"-->
+<!--                    android:textColor="@color/MainTextColor"-->
+<!--                    android:textSize="14sp" />-->
 
-            </LinearLayout>
+<!--            </LinearLayout>-->
 
             <LinearLayout
                 android:id="@+id/discount_box"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/save_box"
+                android:layout_below="@+id/shipping_fee_box"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="10dp">

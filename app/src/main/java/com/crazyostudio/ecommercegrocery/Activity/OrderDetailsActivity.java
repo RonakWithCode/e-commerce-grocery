@@ -155,8 +155,10 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
             if (ValuesHelper.DELIVERED.equals(orderModel.getOrderStatus())) {
                 binding.orderDeliveryOnBox.setVisibility(View.VISIBLE);
                 String formattedDateOfDeliveredOrder = dateFormat.format(orderModel.getShipping().getDeliveredData());
-                binding.orderDeliveryStatus.setText(formattedDateOfDeliveredOrder);
+                binding.orderDeliveryDate.setText(formattedDateOfDeliveredOrder);
+//                binding.orderDeliveryStatus.setText(formattedDateOfDeliveredOrder);
                 binding.download.setVisibility(View.VISIBLE);
+//                order_delivery_on_box
             }
 
             OrderProductAdapter orderProductAdapter = new OrderProductAdapter(orderModel.getOrderItems(), this, this::onOrder);
@@ -167,7 +169,7 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
             binding.discount.setText("₹"+orderModel.getCouponCodeValue());
             binding.subtotal.setText("₹" + ShoppingCartHelper.calculateTotalPrices(orderModel.getOrderItems()));
             binding.shippingFee.setText("₹" + orderModel.getShipping().getShippingFee());
-            binding.save.setText("₹" + ShoppingCartHelper.calculateTotalSavings(orderModel.getOrderItems()));
+//            binding.save.setText("₹" + ShoppingCartHelper.calculateTotalSavings(orderModel.getOrderItems()));
             binding.grandTotal.setText("₹" + orderModel.getOrderTotalPrice());
 
         }

@@ -7,12 +7,13 @@ import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
 public class OrderModel implements Parcelable {
     private String orderId;
     private Customer customer;
     private ArrayList<ShoppingCartsProductModel> orderItems;
-    private double orderTotalPrice;
+    private double orderTotalPrice; // full value of order also say grand total
     private String CouponCode;
     private double CouponCodeValue;
     private String orderStatus;
@@ -23,7 +24,7 @@ public class OrderModel implements Parcelable {
     private String token;
     private double Donate; ;
     private double ProcessingFees;
-
+//    private Date Date;
     public OrderModel() {
     }
 
@@ -42,6 +43,7 @@ public class OrderModel implements Parcelable {
         this.CouponCodeValue =CouponCodeValue;
         this.Donate = Donate;
         this.ProcessingFees = ProcessingFees;
+
     }
 
 
@@ -169,10 +171,37 @@ public class OrderModel implements Parcelable {
         CouponCodeValue = couponCodeValue;
     }
 
+    public double getDonate() {
+        return Donate;
+    }
+
+    public void setDonate(double donate) {
+        Donate = donate;
+    }
+
+    public double getProcessingFees() {
+        return ProcessingFees;
+    }
+
+    public void setProcessingFees(double processingFees) {
+        ProcessingFees = processingFees;
+    }
+//
+//    public java.util.Date getDate() {
+//        return Date;
+//    }
+//
+//    public void setDate(java.util.Date date) {
+//        Date = date;
+//    }
+
     @Override
     public int describeContents() {
         return 0;
     }
+
+
+
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
@@ -190,6 +219,5 @@ public class OrderModel implements Parcelable {
         dest.writeDouble(CouponCodeValue);
         dest.writeDouble(Donate);
         dest.writeDouble(ProcessingFees);
-
     }
 }

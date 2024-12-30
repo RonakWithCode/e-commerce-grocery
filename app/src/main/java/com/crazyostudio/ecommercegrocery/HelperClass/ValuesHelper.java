@@ -22,8 +22,14 @@ public class ValuesHelper {
 
     // Pricing Constants
     public static final String RupeeSymbols = "₹"; // Indian Rupee symbol
-    public static final double MIN_TOTAL_PRICE = 120; // Minimum cart value for free delivery
-    public static final double MIN_TOTAL_PRICE_VALUE = 35; // Delivery fee if below the minimum cart value
+    //    public static final double MIN_TOTAL_PRICE = 120; // Minimum cart value for free delivery
+//    public static final double MIN_TOTAL_PRICE_VALUE = 35; // Delivery fee if below the minimum cart value
+    public static final double MIN_TOTAL_PRICE_FOR_DELIVERY = 120; // Minimum cart value for above the 120 delivery was free
+    public static final double DeliveryFees = 35;
+    public static final double StandardDeliveryFees = 00;
+    public static final double processingFee = 00;
+    public static final double MinDonate = 00;
+
 
     // User Auth System Defaults
     public static final String DEFAULT_USER_NAME = "Hi User"; // Default user name for new users

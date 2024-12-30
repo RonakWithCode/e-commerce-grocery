@@ -332,5 +332,6 @@
 
 
     <string name="shop_by_top_category">Shop by Top Category</string>
+    <string name="order_status">Order Status</string>
 
 </resources>
