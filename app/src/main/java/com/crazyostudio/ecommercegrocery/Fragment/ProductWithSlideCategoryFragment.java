@@ -1,61 +1,30 @@
 package com.crazyostudio.ecommercegrocery.Fragment;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
-import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager2.widget.ViewPager2;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.Target;
-import com.crazyostudio.ecommercegrocery.Activity.AuthMangerActivity;
-import com.crazyostudio.ecommercegrocery.Adapter.DialogSliderAdapter;
 import com.crazyostudio.ecommercegrocery.Adapter.ProductAdapter;
 import com.crazyostudio.ecommercegrocery.Adapter.SlideCategoryAdapter;
-import com.crazyostudio.ecommercegrocery.Adapter.SliderAdapter;
-import com.crazyostudio.ecommercegrocery.Adapter.VariantsAdapter;
 import com.crazyostudio.ecommercegrocery.Component.ProductViewCard;
-import com.crazyostudio.ecommercegrocery.Manager.ProductManager;
-import com.crazyostudio.ecommercegrocery.Model.BrandModel;
 import com.crazyostudio.ecommercegrocery.Model.ProductCategoryModel;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
-import com.crazyostudio.ecommercegrocery.Model.ShoppingCartFirebaseModel;
-import com.crazyostudio.ecommercegrocery.Model.Variations;
 import com.crazyostudio.ecommercegrocery.R;
-import com.crazyostudio.ecommercegrocery.Services.BrandService;
 import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
-import com.crazyostudio.ecommercegrocery.databinding.DialogFullscreenImageBinding;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentProductWithSlideCategoryBinding;
-import com.crazyostudio.ecommercegrocery.databinding.ProductViewDialogBinding;
-import com.crazyostudio.ecommercegrocery.databinding.RemoveProductBoxAlertBinding;
 import com.crazyostudio.ecommercegrocery.interfaceClass.CategoryAdapterInterface;
 import com.crazyostudio.ecommercegrocery.javaClasses.basicFun;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ProductWithSlideCategoryFragment extends Fragment {
     FragmentProductWithSlideCategoryBinding binding;

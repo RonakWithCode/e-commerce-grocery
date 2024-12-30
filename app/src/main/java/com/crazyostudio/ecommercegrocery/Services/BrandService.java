@@ -1,6 +1,7 @@
 package com.crazyostudio.ecommercegrocery.Services;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 public class BrandService {
     Context context;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private static final String TAG = "BrandService";
 
     public BrandService(Context context) {
         this.context = context;
@@ -65,10 +67,16 @@ public class BrandService {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
+                    Log.i(TAG, "onComplete task: "+task);
                     DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
+                    Log.i(TAG, "onComplete brandId document: "+document.getId());
+                    Log.i(TAG, "onComplete brandName document: "+document.get("brandName"));
+                    Log.i(TAG, "onComplete brandIcon document: "+document.get("brandIcon"));
 
+                    if (document.exists()) {
                         BrandModel brandModel = document.toObject(BrandModel.class);
+                        Log.i(TAG, "onComplete brand icon: "+brandModel.getBrandIcon());
+
                         callback.onSuccess(brandModel);
                     } else {
                         callback.onFailure(new Exception("No such document"));

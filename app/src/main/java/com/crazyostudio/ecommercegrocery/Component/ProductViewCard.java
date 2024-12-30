@@ -51,6 +51,8 @@ public class ProductViewCard {
     DatabaseService databaseService;
     String userId;
     ProductManager productManager;
+
+
     public ProductViewCard(Activity context1){
         context=context1;
         databaseService = new DatabaseService();
@@ -146,6 +148,33 @@ public class ProductViewCard {
 //        Set up
         productViewDialogBinding.categoryName.setText(productModel.getCategory());
         productViewDialogBinding.ProductName.setText(productModel.getProductName());
+        productViewDialogBinding.ProductName.post(() -> {
+            if (productViewDialogBinding.ProductName.getLineCount() > 1) {
+                // Save original text
+                String fullText = productModel.getProductName();
+                // Create truncated text
+                String truncatedText = fullText.substring(0, Math.min(fullText.length(), 60)) + "...";
+                
+                // Set initial state
+                productViewDialogBinding.ProductName.setText(truncatedText);
+                productViewDialogBinding.seeMoreButton.setVisibility(View.VISIBLE);
+                
+                // Set up click listener
+                productViewDialogBinding.seeMoreButton.setOnClickListener(v -> {
+                    if (productViewDialogBinding.seeMoreButton.getText().toString().equals("See More")) {
+                        // Expand
+                        productViewDialogBinding.ProductName.setText(fullText);
+                        productViewDialogBinding.seeMoreButton.setText("See Less");
+                    } else {
+                        // Collapse
+                        productViewDialogBinding.ProductName.setText(truncatedText);
+                        productViewDialogBinding.seeMoreButton.setText("See More");
+                    }
+                });
+            } else {
+                productViewDialogBinding.seeMoreButton.setVisibility(View.GONE);
+            }
+        });
 
 
 //        Set Brand with logo
@@ -281,14 +310,15 @@ public class ProductViewCard {
 
 
 //   Show the in cat
-        sameProducts.remove(productModel);
         if (sameProducts.isEmpty()){
+
 //            productViewDialogBinding.product.setVisibility(View.GONE);
 //            productViewDialogBinding.itemCategory.setVisibility(View.GONE);
         }else {
             LinearLayoutManager LayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
             productViewDialogBinding.similarProductsRecyclerView.setLayoutManager(LayoutManager);
             productViewDialogBinding.similarProductsRecyclerView.setAdapter(new ProductAdapter(sameProducts, this::showProductViewDialog,context,"Main"));
+            sameProducts.remove(productModel);
 
         }
 
@@ -382,9 +412,9 @@ public class ProductViewCard {
         dialogBinding.getRoot().setOnClickListener(v -> {
             dialog.dismiss();
         });
-        dialogBinding.close.setOnClickListener(v->{
-            dialog.dismiss();
-        });
+//        dialogBinding.close.setOnClickListener(v->{
+//            dialog.dismiss();
+//        });
         dialogBinding.dialogViewPager.setAdapter(dialogAdapter);
         dialogBinding.dialogViewPager.setCurrentItem(position);
         // Set full screen
