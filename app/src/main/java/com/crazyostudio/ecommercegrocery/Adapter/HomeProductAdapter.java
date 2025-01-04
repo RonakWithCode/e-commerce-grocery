@@ -34,11 +34,6 @@ public class HomeProductAdapter extends RecyclerView.Adapter<HomeProductAdapter.
     FragmentActivity context;
 
 
-//    private final int VIEW_TYPE_PRODUCT = 0;
-//    private final int VIEW_TYPE_BANNER = 1;
-//    private final int VIEW_TYPE_WHAT_NEW = 2;
-
-
     public HomeProductAdapter(ArrayList<HomeProductModel> homeProductModel, HomeProductInterface homeProductInterface, FragmentActivity context) {
         this.homeProductModel = homeProductModel;
         this.homeProductInterface = homeProductInterface;

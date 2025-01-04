@@ -1,5 +1,6 @@
 package com.crazyostudio.ecommercegrocery.DAO;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -44,4 +45,6 @@ public interface CartDAO {
     @Query("SELECT * FROM cart WHERE productId = :productId")
     ShoppingCartFirebaseModelDAO getProductById(String productId);
 
+    @Query("SELECT * FROM cart WHERE productId = :productId")
+    LiveData<ShoppingCartFirebaseModelDAO> observeProductById(String productId);
 }

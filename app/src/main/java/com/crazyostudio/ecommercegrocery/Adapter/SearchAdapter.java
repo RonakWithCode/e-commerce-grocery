@@ -8,16 +8,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.crazyostudio.ecommercegrocery.Activity.AuthMangerActivity;
 import com.crazyostudio.ecommercegrocery.DAO.CartDAOHelper;
 import com.crazyostudio.ecommercegrocery.DAO.ShoppingCartFirebaseModelDAO;
+import com.crazyostudio.ecommercegrocery.Manager.ProductManager;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
 import com.crazyostudio.ecommercegrocery.Model.ShoppingCartFirebaseModel;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.databinding.ItemSearchResultBinding;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +35,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     private final Context context;
     SearchAdapterInterface searchAdapterInterface;
     List<ShoppingCartFirebaseModelDAO> daoList;
+    private ProductManager productManager;
 
     // Constructor to initialize the data list
     public SearchAdapter(Context context,SearchAdapterInterface searchAdapterInterface) {
@@ -35,6 +43,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         this.context = context;
         this.searchAdapterInterface = searchAdapterInterface;
         daoList = CartDAOHelper.getDB(context).ModelDAO().getAllModel();
+        productManager = new ProductManager(context);
     }
 
     // Method to set new data to the adapter
@@ -82,20 +91,16 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         // Bind data to ViewHolder
         ProductModel data = dataList.get(position);
-        if (FirebaseAuth.getInstance().getCurrentUser()!=null) {
-            checkInCart(data.getProductId(), new checkInCartCallback() {
-                @Override
-                public void notFound() {
-
-                }
-                @Override
-                public void found(int selectQTY) {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            productManager.observeCartItem(data.getProductId()).observe((LifecycleOwner) context, cartItem -> {
+                if (cartItem != null) {
                     holder.binding.AddTOCartLayout.setVisibility(View.GONE);
                     holder.binding.productQtyLayout.setVisibility(View.VISIBLE);
-                    data.setSelectableQuantity(selectQTY);
-//                    holder.binding.productQty.setText(""+selectQTY);
-                    holder.binding.productQty.setText(""+data.getSelectableQuantity());
-
+                    data.setSelectableQuantity(cartItem.getProductSelectQuantity());
+                    holder.binding.productQty.setText(String.valueOf(cartItem.getProductSelectQuantity()));
+                } else {
+                    holder.binding.AddTOCartLayout.setVisibility(View.VISIBLE);
+                    holder.binding.productQtyLayout.setVisibility(View.GONE);
                 }
             });
         }

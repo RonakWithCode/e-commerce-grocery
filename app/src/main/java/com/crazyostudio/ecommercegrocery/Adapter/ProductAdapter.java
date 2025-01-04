@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -78,31 +79,33 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
         holder.binding.productMRP.setText("₹" + product.getMrp());
         holder.binding.productMRP.setPaintFlags(holder.binding.productMRP.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         holder.binding.getRoot().setOnClickListener(onclick-> onClickProductAdapter.onClick(product,productModels));
-//        Glide.with(context)
-//                .load(product.getImageURL().get(0))
-//                .placeholder(R.drawable.product_image_shimmee_effect)
-//                .into(holder.binding.productImage);
 
-
+        if (product.getStockCount() == 0) {
+            holder.binding.outOfStockOverlay.setVisibility(View.VISIBLE);
+            holder.binding.outOfStockText.setVisibility(View.VISIBLE);
+        }
+//        if (product.getDiscount() == null) {
 //
-//        holder.binding.AddTOCart.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//            }
-//        });
+//        }
 
-        // Check if product is in cart and show quantity selector
-        productManager.isProductInCart(product.getProductId(), new ProductManager.addListenerForIsProductInCart() {
-            @Override
-            public void FoundProduct(ShoppingCartFirebaseModel cartModel) {
+        double mrp = product.getMrp();
+        double sellingPrice = product.getPrice();
+        double discountPercentage = ((mrp - sellingPrice) / mrp) * 100;
+        int roundedDiscount = (int) Math.round(discountPercentage);
+
+        if (roundedDiscount > 0) {
+            holder.binding.discountBadge.setVisibility(View.VISIBLE);
+            holder.binding.discountBadge.setText(roundedDiscount + "% OFF");
+        } else {
+            holder.binding.discountBadge.setVisibility(View.GONE);
+        }
+//         Check if product is in cart and show quantity selector
+        productManager.observeCartItem(product.getProductId()).observe((LifecycleOwner) context, cartItem -> {
+            if (cartItem != null) {
                 holder.binding.addToCart.setVisibility(View.GONE);
                 holder.binding.quantityLayout.setVisibility(View.VISIBLE);
-                holder.binding.quantity.setText(String.valueOf(cartModel.getProductSelectQuantity()));
-            }
-
-            @Override
-            public void notFoundInCart() {
+                holder.binding.quantity.setText(String.valueOf(cartItem.getProductSelectQuantity()));
+            } else {
                 holder.binding.addToCart.setVisibility(View.VISIBLE);
                 holder.binding.quantityLayout.setVisibility(View.GONE);
             }
@@ -112,7 +115,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
         holder.binding.addToCart.setOnClickListener(view -> {
             if (FirebaseAuth.getInstance().getCurrentUser() != null) {
                 productManager.addToBothDatabase(
-                    new ShoppingCartFirebaseModel(product.getProductId(), product.getMinSelectableQuantity()), 
+                    new ShoppingCartFirebaseModel(product.getProductId(), product.getMinSelectableQuantity()),
                     new ProductManager.AddListenerForAddToBothInDatabase() {
                         @Override
                         public void added(ShoppingCartFirebaseModel shoppingCartFirebaseModel) {

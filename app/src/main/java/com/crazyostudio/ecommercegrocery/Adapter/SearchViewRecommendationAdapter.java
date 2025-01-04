@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -57,19 +58,15 @@ public class SearchViewRecommendationAdapter extends RecyclerView.Adapter<Search
         ProductModel model = dataList.get(position);
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            productManager.isProductInCart(model.getProductId(), new ProductManager.addListenerForIsProductInCart() {
-                @Override
-                public void FoundProduct(ShoppingCartFirebaseModel shoppingCartFirebaseModel) {
+            productManager.observeCartItem(model.getProductId()).observe((LifecycleOwner) context, cartItem -> {
+                if (cartItem != null) {
                     holder.binding.addToCartButton.setVisibility(View.GONE);
                     holder.binding.productQtyLayout.setVisibility(View.VISIBLE);
-                    model.setSelectableQuantity(shoppingCartFirebaseModel.getProductSelectQuantity());
-                    holder.binding.productQty.setText(String.valueOf(shoppingCartFirebaseModel.getProductId()));
-
-                }
-
-                @Override
-                public void notFoundInCart() {
-
+                    model.setSelectableQuantity(cartItem.getProductSelectQuantity());
+                    holder.binding.productQty.setText(String.valueOf(cartItem.getProductSelectQuantity()));
+                } else {
+                    holder.binding.addToCartButton.setVisibility(View.VISIBLE);
+                    holder.binding.productQtyLayout.setVisibility(View.GONE);
                 }
             });
         }

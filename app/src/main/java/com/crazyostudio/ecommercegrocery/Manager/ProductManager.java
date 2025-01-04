@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 
 import com.crazyostudio.ecommercegrocery.DAO.CartDAOHelper;
 import com.crazyostudio.ecommercegrocery.DAO.ShoppingCartFirebaseModelDAO;
@@ -115,6 +116,10 @@ public class ProductManager {
 //        }).addOnFailureListener(e -> {
 //            Log.e("ProductMnager","Remove " + e);
 //        });
+    }
+
+    public LiveData<ShoppingCartFirebaseModelDAO> observeCartItem(String productId) {
+        return databaseHelper.ModelDAO().observeProductById(productId);
     }
 
 
