@@ -18,13 +18,14 @@ import java.util.ArrayList;
 
 
 public class SlideCategoryAdapter extends RecyclerView.Adapter<SlideCategoryAdapter.SlideCategoryAdapterViewHolder>{
-    ArrayList<ProductCategoryModel> categoryModels;
-    Context context;
-    CategoryAdapterInterface onclick;
-    private int selectedPosition = RecyclerView.NO_POSITION;
+    private final ArrayList<ProductCategoryModel> categoryModels;
+    private final Context context;
+    private final CategoryAdapterInterface onclick;
+    private int selectedPosition = 0;
 
-
-    public SlideCategoryAdapter(ArrayList<ProductCategoryModel> categoryModels, Context context, CategoryAdapterInterface onclick) {
+    public SlideCategoryAdapter(ArrayList<ProductCategoryModel> categoryModels, 
+                              Context context, 
+                              CategoryAdapterInterface onclick) {
         this.categoryModels = categoryModels;
         this.context = context;
         this.onclick = onclick;
@@ -32,27 +33,34 @@ public class SlideCategoryAdapter extends RecyclerView.Adapter<SlideCategoryAdap
 
     @NonNull
     @Override
-    public SlideCategoryAdapter.SlideCategoryAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new SlideCategoryAdapterViewHolder(LayoutInflater.from(context).inflate(R.layout.slider_category, parent, false));
-
+    public SlideCategoryAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.slider_category, parent, false);
+        return new SlideCategoryAdapterViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull SlideCategoryAdapter.SlideCategoryAdapterViewHolder holder, int position) {
-//        holder.binding.line.setVisibility(View.INVISIBLE);
-        ProductCategoryModel model  = categoryModels.get(position);
+    public void onBindViewHolder(@NonNull SlideCategoryAdapterViewHolder holder, int position) {
+        ProductCategoryModel model = categoryModels.get(position);
         holder.binding.title.setText(model.getTag());
-        Glide.with(context).load(model.getImageUri()).placeholder(R.drawable.skeleton_shape).into(holder.binding.imageView1);
+        
+        // Load image with error handling
+        Glide.with(context)
+            .load(model.getImageUri())
+            .placeholder(R.drawable.skeleton_shape)
+            .error(R.drawable.ic_error)
+            .into(holder.binding.imageView1);
 
+        // Update selected state
         holder.itemView.setSelected(selectedPosition == position);
 
-
-        holder.binding.imageView1.setOnClickListener(v -> {
-//            holder.binding.line.setVisibility(View.VISIBLE);
-            onclick.onClick(model);
-            notifyItemChanged(selectedPosition);
-            selectedPosition = holder.getAdapterPosition();
-            notifyItemChanged(selectedPosition);
+        holder.itemView.setOnClickListener(v -> {
+            if (selectedPosition != holder.getAdapterPosition()) {
+                int previousPosition = selectedPosition;
+                selectedPosition = holder.getAdapterPosition();
+                notifyItemChanged(previousPosition);
+                notifyItemChanged(selectedPosition);
+                onclick.onClick(model);
+            }
         });
     }
 
@@ -61,9 +69,10 @@ public class SlideCategoryAdapter extends RecyclerView.Adapter<SlideCategoryAdap
         return categoryModels.size();
     }
 
-    public static class SlideCategoryAdapterViewHolder extends RecyclerView.ViewHolder {
-        SliderCategoryBinding binding;
-        public SlideCategoryAdapterViewHolder(@NonNull View itemView) {
+    static class SlideCategoryAdapterViewHolder extends RecyclerView.ViewHolder {
+        final SliderCategoryBinding binding;
+
+        SlideCategoryAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
             binding = SliderCategoryBinding.bind(itemView);
         }

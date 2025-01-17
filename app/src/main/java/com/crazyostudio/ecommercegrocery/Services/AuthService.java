@@ -14,7 +14,7 @@ public class AuthService {
     FirebaseAuth auth = FirebaseAuth.getInstance();
 
     public boolean IsLogin() {
-        return auth.getCurrentUser() == null;
+        return auth.getCurrentUser() != null;
     }
 
     public String getUserId() {

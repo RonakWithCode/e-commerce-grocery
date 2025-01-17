@@ -38,7 +38,7 @@ public class MoreFragment extends Fragment {
 
 
         authService = new AuthService();
-        if (authService.IsLogin()) {
+        if (!authService.IsLogin()) {
             binding.relativeNotAuth.setVisibility(View.VISIBLE);
             binding.mainLayout.setVisibility(View.GONE);
 

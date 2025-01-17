@@ -168,6 +168,7 @@
 
                 <!-- Add to Cart Button -->
                 <FrameLayout
+                    android:id="@+id/AddTOCartLayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
 

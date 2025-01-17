@@ -522,6 +522,19 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
+        <org.imaginativeworld.whynotimagecarousel.ImageCarousel
+            android:id="@+id/BottomCarousel"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_190sdp"
+            android:background="@color/Banner_Colors"
+            app:autoWidthFixing="true"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/TopBrand"
+            app:showTopShadow="false"
+            app:showBottomShadow="false"
+            app:showNavigationButtons="true" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/MultiViewAdapter"
             android:layout_width="match_parent"
@@ -529,7 +542,7 @@
             android:layout_marginTop="@dimen/_5sdp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/TopBrand" />
+            app:layout_constraintTop_toBottomOf="@id/BottomCarousel" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
     

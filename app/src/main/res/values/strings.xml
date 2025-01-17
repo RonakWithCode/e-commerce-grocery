@@ -123,7 +123,6 @@
     </string-array>
 
 
-
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
     <string name="sync_header">Sync</string>
@@ -243,8 +242,6 @@
     <string name="add_item_search_result_hint">ADD</string>
 
 
-
-
     <string name="my_orders">My Orders</string>
     <string name="back_button">Back</string>
 
@@ -333,5 +330,9 @@
 
     <string name="shop_by_top_category">Shop by Top Category</string>
     <string name="order_status">Order Status</string>
+
+    <string name="error_icon">Error Icon</string>
+    <string name="retry">Retry</string>
+    <string name="brand_icon">brand icon</string>
 
 </resources>

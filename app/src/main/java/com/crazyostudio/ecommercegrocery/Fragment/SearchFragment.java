@@ -20,7 +20,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.crazyostudio.ecommercegrocery.Adapter.SearchAdapter;
-import com.crazyostudio.ecommercegrocery.Adapter.SearchAdapterInterface;
 import com.crazyostudio.ecommercegrocery.Adapter.ViewAdapterSearchViewRecommendation;
 import com.crazyostudio.ecommercegrocery.Component.ProductViewCard;
 import com.crazyostudio.ecommercegrocery.Manager.ProductManager;
@@ -31,6 +30,7 @@ import com.crazyostudio.ecommercegrocery.Services.AuthService;
 import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentSearchBinding;
 import com.crazyostudio.ecommercegrocery.interfaceClass.HomeProductInterface;
+import com.crazyostudio.ecommercegrocery.interfaceClass.onClickProductAdapter;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -40,7 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class SearchFragment extends Fragment implements SearchAdapterInterface {
+public class SearchFragment extends Fragment {
     private FragmentSearchBinding binding;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final CollectionReference productsRef = db.collection("Product");
@@ -85,11 +85,11 @@ public class SearchFragment extends Fragment implements SearchAdapterInterface {
         binding.Recommendation.setLayoutManager(new LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false));
         binding.Recommendation.setAdapter(adapterSearchViewRecommendation);
 
-        adapter = new SearchAdapter(requireContext(),this);
+        adapter = new SearchAdapter(requireContext(), (productModel, sameProducts) -> card.showProductViewDialog(productModel, sameProducts));
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         binding.recyclerView.setAdapter(adapter);
-
-
+// recycler
+        binding.recyclerView.setVisibility(View.GONE);
 
 //        binding.backBtn.setOnClickListener(view-> requireActivity().onBackPressed());
 //        binding.searchBar.setSpeechMode(true); // Enable voice search
@@ -186,36 +186,47 @@ public class SearchFragment extends Fragment implements SearchAdapterInterface {
 //    } p
 
     private void searchProductByKeyword(String keyword) {
+        if (keyword.isEmpty()) {
+            // When search is empty, show recommendations and hide search results
+            binding.recyclerView.setVisibility(View.GONE);
+            binding.noResultsView.setVisibility(View.GONE);
+            binding.Recommendation.setVisibility(View.VISIBLE);
+            adapter.setData(new ArrayList<>());
+            return;
+        }
 
-        // Perform search only if keyword is not empty
-        if (!keyword.isEmpty()) {
-            // Convert the keyword to lowercase for case-insensitive search
-            String lowercaseKeyword = keyword.toLowerCase(Locale.getDefault());
+        // When searching, hide recommendations
+        binding.Recommendation.setVisibility(View.GONE);
 
-            // Create a query to filter products based on the keyword
-            Query query = productsRef.whereArrayContains("keywords", lowercaseKeyword);
+        String lowercaseKeyword = keyword.toLowerCase(Locale.getDefault());
+        Query query = productsRef.whereArrayContains("keywords", lowercaseKeyword);
 
-            // Execute the query
-            query.get().addOnSuccessListener(queryDocumentSnapshots -> {
-                // Initialize an ArrayList to store matching products
-                ArrayList<ProductModel> matchingProducts = new ArrayList<>();
-
-                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                    // Retrieve each matching product
-                    ProductModel productModel = documentSnapshot.toObject(ProductModel.class);
+        query.get().addOnSuccessListener(queryDocumentSnapshots -> {
+            ArrayList<ProductModel> matchingProducts = new ArrayList<>();
+            for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                ProductModel productModel = documentSnapshot.toObject(ProductModel.class);
+                if (productModel != null) {
                     matchingProducts.add(productModel);
                 }
-
-                // Set data to your adapter after completing the search
-                adapter.setData(matchingProducts);
-            }).addOnFailureListener(e -> {
-                // Handle query failure
-                Log.e("SearchFragment", "Error searching for products: " + e.getMessage());
-            });
-        } else {
-            // If keyword is empty, do nothing or show a message
-            Log.d("SearchFragment", "Keyword is empty");
-        }
+            }
+            adapter.setData(matchingProducts);
+            
+            // Update UI based on search results
+            if (matchingProducts.isEmpty()) {
+                binding.noResultsView.setVisibility(View.VISIBLE);
+                binding.recyclerView.setVisibility(View.GONE);
+            } else {
+                binding.noResultsView.setVisibility(View.GONE);
+                binding.recyclerView.setVisibility(View.VISIBLE);
+            }
+        }).addOnFailureListener(e -> {
+            Log.e("SearchFragment", "Error searching for products: " + e.getMessage());
+            Toast.makeText(requireContext(), "Search failed. Please try again.", Toast.LENGTH_SHORT).show();
+            // On error, show recommendations
+            binding.Recommendation.setVisibility(View.VISIBLE);
+            binding.recyclerView.setVisibility(View.GONE);
+            binding.noResultsView.setVisibility(View.GONE);
+        });
     }
 
 //    private void searchProductByKeyword(String keyword) {
@@ -415,43 +426,6 @@ public class SearchFragment extends Fragment implements SearchAdapterInterface {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    @Override
-    public void onclick(ProductModel productModel) {
-//         showProductViewDialog(productModel);
-        card.showProductViewDialog(productModel,new ArrayList<>());
-    }
-
-    @Override
-    public void Remove(ProductModel productModel) {
-        binding.loading.setVisibility(View.VISIBLE);
-        productManager.RemoveCartProductById(userId,productModel.getProductId());
-        binding.loading.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void UpdateQTY(ProductModel productModel) {
-        binding.loading.setVisibility(View.VISIBLE);
-        productManager.UpdateCartQuantityById(userId,productModel.getProductId(),productModel.getSelectableQuantity());
-        binding.loading.setVisibility(View.GONE);
-
-    }
-
-    @Override
-    public void AddProduct(ShoppingCartFirebaseModel shoppingCartFirebaseModel) {
-        binding.loading.setVisibility(View.VISIBLE);
-        productManager.addToBothDatabase(shoppingCartFirebaseModel, new ProductManager.AddListenerForAddToBothInDatabase() {
-            @Override
-            public void added(ShoppingCartFirebaseModel shoppingCartFirebaseModel) {
-                binding.loading.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void failure(Exception e) {
-                Toast.makeText(requireContext(), e.toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
 
-
-}

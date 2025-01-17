@@ -8,10 +8,13 @@ import android.os.Bundle;
 
 import com.crazyostudio.ecommercegrocery.Fragment.AddressFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.ProductDetailsFragment;
+import com.crazyostudio.ecommercegrocery.Fragment.SearchFragment;
 import com.crazyostudio.ecommercegrocery.Fragment.UserAccountFragment;
+import com.crazyostudio.ecommercegrocery.Model.ProductModel;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.databinding.ActivityFragmentLoaderBinding;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class FragmentLoader extends AppCompatActivity {
@@ -22,41 +25,59 @@ public class FragmentLoader extends AppCompatActivity {
         binding = ActivityFragmentLoaderBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         String id = getIntent().getStringExtra("LoadID");
-        if (id.isEmpty()) {
+        if (id == null || id.isEmpty()) {
             finish();
+            return;
         }
-//        else if (id.equals("MoreAddress")){
-//            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//            Fragment fragment = new AddressFragment();
-//            Bundle bundle = new Bundle();
-//            bundle.putString("LoadID",id);
-//            bundle.putString("BuyType","viewAddress");
-//            fragment.setArguments(bundle);
-//            transaction.replace(R.id.fragment_container,fragment,id);
-//            transaction.addToBackStack(id);
-//            transaction.commit();
-//        }
-        else if (id.equals("UserAccountFragment")){
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            Fragment fragment = new UserAccountFragment();
-//            Bundle bundle = new Bundle();
-//            bundle.putString("LoadID",id);
-//            fragment.setArguments(bundle);
-            transaction.replace(R.id.fragment_container,fragment,id);
-            transaction.addToBackStack(id);
-            transaction.commit();
-        }else if (id.equals("Details")){
-            Objects.requireNonNull(getSupportActionBar()).show();
-            FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
-            Bundle bundle = new Bundle();
-            bundle.putString("productId", getIntent().getStringExtra("productId"));
 
-            ProductDetailsFragment productDetailsFragment = new ProductDetailsFragment();
-            productDetailsFragment.setArguments(bundle);
+
+        switch (id) {
+            case "search": {
+//                if (getSupportActionBar() != null) {
+//                    getSupportActionBar().hide();
+//                }
+
+//                Objects.requireNonNull(getSupportActionBar()).hide();
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                Fragment fragment = new SearchFragment();
+
+//                ArrayList<ProductModel> homeProductModel = getIntent().getParcelableArrayListExtra("model"); // Corrected line
+//
+//                Bundle bundle = new Bundle();
+//                bundle.putParcelableArrayList("model", homeProductModel);
+//                fragment.setArguments(bundle);
+
+                transaction.replace(R.id.fragment_container, fragment, id);
+                transaction.addToBackStack(id);
+                transaction.commit();
+
+                break;
+            }
+            case "UserAccountFragment": {
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                Fragment fragment = new UserAccountFragment();
+//            Bundle bundle = new Bundle();
+//            bundle.putString("LoadID",id);
+//            fragment.setArguments(bundle);
+                transaction.replace(R.id.fragment_container, fragment, id);
+                transaction.addToBackStack(id);
+                transaction.commit();
+                break;
+            }
+            case "Details": {
+                Objects.requireNonNull(getSupportActionBar()).show();
+                FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
+                Bundle bundle = new Bundle();
+                bundle.putString("productId", getIntent().getStringExtra("productId"));
+
+                ProductDetailsFragment productDetailsFragment = new ProductDetailsFragment();
+                productDetailsFragment.setArguments(bundle);
 //        productDetailsFragment.setArguments(bundle);
-            transaction.replace(R.id.fragment_container,productDetailsFragment,"OrderDetailsActivity");
-            transaction.addToBackStack("OrderDetailsActivity");
-            transaction.commit();
+                transaction.replace(R.id.fragment_container, productDetailsFragment, "OrderDetailsActivity");
+                transaction.addToBackStack("OrderDetailsActivity");
+                transaction.commit();
+                break;
+            }
         }
 
 

@@ -150,6 +150,7 @@
                     app:strokeColor="@color/gray">
 
                     <LinearLayout
+                        android:id="@+id/brandBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="@dimen/_12sdp"

@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:context=".Fragment.ProductWithSlideCategoryFragment">
+    tools:context=".Activity.BrandActivity">
+
+
+
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/TopNav"
@@ -66,16 +69,45 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/slideView"
-                android:layout_width="@dimen/_60sdp"
-                android:layout_height="match_parent"
-                android:background="@color/grey_50"
-                android:paddingVertical="@dimen/_8sdp"
-                android:clipToPadding="false" />
+            <!-- Brand Card -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/brandCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_8sdp"
+                android:elevation="4dp"
+                app:cardCornerRadius="@dimen/_8sdp">
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/_8sdp"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:id="@+id/brandIcon"
+                        android:layout_width="@dimen/_48sdp"
+                        android:layout_height="@dimen/_48sdp"
+                        android:src="@drawable/placeholder"
+                        android:contentDescription="@string/brand_icon" />
+
+                    <TextView
+                        android:id="@+id/brandName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_8sdp"
+                        android:textColor="@color/MainTextColor"
+                        android:textSize="@dimen/_16ssp"
+                        android:textStyle="bold"
+                        android:ellipsize="end"
+                        android:maxLines="1" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Products RecyclerView -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/Products"
                 android:layout_width="match_parent"

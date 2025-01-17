@@ -120,7 +120,7 @@ public class ProductFilterByQueryFragment extends Fragment implements onClickPro
 //                });
 
 
-        db.collection("query").document(category).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        db.collection(" ").document(category).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {

@@ -53,7 +53,19 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
         binding = FragmentShoppingCartsBinding.inflate(inflater,container,false);
         authService = new AuthService();
         service = new DatabaseService();
-        uid  = authService.getUserId();
+        if (!authService.IsLogin()) {
+            binding.relativeNotAuth.setVisibility(View.VISIBLE);
+            binding.main.setVisibility(View.GONE);
+            binding.progressCircular.setVisibility(View.GONE);
+            binding.linearLayoutPlaceHolder.stopShimmer();
+            binding.linearLayoutPlaceHolder.setVisibility(View.GONE);
+        }  else {
+            uid  = authService.getUserId();
+
+            init();
+        }
+
+
         models = new ArrayList<>();
         binding.siginUp.setOnClickListener(view -> startActivity(new Intent(requireContext(), AuthMangerActivity.class)));
         binding.Buy.setOnClickListener(Buy->{
@@ -66,15 +78,15 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
         });
         binding.linearLayoutPlaceHolder.startShimmer();
 
-        if (authService.IsLogin()) {
-            binding.relativeNotAuth.setVisibility(View.VISIBLE);
-            binding.main.setVisibility(View.GONE);
-            binding.progressCircular.setVisibility(View.GONE);
-            binding.linearLayoutPlaceHolder.stopShimmer();
-            binding.linearLayoutPlaceHolder.setVisibility(View.GONE);
-        }  else {
-            init();
-        }
+//        if (!authService.IsLogin()) {
+//            binding.relativeNotAuth.setVisibility(View.VISIBLE);
+//            binding.main.setVisibility(View.GONE);
+//            binding.progressCircular.setVisibility(View.GONE);
+//            binding.linearLayoutPlaceHolder.stopShimmer();
+//            binding.linearLayoutPlaceHolder.setVisibility(View.GONE);
+//        }  else {
+//            init();
+//        }
         return binding.getRoot();
     }
 

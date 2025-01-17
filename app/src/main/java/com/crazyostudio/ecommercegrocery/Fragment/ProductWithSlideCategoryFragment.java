@@ -27,161 +27,172 @@ import com.crazyostudio.ecommercegrocery.javaClasses.basicFun;
 import java.util.ArrayList;
 
 public class ProductWithSlideCategoryFragment extends Fragment {
-    FragmentProductWithSlideCategoryBinding binding;
-
-    ProductAdapter productAdapter;
-    ArrayList<ProductModel> model;
-    String filter;
-//    ArrayList<Hom>
+    private FragmentProductWithSlideCategoryBinding binding;
+    private ProductAdapter productAdapter;
+    private SlideCategoryAdapter categoryAdapter;
     private DatabaseService databaseService;
-
-
-    public ProductWithSlideCategoryFragment() {
-        // Required empty public constructor
-    }
-
+    private ArrayList<ProductModel> productModels;
+    private ArrayList<ProductCategoryModel> categoryModels;
+    private String currentFilter;
+    
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        binding = FragmentProductWithSlideCategoryBinding.inflate(inflater,container,false);
+                           Bundle savedInstanceState) {
+        binding = FragmentProductWithSlideCategoryBinding.inflate(inflater, container, false);
+        initializeViews();
+        setupAdapters();
+        setupListeners();
+        loadInitialData();
+        return binding.getRoot();
+    }
+
+    private void initializeViews() {
+        hideActionBar();
+        productModels = new ArrayList<>();
+        categoryModels = new ArrayList<>();
+        databaseService = new DatabaseService();
+        currentFilter = getArguments() != null ? getArguments().getString("filter", "no") : "no";
+    }
+
+    private void setupAdapters() {
+        // Setup category adapter
+        categoryAdapter = new SlideCategoryAdapter(categoryModels, requireContext(), 
+            productModel -> loadProductByCategory(productModel.getTag()));
+        binding.slideView.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.slideView.setAdapter(categoryAdapter);
+
+        // Setup product adapter
+        productAdapter = new ProductAdapter(productModels, 
+            (productModel, sameProducts) -> new ProductViewCard(getActivity())
+                .showProductViewDialog(productModel, sameProducts), 
+            requireContext(), "main");
+        binding.Products.setLayoutManager(new GridLayoutManager(requireContext(), 2));
+        binding.Products.setAdapter(productAdapter);
+    }
+
+    private void setupListeners() {
+        binding.backBtn.setOnClickListener(v -> handleBackPress());
+        binding.searchBta.setOnClickListener(v -> openSearchFragment());
+        binding.swipeRefresh.setOnRefreshListener(this::refreshData);
+        binding.retryButton.setOnClickListener(v -> loadInitialData());
+    }
+
+    private void loadInitialData() {
+        showLoading();
+        databaseService.getAllCategory(new DatabaseService.GetAllCategoryCallback() {
+            @Override
+            public void onSuccess(ArrayList<ProductCategoryModel> categories) {
+                if (!isAdded()) return;
+                
+                categoryModels.clear();
+                categoryModels.addAll(categories);
+                categoryAdapter.notifyDataSetChanged();
+                
+                if (categories.isEmpty()) {
+                    showError("No categories found");
+                    return;
+                }
+
+                String categoryToLoad = currentFilter.equals("no") ? 
+                    categories.get(0).getTag() : currentFilter;
+                loadProductByCategory(categoryToLoad);
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                if (!isAdded()) return;
+                showError(errorMessage);
+            }
+        });
+    }
+
+    private void loadProductByCategory(String category) {
+        showLoading();
+        databaseService.getAllProductsByCategoryOnly(category, new DatabaseService.GetAllProductsCallback() {
+            @Override
+            public void onSuccess(ArrayList<ProductModel> products) {
+                if (!isAdded()) return;
+                
+                productModels.clear();
+                productModels.addAll(products);
+                productAdapter.notifyDataSetChanged();
+                binding.title.setText(category);
+                
+                hideLoading();
+                if (products.isEmpty()) {
+                    showError("No products found in this category");
+                }
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                if (!isAdded()) return;
+                showError(errorMessage);
+            }
+        });
+    }
+
+    private void refreshData() {
+        loadInitialData();
+    }
+
+    private void showLoading() {
+        binding.loadingProgress.setVisibility(View.VISIBLE);
+        binding.errorState.setVisibility(View.GONE);
+    }
+
+    private void hideLoading() {
+        binding.loadingProgress.setVisibility(View.GONE);
+        binding.swipeRefresh.setRefreshing(false);
+    }
+
+    private void showError(String message) {
+        hideLoading();
+        binding.errorState.setVisibility(View.VISIBLE);
+        binding.errorMessage.setText(message);
+    }
+
+    private void hideActionBar() {
         ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
         }
-        databaseService = new DatabaseService();
+    }
 
-        binding.backBtn.setOnClickListener(v -> {
-            AppCompatActivity activity = (AppCompatActivity) requireActivity();
-            if (activity.getSupportActionBar() != null) {
-                activity.getSupportActionBar().show();
-            }
-
-            // Navigate back
-            requireActivity().onBackPressed();
-        });
-        if (getArguments() != null) {
-            filter = getArguments().getString("filter");
-            LoadCategory(filter);
-        }else {
-            LoadCategory("no");
+    private void handleBackPress() {
+        if (getActivity() != null) {
+            getActivity().onBackPressed();
         }
-        binding.searchBta.setOnClickListener(view->openSearchFragment());
-        model = new ArrayList<>();
-        productAdapter = new ProductAdapter(model, (productModel, sameProducts) -> {
-
-            new ProductViewCard(getActivity()).showProductViewDialog(productModel,sameProducts);
-
-        }, requireContext(),"main");
-
-        binding.Products.setLayoutManager(new GridLayoutManager(requireContext(), 2));
-        binding.Products.setAdapter(productAdapter);
-
-        return binding.getRoot();
     }
-
-
-
-    void LoadCategory(String filter) {
-        ArrayList<ProductCategoryModel> categoryModels = new ArrayList<>();
-        SlideCategoryAdapter categoryAdapter = new SlideCategoryAdapter(categoryModels, requireContext(), new CategoryAdapterInterface() {
-            @Override
-            public void onClick(ProductCategoryModel productModel) {
-                LoadProductByCategory(productModel.getTag());
-
-            }
-        });
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        binding.slideView.setLayoutManager(layoutManager);
-        binding.slideView.setAdapter(categoryAdapter);
-
-//        Drawable scrollbarThumb = ContextCompat.getDrawable(requireContext(), R.drawable.scrollbar_thumb);
-//        Drawable scrollbarTrack = ContextCompat.getDrawable(requireContext(), R.drawable.scrollbar_track);
-//
-//        binding.slideView.setVerticalScrollBarEnabled(true);
-//        binding.slideView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-////
-////        binding.slideView.setScrollBarThumbDrawable(scrollbarThumb);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-//            binding.slideView.setVerticalScrollbarThumbDrawable(scrollbarThumb);
-//            binding.slideView.setVerticalScrollbarTrackDrawable(scrollbarTrack);
-//        }
-//        binding.slideView.setScrollBarTrackDrawable(scrollbarTrack);
-
-
-        new DatabaseService().getAllCategory(new DatabaseService.GetAllCategoryCallback() {
-            @SuppressLint("NotifyDataSetChanged")
-            @Override
-            public void onSuccess(ArrayList<ProductCategoryModel> category) {
-                categoryModels.addAll(category);
-                categoryAdapter.notifyDataSetChanged();
-                if (filter.equals("no")) {
-                    LoadProductByCategory(category.get(0).getTag());
-                }else {
-                    LoadProductByCategory(filter);
-                }
-//                binding.shimmerLayout.stopShimmer();
-//                binding.shimmerLayout.setVisibility(View.GONE);
-                binding.slideView.setVisibility(View.VISIBLE);
-
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-
-            }
-        });
-    }
-
-    private void LoadProductByCategory(String s) {
-        databaseService.getAllProductsByCategoryOnly(s, new DatabaseService.GetAllProductsCallback() {
-            @SuppressLint("NotifyDataSetChanged")
-            @Override
-            public void onSuccess(ArrayList<ProductModel> products) {
-                model.clear();
-                model.addAll(products);
-                binding.title.setText(s);
-                productAdapter.notifyDataSetChanged();
-//                MultiViewModel.clear();
-//                MultiViewModel.add(new HomeProductModel(s,products));
-//                MultiViewAdapter.notifyDataSetChanged();
-
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                basicFun.AlertDialog(requireContext(), errorMessage);
-
-            }
-        });
-    }
-
 
     private void openSearchFragment() {
-        if (isAdded() && getActivity() != null) {
-            SearchFragment fragment  = new SearchFragment();
-//            Bundle bundle = new Bundle();
-//            bundle.putParcelableArrayList("model",model);
-//            fragment.setArguments(bundle);
-            getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.loader,fragment)
-                    .addToBackStack("HomeFragment")
-                    .commit();
-
-
+        // Create bundle to pass current products if needed
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList("model", productModels);
+        
+        // Create and navigate to search fragment
+        SearchFragment searchFragment = new SearchFragment();
+        searchFragment.setArguments(bundle);
+        
+        // Replace current fragment with search fragment
+        if (getActivity() != null) {
+            getActivity().getSupportFragmentManager()
+                .beginTransaction()
+//                .setCustomAnimations(
+//                    R.anim.slide_in_right,  // enter
+//                    R.anim.slide_out_left,   // exit
+//                    R.anim.slide_in_left,    // popEnter
+//                    R.anim.slide_out_right   // popExit
+//                )
+                .replace(R.id.fragment_container, searchFragment)
+                .addToBackStack(null)
+                .commit();
         }
     }
 
-
-
-
-
-
-//    CARD'S
-
-// Component of ProductViewCard
-
-
-
-
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
 }

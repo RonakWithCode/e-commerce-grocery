@@ -8,7 +8,6 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,7 +39,6 @@ import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.Services.DatabaseService;
 import com.crazyostudio.ecommercegrocery.databinding.CategoryViewDialogBinding;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentHomeBinding;
-import com.crazyostudio.ecommercegrocery.interfaceClass.HomeProductInterface;
 import com.crazyostudio.ecommercegrocery.javaClasses.CustomSmoothScroller;
 import com.crazyostudio.ecommercegrocery.javaClasses.basicFun;
 import com.google.firebase.auth.FirebaseAuth;
@@ -56,6 +54,8 @@ import org.imaginativeworld.whynotimagecarousel.listener.CarouselListener;
 import org.imaginativeworld.whynotimagecarousel.model.CarouselItem;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
@@ -162,7 +162,6 @@ public class HomeFragment extends Fragment {
             }
         });
 
-//        MultiViewAdapter.setHasStableIds(true);
 
 
     }
@@ -172,6 +171,7 @@ public class HomeFragment extends Fragment {
 
 //        loadProductsMultiViewForLoop(new String[]{"chips and Snacks"});
         loadProductsMultiViewForLoop(new String[]{"Detergent Powder & Bars","Soaps & Body Care", "snacks", "Dishwashing Bars & Tubs", "BISCUITS"});
+        loadProductsForCategories(new String[]{"Detergent Powder & Bars","Soaps & Body Care", "snacks", "Dishwashing Bars & Tubs", "BISCUITS"});
 //        loadProductsForCategories(new String[]{"ha","hahahah","aw","oil","this is me new \uD83D\uDC08" });
 //        loadProductsForCategoriesByBoysSkin(new String[]{"toothpaste", "drinks"});
     }
@@ -204,74 +204,70 @@ public class HomeFragment extends Fragment {
     }
 
 
-// this Will I make locally Store
     private void LoadProductCategory() {
+
         Glide.with(requireContext()).load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/all_category%2Fskin%20care.png?alt=media&token=6edf6d22-e31e-4935-abfd-6b5ddde4ea28").placeholder(R.drawable.skeleton_shape).into(binding.skin);
         Glide.with(requireContext()).load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/all_category%2F6.png?alt=media&token=032ccdeb-9a48-4d2e-976d-238b20172b1a").placeholder(R.drawable.skeleton_shape).into(binding.AttaRiceDal);
         Glide.with(requireContext()).load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/all_category%2F3.png?alt=media&token=30804049-0835-4197-a25c-637b75f0f5d4").placeholder(R.drawable.skeleton_shape).into(binding.milk);
         Glide.with(requireContext()).load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/all_category%2F1.png?alt=media&token=4608d93f-add0-4e26-bbce-e17275024b06").placeholder(R.drawable.skeleton_shape).into(binding.oil);
         Glide.with(requireContext()).load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/all_category%2F2.png?alt=media&token=fc901685-49db-4b11-a053-231c7cfa7380").placeholder(R.drawable.skeleton_shape).into(binding.Bakery);
         Glide.with(requireContext()).load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/all_category%2F4.png?alt=media&token=8aad396a-a33a-4d71-94bb-b1bf9052d425").placeholder(R.drawable.skeleton_shape).into(binding.drinks);
-// TODO:  More set in this
-//          some are : onClicks and view category etc
-
+//// TODO:  More set in this
+////          some are : onClicks and view category etc
+//
         Glide.with(requireContext()).load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/all_category%2Fbrand%2Fdabur.png?alt=media&token=26e97c85-3c03-47d9-8971-0b496ab5100f").placeholder(R.drawable.skeleton_shape).into(binding.Dabur);
         Glide.with(requireContext()).load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/all_category%2Fbrand%2Fitc.png?alt=media&token=34307cc3-bba2-492c-9393-8306898f7757").placeholder(R.drawable.skeleton_shape).into(binding.itc);
         Glide.with(requireContext()).load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/all_category%2Fbrand%2Fitc.png?alt=media&token=34307cc3-bba2-492c-9393-8306898f7757").placeholder(R.drawable.skeleton_shape).into(binding.View1);
         Glide.with(requireContext()).load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/all_category%2Fbrand%2Fitc.png?alt=media&token=34307cc3-bba2-492c-9393-8306898f7757").placeholder(R.drawable.skeleton_shape).into(binding.View2);
-//        Glide.with(requireContext()).load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/all_category%2F4.png?alt=media&token=8aad396a-a33a-4d71-94bb-b1bf9052d425").placeholder(R.drawable.skeleton_shape).into(binding.drinks);
+        Glide.with(requireContext()).load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/all_category%2F4.png?alt=media&token=8aad396a-a33a-4d71-94bb-b1bf9052d425").placeholder(R.drawable.skeleton_shape).into(binding.drinks);
 
 
     }
 
 
+
+
+
+
     void LoadCarousel() {
-        ArrayList<BannerModels> modelsTop = new ArrayList<>();
-        ArrayList<BannerModels> modelsCenter = new ArrayList<>();
+        ArrayList<BannerModels> TopBannerModels = new ArrayList<>();
+        ImageCarousel TopCarousel = this.binding.carousel;
+        ImageCarousel BottomCarousel = this.binding.BottomCarousel;
+
+        ArrayList<BannerModels> BottomBannerModels = new ArrayList<>();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference bannerRef = database.getReference().child("Banner");
-        ImageCarousel Image_Carousel = this.binding.carousel;
-        ImageCarousel Image_CarouselCenter = this.binding.carousel;
         bannerRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     BannerModels banner = snapshot.getValue(BannerModels.class);
-                    if (banner != null) {
-                        if (banner.getPosition().equals("Top Position")){
-                            modelsTop.add(banner);
-                            if (isDarkModeEnabled(requireContext())){
-                                CarouselItem carouselItem = new CarouselItem(banner.getDarkBannerImage());
-                                Image_Carousel.addData(carouselItem);
-                            }
-                            else {
-                                CarouselItem carouselItem = new CarouselItem(banner.getBannerImages());
-                                Image_Carousel.addData(carouselItem);
-                            }
+                    if (banner != null && banner.isActive()) {
+                        if (banner.getPosition().equals("Top Position")) {
+                            TopBannerModels.add(banner);
+                            Map<String,String> map = new HashMap<>();
+                            map.put("bannerId",banner.getBannerId());
+                            TopCarousel.addData(new CarouselItem(banner.getBannerImages(),map));
                         }
-                        else if (banner.getPosition().equals("Center Position"))
-                        {
-                            modelsCenter.add(banner);
-                            if (isDarkModeEnabled(requireContext())){
-                                CarouselItem carouselItem = new CarouselItem(banner.getDarkBannerImage());
-                                Image_CarouselCenter.addData(carouselItem);
-                            }
-                            else {
-                                CarouselItem carouselItem = new CarouselItem(banner.getBannerImages());
-                                Image_CarouselCenter.addData(carouselItem);
-                            }
+                        else {
+                            BottomBannerModels.add(banner);
+//                            BottomCarousel
+                            Map<String,String> map = new HashMap<>();
+                            map.put("bannerId",banner.getBannerId());
+                            BottomCarousel.addData(new CarouselItem(banner.getBannerImages(),map));
+
                         }
+
                     }
                 }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle potential errors
-                Log.e("TAG", "Error fetching data", databaseError.toException());
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
-        Image_Carousel.setCarouselListener(new CarouselListener() {
+        TopCarousel.setCarouselListener(new CarouselListener() {
             @Nullable
             @Override
             public ViewBinding onCreateViewHolder(@NonNull LayoutInflater layoutInflater, @NonNull ViewGroup viewGroup) {
@@ -280,95 +276,98 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onBindViewHolder(@NonNull ViewBinding viewBinding, @NonNull CarouselItem carouselItem, int i) {
+
             }
 
             @Override
-            public void onClick(int position, @NonNull CarouselItem carouselItem) {
-                if (modelsTop.get(position).isByCategory()) {
-                    FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-                    Bundle bundle = new Bundle();
-                    bundle.putString("filter",modelsTop.get(position).getFilterQuery());
-                    ProductFilterFragment fragment = new ProductFilterFragment();
-                    fragment.setArguments(bundle);
-                    transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
-                    transaction.addToBackStack("ProductFilterFragment");
-                    transaction.commit();
-                }else {
-                    //TODO : ---------------------------------------------------------
-                    FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-                    Bundle bundle = new Bundle();
-                    bundle.putString("filter",modelsTop.get(position).getFilterQuery());
-                    bundle.putString("filterName",modelsTop.get(position).getBannerCaption());
-                    ProductFilterByQueryFragment fragment = new ProductFilterByQueryFragment();
-                    fragment.setArguments(bundle);
-                    transaction.replace(R.id.loader, fragment, "ProductFilterByQueryFragment");
-                    transaction.addToBackStack("ProductFilterByQueryFragment");
-                    transaction.commit();
-
+            public void onClick(int i, @NonNull CarouselItem carouselItem) {
+                assert carouselItem.getHeaders() != null;
+                String id = carouselItem.getHeaders().get("bannerId");
+                if (TopBannerModels.get(i).getBannerId().equals(id)) {
+                    if (TopBannerModels.get(i).getFilterByCategory()) {
+                        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("filter", TopBannerModels.get(i).getQuery());
+                        ProductFilterFragment fragment = new ProductFilterFragment();
+                        fragment.setArguments(bundle);
+                        transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
+                        transaction.addToBackStack("ProductFilterFragment");
+                        transaction.commit();
+                    } else {
+                        //TODO : ---------------------------------------------------------
+                        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("filter", TopBannerModels.get(i).getQuery());
+                        bundle.putString("filterName", TopBannerModels.get(i).getBannerCaption());
+                        ProductFilterByQueryFragment fragment = new ProductFilterByQueryFragment();
+                        fragment.setArguments(bundle);
+                        transaction.replace(R.id.loader, fragment, "ProductFilterByQueryFragment");
+                        transaction.addToBackStack("ProductFilterByQueryFragment");
+                        transaction.commit();
+                    }
                 }
-
-
             }
 
             @Override
-            public void onLongClick(int position, @NonNull CarouselItem carouselItem) {
+            public void onLongClick(int i, @NonNull CarouselItem carouselItem) {
+
 
             }
         });
-//        Image_CarouselCenter.setCarouselListener(new CarouselListener() {
-//            @Nullable
-//            @Override
-//            public ViewBinding onCreateViewHolder(@NonNull LayoutInflater layoutInflater, @NonNull ViewGroup viewGroup) {
-//                return null;
-//            }
-//
-//            @Override
-//            public void onBindViewHolder(@NonNull ViewBinding viewBinding, @NonNull CarouselItem carouselItem, int i) {
-//            }
-//
-//            @Override
-//            public void onClick(int position, @NonNull CarouselItem carouselItem) {
-//                if (modelsCenter.get(position).isByCategory()) {
-//                    FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-//                    Bundle bundle = new Bundle();
-//                    bundle.putString("filter",modelsCenter.get(position).getFilterQuery());
-//                    ProductFilterFragment fragment = new ProductFilterFragment();
-//                    fragment.setArguments(bundle);
-//                    transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
-//                    transaction.addToBackStack("ProductFilterFragment");
-//                    transaction.commit();
-//                }else {
-//                    //TODO : ---------------------------------------------------------
-//                    FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-//                    Bundle bundle = new Bundle();
-//                    bundle.putString("filter",modelsCenter.get(position).getFilterQuery());
-//                    bundle.putString("filterName",modelsCenter.get(position).getBannerCaption());
-//                    ProductFilterByQueryFragment fragment = new ProductFilterByQueryFragment();
-//                    fragment.setArguments(bundle);
-//                    transaction.replace(R.id.loader, fragment, "ProductFilterByQueryFragment");
-//                    transaction.addToBackStack("ProductFilterByQueryFragment");
-//                    transaction.commit();
-//
-//                }
-//
-//
-//            }
-//
-//            @Override
-//            public void onLongClick(int position, @NonNull CarouselItem carouselItem) {
-//
-//            }
-//        });
+        BottomCarousel.setCarouselListener(new CarouselListener() {
+            @Nullable
+            @Override
+            public ViewBinding onCreateViewHolder(@NonNull LayoutInflater layoutInflater, @NonNull ViewGroup viewGroup) {
+                return null;
+            }
+
+            @Override
+            public void onBindViewHolder(@NonNull ViewBinding viewBinding, @NonNull CarouselItem carouselItem, int i) {
+
+            }
+
+            @Override
+            public void onClick(int i, @NonNull CarouselItem carouselItem) {
+                assert carouselItem.getHeaders() != null;
+                String id = carouselItem.getHeaders().get("bannerId");
+                if (TopBannerModels.get(i).getBannerId().equals(id)) {
+                    if (TopBannerModels.get(i).getFilterByCategory()) {
+                        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("filter", TopBannerModels.get(i).getQuery());
+                        ProductFilterFragment fragment = new ProductFilterFragment();
+                        fragment.setArguments(bundle);
+                        transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
+                        transaction.addToBackStack("ProductFilterFragment");
+                        transaction.commit();
+                    } else {
+                        //TODO : ---------------------------------------------------------
+                        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("filter", TopBannerModels.get(i).getQuery());
+                        bundle.putString("filterName", TopBannerModels.get(i).getBannerCaption());
+                        ProductFilterByQueryFragment fragment = new ProductFilterByQueryFragment();
+                        fragment.setArguments(bundle);
+                        transaction.replace(R.id.loader, fragment, "ProductFilterByQueryFragment");
+                        transaction.addToBackStack("ProductFilterByQueryFragment");
+                        transaction.commit();
+                    }
+                }
+            }
+
+            @Override
+            public void onLongClick(int i, @NonNull CarouselItem carouselItem) {
+
+
+            }
+        });
+
+
+
+
 
     }
 
-
-
-    public static boolean isDarkModeEnabled(Context context) {
-        int currentNightMode = context.getResources().getConfiguration().uiMode
-                & Configuration.UI_MODE_NIGHT_MASK;
-        return currentNightMode == Configuration.UI_MODE_NIGHT_YES;
-    }
 
     private void loadProductsForCategories(String[] categories) {
         for (String category : categories) {
@@ -381,6 +380,8 @@ public class HomeFragment extends Fragment {
         }
 //        binding.loader.setVisibility(View.GONE);
     }
+
+
     private void loadProduct(String category, ArrayList<HomeProductModel> productList, HomeCategoryAdapter adapter) {
         databaseService.getAllProductsByCategoryOnly(category, new DatabaseService.GetAllProductsCallback() {
             @SuppressLint("NotifyDataSetChanged")

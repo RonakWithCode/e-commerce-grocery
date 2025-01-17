@@ -155,6 +155,26 @@ public class DatabaseService {
                     }
                 });
     }
+    public void getBrandProducts(String brand, GetAllProductsCallback callback) {
+        database.collection("Product")
+                .whereEqualTo("brand", brand) // Filter by category
+//                .limit(10)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        ArrayList<ProductModel> products = new ArrayList<>();
+                        for (DocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                            ProductModel product = document.toObject(ProductModel.class);
+                            if (product != null && product.isAvailable()) {
+                                products.add(product);
+                            }
+                        }
+                        callback.onSuccess(products);
+                    } else {
+                        callback.onError(Objects.requireNonNull(task.getException()).toString());
+                    }
+                });
+    }
 
 
 
@@ -243,6 +263,24 @@ public class DatabaseService {
             }
         });
     }
+
+//    public void getAllCategoryWithLimit(int limit,GetAllCategoryCallback callback) {
+//        database.collection("Category").limit(limit).get().addOnCompleteListener(task -> {
+//            if (task.isSuccessful()) {
+//                ArrayList<ProductCategoryModel> categoryModels = new ArrayList<>();
+//                for (DocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+//                    ProductCategoryModel categoryModel = document.toObject(ProductCategoryModel.class);
+//                    if (categoryModel != null) {
+//                        categoryModels.add(categoryModel);
+//                    }
+//                }
+//                callback.onSuccess(categoryModels);
+//            } else {
+//                callback.onError(Objects.requireNonNull(task.getException()).toString());
+//            }
+//        });
+//    }
+//
 
 
     public void getUserCartById(String id, GetUserCartByIdCallback callback) {

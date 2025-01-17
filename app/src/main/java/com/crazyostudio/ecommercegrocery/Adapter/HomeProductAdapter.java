@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.crazyostudio.ecommercegrocery.Fragment.ProductFilterFragment;
+import com.crazyostudio.ecommercegrocery.Fragment.ProductWithSlideCategoryFragment;
 import com.crazyostudio.ecommercegrocery.Model.HomeProductModel;
 import com.crazyostudio.ecommercegrocery.Model.ProductModel;
 import com.crazyostudio.ecommercegrocery.R;
@@ -75,12 +76,23 @@ public class HomeProductAdapter extends RecyclerView.Adapter<HomeProductAdapter.
             Bundle bundle = new Bundle();
             bundle.putString("filter", homeProductModel1.getProduct().get(position).getCategory());
             Log.i("HomeProductAdapter", "onBindViewHolder: "+homeProductModel1.getProduct().get(position).getCategory());
-            ProductFilterFragment fragment = new ProductFilterFragment();
+            ProductWithSlideCategoryFragment fragment = new ProductWithSlideCategoryFragment();
             fragment.setArguments(bundle);
             transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
             transaction.addToBackStack("ProductFilterFragment");
             transaction.commit();
         });
+//        holder.binding.seeMore.setOnClickListener(view->{
+//            FragmentTransaction transaction = context.getSupportFragmentManager().beginTransaction();
+//            Bundle bundle = new Bundle();
+//            bundle.putString("filter", homeProductModel1.getProduct().get(position).getCategory());
+//            Log.i("HomeProductAdapter", "onBindViewHolder: "+homeProductModel1.getProduct().get(position).getCategory());
+//            ProductFilterFragment fragment = new ProductFilterFragment();
+//            fragment.setArguments(bundle);
+//            transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
+//            transaction.addToBackStack("ProductFilterFragment");
+//            transaction.commit();
+//        });
 
         productAdapter.notifyDataSetChanged();
 
