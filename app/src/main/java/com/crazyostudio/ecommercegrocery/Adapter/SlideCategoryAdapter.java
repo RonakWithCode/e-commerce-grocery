@@ -21,7 +21,7 @@ public class SlideCategoryAdapter extends RecyclerView.Adapter<SlideCategoryAdap
     private final ArrayList<ProductCategoryModel> categoryModels;
     private final Context context;
     private final CategoryAdapterInterface onclick;
-    private int selectedPosition = 0;
+    private int selectedPosition = RecyclerView.NO_POSITION;
 
     public SlideCategoryAdapter(ArrayList<ProductCategoryModel> categoryModels, 
                               Context context, 

@@ -330,11 +330,11 @@ public class HomeFragment extends Fragment {
             public void onClick(int i, @NonNull CarouselItem carouselItem) {
                 assert carouselItem.getHeaders() != null;
                 String id = carouselItem.getHeaders().get("bannerId");
-                if (TopBannerModels.get(i).getBannerId().equals(id)) {
-                    if (TopBannerModels.get(i).getFilterByCategory()) {
+                if (BottomBannerModels.get(i).getBannerId().equals(id)) {
+                    if (BottomBannerModels.get(i).getFilterByCategory()) {
                         FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
                         Bundle bundle = new Bundle();
-                        bundle.putString("filter", TopBannerModels.get(i).getQuery());
+                        bundle.putString("filter", BottomBannerModels.get(i).getQuery());
                         ProductFilterFragment fragment = new ProductFilterFragment();
                         fragment.setArguments(bundle);
                         transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
@@ -344,8 +344,8 @@ public class HomeFragment extends Fragment {
                         //TODO : ---------------------------------------------------------
                         FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
                         Bundle bundle = new Bundle();
-                        bundle.putString("filter", TopBannerModels.get(i).getQuery());
-                        bundle.putString("filterName", TopBannerModels.get(i).getBannerCaption());
+                        bundle.putString("filter", BottomBannerModels.get(i).getQuery());
+                        bundle.putString("filterName", BottomBannerModels.get(i).getBannerCaption());
                         ProductFilterByQueryFragment fragment = new ProductFilterByQueryFragment();
                         fragment.setArguments(bundle);
                         transaction.replace(R.id.loader, fragment, "ProductFilterByQueryFragment");

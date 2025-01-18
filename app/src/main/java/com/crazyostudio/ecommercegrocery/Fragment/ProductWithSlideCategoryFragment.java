@@ -1,6 +1,7 @@
 package com.crazyostudio.ecommercegrocery.Fragment;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.crazyostudio.ecommercegrocery.Activity.BrandActivity;
+import com.crazyostudio.ecommercegrocery.Activity.FragmentLoader;
 import com.crazyostudio.ecommercegrocery.Adapter.ProductAdapter;
 import com.crazyostudio.ecommercegrocery.Adapter.SlideCategoryAdapter;
 import com.crazyostudio.ecommercegrocery.Component.ProductViewCard;
@@ -167,27 +170,34 @@ public class ProductWithSlideCategoryFragment extends Fragment {
 
     private void openSearchFragment() {
         // Create bundle to pass current products if needed
-        Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList("model", productModels);
-        
-        // Create and navigate to search fragment
-        SearchFragment searchFragment = new SearchFragment();
-        searchFragment.setArguments(bundle);
-        
-        // Replace current fragment with search fragment
-        if (getActivity() != null) {
-            getActivity().getSupportFragmentManager()
-                .beginTransaction()
-//                .setCustomAnimations(
-//                    R.anim.slide_in_right,  // enter
-//                    R.anim.slide_out_left,   // exit
-//                    R.anim.slide_in_left,    // popEnter
-//                    R.anim.slide_out_right   // popExit
-//                )
-                .replace(R.id.fragment_container, searchFragment)
-                .addToBackStack(null)
-                .commit();
-        }
+//        Bundle bundle = new Bundle();
+//        bundle.putParcelableArrayList("model", productModels);
+//
+//        // Create and navigate to search fragment
+//        SearchFragment searchFragment = new SearchFragment();
+//        searchFragment.setArguments(bundle);
+//
+//        // Replace current fragment with search fragment
+//        if (getActivity() != null) {
+//            getActivity().getSupportFragmentManager()
+//                .beginTransaction()
+////                .setCustomAnimations(
+////                    R.anim.slide_in_right,  // enter
+////                    R.anim.slide_out_left,   // exit
+////                    R.anim.slide_in_left,    // popEnter
+////                    R.anim.slide_out_right   // popExit
+////                )
+//                .replace(R.id.fragment_container, searchFragment)
+//                .addToBackStack(null)
+//                .commit();
+//        }
+
+
+
+        Intent intent = new Intent(requireContext(), FragmentLoader.class);
+        intent.putExtra("LoadID","search");
+//        intent.putParcelableArrayListExtra("model",productModel);
+        startActivity(intent);
     }
 
     @Override
