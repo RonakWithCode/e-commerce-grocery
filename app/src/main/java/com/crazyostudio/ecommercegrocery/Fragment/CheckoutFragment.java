@@ -116,6 +116,10 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
         binding.CardView.setLayoutManager(new LinearLayoutManager(requireContext()));
 //        binding.orderDetailsViewBack.setOnClickListener(click->navController.popBackStack());
 
+        binding.orderDetailsViewBack.setOnClickListener(view->{
+            navController.popBackStack();
+
+        });
 
         initAddress();
 

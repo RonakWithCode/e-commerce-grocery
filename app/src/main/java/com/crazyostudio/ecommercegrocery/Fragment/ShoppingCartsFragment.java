@@ -59,14 +59,16 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
             binding.progressCircular.setVisibility(View.GONE);
             binding.linearLayoutPlaceHolder.stopShimmer();
             binding.linearLayoutPlaceHolder.setVisibility(View.GONE);
-        }  else {
+        }
+        else {
             uid  = authService.getUserId();
+            models = new ArrayList<>();
 
             init();
+
         }
 
 
-        models = new ArrayList<>();
         binding.siginUp.setOnClickListener(view -> startActivity(new Intent(requireContext(), AuthMangerActivity.class)));
         binding.Buy.setOnClickListener(Buy->{
             if (models.isEmpty()){

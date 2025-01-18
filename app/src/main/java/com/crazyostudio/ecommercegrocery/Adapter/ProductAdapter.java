@@ -69,10 +69,14 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
     @Override
     public void onBindViewHolder(@NonNull ProductAdapter.ProductAdapterViewHolder holder, int position) {
         ProductModel product = productModels.get(position);
+        
+        // Format price to remove .0 if it's a whole number
+        String formattedPrice = formatPrice(product.getPrice());
+        String formattedMRP = formatPrice(product.getMrp());
 
         holder.binding.productName.setText(product.getProductName());
-        holder.binding.productPrice.setText("₹" + product.getPrice());
-        holder.binding.productMRP.setText("₹" + product.getMrp());
+        holder.binding.productPrice.setText("₹" + formattedPrice);
+        holder.binding.productMRP.setText("₹" + formattedMRP);
         holder.binding.productMRP.setPaintFlags(holder.binding.productMRP.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         holder.binding.getRoot().setOnClickListener(onclick-> onClickProductAdapter.onClick(product,productModels));
 
@@ -197,6 +201,15 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
         public ProductAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
             binding = RecommendationsViewBinding.bind(itemView);
+        }
+    }
+
+    // Add this helper method to format prices
+    private String formatPrice(double price) {
+        if (price == (long) price) {
+            return String.format("%d", (long) price);
+        } else {
+            return String.format("%.2f", price);
         }
     }
 }

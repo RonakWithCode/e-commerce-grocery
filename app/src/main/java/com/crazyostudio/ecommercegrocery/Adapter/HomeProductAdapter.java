@@ -70,18 +70,29 @@ public class HomeProductAdapter extends RecyclerView.Adapter<HomeProductAdapter.
         smoothScroller.setTargetPosition(0);
         layoutManager.startSmoothScroll(smoothScroller);
 
-
-        holder.binding.seeMore.setOnClickListener(view->{
+        holder.binding.seeMore.setOnClickListener(view -> {
             FragmentTransaction transaction = context.getSupportFragmentManager().beginTransaction();
             Bundle bundle = new Bundle();
-            bundle.putString("filter", homeProductModel1.getProduct().get(position).getCategory());
-            Log.i("HomeProductAdapter", "onBindViewHolder: "+homeProductModel1.getProduct().get(position).getCategory());
-            ProductWithSlideCategoryFragment fragment = new ProductWithSlideCategoryFragment();
-            fragment.setArguments(bundle);
-            transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
-            transaction.addToBackStack("ProductFilterFragment");
-            transaction.commit();
+
+            // Check if the position is within the valid range of the product list
+            if (position >= 0 && position < homeProductModel1.getProduct().size()) {
+                // Retrieve the product's category and proceed with the transaction
+                String category = homeProductModel1.getProduct().get(position).getCategory();
+                bundle.putString("filter", category);
+                Log.i("HomeProductAdapter", "onBindViewHolder: " + category);
+
+                ProductWithSlideCategoryFragment fragment = new ProductWithSlideCategoryFragment();
+                fragment.setArguments(bundle);
+
+                transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
+                transaction.addToBackStack("ProductFilterFragment");
+                transaction.commit();
+            } else {
+                // Log an error message if the position is out of bounds
+                Log.e("HomeProductAdapter", "Invalid position: " + position + ", Product list size: " + homeProductModel1.getProduct().size());
+            }
         });
+
 //        holder.binding.seeMore.setOnClickListener(view->{
 //            FragmentTransaction transaction = context.getSupportFragmentManager().beginTransaction();
 //            Bundle bundle = new Bundle();
@@ -113,7 +124,6 @@ public class HomeProductAdapter extends RecyclerView.Adapter<HomeProductAdapter.
         return super.getItemViewType(position);
 
     }
-
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

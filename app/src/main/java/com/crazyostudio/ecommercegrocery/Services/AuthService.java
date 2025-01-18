@@ -10,6 +10,7 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+
 public class AuthService {
     FirebaseAuth auth = FirebaseAuth.getInstance();
 
