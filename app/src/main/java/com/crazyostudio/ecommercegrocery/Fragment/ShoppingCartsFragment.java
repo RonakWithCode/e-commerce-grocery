@@ -53,21 +53,19 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
         binding = FragmentShoppingCartsBinding.inflate(inflater,container,false);
         authService = new AuthService();
         service = new DatabaseService();
-        if (!authService.IsLogin()) {
+        if (authService.IsLogin()) {
+            uid  = authService.getUserId();
+            models = new ArrayList<>();
+            init();
+            binding.relativeNotAuth.setVisibility(View.GONE);
+            binding.main.setVisibility(View.VISIBLE);
+        } else {
             binding.relativeNotAuth.setVisibility(View.VISIBLE);
             binding.main.setVisibility(View.GONE);
             binding.progressCircular.setVisibility(View.GONE);
             binding.linearLayoutPlaceHolder.stopShimmer();
             binding.linearLayoutPlaceHolder.setVisibility(View.GONE);
         }
-        else {
-            uid  = authService.getUserId();
-            models = new ArrayList<>();
-
-            init();
-
-        }
-
 
         binding.siginUp.setOnClickListener(view -> startActivity(new Intent(requireContext(), AuthMangerActivity.class)));
         binding.Buy.setOnClickListener(Buy->{

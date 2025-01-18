@@ -44,21 +44,21 @@ public class MoreFragment extends Fragment {
 
 
 
-        if (!authService.IsLogin()) {
-            binding.relativeNotAuth.setVisibility(View.VISIBLE);
-            binding.mainLayout.setVisibility(View.GONE);
-
-        }else {
+        if (authService.IsLogin()) {
             binding.mainLayout.setVisibility(View.VISIBLE);
+            binding.relativeNotAuth.setVisibility(View.GONE);
             binding.Username.setText(authService.getUserName());
 
             Glide.with(requireContext())
                     .load(R.drawable.ic_profile)
-                    .placeholder(R.drawable.product_image_shimmee_effect) // Placeholder image while loading
-                    .error(R.drawable.ic_profile) // Error image if loading fails
-                    .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL) // Resize the image
-                    .centerCrop() // Scale type for resizing
+                    .placeholder(R.drawable.product_image_shimmee_effect)
+                    .error(R.drawable.ic_profile)
+                    .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                    .centerCrop()
                     .into(binding.userImage);
+        } else {
+            binding.relativeNotAuth.setVisibility(View.VISIBLE);
+            binding.mainLayout.setVisibility(View.GONE);
         }
 
 

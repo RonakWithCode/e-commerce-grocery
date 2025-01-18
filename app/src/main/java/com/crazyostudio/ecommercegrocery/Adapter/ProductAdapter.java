@@ -7,9 +7,9 @@ import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,10 +21,13 @@ import com.crazyostudio.ecommercegrocery.Model.ProductModel;
 import com.crazyostudio.ecommercegrocery.Model.ShoppingCartFirebaseModel;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.Services.AuthService;
+import com.crazyostudio.ecommercegrocery.databinding.ProductboxviewBinding;
 import com.crazyostudio.ecommercegrocery.databinding.RecommendationsViewBinding;
 import com.crazyostudio.ecommercegrocery.interfaceClass.onClickProductAdapter;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 
 
@@ -33,9 +36,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
     onClickProductAdapter onClickProductAdapter;
     Context context;
     ProductManager productManager;
-    boolean IsLogin;
-    String userId;
-//    String layout;
+
+    //    String layout;
     //    productboxview
     public void setFilerList(ArrayList<ProductModel> FilterModels){
         this.productModels = FilterModels;
@@ -52,10 +54,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
         this.context = context;
         this.productManager = new ProductManager(context);
 //        this.layout = layout;
-        AuthService authService = new AuthService();
-
-        IsLogin = authService.IsLogin();
-        userId = authService.getUserId();
     }
 
     @NonNull
@@ -69,20 +67,27 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
     @Override
     public void onBindViewHolder(@NonNull ProductAdapter.ProductAdapterViewHolder holder, int position) {
         ProductModel product = productModels.get(position);
+//        if (layout.equals("Main")) {
+////            holder.binding.getRoot().setMaxWidth(match_parent ConstraintLayout);
+//            ViewGroup.LayoutParams params =  holder.binding.getRoot().getLayoutParams();
+//            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+//            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+//            holder.binding.getRoot().setLayoutParams(params);
+//        }
 
         holder.binding.productName.setText(product.getProductName());
-        holder.binding.productPrice.setText("₹" + product.getPrice());
-        holder.binding.productMRP.setText("₹" + product.getMrp());
+        holder.binding.productPrice.setText("₹" + formatPrice(product.getPrice()));
+        holder.binding.productMRP.setText("₹" + formatPrice(product.getMrp()));
         holder.binding.productMRP.setPaintFlags(holder.binding.productMRP.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         holder.binding.getRoot().setOnClickListener(onclick-> onClickProductAdapter.onClick(product,productModels));
 
         if (product.getStockCount() == 0) {
             holder.binding.outOfStockOverlay.setVisibility(View.VISIBLE);
             holder.binding.outOfStockText.setVisibility(View.VISIBLE);
-            holder.binding.AddTOCartLayout.setVisibility(View.GONE);
-
         }
-
+//        if (product.getDiscount() == null) {
+//
+//        }
 
         double mrp = product.getMrp();
         double sellingPrice = product.getPrice();
@@ -96,8 +101,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
             holder.binding.discountBadge.setVisibility(View.GONE);
         }
 //         Check if product is in cart and show quantity selector
-        if (IsLogin) {
-            productManager.observeCartItem(product.getProductId()).observe((LifecycleOwner) context, cartItem -> {
+        productManager.observeCartItem(product.getProductId()).observe((LifecycleOwner) context, cartItem -> {
             if (cartItem != null) {
                 holder.binding.addToCart.setVisibility(View.GONE);
                 holder.binding.quantityLayout.setVisibility(View.VISIBLE);
@@ -105,29 +109,27 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
             } else {
                 holder.binding.addToCart.setVisibility(View.VISIBLE);
                 holder.binding.quantityLayout.setVisibility(View.GONE);
-                holder.binding.AddTOCartLayout.setVisibility(View.VISIBLE);
             }
         });
-        }
 
         // Add to cart click listener
         holder.binding.addToCart.setOnClickListener(view -> {
-            if (IsLogin) {
+            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
                 productManager.addToBothDatabase(
-                    new ShoppingCartFirebaseModel(product.getProductId(), product.getMinSelectableQuantity()),
-                    new ProductManager.AddListenerForAddToBothInDatabase() {
-                        @Override
-                        public void added(ShoppingCartFirebaseModel shoppingCartFirebaseModel) {
-                            holder.binding.addToCart.setVisibility(View.GONE);
-                            holder.binding.quantityLayout.setVisibility(View.VISIBLE);
-                            holder.binding.quantity.setText(String.valueOf(shoppingCartFirebaseModel.getProductSelectQuantity()));
-                        }
+                        new ShoppingCartFirebaseModel(product.getProductId(), product.getMinSelectableQuantity()),
+                        new ProductManager.AddListenerForAddToBothInDatabase() {
+                            @Override
+                            public void added(ShoppingCartFirebaseModel shoppingCartFirebaseModel) {
+                                holder.binding.addToCart.setVisibility(View.GONE);
+                                holder.binding.quantityLayout.setVisibility(View.VISIBLE);
+                                holder.binding.quantity.setText(String.valueOf(shoppingCartFirebaseModel.getProductSelectQuantity()));
+                            }
 
-                        @Override
-                        public void failure(Exception e) {
-                            // Handle error
-                        }
-                    });
+                            @Override
+                            public void failure(Exception e) {
+                                // Handle error
+                            }
+                        });
             } else {
                 context.startActivity(new Intent(context, AuthMangerActivity.class));
             }
@@ -137,34 +139,18 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
         holder.binding.increaseQuantity.setOnClickListener(v -> {
             int currentQty = Integer.parseInt(holder.binding.quantity.getText().toString());
             int newQty = currentQty + 1;
-            
-            if (newQty <= product.getMaxSelectableQuantity() && newQty <= product.getStockCount()) {
+            if (newQty <= product.getMaxSelectableQuantity()) {
                 holder.binding.quantity.setText(String.valueOf(newQty));
                 UpdateQTY(product.getProductId(), newQty);
-            } else {
-                Toast.makeText(context, "Maximum quantity available: " + 
-                    Math.min(product.getMaxSelectableQuantity(), product.getStockCount()), 
-                    Toast.LENGTH_SHORT).show();
             }
         });
 
         holder.binding.decreaseQuantity.setOnClickListener(v -> {
             int currentQty = Integer.parseInt(holder.binding.quantity.getText().toString());
             int newQty = currentQty - 1;
-            
             if (newQty >= product.getMinSelectableQuantity()) {
                 holder.binding.quantity.setText(String.valueOf(newQty));
                 UpdateQTY(product.getProductId(), newQty);
-            } else {
-                // Show remove confirmation dialog or handle minimum quantity reached
-//                Toast.makeText(context, "Minimum quantity is " + product.getMinSelectableQuantity(),
-//                    Toast.LENGTH_SHORT).show();
-                productManager.RemoveCartProductById(userId, product.getProductId());
-                holder.binding.AddTOCartLayout.setVisibility(View.VISIBLE);
-                holder.binding.addToCart.setVisibility(View.VISIBLE);
-                holder.binding.quantityLayout.setVisibility(View.GONE);
-                product.setSelectableQuantity(product.getMinSelectableQuantity());
-
             }
         });
 
@@ -179,10 +165,18 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
 
     private void UpdateQTY(String productId, int quantity) {
         productManager.UpdateCartQuantityById(
-                userId,
-            productId,
-            quantity
+                new AuthService().getUserId(),
+                productId,
+                quantity
         );
+    }
+
+    private String formatPrice(double price) {
+        if (price == (long) price) {
+            return String.format(Locale.getDefault(), "%d", (long) price);
+        } else {
+            return String.format(Locale.getDefault(), "%.2f", price);
+        }
     }
 
     @Override

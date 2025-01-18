@@ -32,10 +32,10 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     boolean IsLogin;
     String userId;
     // Constructor to initialize the data list
-    public SearchAdapter(Context context, onClickProductAdapter searchAdapter) {
+    public SearchAdapter(Context context, onClickProductAdapter searchAdapterInterface) {
         this.dataList = new ArrayList<>();
         this.context = context;
-        this.searchAdapterInterface = searchAdapter;
+        this.searchAdapterInterface = searchAdapterInterface;
         productManager = new ProductManager(context);
         AuthService authService = new AuthService();
         userId = authService.getUserId();
@@ -100,7 +100,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 //
 //                holder.binding.AddTOCartLayout.setVisibility(View.GONE);
 //                holder.binding.productQtyLayout.setVisibility(View.VISIBLE);
-//                holder.binding.productQty.setText(""+data.getSelectableQuantity());
+//                holder.binding.productQty.setText(String.valueOf(data.getSelectableQuantity()));
 //            }else {
 //                context.startActivity(new Intent(context, AuthMangerActivity.class));
 //            }
