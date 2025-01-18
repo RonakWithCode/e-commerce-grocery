@@ -13,87 +13,116 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.crazyostudio.ecommercegrocery.Model.AddressModel;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.databinding.AddresslayoutBinding;
 import com.crazyostudio.ecommercegrocery.interfaceClass.AddressInterface;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.List;
 
-public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressAdapterViewHolder>{
-    ArrayList<AddressModel> address;
-    AddressInterface addressInterface;
-    Context context;
+public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressViewHolder> {
+    private final ArrayList<AddressModel> addresses;
+    private final AddressInterface addressInterface;
+    private final WeakReference<Context> contextRef;
 
-    public AddressAdapter(ArrayList<AddressModel> address, AddressInterface addressInterface, Context context) {
-        this.address = address;
+    public AddressAdapter(ArrayList<AddressModel> addresses, AddressInterface addressInterface, Context context) {
+        this.addresses = addresses; // Don't create defensive copy as fragments manage the list
         this.addressInterface = addressInterface;
-        this.context = context;
+        this.contextRef = new WeakReference<>(context);
     }
 
     @NonNull
     @Override
-    public AddressAdapter.AddressAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new AddressAdapter.AddressAdapterViewHolder(LayoutInflater.from(context).inflate(R.layout.addresslayout, parent, false));
-
+    public AddressViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        AddresslayoutBinding binding = AddresslayoutBinding.inflate(
+            LayoutInflater.from(parent.getContext()), parent, false);
+        return new AddressViewHolder(binding);
     }
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(@NonNull AddressAdapter.AddressAdapterViewHolder holder, int position) {
-        AddressModel addressS = address.get(position);
-//        holder.binding.address.setText(addressS.getAddress());
-        String type;
-        if (addressS.isHomeSelected()) {
-            type = "Home";
-            Glide.with(context).load(R.drawable.home_shipping).into(holder.binding.AddressType);
-        }else {
-            type = "Work";
-            Glide.with(context).load(R.drawable.office_building).into(holder.binding.AddressType);
+    public void onBindViewHolder(@NonNull AddressViewHolder holder, int position) {
+        Context context = contextRef.get();
+        if (context == null || position >= addresses.size()) return;
+
+        AddressModel address = addresses.get(position);
+        if (address == null) return;
+
+        // Set address type and icon
+        String type = address.isHomeSelected() ? "Home" : "Work";
+        holder.binding.deliveryTo.setText("Delivering to " + type);
+        
+        // Load icon using Glide with error handling
+        Glide.with(context)
+            .load(address.isHomeSelected() ? 
+                R.drawable.home_shipping : R.drawable.office_building)
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .error(R.drawable.ic_error)
+            .into(holder.binding.AddressType);
+
+        // Set address details safely
+        String fullAddress = "";
+        if (address.getFlatHouse() != null) {
+            fullAddress += address.getFlatHouse();
         }
+        if (address.getAddress() != null) {
+            fullAddress += " " + address.getAddress();
+        }
+        holder.binding.deliveryAddress.setText(fullAddress.trim());
 
-
-        holder.binding.deliveryTo.setText("Delivering to "+type);
-        holder.binding.deliveryAddress.setText(addressS.getFlatHouse()+addressS.getAddress());
-        holder.binding.edit.setOnClickListener(view->{
-            Toast.makeText(context, "work", Toast.LENGTH_SHORT).show();
-        });
-        holder.binding.getRoot().setOnClickListener(deliver-> addressInterface.addersSelect(addressS));
-        holder.binding.delete.setOnClickListener(Edit->
-                addressInterface.remove(addressS,position)
-//                showPopupMenu(holder.binding.edit,position,addressS)
-        );
-
-
-
+        // Setup click listeners with position checks
+        setupClickListeners(holder, address, holder.getBindingAdapterPosition());
     }
-//    private void showPopupMenu(View view,int position,AddressModel address) {
-//        // inflate menu
-//        PopupMenu popup = new PopupMenu(view.getContext(),view);
-//        MenuInflater inflater = popup.getMenuInflater();
-//        inflater.inflate(R.menu.address_menu, popup.getMenu());
-//        popup.setOnMenuItemClickListener(menuItem -> {
-//            if (menuItem.getItemId()==R.id.edit){
-//                addressInterface.Edit(address,position);
-//                return true;
-//            }else if (menuItem.getItemId()==R.id.remove){
-//                addressInterface.remove(address,position);
-//                return true;
-//            }
-//            return false;
-//        });
-//        popup.show();
-//    }
+
+    private void setupClickListeners(AddressViewHolder holder, AddressModel address, int position) {
+        View.OnClickListener selectListener = v -> {
+            if (addressInterface != null && position != RecyclerView.NO_POSITION) {
+                addressInterface.addersSelect(address);
+            }
+        };
+
+        View.OnClickListener deleteListener = v -> {
+            if (addressInterface != null && position != RecyclerView.NO_POSITION) {
+                addressInterface.remove(address, position);
+            }
+        };
+
+        View.OnClickListener editListener = v -> {
+            Context context = contextRef.get();
+            if (context != null) {
+                Toast.makeText(context, "Edit functionality coming soon", Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        // Set click listeners
+        holder.binding.getRoot().setOnClickListener(selectListener);
+        holder.binding.delete.setOnClickListener(deleteListener);
+        holder.binding.edit.setOnClickListener(editListener);
+    }
+
     @Override
     public int getItemCount() {
-        return address.size();
+        return addresses != null ? addresses.size() : 0;
     }
 
-    public static class AddressAdapterViewHolder extends RecyclerView.ViewHolder {
-        AddresslayoutBinding binding;
-        public AddressAdapterViewHolder(@NonNull View itemView) {
-            super(itemView);
-            binding = AddresslayoutBinding.bind(itemView);
+    @SuppressLint("NotifyDataSetChanged")
+    public void updateAddresses(ArrayList<AddressModel> newAddresses) {
+        if (newAddresses != null) {
+            addresses.clear();
+            addresses.addAll(newAddresses);
+            notifyDataSetChanged();
+        }
+    }
+
+    static class AddressViewHolder extends RecyclerView.ViewHolder {
+        private final AddresslayoutBinding binding;
+
+        AddressViewHolder(AddresslayoutBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 }
