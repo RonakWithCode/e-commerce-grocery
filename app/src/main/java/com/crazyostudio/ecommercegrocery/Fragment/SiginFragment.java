@@ -16,18 +16,6 @@ import androidx.navigation.Navigation;
 import com.crazyostudio.ecommercegrocery.R;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentSiginBinding;
 
-
-//<TextView
-//        android:id="@+id/changeLanguage"
-//                android:layout_width="wrap_content"
-//                android:layout_height="wrap_content"
-//                android:layout_centerHorizontal="true"
-//                android:layout_marginTop="@dimen/_25sdp"
-//                android:layout_below="@id/button"
-//                android:layout_alignParentBottom="true"
-//                android:text="@string/change_your_language"
-//                android:textColor="@color/Link"
-//                android:textSize="@dimen/_18ssp" />
 public class SiginFragment extends Fragment {
     FragmentSiginBinding binding;
     @Override

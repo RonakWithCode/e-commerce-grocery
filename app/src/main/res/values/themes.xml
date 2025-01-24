@@ -138,4 +138,12 @@
         <item name="backgroundColor">@color/MainBackgroundColor</item>
         <!-- Add more customizations as needed -->
     </style>
+
+    <style name="TextAppearance.App.Headline3" parent="TextAppearance.MaterialComponents.Headline3">
+        <item name="android:textSize">@dimen/_32ssp</item>
+    </style>
+
+    <style name="TextAppearance.App.Headline5" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="android:textSize">@dimen/_20ssp</item>
+    </style>
 </resources>

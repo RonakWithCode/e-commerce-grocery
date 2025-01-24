@@ -22,6 +22,7 @@ import com.crazyostudio.ecommercegrocery.Services.AuthService;
 import com.crazyostudio.ecommercegrocery.databinding.FragmentMoreBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+
 public class MoreFragment extends Fragment {
     FragmentMoreBinding binding;
     AuthService authService;
@@ -83,7 +84,6 @@ public class MoreFragment extends Fragment {
         binding.continueShipping.setOnClickListener(view -> {
             requireActivity().finish();
             startActivity(new Intent(requireContext(), MainActivity.class));
-
         });
   /*             <Button style="@style/MoreButtonLight"
         android:id="@+id/language"

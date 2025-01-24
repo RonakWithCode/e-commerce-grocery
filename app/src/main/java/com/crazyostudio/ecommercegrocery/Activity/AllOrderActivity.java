@@ -15,6 +15,7 @@ import com.crazyostudio.ecommercegrocery.Adapter.ViewOrderProductAdapter;
 import com.crazyostudio.ecommercegrocery.HelperClass.ValuesHelper;
 import com.crazyostudio.ecommercegrocery.Model.OrderModel;
 import com.crazyostudio.ecommercegrocery.R;
+import com.crazyostudio.ecommercegrocery.Services.AuthService;
 import com.crazyostudio.ecommercegrocery.databinding.ActivityAllOrderBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -39,13 +40,17 @@ public class AllOrderActivity extends AppCompatActivity {
     private int pageSize = 10;
     private Query lastQuery;
     private DataSnapshot lastVisible;
-    
+    private AuthService auth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityAllOrderBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        
+        auth = new AuthService();
+        if (!auth.IsLogin()) {
+            this.finish();
+            return;
+        }
         setupViews();
         setupRecyclerView();
         setupFilters();
@@ -153,6 +158,8 @@ public class AllOrderActivity extends AppCompatActivity {
                 }
             }
         });
+
+
     }
 
     private void loadInitialData() {

@@ -1,4 +1,9 @@
 <resources>
+       <string name="phone_required">Phone number is required</string>
+    <string name="invalid_phone">Enter a valid 10-digit phone number</string>
+    <string name="accept_terms_error">Please accept the terms and conditions</string>
+
+
     <string name="app_name">RK</string>
     <string name="create_account">Create a new Account</string>
 
@@ -334,5 +339,13 @@
     <string name="error_icon">Error Icon</string>
     <string name="retry">Retry</string>
     <string name="brand_icon">brand icon</string>
+
+
+    <string name="welcome_text">Welcome to</string>
+    <string name="delivery_estimate">Estimated delivery within 45 minutes</string>
+    <string name="phone_number_hint">Phone Number</string>
+<!--    <string name="phone_required">Phone number is required</string>-->
+<!--    <string name="invalid_phone">Enter a valid 10-digit phone number</string>-->
+<!--    <string name="accept_terms_error">Please accept the terms and conditions</string>-->
 
 </resources>
