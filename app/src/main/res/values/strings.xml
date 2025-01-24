@@ -1,6 +1,6 @@
 <resources>
        <string name="phone_required">Phone number is required</string>
-    <string name="invalid_phone">Enter a valid 10-digit phone number</string>
+<!--    <string name="invalid_phone">Enter a valid 10-digit phone number</string>-->
     <string name="accept_terms_error">Please accept the terms and conditions</string>
 
 
@@ -20,7 +20,7 @@
 
     <string name="otp_title">OTP Verification</string>
     <string name="otp_button_text">VERIFY</string>
-    <string name="resend_msg">Did’t you receive the OTP?</string>
+<!--    <string name="resend_msg">Did't you receive the OTP?</string>-->
     <string name="resend_again_msg">Resend OTP</string>
     <string name="change">Change</string>
     <string name="phone_number">Phone Number</string>
@@ -310,7 +310,7 @@
     <string name="loading_more">Loading more orders…</string>
 
     <!-- Error Messages -->
-    <string name="network_error">Network error. Please check your connection.</string>
+<!--    <string name="network_error">Network error. Please check your connection.</string>-->
     <string name="generic_error">Something went wrong. Please try again.</string>
 
     <!-- Filter Descriptions -->
@@ -344,8 +344,24 @@
     <string name="welcome_text">Welcome to</string>
     <string name="delivery_estimate">Estimated delivery within 45 minutes</string>
     <string name="phone_number_hint">Phone Number</string>
-<!--    <string name="phone_required">Phone number is required</string>-->
-<!--    <string name="invalid_phone">Enter a valid 10-digit phone number</string>-->
-<!--    <string name="accept_terms_error">Please accept the terms and conditions</string>-->
+
+    <!-- OTP Verification Strings -->
+    <string name="resend_countdown">Resend OTP in %d seconds</string>
+    <string name="resend_otp">Resend OTP</string>
+    <string name="verification_failed">Verification failed</string>
+    <string name="network_error">Network connection error</string>
+    <string name="invalid_otp">Invalid OTP code entered</string>
+    <string name="too_many_requests">Too many attempts. Please try again later</string>
+    <string name="otp_sent">OTP sent successfully</string>
+    <string name="please_wait">Please wait…</string>
+    <string name="invalid_phone">Invalid phone number</string>
+    <string name="token_update_failed">Failed to update token</string>
+    <string name="verification_error">Verification error: %s</string>
+    <string name="enter_otp">Enter OTP</string>
+    <string name="verify">Verify</string>
+
+
+    <string name="resend_msg">Didn\'t receive the OTP?</string>
+<!--    <string name="resend_msg">Didn&#39;t receive the OTP?</string>-->
 
 </resources>

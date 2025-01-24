@@ -8,6 +8,7 @@ import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.VibrationEffect;
@@ -61,15 +62,27 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import com.google.android.material.snackbar.Snackbar;
+import androidx.core.content.ContextCompat;
+import android.graphics.Color;
 
 public class AuthOTP extends Fragment {
 
     private static final String TAG = "AuthOTP";
     private static final String ARG_NUMBER = "number";
     private static final int MAX_RETRIES = 3;
-    private int retryCount = 0;
     private static final long RETRY_DELAY_MS = 2000; // 2 seconds
-
+    private static final long RATE_LIMIT_COOLDOWN_MS = 60000; // 1 minute cooldown
+    private static final long RESEND_DELAY_MS = 30000; // 30 seconds
+    private static final int OTP_LENGTH = 6;
+    
+    private long lastOTPRequestTime = 0;
+    private int retryCount = 0;
+    
+    private CountDownTimer resendTimer;
+    private boolean isVerificationInProgress = false;
+    private String lastVerificationId;
+    private PhoneAuthProvider.ForceResendingToken resendToken;
+    
     private FragmentAuthOTPBinding binding;
     private FirebaseAuth firebaseAuth;
     private NavController navController;
@@ -100,11 +113,13 @@ public class AuthOTP extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 boolean connected = Boolean.TRUE.equals(snapshot.getValue(Boolean.class));
                 Log.d(TAG, "Firebase connection state: " + connected);
+//                showError("Firebase connection state: " + connected);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e(TAG, "Firebase connection listener cancelled", error.toException());
+//                showError("connection listener cancelled");
             }
         });
     }
@@ -113,27 +128,138 @@ public class AuthOTP extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentAuthOTPBinding.inflate(inflater, container, false);
-        context = getContext();
+        initializeViews();
+        setupListeners();
+        startOtpProcess();
+        return binding.getRoot();
+    }
+
+    private void initializeViews() {
+        context = requireContext();
         navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
+        loadingDialog = new LoadingDialog(requireActivity());
+        databaseService = new DatabaseService();
+        
         if (number == null) {
             navController.popBackStack();
-            return binding.getRoot();
+            return;
         }
 
-        loadingDialog = new LoadingDialog(requireActivity()); // Initialize LoadingDialog
-        loadingDialog.startLoadingDialog(); // Show loading dialog
-        databaseService = new DatabaseService();
-
-        binding.fullNumber.setText("+91" + number + " ");
-        binding.tvPhoneNo.setOnClickListener(view -> navController.popBackStack());
-        binding.tvResend.setOnClickListener(view -> sendOTP());
-
+        binding.fullNumber.setText(String.format("+91 %s", number));
         initializeEditTexts();
         addTextWatchers();
-        sendOTP();
-        binding.btnVerify.setOnClickListener(view -> verifyOTP());
+    }
 
-        return binding.getRoot();
+    private void setupListeners() {
+        binding.tvPhoneNo.setOnClickListener(v -> navController.popBackStack());
+        binding.tvResend.setOnClickListener(v -> resendOTP());
+        binding.btnVerify.setOnClickListener(v -> verifyOTP());
+    }
+
+    private void startOtpProcess() {
+        if (!isNetworkAvailable()) {
+            showNetworkError();
+            return;
+        }
+        sendOTP();
+        startResendTimer();
+    }
+
+    private void startResendTimer() {
+        binding.tvResend.setEnabled(false);
+        if (resendTimer != null) {
+            resendTimer.cancel();
+        }
+
+        resendTimer = new CountDownTimer(RESEND_DELAY_MS, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                if (isAdded()) {
+                    binding.tvResend.setText(String.format(
+                        getString(R.string.resend_countdown),
+                        millisUntilFinished / 1000
+                    ));
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                if (isAdded()) {
+                    binding.tvResend.setEnabled(true);
+                    binding.tvResend.setText(getString(R.string.resend_otp));
+                }
+            }
+        }.start();
+    }
+
+    private void sendOTP() {
+        if (isVerificationInProgress) {
+            return;
+        }
+
+        isVerificationInProgress = true;
+        loadingDialog.startLoadingDialog("Sending OTP...");
+
+        try {
+            PhoneAuthOptions options = PhoneAuthOptions.newBuilder(firebaseAuth)
+                    .setPhoneNumber("+91" + number)
+                    .setTimeout(60L, TimeUnit.SECONDS)
+                    .setActivity(requireActivity())
+                    .setCallbacks(verificationCallbacks)
+                    .setForceResendingToken(resendToken)
+                    .build();
+
+            PhoneAuthProvider.verifyPhoneNumber(options);
+        } catch (Exception e) {
+            isVerificationInProgress = false;
+            loadingDialog.dismissDialog();
+            handleSendOTPError(e);
+        }
+    }
+
+    private void resendOTP() {
+        if (resendToken == null) {
+            sendOTP();
+            return;
+        }
+
+        loadingDialog.startLoadingDialog("Resending OTP...");
+        PhoneAuthOptions options = PhoneAuthOptions.newBuilder(firebaseAuth)
+                .setPhoneNumber("+91" + number)
+                .setTimeout(60L, TimeUnit.SECONDS)
+                .setActivity(requireActivity())
+                .setCallbacks(verificationCallbacks)
+                .setForceResendingToken(resendToken)
+                .build();
+
+        PhoneAuthProvider.verifyPhoneNumber(options);
+    }
+
+    private void verifyOTP() {
+        String userOtp = getEnteredOTP();
+        if (userOtp.length() != OTP_LENGTH) {
+            showError("Please enter complete OTP");
+            vibrateDevice();
+            return;
+        }
+
+        if (lastVerificationId == null) {
+            showError("Please wait for OTP");
+            return;
+        }
+
+        loadingDialog.startLoadingDialog("Verifying OTP...");
+        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(lastVerificationId, userOtp);
+        signInWithPhoneAuthCredential(credential);
+    }
+
+    private String getEnteredOTP() {
+        return mEt1.getText().toString() +
+               mEt2.getText().toString() +
+               mEt3.getText().toString() +
+               mEt4.getText().toString() +
+               mEt5.getText().toString() +
+               mEt6.getText().toString();
     }
 
     private void initializeEditTexts() {
@@ -201,44 +327,6 @@ public class AuthOTP extends Fragment {
         }
     }
 
-    private void sendOTP() {
-        Log.d(TAG, "Starting sendOTP process...");
-        
-        if (!isNetworkAvailable()) {
-            Log.e(TAG, "Network not available");
-            showNetworkError();
-            return;
-        }
-
-        try {
-            Log.i(TAG, "Attempting to send OTP to: " + number);
-            loadingDialog.startLoadingDialog();
-            
-            // Add connection timeout
-            PhoneAuthOptions options = PhoneAuthOptions.newBuilder(firebaseAuth)
-                    .setPhoneNumber("+91" + number)
-                    .setTimeout(60L, TimeUnit.SECONDS)  // Reduced timeout
-                    .setActivity(requireActivity())
-                    .setCallbacks(verificationCallbacks)
-                    .setForceResendingToken(null)  // Clear any existing token
-                    .build();
-            
-            Log.d(TAG, "PhoneAuthOptions built successfully");
-            
-            // Clear any existing verification in progress
-            if (firebaseAuth.getCurrentUser() != null) {
-                firebaseAuth.signOut();
-            }
-            
-            PhoneAuthProvider.verifyPhoneNumber(options);
-            Log.d(TAG, "verifyPhoneNumber called");
-        } catch (Exception e) {
-            Log.e(TAG, "Exception in sendOTP: ", e);
-            loadingDialog.dismissDialog();
-            handleSendOTPError(e);
-        }
-    }
-
     private boolean hasActiveInternetConnection() {
         try {
             Log.d(TAG, "Checking active internet connection with ping...");
@@ -255,6 +343,15 @@ public class AuthOTP extends Fragment {
 
     private void handleSendOTPError(Exception e) {
         Log.e(TAG, "Handling send OTP error. Current retry count: " + retryCount);
+        
+        // If we hit the rate limit, enforce a longer cooldown
+        if (e instanceof FirebaseTooManyRequestsException) {
+            retryCount = 0;
+            lastOTPRequestTime = System.currentTimeMillis();
+            showError("Too many requests. Please try again after a few minutes.");
+            return;
+        }
+        
         if (retryCount < MAX_RETRIES) {
             retryCount++;
             Log.i(TAG, "Scheduling retry attempt " + retryCount + " in " + RETRY_DELAY_MS + "ms");
@@ -274,59 +371,161 @@ public class AuthOTP extends Fragment {
             new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
                 @Override
                 public void onVerificationCompleted(@NonNull PhoneAuthCredential credential) {
-                    Log.d(TAG, "onVerificationCompleted: Credential received");
-                    retryCount = 0;
+                    isVerificationInProgress = false;
+                    loadingDialog.dismissDialog();
                     signInWithPhoneAuthCredential(credential);
                 }
 
                 @Override
                 public void onVerificationFailed(@NonNull FirebaseException e) {
-                    Log.e(TAG, "onVerificationFailed with exception: ", e);
+                    isVerificationInProgress = false;
                     loadingDialog.dismissDialog();
-                    retryCount = 0;
-
-                    if (e instanceof FirebaseNetworkException) {
-                        Log.e(TAG, "FirebaseNetworkException detected");
-                        if (!isNetworkAvailable()) {
-                            Log.e(TAG, "Network not available during verification");
-                            showNetworkError();
-                        } else {
-                            Log.w(TAG, "Network available but still got FirebaseNetworkException");
-                            handleSendOTPError(e);
-                        }
-                    } else if (e instanceof FirebaseAuthInvalidCredentialsException) {
-                        Log.e(TAG, "Invalid credentials: " + e.getMessage());
-                        showError("Invalid phone number format");
-                    } else if (e instanceof FirebaseTooManyRequestsException) {
-                        Log.e(TAG, "Too many requests: " + e.getMessage());
-                        showError("Too many requests. Please try again later");
-                    } else {
-                        Log.e(TAG, "Unknown verification error: " + e.getMessage());
-                        showError("Verification failed. Please try again");
-                    }
+                    handleVerificationError(e);
                 }
 
                 @Override
-                public void onCodeSent(@NonNull String s, @NonNull PhoneAuthProvider.ForceResendingToken token) {
-                    super.onCodeSent(s, token);
-                    Log.d(TAG, "OTP code sent successfully. VerificationId received");
-                    verificationId = s;
-                    retryCount = 0;
+                public void onCodeSent(@NonNull String verificationId,
+                                     @NonNull PhoneAuthProvider.ForceResendingToken token) {
+                    super.onCodeSent(verificationId, token);
+                    isVerificationInProgress = false;
+                    lastVerificationId = verificationId;
+                    resendToken = token;
                     loadingDialog.dismissDialog();
-                    Snackbar.make(binding.getRoot(), "OTP Sent Successfully", Snackbar.LENGTH_SHORT).show();
+                    
+                    showSuccess("OTP sent successfully");
+                    startResendTimer();
                 }
             };
 
-    private void verifyOTP() {
-        String userOtp = mEt1.getText().toString() + mEt2.getText().toString() + mEt3.getText().toString() +
-                mEt4.getText().toString() + mEt5.getText().toString() + mEt6.getText().toString();
+    private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
+        firebaseAuth.signInWithCredential(credential)
+                .addOnCompleteListener(requireActivity(), task -> {
+                    if (task.isSuccessful()) {
+                        handleSuccessfulSignIn();
+                    } else {
+                        handleSignInError(task.getException());
+                    }
+                });
+    }
 
-        if (userOtp.trim().length() == 6) {
-            PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, userOtp);
-            signInWithPhoneAuthCredential(credential);
-        } else {
-            vibrateDevice();
+    private void handleSuccessfulSignIn() {
+        if (firebaseAuth.getCurrentUser() != null) {
+            if (firebaseAuth.getCurrentUser().getDisplayName() == null) {
+                setupNewUser();
+            } else {
+                updateExistingUser();
+            }
         }
+    }
+
+    private void setupNewUser() {
+        databaseService.CheckNotificationToken(new DatabaseService.UpdateTokenCallback() {
+            @Override
+            public void onSuccess(String token) {
+                TokenManager.getInstance(requireContext()).saveToken(token);
+                UserinfoModels userInfo = new UserinfoModels(
+                    token,
+                    firebaseAuth.getUid(),
+                    ValuesHelper.DEFAULT_USER_NAME,
+                    number,
+                    true
+                );
+                saveUserInfo(userInfo);
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                loadingDialog.dismissDialog();
+                showError("Failed to setup user: " + errorMessage);
+            }
+        });
+    }
+
+    private void saveUserInfo(UserinfoModels userInfo) {
+        databaseService.setUserInfo(userInfo, new DatabaseService.SetUserInfoCallback() {
+            @Override
+            public void onSuccess(Task<Void> task) {
+                loadingDialog.dismissDialog();
+                Bundle bundle = new Bundle();
+                bundle.putString("number", number);
+                navController.navigate(R.id.action_authOTP_to_authUserDetailsFragment, bundle);
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                loadingDialog.dismissDialog();
+                showError(errorMessage);
+            }
+        });
+    }
+
+    private void updateExistingUser() {
+        databaseService.CheckNotificationToken(new DatabaseService.UpdateTokenCallback() {
+            @Override
+            public void onSuccess(String token) {
+                TokenManager tokenManager = TokenManager.getInstance(requireContext());
+                tokenManager.clearToken();
+                tokenManager.saveToken(token);
+                
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                DocumentReference userRef = db.collection("UserInfo")
+                    .document(Objects.requireNonNull(firebaseAuth.getUid()));
+                
+                userRef.update("token", token)
+                    .addOnSuccessListener(aVoid -> {
+                        loadingDialog.dismissDialog();
+                        requireActivity().finish();
+                    })
+                    .addOnFailureListener(e -> {
+                        loadingDialog.dismissDialog();
+                        showError("Failed to update token");
+                        Log.e(TAG, "Token update failed", e);
+                    });
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                loadingDialog.dismissDialog();
+                showError("Failed to update token: " + errorMessage);
+                Log.e(TAG, "Token check failed: " + errorMessage);
+            }
+        });
+    }
+
+    private void handleSignInError(Exception exception) {
+        loadingDialog.dismissDialog();
+        if (exception instanceof FirebaseAuthInvalidCredentialsException) {
+            showError(getString(R.string.invalid_otp));
+            clearOTPFields();
+        } else {
+            showError(getString(R.string.verification_failed));
+            Log.e(TAG, "Sign-in failed", exception);
+        }
+    }
+
+    private void handleVerificationError(FirebaseException e) {
+        String errorMessage;
+        if (e instanceof FirebaseAuthInvalidCredentialsException) {
+            errorMessage = "Invalid phone number format";
+        } else if (e instanceof FirebaseTooManyRequestsException) {
+            errorMessage = getString(R.string.too_many_requests);
+        } else if (e instanceof FirebaseNetworkException) {
+            errorMessage = getString(R.string.network_error);
+        } else {
+            errorMessage = "Verification failed: " + e.getMessage();
+        }
+        showError(errorMessage);
+        Log.e(TAG, "Verification failed", e);
+    }
+
+    private void clearOTPFields() {
+        mEt1.setText("");
+        mEt2.setText("");
+        mEt3.setText("");
+        mEt4.setText("");
+        mEt5.setText("");
+        mEt6.setText("");
+        mEt1.requestFocus();
     }
 
     private void vibrateDevice() {
@@ -338,84 +537,6 @@ public class AuthOTP extends Fragment {
                 vibrator.vibrate(150);
             }
         }
-    }
-
-    private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
-        loadingDialog.startLoadingDialog(); // Show loading dialog
-        firebaseAuth.signInWithCredential(credential).addOnCompleteListener(requireActivity(), task -> {
-            if (task.isSuccessful()) {
-                navigateToNextScreen();
-            } else {
-                Toast.makeText(context, "Sign-in failed, please try again", Toast.LENGTH_SHORT).show();
-                loadingDialog.dismissDialog(); // Show loading dialog
-            }
-        });
-    }
-
-    private void navigateToNextScreen() {
-        if (firebaseAuth.getCurrentUser() != null && firebaseAuth.getCurrentUser().getDisplayName() == null) {
-
-            databaseService.CheckNotificationToken(new DatabaseService.UpdateTokenCallback() {
-                @Override
-                public void onSuccess(String token) {
-                    TokenManager.getInstance(requireContext()).clearToken();
-                    TokenManager.getInstance(requireContext()).saveToken(token);
-                    setupUser(token);
-                }
-
-                @Override
-                public void onError(String errorMessage) {
-                    Log.i("onError", "onError: "+errorMessage);
-                }
-            });
-
-        } else {
-            updateToken();
-        }
-    }
-
-    void setupUser(String token){
-        String defaultUserName = ValuesHelper.DEFAULT_USER_NAME;
-        UserinfoModels UserinfoModels = new UserinfoModels(token,FirebaseAuth.getInstance().getUid(), defaultUserName,number,true);
-        databaseService.setUserInfo(UserinfoModels, new DatabaseService.SetUserInfoCallback() {
-            @Override
-            public void onSuccess(Task<Void> task) {
-                Bundle bundle = new Bundle();
-                bundle.putString("number", number);
-                loadingDialog.dismissDialog(); // Show loading dialog
-                navController.navigate(R.id.action_authOTP_to_authUserDetailsFragment, bundle);
-
-            }
-            @Override
-            public void onError(String errorMessage) {
-                basicFun.AlertDialog(requireContext(),errorMessage);
-            }
-        });
-    }
-
-    private void updateToken() {
-        databaseService.CheckNotificationToken(new DatabaseService.UpdateTokenCallback() {
-            @Override
-            public void onSuccess(String token) {
-                TokenManager.getInstance(requireContext()).clearToken();
-                TokenManager.getInstance(requireContext()).saveToken(token);
-                FirebaseFirestore db = FirebaseFirestore.getInstance();
-                DocumentReference userRef = db.collection("UserInfo").document(Objects.requireNonNull(firebaseAuth.getUid()));
-                userRef.update("token", token)
-                        .addOnSuccessListener(aVoid -> {
-                            loadingDialog.dismissDialog(); // Show loading dialog
-                            requireActivity().finish();
-                        })
-                        .addOnFailureListener(e -> {
-                            Toast.makeText(context, "Failed to update token", Toast.LENGTH_SHORT).show();
-                        });
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                Log.e(TAG, "Token update error: " + errorMessage);
-            }
-        });
     }
 
     private boolean isNetworkAvailable() {
@@ -465,29 +586,33 @@ public class AuthOTP extends Fragment {
     }
 
     private void showError(String message) {
-        loadingDialog.dismissDialog();
-        Snackbar.make(binding.getRoot(), message, Snackbar.LENGTH_SHORT).show();
-    }
-
-    // Add method to check Firebase configuration
-    private void checkFirebaseConfig() {
-        try {
-            FirebaseOptions options = FirebaseApp.getInstance().getOptions();
-            Log.d(TAG, "Firebase Project ID: " + options.getProjectId());
-            Log.d(TAG, "Firebase App ID: " + options.getApplicationId());
-            
-            // Verify Google Play Services
-            GoogleApiAvailability googleApi = GoogleApiAvailability.getInstance();
-            int result = googleApi.isGooglePlayServicesAvailable(requireContext());
-            if (result != ConnectionResult.SUCCESS) {
-                Log.e(TAG, "Google Play Services not available: " + result);
-                showError("Please update Google Play Services");
-                return;
-            }
-            
-            Log.d(TAG, "Firebase configuration verified successfully");
-        } catch (Exception e) {
-            Log.e(TAG, "Firebase configuration error: ", e);
+        if (isAdded()) {
+            Snackbar.make(binding.getRoot(), message, Snackbar.LENGTH_LONG)
+                    .setAction("OK", v -> {})
+                    .setActionTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+                    .setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.error_color))
+                    .setTextColor(Color.WHITE)
+                    .show();
         }
     }
+
+    private void showSuccess(String message) {
+        if (isAdded()) {
+            Snackbar.make(binding.getRoot(), message, Snackbar.LENGTH_SHORT)
+                    .setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.success_color))
+                    .setTextColor(Color.WHITE)
+                    .show();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (resendTimer != null) {
+            resendTimer.cancel();
+        }
+        loadingDialog.dismissDialog();
+    }
 }
+
+

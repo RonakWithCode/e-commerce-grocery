@@ -12,8 +12,8 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_margin="@dimen/_16sdp"
-        android:background="?attr/colorSurface"
-        app:cardCornerRadius="@dimen/_8sdp">
+        app:cardCornerRadius="@dimen/_8sdp"
+        app:cardElevation="@dimen/_4sdp">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -23,18 +23,20 @@
             android:gravity="center">
 
             <ProgressBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/loading_progress"
+                android:layout_width="@dimen/_32sdp"
+                android:layout_height="@dimen/_32sdp"
                 android:indeterminate="true"
-                android:layout_gravity="center"
-                style="?android:attr/progressBarStyleLarge"/>
+                android:layout_gravity="center"/>
 
             <TextView
+                android:id="@+id/loading_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_16sdp"
                 android:text="Loading..."
-                android:textAppearance="?attr/textAppearanceHeadline6" />
+                android:textAlignment="center"
+                android:textAppearance="?attr/textAppearanceBody1"/>
 
         </LinearLayout>
 

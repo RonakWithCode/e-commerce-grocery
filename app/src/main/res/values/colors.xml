@@ -128,4 +128,7 @@
     <color name="grey_300">#E0E0E0</color>
     <color name="error_text">#B00020</color>
 
+    <color name="success_color">#4CAF50</color>
+    <color name="error_color">#F44336</color>
+
 </resources>
