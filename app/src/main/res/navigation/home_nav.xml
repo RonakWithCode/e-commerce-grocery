@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.crazyostudio.ecommercegrocery.Fragment.HomeFragment"
+        android:name="com.ronosoft.alwarmart.Fragment.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" >
         <action
@@ -21,32 +21,32 @@
     </fragment>
     <fragment
         android:id="@+id/categoryFragment"
-        android:name="com.crazyostudio.ecommercegrocery.Fragment.CategoryFragment"
+        android:name="com.ronosoft.alwarmart.Fragment.CategoryFragment"
         android:label="fragment_category"
         tools:layout="@layout/fragment_category" />
     <fragment
         android:id="@+id/shoppingCartsFragment"
-        android:name="com.crazyostudio.ecommercegrocery.Fragment.ShoppingCartsFragment"
+        android:name="com.ronosoft.alwarmart.Fragment.ShoppingCartsFragment"
         android:label="fragment_shopping_carts"
         tools:layout="@layout/fragment_shopping_carts" />
     <fragment
         android:id="@+id/moreFragment"
-        android:name="com.crazyostudio.ecommercegrocery.Fragment.MoreFragment"
+        android:name="com.ronosoft.alwarmart.Fragment.MoreFragment"
         android:label="fragment_more"
         tools:layout="@layout/fragment_more" />
     <fragment
         android:id="@+id/searchFragment"
-        android:name="com.crazyostudio.ecommercegrocery.Fragment.SearchFragment"
+        android:name="com.ronosoft.alwarmart.Fragment.SearchFragment"
         android:label="fragment_search"
         tools:layout="@layout/fragment_search" />
     <fragment
         android:id="@+id/productDetailsFragment2"
-        android:name="com.crazyostudio.ecommercegrocery.Fragment.ProductDetailsFragment"
+        android:name="com.ronosoft.alwarmart.Fragment.ProductDetailsFragment"
         android:label="fragment_product_details"
         tools:layout="@layout/fragment_product_details" />
     <fragment
         android:id="@+id/productFilterFragment"
-        android:name="com.crazyostudio.ecommercegrocery.Fragment.ProductFilterFragment"
+        android:name="com.ronosoft.alwarmart.Fragment.ProductFilterFragment"
         android:label="fragment_product_filter"
         tools:layout="@layout/fragment_product_filter" />
 </navigation>

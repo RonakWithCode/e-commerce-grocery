@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/addressFragment"
-        android:name="com.crazyostudio.ecommercegrocery.Fragment.AddressFragment"
+        android:name="com.ronosoft.alwarmart.Fragment.AddressFragment"
         android:label="fragment_address"
         tools:layout="@layout/fragment_address" >
         <action
@@ -19,12 +19,12 @@
     </fragment>
     <fragment
         android:id="@+id/newAddressFragment"
-        android:name="com.crazyostudio.ecommercegrocery.Adapter.newAddressFragment"
+        android:name="com.ronosoft.alwarmart.Adapter.newAddressFragment"
         android:label="fragment_new_address"
         tools:layout="@layout/fragment_new_address" />
     <fragment
         android:id="@+id/checkoutFragment"
-        android:name="com.crazyostudio.ecommercegrocery.Fragment.CheckoutFragment"
+        android:name="com.ronosoft.alwarmart.Fragment.CheckoutFragment"
         android:label="fragment_checkout"
         tools:layout="@layout/fragment_checkout" />
 </navigation>

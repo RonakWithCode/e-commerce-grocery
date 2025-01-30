@@ -9,18 +9,18 @@
     <Preference
         android:title="About US"
         android:icon="@drawable/ic_review_recent_logins"
-        app:fragment="com.crazyostudio.ecommercegrocery.Activity.SettingsActivity$AboutFragment" />
+        app:fragment="com.ronosoft.alwarmart.Activity.SettingsActivity$AboutFragment" />
 
     <!-- Logout from All Devices -->
     <Preference
         android:icon="@drawable/item_license"
         android:title="terms &amp; conditions"
-        app:fragment="com.crazyostudio.ecommercegrocery.Activity.SettingsActivity$TermsConditionsFragment"/>
+        app:fragment="com.ronosoft.alwarmart.Activity.SettingsActivity$TermsConditionsFragment"/>
 
     <Preference
         android:icon="@drawable/ic_baseline_policy_24"
         android:title="Privacy policy"
-        app:fragment="com.crazyostudio.ecommercegrocery.Activity.SettingsActivity$PrivacyPolicyWebFragment"/>
+        app:fragment="com.ronosoft.alwarmart.Activity.SettingsActivity$PrivacyPolicyWebFragment"/>
     <Preference
         android:icon="@drawable/item_license"
         android:title="Developer Information"/>
@@ -28,7 +28,7 @@
 
         android:icon="@drawable/ic_baseline_smartphone_24"
         android:title="Open Source Licenses"
-        app:fragment="com.crazyostudio.ecommercegrocery.Activity.SettingsActivity$OpenSourceLicenses" />
+        app:fragment="com.ronosoft.alwarmart.Activity.SettingsActivity$OpenSourceLicenses" />
 
 
 </PreferenceScreen>

@@ -6,7 +6,7 @@ xmlns:app="http://schemas.android.com/apk/res-auto">
         android:key="manage_permissions"
         android:title="Manage App Permissions"
         android:summary="Review and manage the permissions granted to the app, such as camera, location, contacts, etc."
-        app:fragment="com.crazyostudio.ecommercegrocery.Activity.SettingsActivity$ManagePermissionsFragment" />
+        app:fragment="com.ronosoft.alwarmart.Activity.SettingsActivity$ManagePermissionsFragment" />
 
     <!-- Privacy Policy -->
     <Preference
@@ -21,7 +21,7 @@ xmlns:app="http://schemas.android.com/apk/res-auto">
         android:title="Review Recent Logins"
         android:summary="View a history of recent login attempts and devices."
         android:icon="@drawable/ic_review_recent_logins"
-        app:fragment="com.crazyostudio.ecommercegrocery.Activity.SettingsActivity$ReviewRecentLoginsFragment" />
+        app:fragment="com.ronosoft.alwarmart.Activity.SettingsActivity$ReviewRecentLoginsFragment" />
 
 
     <!-- Logout from All Devices -->

@@ -8,34 +8,15 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:24117533764:android:e43cd2ba52999b9fb97011",
+        "mobilesdk_app_id": "1:24117533764:android:c4754ad13ddc21eab97011",
         "android_client_info": {
-          "package_name": "com.crazyostudio.e_commerce_grocery_admin_app"
+          "package_name": "com.ronosoft.alwarmart"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBjqPOXVmKyL9ETPSTxJB7mQfuFlXNqQq8"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:24117533764:android:94d962929bdd5195b97011",
-        "android_client_info": {
-          "package_name": "com.crazyostudio.ecommercegrocery"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBjqPOXVmKyL9ETPSTxJB7mQfuFlXNqQq8"
+          "current_key": "AIzaSyBtA_IEKG_n58RM6v0I2cuN7oiFsMzYbi8"
         }
       ],
       "services": {

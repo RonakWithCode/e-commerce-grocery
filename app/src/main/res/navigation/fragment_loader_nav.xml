@@ -6,22 +6,22 @@
     app:startDestination="@id/userAccountFragment">
     <fragment
         android:id="@+id/userAccountFragment"
-        android:name="com.crazyostudio.ecommercegrocery.Fragment.UserAccountFragment"
+        android:name="com.ronosoft.alwarmart.Fragment.UserAccountFragment"
         android:label="fragment_user_account"
         tools:layout="@layout/fragment_user_account" />
     <fragment
         android:id="@+id/addressFragment2"
-        android:name="com.crazyostudio.ecommercegrocery.Fragment.AddressFragment"
+        android:name="com.ronosoft.alwarmart.Fragment.AddressFragment"
         android:label="fragment_address"
         tools:layout="@layout/fragment_address" />
     <fragment
         android:id="@+id/newAddressFragment2"
-        android:name="com.crazyostudio.ecommercegrocery.Adapter.newAddressFragment"
+        android:name="com.ronosoft.alwarmart.Adapter.newAddressFragment"
         android:label="fragment_new_address"
         tools:layout="@layout/fragment_new_address" />
     <fragment
         android:id="@+id/productDetailsFragment"
-        android:name="com.crazyostudio.ecommercegrocery.Fragment.ProductDetailsFragment"
+        android:name="com.ronosoft.alwarmart.Fragment.ProductDetailsFragment"
         android:label="fragment_product_details"
         tools:layout="@layout/fragment_product_details" />
 </navigation>

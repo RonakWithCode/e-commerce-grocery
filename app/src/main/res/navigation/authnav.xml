@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/siginFragment"
-        android:name="com.crazyostudio.ecommercegrocery.Fragment.SiginFragment"
+        android:name="com.ronosoft.alwarmart.Fragment.SiginFragment"
         android:label="fragment_sigin"
         tools:layout="@layout/fragment_sigin" >
         <action
@@ -21,7 +21,7 @@
     </fragment>
     <fragment
         android:id="@+id/authOTP"
-        android:name="com.crazyostudio.ecommercegrocery.Fragment.AuthOTP"
+        android:name="com.ronosoft.alwarmart.Fragment.AuthOTP"
         android:label="fragment_auth_o_t_p"
         tools:layout="@layout/fragment_auth_o_t_p" >
         <argument
@@ -34,7 +34,7 @@
 
     <fragment
         android:id="@+id/authUserDetailsFragment"
-        android:name="com.crazyostudio.ecommercegrocery.Fragment.AuthUserDetailsFragment"
+        android:name="com.ronosoft.alwarmart.Fragment.AuthUserDetailsFragment"
         android:label="fragment_auth_user_details"
         tools:layout="@layout/fragment_auth_user_details" >
         <argument

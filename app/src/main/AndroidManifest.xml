@@ -1,25 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    >
 
+    <!-- Permissions -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" /> <!-- <uses-feature android:name="android.hardware.camera" /> -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-feature android:name="android.hardware.camera" /> <!-- Devices running Android 12L (API level 32) or lower -->
-    <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" /> <!-- Devices running Android 13 (API level 33) or higher -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
 
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -31,76 +27,38 @@
         android:theme="@style/Theme.ECommerceGrocery"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-        <activity
-            android:name=".Activity.BrandActivity"
-            android:exported="false" />
+
+        <!-- Splash Screen (Entry Point) -->
         <activity
             android:name=".Activity.SolashScreen"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".Activity.SettingsActivity"
-            android:exported="false"
-            android:label="@string/title_activity_settings">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".Activity.AllOrderActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".Activity.OrderDetailsActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".Activity.FragmentLoader"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".Activity.OderActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".Activity.AuthMangerActivity"
-            android:exported="true">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".MainActivity"
-            android:configChanges="locale|orientation|screenSize"
-            android:exported="true">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
 
+        <!-- Other Activities -->
+        <activity android:name=".Activity.BrandActivity" android:exported="false" />
+        <activity android:name=".Activity.SettingsActivity" android:exported="false" android:label="@string/title_activity_settings" />
+        <activity android:name=".Activity.AllOrderActivity" android:exported="false" />
+        <activity android:name=".Activity.OrderDetailsActivity" android:exported="false" />
+        <activity android:name=".Activity.FragmentLoader" android:exported="false" />
+        <activity android:name=".Activity.OderActivity" android:exported="false" />
+        <activity android:name=".Activity.AuthMangerActivity" android:exported="true"
+            android:launchMode="singleTop"
+            >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="otpless" android:scheme="otpless.ju7polncn4p9vt1gy3ld" />
             </intent-filter>
-        </activity>
 
+        </activity>
+        <activity android:name=".MainActivity" android:exported="true" />
+
+        <!-- Firebase Messaging Service -->
         <service
             android:name=".javaClasses.FCMService"
             android:exported="false">
@@ -109,12 +67,16 @@
             </intent-filter>
         </service>
 
-        <meta-data
-            android:name="com.mapmyindia.sdk.apikey"
-            android:value="92c446c1026304f56fa21f15dcd41be6" />
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAbgFyLxU2JhvS9ktQS20IoOdfXSZb_T04" />
-    </application>
+        <!-- API Keys and Firebase Configuration -->
+        <meta-data android:name="com.mapmyindia.sdk.apikey" android:value="92c446c1026304f56fa21f15dcd41be6" />
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyAbgFyLxU2JhvS9ktQS20IoOdfXSZb_T04" />
+        <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
+        <meta-data android:name="firebase_analytics_collection_enabled" android:value="true" />
 
+        <!-- Add this metadata for Firebase App Check -->
+        <meta-data
+            android:name="firebase_appcheck_debug_token"
+            android:value="true" />
+
+    </application>
 </manifest>
