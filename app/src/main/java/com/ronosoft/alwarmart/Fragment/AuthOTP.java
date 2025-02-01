@@ -191,7 +191,7 @@ public class AuthOTP extends Fragment {
             // Extract phone number from identities array
             JSONArray identities = responseData.getJSONArray("identities");
             JSONObject identity = identities.getJSONObject(0);
-            number = identity.getString("identityValue");
+//            number = identity.getString("identityValue");
             
             // Get the OTPless token for additional verification if needed
             String otplessToken = responseData.getString("token");
@@ -225,6 +225,9 @@ public class AuthOTP extends Fragment {
         JSONObject jsonBody = new JSONObject();
         try {
             jsonBody.put("uid", userId);
+            jsonBody.put("phone", number);
+            jsonBody.put("premium", false);
+
         } catch (JSONException e) {
             Log.e(TAG, "Error creating request body", e);
             showError("Failed to create authentication request");

@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewbinding.ViewBinding;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.GetTokenResult;
 import com.ronosoft.alwarmart.Adapter.HomeCategoryAdapter;
 import com.ronosoft.alwarmart.Adapter.HomeProductAdapter;
 import com.ronosoft.alwarmart.Adapter.ProductAdapter;
@@ -81,10 +85,30 @@ public class HomeFragment extends Fragment {
         if (currentUser != null){
 //            String defaultUserName = ValuesHelper.DEFAULT_USER_NAME;
             String displayName = currentUser.getDisplayName() != null ? currentUser.getDisplayName() : "Hi user";
-            String phoneNumber = currentUser.getPhoneNumber() != null ? currentUser.getPhoneNumber() : "No phone number";
+            String phoneNumber = "No phone number";
+            binding.address.setText(phoneNumber);
+
+            currentUser.getIdToken(true).addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
+                @Override
+                public void onComplete(@NonNull Task<GetTokenResult> task) {
+                    if (task.isSuccessful()){
+                        GetTokenResult tokenResult = task.getResult();
+                        if (tokenResult != null) {
+                            // Get additional claims
+                            Object phone = tokenResult.getClaims().get("phone_number"); // Example: Custom role claim
+//                            Object admin = tokenResult.getClaims().get("admin"); // Example: Admin claim
+                            Log.i("HomeFragmentTAG", "onComplete: "+phone);
+                            binding.address.setText(phone.toString());
+
+                        }
+
+                        }
+                }
+            });
+
+//            String phoneNumber = currentUser.getPhoneNumber() != null ? currentUser.getPhoneNumber() : "No phone number";
             userId = currentUser.getUid();
             binding.UserName.setText(displayName);
-            binding.address.setText(phoneNumber);
         }else {
             binding.UserName.setText("Hi user");
             binding.address.setText("Alwar Mart");
