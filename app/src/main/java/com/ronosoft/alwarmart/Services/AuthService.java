@@ -2,17 +2,27 @@ package com.ronosoft.alwarmart.Services;
 
 import android.net.Uri;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.ronosoft.alwarmart.Model.UserinfoModels;
+
+import java.util.Objects;
 
 
 public class AuthService {
-    FirebaseAuth auth = FirebaseAuth.getInstance();
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
 
     public boolean IsLogin() {
         return auth.getCurrentUser() != null;
@@ -34,9 +44,58 @@ public class AuthService {
         return currentUser != null && currentUser.getPhotoUrl() != null ? currentUser.getPhotoUrl().toString() : null;
     }
 
-    public String getUserPhoneNumber() {
+    public Task<String> getUserPhoneNumber() {
         FirebaseUser currentUser = auth.getCurrentUser();
-        return currentUser != null ? currentUser.getPhoneNumber() : null;
+        if (currentUser == null) {
+            return Tasks.forException(new Exception("User not logged in"));
+        }
+
+        return currentUser.getIdToken(true)
+            .continueWith(task -> {
+                if (!task.isSuccessful()) {
+                    throw Objects.requireNonNull(task.getException());
+                }
+
+                GetTokenResult tokenResult = task.getResult();
+                if (tokenResult == null) {
+                    throw new Exception("Token claims not available");
+                }
+
+                Object phoneObj = tokenResult.getClaims().get("phone_number");
+                if (phoneObj != null) {
+                    return phoneObj.toString();
+                }
+
+                // Fallback to user profile phone number
+                String profilePhone = currentUser.getPhoneNumber();
+                if (profilePhone != null) {
+                    return profilePhone;
+                }
+
+                // If no phone number found, get it from DatabaseService
+                return Tasks.call(() -> {
+                    TaskCompletionSource<String> tcs = new TaskCompletionSource<>();
+                    
+                    new DatabaseService().getUserInfo(getUserId(), new DatabaseService.getUserInfoCallback() {
+                        @Override
+                        public void onSuccess(UserinfoModels user) {
+                            String phone = user.getPhoneNumber();
+                            if (phone != null) {
+                                tcs.setResult(phone);
+                            } else {
+                                tcs.setException(new Exception("Phone number not found in database"));
+                            }
+                        }
+
+                        @Override
+                        public void onError(String errorMessage) {
+                            tcs.setException(new Exception(errorMessage));
+                        }
+                    });
+                    
+                    return Tasks.await(tcs.getTask());
+                }).getResult();
+            });
     }
 
     public String getUserEmail() {

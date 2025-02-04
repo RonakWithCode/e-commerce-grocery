@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.RadioButton;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -73,6 +74,7 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
     String couponCode = "";
     private double minOderValue = 0;
     private boolean couponIsApply = false;
+    private final String TAG = "CheckoutFragment";
 
     public CheckoutFragment() {}
 
@@ -173,29 +175,53 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
 
 
     private void placeOrder(String shippingMethod, String shippingStatus) {
-//    public Shipping(String shippingMethod,AddressModel shippingAddress, String shippingStatus) {
-//    public Shipping(String shippingMethod, String shippingFee, Date deliveredData, AddressModel shippingAddress, String shippingStatus) {
         Date orderDate = new Date();
-        Log.i("CHECKOUT", "placeOrder: "+orderDate);
+        Log.d(TAG, "placeOrder: " + orderDate);
 
-        // Alternative: Use a server timestamp (if available) to prevent manipulation
-//         orderDate = getServerTimestamp();
-
-        Shipping shipping = new Shipping(shippingMethod,"00",new Date(),addressModel,shippingStatus);
-        Payment payment = new Payment("cash","Pending");
-//    public Customer(String customerId, String fullName, String phoneNumber, String phoneNumber2) {
+        Shipping shipping = new Shipping(shippingMethod, "00", new Date(), addressModel, shippingStatus);
+        Payment payment = new Payment("cash", "Pending");
         String userID = authService.getUserId();
-        Customer customer = new Customer(userID, addressModel.getFullName(), addressModel.getMobileNumber(), authService.getUserPhoneNumber());
 
-        String orderId = generateUniqueOrderId();
-//         FieldValue.serverTimestamp()
+        // Get phone number asynchronously before creating the order
+        authService.getUserPhoneNumber()
+            .addOnSuccessListener(phoneNumber -> {
+                // Create customer with retrieved phone number
+                Customer customer = new Customer(
+                    userID, 
+                    addressModel.getFullName(), 
+                    addressModel.getMobileNumber(), 
+                    phoneNumber
+                );
 
-//        OrderModel orderModel = new OrderModel(orderId,orderTime,null,null,null,null,null,null,"Processing",subTotalPrice,shippingFee,processingFee,donate,saveAmount,grandTotal,couponCode,couponValue,binding.note.getEditText().getText().toString(),oProductModels,payment,customer, TokenManager.getInstance(requireContext()).getToken(),shipping);
-//     OrderModel(String orderId, Customer customer, ArrayList<ShoppingCartsProductModel> orderItems, double orderTotalPrice, String couponCode, String orderStatus, Payment payment, Shipping shipping, Date orderDate, String notes, String token,double CouponCodeValue,double Donate,double ProcessingFees) {
+                String orderId = generateUniqueOrderId();
 
-        OrderModel orderModel = new OrderModel(orderId,customer,models,grandTotal,couponCode,shippingStatus,payment,shipping,orderDate,binding.note.getEditText().getText().toString(),TokenManager.getInstance(requireContext()).getToken(),couponValue,donate,processingFee);
-        placeOrder(orderModel);
+                OrderModel orderModel = new OrderModel(
+                    orderId,
+                    customer,
+                    models,
+                    grandTotal,
+                    couponCode,
+                    shippingStatus,
+                    payment,
+                    shipping,
+                    orderDate,
+                    binding.note.getEditText().getText().toString(),
+                    TokenManager.getInstance(requireContext()).getToken(),
+                    couponValue,
+                    donate,
+                    processingFee
+                );
 
+                placeOrder(orderModel);
+            })
+            .addOnFailureListener(e -> {
+                Log.e(TAG, "Error getting phone number", e);
+                // Show error to user
+                Toast.makeText(requireContext(), 
+                    "Error: Unable to get phone number", 
+                    Toast.LENGTH_SHORT
+                ).show();
+            });
     }
 
 
