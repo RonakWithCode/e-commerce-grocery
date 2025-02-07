@@ -87,17 +87,17 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressV
             }
         };
 
-        View.OnClickListener editListener = v -> {
-            Context context = contextRef.get();
-            if (context != null) {
-                Toast.makeText(context, "Edit functionality coming soon", Toast.LENGTH_SHORT).show();
-            }
-        };
+//        View.OnClickListener editListener = v -> {
+//            Context context = contextRef.get();
+//            if (context != null) {
+//                Toast.makeText(context, "Edit functionality coming soon", Toast.LENGTH_SHORT).show();
+//            }
+//        };
 
         // Set click listeners
         holder.binding.getRoot().setOnClickListener(selectListener);
         holder.binding.delete.setOnClickListener(deleteListener);
-        holder.binding.edit.setOnClickListener(editListener);
+//        holder.binding.edit.setOnClickListener(editListener);
     }
 
     @Override

@@ -28,6 +28,7 @@ import com.ronosoft.alwarmart.Fragment.MoreFragment;
 import com.ronosoft.alwarmart.Fragment.ProductWithSlideCategoryFragment;
 import com.ronosoft.alwarmart.Fragment.SearchFragment;
 import com.ronosoft.alwarmart.Fragment.ShoppingCartsFragment;
+import com.ronosoft.alwarmart.Manager.ProductManager;
 import com.ronosoft.alwarmart.databinding.ActivityMainBinding;
 import com.google.firebase.FirebaseApp;
 //import com.google.firebase.appcheck.FirebaseAppCheck;
@@ -61,6 +62,9 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+
+//        new ProductManager(this).deleteProduct();
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {

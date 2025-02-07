@@ -3,6 +3,7 @@ package com.ronosoft.alwarmart.Adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.ronosoft.alwarmart.Activity.AuthMangerActivity;
+import com.ronosoft.alwarmart.Component.ProductViewCard;
 import com.ronosoft.alwarmart.Manager.ProductManager;
 import com.ronosoft.alwarmart.Model.ProductModel;
 import com.ronosoft.alwarmart.Model.ShoppingCartFirebaseModel;
@@ -31,12 +33,12 @@ import java.util.ArrayList;
 public class SearchViewRecommendationAdapter extends RecyclerView.Adapter<SearchViewRecommendationAdapter.SearchViewRecommendationAdapterViewHolder> {
 
     private ArrayList<ProductModel> dataList;
-    private Context context;
+    private Activity context;
     private LoadingDialog loadingDialog;
     private ErrorBox errorBox;
     private ProductManager productManager;
 
-    public SearchViewRecommendationAdapter(ArrayList<ProductModel> modelArrayList, Context context) {
+    public SearchViewRecommendationAdapter(ArrayList<ProductModel> modelArrayList, Activity context) {
         this.dataList = modelArrayList;
         this.context = context;
         this.loadingDialog = new LoadingDialog((Activity) context); // Initialize LoadingDialog
@@ -69,10 +71,32 @@ public class SearchViewRecommendationAdapter extends RecyclerView.Adapter<Search
             });
         }
 
-        Glide.with(context).load(model.getProductImage().get(0))
-                .placeholder(R.drawable.skeleton_shape).into(holder.binding.productImage);
-        holder.binding.productName.setText(model.getProductName());
-        holder.binding.productPrice.setText("₹" + model.getPrice());
+        Glide.with(context)
+            .load(model.getProductImage().get(0))
+            .placeholder(R.drawable.skeleton_shape)
+            .into(holder.binding.productImage);
+
+        String formattedName = capitalizeFirstLetter(model.getProductName());
+        holder.binding.productName.setText(formattedName);
+        
+        String weightText = String.format("%s %s", model.getWeight(), model.getWeightSIUnit().toUpperCase());
+        holder.binding.weightInfo.setText(weightText);
+
+        double discountPercentage = ((model.getMrp() - model.getPrice()) / model.getMrp()) * 100;
+        if (discountPercentage > 0) {
+            holder.binding.discountBadge.setVisibility(View.VISIBLE);
+            holder.binding.discountBadge.setText(String.format("%.0f%% OFF", discountPercentage));
+            
+            double savings = model.getMrp() - model.getPrice();
+            holder.binding.productMrp.setText(String.format("MRP: ₹%.2f (Save ₹%.2f)", 
+                model.getMrp(), savings));
+        } else {
+            holder.binding.discountBadge.setVisibility(View.GONE);
+            holder.binding.productMrp.setText(String.format("MRP: ₹%.2f", model.getMrp()));
+        }
+
+        holder.binding.productPrice.setText(String.format("₹%.2f", model.getPrice()));
+        holder.binding.productMrp.setPaintFlags(holder.binding.productMrp.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
         holder.binding.addToCartButton.setOnClickListener(v -> {
             if (FirebaseAuth.getInstance().getCurrentUser() != null) {
@@ -136,6 +160,7 @@ public class SearchViewRecommendationAdapter extends RecyclerView.Adapter<Search
             @Override
             public void onClick(View v) {
                 // Handle root click if needed
+                new ProductViewCard(context).showProductViewDialog(model,dataList);
             }
         });
     }
@@ -147,6 +172,14 @@ public class SearchViewRecommendationAdapter extends RecyclerView.Adapter<Search
 
     private void UpdateQTY(ProductModel newModel) {
         productManager.UpdateCartQuantityById(new AuthService().getUserId(), newModel.getProductId(), newModel.getSelectableQuantity());
+    }
+
+    // Helper method to capitalize product name
+    private String capitalizeFirstLetter(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+        return text.substring(0, 1).toUpperCase() + text.substring(1).toLowerCase();
     }
 
     public static class SearchViewRecommendationAdapterViewHolder extends RecyclerView.ViewHolder {

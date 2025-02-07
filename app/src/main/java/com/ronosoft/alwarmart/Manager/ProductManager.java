@@ -108,6 +108,12 @@ public class ProductManager {
 
 
 
+    public void deleteProduct(){
+        databaseHelper.ModelDAO().deleteAll();
+//        databaseHelper.ModelDAO.deleteAll()
+    }
+
+
 
 
 

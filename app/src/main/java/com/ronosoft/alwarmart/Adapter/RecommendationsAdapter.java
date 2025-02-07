@@ -24,6 +24,7 @@ public class RecommendationsAdapter extends RecyclerView.Adapter<Recommendations
     RecommendationsInterface recommendationsInterface;
 
 
+
     public RecommendationsAdapter(ArrayList<ProductModel> productModels,RecommendationsInterface onClickProductAdapter, Context context) {
         this.productModels = productModels;
         this.recommendationsInterface = onClickProductAdapter;

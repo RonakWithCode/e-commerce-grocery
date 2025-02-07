@@ -43,25 +43,12 @@
             android:textSize="@dimen/_13ssp"
             android:textStyle="normal" />
 
-        <TextView
-            android:id="@+id/edit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginTop="@dimen/_2sdp"
-            android:layout_marginEnd="@dimen/_2sdp"
-            android:layout_toEndOf="@id/deliveryTo"
-            android:text="@string/edit_address"
-            android:textColor="@color/orange_secondary"
-            android:textSize="@dimen/_13ssp"
-            tools:ignore="RelativeOverlap" />
-
 
         <ImageButton
             android:id="@+id/delete"
             android:layout_width="25dp"
             android:layout_height="30dp"
-            android:layout_below="@id/edit"
+            android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="@dimen/_5sdp"
             android:layout_marginEnd="@dimen/_5sdp"

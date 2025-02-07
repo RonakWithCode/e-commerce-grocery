@@ -22,11 +22,9 @@ import java.util.ArrayList;
 public class BrandActivity extends AppCompatActivity {
     ActivityBrandBinding binding;
     private static final String ARG_BRAND = "brand";
-    private static final String TAG = "SliderBrandFragment";
+    private static final String TAG = "BrandActivity";
     private String BrandName;
     ArrayList<ProductModel> productModel;
-
-//    FragmentSliderBrandBinding binding;
     DatabaseService databaseService;
     BrandService brandService;
     ProductAdapter productAdapter;
@@ -37,95 +35,108 @@ public class BrandActivity extends AppCompatActivity {
         binding = ActivityBrandBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        BrandName = getIntent().getStringExtra(ARG_BRAND);
-        if (BrandName == null) {
-         finish();
-        }
-        databaseService =  new DatabaseService();
-        brandService =  new BrandService(this);
-
-
-        binding.backBtn.setOnClickListener(v -> {
-            this.onBackPressed();
-        });
-        productModel = new ArrayList<>();
-
-        setupAdpter();
+        initializeComponents();
+        setupListeners();
+        setupAdapter();
         loadBrandData();
-        binding.searchBta.setOnClickListener(view -> openSearchFragment());
     }
 
+    private void initializeComponents() {
+        BrandName = getIntent().getStringExtra(ARG_BRAND);
+        if (BrandName == null) {
+            finish();
+            return;
+        }
+        
+        databaseService = new DatabaseService();
+        brandService = new BrandService(this);
+        productModel = new ArrayList<>();
+    }
+
+    private void setupListeners() {
+        binding.backBtn.setOnClickListener(v -> onBackPressed());
+        binding.searchBta.setOnClickListener(v -> openSearchFragment());
+    }
 
     private void openSearchFragment() {
-//        if (isAdded() && getActivity() != null) {
-//        finish();
-//        SearchFragment fragment  = new SearchFragment();
-//            Bundle bundle = new Bundle();
-//            bundle.putParcelableArrayList("model",new ArrayList<>());
-//            fragment.setArguments(bundle);
-//            this.getSupportFragmentManager().beginTransaction()
-//                    .replace(R.id.loader,fragment)
-//                    .addToBackStack("HomeFragment")
-//                    .commit();
-
-
-//        }
-
         Intent intent = new Intent(BrandActivity.this, FragmentLoader.class);
-        intent.putExtra("LoadID","search");
-//        intent.putParcelableArrayListExtra("model",productModel);
+        intent.putExtra("LoadID", "search");
         startActivity(intent);
     }
 
-    void loadBrandData(){
+    private void loadBrandData() {
         brandService.getAllBrandWithIconsById(BrandName, new BrandService.addBrandsByIdListener() {
             @Override
             public void onFailure(Exception error) {
-
+                runOnUiThread(() -> {
+                    binding.errorMessage.setText(error.getMessage());
+                    binding.errorState.setVisibility(View.VISIBLE);
+                });
             }
 
             @Override
             public void onSuccess(BrandModel brandModel) {
-                binding.brandName.setText(brandModel.getBrandName());
-                Glide
-                        .with(BrandActivity.this)
-                        .load(brandModel.getBrandIcon())
-                        .placeholder(R.drawable.product_image_shimmee_effect)
-                        .into(binding.brandIcon);
-                getProducts(brandModel);
-//                Glide.with(this)
-//                        .load(brandModel.getBrandIcon())
+                runOnUiThread(() -> {
+                    updateBrandUI(brandModel);
+                    getProducts(brandModel);
+                });
             }
         });
+    }
+
+    private void updateBrandUI(BrandModel brandModel) {
+        binding.brandName.setText(brandModel.getBrandName());
+        Glide.with(this)
+            .load(brandModel.getBrandIcon())
+            .placeholder(R.drawable.product_image_shimmee_effect)
+            .into(binding.brandIcon);
     }
 
     private void getProducts(BrandModel brandModel) {
         databaseService.getBrandProducts(brandModel.getBrandName(), new DatabaseService.GetAllProductsCallback() {
             @Override
             public void onSuccess(ArrayList<ProductModel> products) {
-//                Log.i(TAG, "onSuccess: "+products.size());
-                productModel.addAll(products);
-                productAdapter.notifyDataSetChanged();
+                runOnUiThread(() -> {
+                    productModel.clear();
+                    productModel.addAll(products);
+                    productAdapter.notifyDataSetChanged();
+                    binding.errorState.setVisibility(View.GONE);
+                });
             }
 
             @Override
             public void onError(String errorMessage) {
-                binding.errorMessage.setText(errorMessage);
-                binding.errorState.setVisibility(View.VISIBLE);
+                runOnUiThread(() -> {
+                    binding.errorMessage.setText(errorMessage);
+                    binding.errorState.setVisibility(View.VISIBLE);
+                });
             }
         });
-
     }
 
-    void setupAdpter(){
-        productAdapter = new ProductAdapter(productModel, (productModel, sameProducts) -> {
-//
-            new ProductViewCard(BrandActivity.this).showProductViewDialog(productModel,sameProducts);
-        },this,"");
+    private void setupAdapter() {
+        productAdapter = new ProductAdapter(
+            productModel,
+            (productModel, sameProducts) -> {
+                ArrayList<ProductModel> limitedProducts = new ArrayList<>(
+                    sameProducts.subList(0, Math.min(sameProducts.size(), 10))
+                );
+                new ProductViewCard(this).showProductViewDialog(productModel, limitedProducts);
+            },
+            this,
+            ""
+        );
 
         binding.Products.setAdapter(productAdapter);
-        binding.Products.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-
+        binding.Products.setLayoutManager(
+            new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        );
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        Bundle clean = new Bundle();
+        clean.putString(ARG_BRAND, BrandName);
+        super.onSaveInstanceState(clean);
+    }
 }

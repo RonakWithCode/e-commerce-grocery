@@ -1,13 +1,24 @@
 package com.ronosoft.alwarmart.Activity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Typeface;
+import android.graphics.pdf.PdfDocument;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextPaint;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.ronosoft.alwarmart.Adapter.OrderProductAdapter;
@@ -16,6 +27,7 @@ import com.ronosoft.alwarmart.HelperClass.ValuesHelper;
 import com.ronosoft.alwarmart.Manager.ProductManager;
 import com.ronosoft.alwarmart.Model.OrderModel;
 import com.ronosoft.alwarmart.Model.ShoppingCartsProductModel;
+import com.ronosoft.alwarmart.R;
 import com.ronosoft.alwarmart.Services.DatabaseService;
 import com.ronosoft.alwarmart.databinding.ActivityOrderDetailsBinding;
 import com.ronosoft.alwarmart.interfaceClass.OrderProductInterface;
@@ -25,7 +37,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class OrderDetailsActivity extends AppCompatActivity implements OrderProductInterface {
@@ -44,9 +61,9 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
         setContentView(binding.getRoot());
         setupActionBar();
         initializeFirebase();
-
-        binding.orderDetailsViewBack.setOnClickListener(view -> onBackPressed());
-        binding.download.setOnClickListener(v -> downloadBill());
+//        binding.download.setVisibility();
+//        binding.orderDetailsViewBack.setOnClickListener(view -> onBackPressed());
+//        binding.download.setOnClickListener(v -> downloadBill());
         binding.ContinueShopping.setOnClickListener(v -> finish());
 
         String orderID = getIntent().getStringExtra("orderID");
@@ -103,7 +120,256 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
     }
 
     private void downloadBill() {
-        // Implement your download bill logic here
+        try {
+            // Create PDF document optimized for thermal paper (72mm printable width)
+            PdfDocument document = new PdfDocument();
+            // 72mm = ~204 points width, height will be dynamic based on content
+            PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(204, 800, 1).create();
+            PdfDocument.Page page = document.startPage(pageInfo);
+            Canvas canvas = page.getCanvas();
+            Paint paint = new Paint();
+            
+            // Starting position - minimal margins
+            int y = 10;
+            int leftMargin = 5;
+            int rightMargin = 199; // 204 - 5
+            int centerX = 204 / 2;
+
+            // Logo - smaller size
+            Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.logo);
+            if (logo != null) {
+                float aspectRatio = (float) logo.getWidth() / logo.getHeight();
+                int targetWidth = 60; // Smaller logo
+                int targetHeight = (int) (targetWidth / aspectRatio);
+                Bitmap resizedLogo = Bitmap.createScaledBitmap(logo, targetWidth, targetHeight, true);
+                canvas.drawBitmap(resizedLogo, centerX - (targetWidth / 2), y, paint);
+                y += targetHeight + 5;
+            }
+
+            // Company Name - compact
+            paint.setTypeface(Typeface.create(Typeface.DEFAULT_BOLD, Typeface.BOLD));
+            paint.setTextSize(12);
+            String companyName = "ALWAR MART";
+            float textWidth = paint.measureText(companyName);
+            canvas.drawText(companyName, centerX - (textWidth / 2), y, paint);
+            y += 15;
+
+            // Business Details - smaller and more compact
+            paint.setTextSize(7);
+            paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+            String[] businessDetails = {
+                "Email: contact@alwarmart.in",
+                "Website: alwarmart.in",
+                "Phone: +91 7023941072"
+            };
+            
+            for (String detail : businessDetails) {
+                textWidth = paint.measureText(detail);
+                canvas.drawText(detail, centerX - (textWidth / 2), y, paint);
+                y += 10;
+            }
+
+            // Separator Line
+            y += 3;
+            paint.setStrokeWidth(0.5f);
+            canvas.drawLine(leftMargin, y, rightMargin, y, paint);
+            y += 10;
+
+            // Order Details - compact layout
+            paint.setTextSize(8);
+            paint.setTypeface(Typeface.create(Typeface.DEFAULT_BOLD, Typeface.BOLD));
+            canvas.drawText("TAX INVOICE", leftMargin, y, paint);
+            y += 12;
+
+            paint.setTextSize(7);
+            paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy HH:mm", Locale.getDefault());
+            
+            // Compact key-value pairs
+            drawKeyValuePair(canvas, "Invoice:", orderModel.getOrderId(), leftMargin, y, paint);
+            y += 10;
+            drawKeyValuePair(canvas, "Date:", dateFormat.format(orderModel.getOrderDate()), leftMargin, y, paint);
+            y += 10;
+            
+            if (ValuesHelper.DELIVERED.equals(orderModel.getOrderStatus())) {
+                drawKeyValuePair(canvas, "Delivered:", 
+                    dateFormat.format(orderModel.getShipping().getDeliveredData()), leftMargin, y, paint);
+                y += 10;
+            }
+
+            // Customer Details - compact
+            y += 5;
+            paint.setTypeface(Typeface.create(Typeface.DEFAULT_BOLD, Typeface.BOLD));
+            canvas.drawText("Customer Details:", leftMargin, y, paint);
+            y += 10;
+            
+            paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+            canvas.drawText(orderModel.getCustomer().getFullName(), leftMargin, y, paint);
+            y += 10;
+            canvas.drawText("Ph: " + orderModel.getShipping().getShippingAddress().getMobileNumber(), 
+                leftMargin, y, paint);
+            y += 10;
+            
+            // Address with optimized word wrap
+            String address = orderModel.getShipping().getShippingAddress().getFlatHouse() + ", " + 
+                orderModel.getShipping().getShippingAddress().getAddress();
+            String[] addressLines = splitTextIntoLines(address, 40);
+            for (String line : addressLines) {
+                canvas.drawText(line, leftMargin, y, paint);
+                y += 10;
+            }
+
+            // Items Table - optimized for thermal paper
+            y += 5;
+            drawThermalItemsTable(canvas, paint, y, leftMargin, rightMargin);
+
+            document.finishPage(page);
+
+            // Save and share PDF
+            String fileName = "AlwarMart_" + orderModel.getOrderId() + ".pdf";
+            File file = new File(getExternalFilesDir(null), fileName);
+            FileOutputStream fos = new FileOutputStream(file);
+            document.writeTo(fos);
+            document.close();
+            fos.close();
+
+            Toast.makeText(this, "Invoice downloaded successfully", Toast.LENGTH_SHORT).show();
+            openPDF(file);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Failed to generate invoice", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void drawThermalItemsTable(Canvas canvas, Paint paint, int startY, int leftMargin, int rightMargin) {
+        // Optimized column widths for thermal paper
+        int[] columnWidths = {85, 30, 35, 40}; // Item, Qty, Price, Total
+        
+        // Headers - compact
+        paint.setTypeface(Typeface.create(Typeface.DEFAULT_BOLD, Typeface.BOLD));
+        paint.setTextSize(7);
+        
+        int x = leftMargin;
+        canvas.drawText("Item", x, startY, paint);
+        x += columnWidths[0];
+        canvas.drawText("Qty", x, startY, paint);
+        x += columnWidths[1];
+        canvas.drawText("Price", x, startY, paint);
+        x += columnWidths[2];
+        canvas.drawText("Total", x, startY, paint);
+
+        // Separator
+        startY += 3;
+        paint.setStrokeWidth(0.5f);
+        canvas.drawLine(leftMargin, startY, rightMargin, startY, paint);
+
+        // Items - compact layout
+        startY += 8;
+        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+        paint.setTextSize(7);
+        
+        double subtotal = 0;
+        for (ShoppingCartsProductModel item : orderModel.getOrderItems()) {
+            x = leftMargin;
+            
+            // Compact item name with weight
+            String itemText = item.getProductName() + " (" + item.getWeight() + item.getWeightSIUnit() + ")";
+            String[] itemLines = splitTextIntoLines(itemText, 22);
+            for (String line : itemLines) {
+                canvas.drawText(line, x, startY, paint);
+                startY += 8;
+            }
+            startY -= 8;
+            
+            x += columnWidths[0];
+            canvas.drawText(String.valueOf(item.getSelectableQuantity()), x, startY, paint);
+            
+            x += columnWidths[1];
+            canvas.drawText("₹" + formatPrice(item.getPrice()), x, startY, paint);
+            
+            x += columnWidths[2];
+            double itemTotal = item.getPrice() * item.getSelectableQuantity();
+            canvas.drawText("₹" + formatPrice(itemTotal), x, startY, paint);
+            
+            subtotal += itemTotal;
+            startY += 8;
+        }
+
+        // Totals section - compact
+        startY += 3;
+        paint.setStrokeWidth(0.5f);
+        canvas.drawLine(leftMargin, startY, rightMargin, startY, paint);
+        startY += 8;
+
+        // Compact totals layout
+        int totalsX = rightMargin - 70;
+        drawThermalTotalLine(canvas, paint, "Subtotal:", formatPrice(subtotal), totalsX, startY);
+        startY += 8;
+
+        if (orderModel.getCouponCodeValue() > 0) {
+            drawThermalTotalLine(canvas, paint, "Discount:", 
+                "-" + formatPrice(orderModel.getCouponCodeValue()), totalsX, startY);
+            startY += 8;
+        }
+
+        double shippingFee = Double.parseDouble(orderModel.getShipping().getShippingFee());
+        drawThermalTotalLine(canvas, paint, "Shipping:", formatPrice(shippingFee), totalsX, startY);
+        startY += 8;
+
+        if (orderModel.getDonate() > 0) {
+            drawThermalTotalLine(canvas, paint, "Donation:", formatPrice(orderModel.getDonate()), 
+                totalsX, startY);
+            startY += 8;
+        }
+
+        // Final total
+        paint.setTypeface(Typeface.create(Typeface.DEFAULT_BOLD, Typeface.BOLD));
+        drawThermalTotalLine(canvas, paint, "Total:", formatPrice(orderModel.getOrderTotalPrice()), 
+            totalsX, startY);
+    }
+
+    private void drawThermalTotalLine(Canvas canvas, Paint paint, String label, String amount, int x, int y) {
+        canvas.drawText(label, x, y, paint);
+        float amountWidth = paint.measureText(amount);
+        canvas.drawText(amount, x + 70 - amountWidth, y, paint);
+    }
+
+    private void drawKeyValuePair(Canvas canvas, String key, String value, int x, int y, Paint paint) {
+        paint.setTypeface(Typeface.create(Typeface.DEFAULT_BOLD, Typeface.BOLD));
+        canvas.drawText(key, x, y, paint);
+        paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+        canvas.drawText(value, x + 100, y, paint);
+    }
+
+    private String formatPrice(double price) {
+        return String.format(Locale.getDefault(), "%.2f", price);
+    }
+
+    private String[] splitTextIntoLines(String text, int maxCharsPerLine) {
+        List<String> lines = new ArrayList<>();
+        int start = 0;
+        while (start < text.length()) {
+            int end = Math.min(start + maxCharsPerLine, text.length());
+            if (end < text.length()) {
+                int lastSpace = text.lastIndexOf(' ', end);
+                if (lastSpace > start) {
+                    end = lastSpace;
+                }
+            }
+            lines.add(text.substring(start, end).trim());
+            start = end;
+        }
+        return lines.toArray(new String[0]);
+    }
+
+    private void openPDF(File file) {
+        Uri uri = FileProvider.getUriForFile(this,
+            getApplicationContext().getPackageName() + ".provider", file);
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(uri, "application/pdf");
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivity(intent);
     }
 
     @SuppressLint({"SetTextI18n", "NotifyDataSetChanged"})
@@ -124,10 +390,10 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
                 binding.orderDeliveryOnBox.setVisibility(View.VISIBLE);
                 String formattedDateOfDeliveredOrder = dateFormat.format(orderModel.getShipping().getDeliveredData());
                 binding.orderDeliveryDate.setText(formattedDateOfDeliveredOrder);
-//                binding.orderDeliveryStatus.setText(formattedDateOfDeliveredOrder);
-                binding.download.setVisibility(View.VISIBLE);
-//                order_delivery_on_box
+//                binding.download.setVisibility(View.VISIBLE);
             }
+
+
 
             OrderProductAdapter orderProductAdapter = new OrderProductAdapter(orderModel.getOrderItems(), this, this::onOrder);
             binding.orderItems.setAdapter(orderProductAdapter);
@@ -137,277 +403,16 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
             binding.discount.setText("₹"+orderModel.getCouponCodeValue());
             binding.subtotal.setText("₹" + ShoppingCartHelper.calculateTotalPrices(orderModel.getOrderItems()));
             binding.shippingFee.setText("₹" + orderModel.getShipping().getShippingFee());
-//            binding.save.setText("₹" + ShoppingCartHelper.calculateTotalSavings(orderModel.getOrderItems()));
             binding.grandTotal.setText("₹" + orderModel.getOrderTotalPrice());
 
         }
         else {
             Toast.makeText(this, "Customer information is missing", Toast.LENGTH_SHORT).show();
-//            binding.download.setVisibility(View.INVISIBLE);
             this.finish();
         }
     }
 
     @Override
     public void onOrder(ShoppingCartsProductModel model) {
-//        ProductModel productModel = new ProductModel(model.isAvailable(), model.getProductId(), model.getProductName(), model.getProductDescription(), model.getBrand(), model.getCategory(), model.getSubCategory(), model.getPrice(), model.getMrp(), model.getDiscount(), model.getStockCount(), model.getMinSelectableQuantity(), model.getMaxSelectableQuantity(), model.getWeight(), model.getWeightSIUnit(), model.getProductLife(), model.getProductType(), model.getProductIsFoodItem(), model.getKeywords(), model.getProductImage(), model.getVariations());
-//        showProductViewDialog(productModel, this);
     }
-
-//    private void showProductViewDialog(ProductModel productModel, Activity context) {
-//        List<String> imageUrls = productModel.getProductImage();
-//        Dialog bottomSheetDialog = new Dialog(context);
-//        ProductViewDialogBinding productViewDialogBinding = ProductViewDialogBinding.inflate(getLayoutInflater());
-//        ViewPager2 viewPager = productViewDialogBinding.viewPager;
-//        SliderAdapter sliderAdapter = new SliderAdapter(context, imageUrls, position -> showImageInDialog(position, imageUrls, context));
-//        viewPager.setAdapter(sliderAdapter);
-//
-//        ArrayList<ProductModel> sameProducts = new ArrayList<>();
-//        databaseService.getAllProductsByCategoryOnly(productModel.getCategory(), new DatabaseService.GetAllProductsCallback() {
-//            @Override
-//            public void onSuccess(ArrayList<ProductModel> products) {
-//                sameProducts.addAll(products);
-//                sameProducts.remove(productModel);
-//                LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
-//                productViewDialogBinding.similarProductsRecyclerView.setLayoutManager(layoutManager);
-//                productViewDialogBinding.similarProductsRecyclerView.setAdapter(new ProductAdapter(sameProducts, (subProductModel, SubsameProducts) -> showProductViewDialog(subProductModel, context), context, "Main"));
-//            }
-//
-//            @Override
-//            public void onError(String errorMessage) {
-//                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//
-//        productViewDialogBinding.closeButton.setOnClickListener(v -> bottomSheetDialog.dismiss());
-//        productViewDialogBinding.quantity.setText(String.valueOf(productModel.getSelectableQuantity()));
-//
-//        List<Variations> variationsList = new ArrayList<>();
-//        ArrayList<ProductModel> productModels = new ArrayList<>();
-//        VariantsAdapter variantsAdapter = new VariantsAdapter(context, variationsList, productModel.getProductId(), id -> {
-//            for (ProductModel model : productModels) {
-//                if (id.equals(model.getProductId())) {
-//                    showProductViewDialog(model, context);
-//                    break;
-//                }
-//            }
-//        });
-//        RecyclerView variantsRecyclerView = productViewDialogBinding.variantsList;
-//        variantsRecyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-//        variantsRecyclerView.setAdapter(variantsAdapter);
-//        variationsList.add(new Variations(productModel.getProductId(), productModel.getMinSelectableQuantity() + " * " + productModel.getWeight() + productModel.getWeightSIUnit(), String.valueOf(productModel.getPrice())));
-//        variantsAdapter.notifyDataSetChanged();
-//
-//        if (productModel.getVariations() != null) {
-//            for (int i = 0; i < productModel.getVariations().size(); i++) {
-//                int finalI = i;
-////                databaseService.getAllProductById(productModel.getVariations().get(i).getId(), new DatabaseService.GetAllProductsModelCallback() {
-////                    @Override
-////                    public void onSuccess(ProductModel oneProduct) {
-////                        variationsList.add(new Variations(oneProduct.getProductId(), productModel.getVariations().get(finalI).getWeightWithSIUnit(), String.valueOf(oneProduct.getPrice())));
-////                        productModels.add(oneProduct);
-////                        variantsAdapter.notifyDataSetChanged();
-////                    }
-////
-////                    @Override
-////                    public void onError(String errorMessage) {
-////                        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show();
-////                    }
-////                });
-//            }
-//        }
-//
-//        productViewDialogBinding.categoryName.setText(productModel.getCategory());
-//        productViewDialogBinding.ProductName.setText(productModel.getProductName());
-//        productViewDialogBinding.brandNameInBox.setText(productModel.getBrand());
-//        BrandService brandService = new BrandService(context);
-//        brandService.getAllBrandWithIconsById(productModel.getBrand(), new BrandService.addBrandsByIdListener() {
-//            @Override
-//            public void onFailure(Exception error) {
-//                Toast.makeText(context, "Failed to load brand icon", Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onSuccess(BrandModel brandModel) {
-//                Glide.with(context)
-//                        .load(brandModel.getBrandIcon())
-//                        .placeholder(R.drawable.product_image_shimmee_effect)
-//                        .error(R.drawable.product_image_shimmee_effect)
-//                        .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-//                        .centerCrop()
-//                        .into(productViewDialogBinding.brandIcon);
-//            }
-//        });
-//
-//        productViewDialogBinding.Price.setText("₹" + productModel.getPrice());
-//        productViewDialogBinding.size.setText(productModel.getWeight() + " " + productModel.getWeightSIUnit());
-//        productViewDialogBinding.MRP.setText(":" + productModel.getMrp());
-//        productViewDialogBinding.MRP.setPaintFlags(productViewDialogBinding.MRP.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-//
-//        if (!productModel.getProductDescription().isEmpty()) {
-//            productViewDialogBinding.Description.setVisibility(View.VISIBLE);
-//            productViewDialogBinding.DescriptionTextView.setVisibility(View.VISIBLE);
-//            productViewDialogBinding.Description.setText(productModel.getProductDescription());
-//        }
-//
-//        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-//            productManager.isProductInCart(productModel.getProductId(), new ProductManager.addListenerForIsProductInCart() {
-//                @Override
-//                public void FoundProduct(ShoppingCartFirebaseModel shoppingCartFirebaseModel) {
-//                    productViewDialogBinding.quantityBox.setVisibility(View.VISIBLE);
-//                    productViewDialogBinding.AddTOCart.setVisibility(View.GONE);
-//                    productViewDialogBinding.quantity.setText(String.valueOf(shoppingCartFirebaseModel.getProductSelectQuantity()));
-//                }
-//
-//                @Override
-//                public void notFoundInCart() {
-//                    productViewDialogBinding.AddTOCart.setVisibility(View.VISIBLE);
-//                    productViewDialogBinding.quantityBox.setVisibility(View.GONE);
-//                }
-//            });
-//        }
-//
-//        if (productModel.getStockCount() == 0) {
-//            productViewDialogBinding.OutOfStockBuyOptions.setVisibility(View.VISIBLE);
-//            productViewDialogBinding.quantity.setText("0");
-//            productViewDialogBinding.quantityBox.setVisibility(View.GONE);
-//            productViewDialogBinding.AddTOCart.setVisibility(View.GONE);
-//        }
-//
-//        String diet;
-//        if ("FoodVeg".equals(productModel.getProductIsFoodItem())) {
-//            diet = "Veg";
-//            Glide.with(context)
-//                    .load(R.drawable.food_green)
-//                    .placeholder(R.drawable.product_image_shimmee_effect)
-//                    .error(R.drawable.product_image_shimmee_effect)
-//                    .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-//                    .centerCrop()
-//                    .into(productViewDialogBinding.FoodTypeIcon);
-//        } else if ("FoodNonVeg".equals(productModel.getProductIsFoodItem())) {
-//            diet = "NonVeg";
-//            Glide.with(context)
-//                    .load(R.drawable.food_brown)
-//                    .placeholder(R.drawable.product_image_shimmee_effect)
-//                    .error(R.drawable.product_image_shimmee_effect)
-//                    .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-//                    .centerCrop()
-//                    .into(productViewDialogBinding.FoodTypeIcon);
-//        } else if ("VegetableAndFruit".equals(productModel.getProductIsFoodItem())) {
-//            diet = "VegetableAndFruit";
-//            Glide.with(context)
-//                    .load(R.drawable.food_green)
-//                    .placeholder(R.drawable.product_image_shimmee_effect)
-//                    .error(R.drawable.product_image_shimmee_effect)
-//                    .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-//                    .centerCrop()
-//                    .into(productViewDialogBinding.FoodTypeIcon);
-//        } else {
-//            diet = "not food item";
-//            productViewDialogBinding.FoodTypeIcon.setVisibility(View.GONE);
-//        }
-//
-//        productViewDialogBinding.AddTOCart.setOnClickListener(v -> {
-//            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-//                productManager.addToBothDatabase(new ShoppingCartFirebaseModel(productModel.getProductId(), productModel.getMinSelectableQuantity()), new ProductManager.AddListenerForAddToBothInDatabase() {
-//                    @Override
-//                    public void added(ShoppingCartFirebaseModel shoppingCartFirebaseModel) {
-//                        productViewDialogBinding.AddTOCart.setVisibility(View.GONE);
-//                        productViewDialogBinding.quantityBox.setVisibility(View.VISIBLE);
-//                    }
-//
-//                    @Override
-//                    public void failure(Exception e) {
-//                        productViewDialogBinding.AddTOCart.setVisibility(View.VISIBLE);
-//                        productViewDialogBinding.quantityBox.setVisibility(View.GONE);
-//                        Toast.makeText(context, "Check your network connection and try again", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//            } else {
-//                context.startActivity(new Intent(context, AuthMangerActivity.class));
-//            }
-//        });
-//
-//        productViewDialogBinding.plusBtn.setOnClickListener(view -> {
-//            int quantity = productModel.getSelectableQuantity();
-//            quantity++;
-//            if (quantity > productModel.getStockCount()) {
-//                Toast.makeText(context, "Max stock available: " + productModel.getStockCount(), Toast.LENGTH_SHORT).show();
-//            } else {
-//                productModel.setSelectableQuantity(quantity);
-//                productViewDialogBinding.quantity.setText(String.valueOf(productModel.getSelectableQuantity()));
-//                productManager.UpdateCartQuantityById(userId, productModel.getProductId(), productModel.getSelectableQuantity());
-//            }
-//        });
-//
-//        productViewDialogBinding.minusBtn.setOnClickListener(view -> {
-//            int quantity = productModel.getSelectableQuantity();
-//            if (quantity > 1) {
-//                quantity--;
-//                productModel.setSelectableQuantity(quantity);
-//                productViewDialogBinding.quantity.setText(String.valueOf(productModel.getSelectableQuantity()));
-//                productManager.UpdateCartQuantityById(userId, productModel.getProductId(), productModel.getSelectableQuantity());
-//            } else {
-//                showRemoveProductDialog(productModel, context, productViewDialogBinding);
-//            }
-//        });
-//
-//        bottomSheetDialog.setContentView(productViewDialogBinding.getRoot());
-//        bottomSheetDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//        bottomSheetDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//        bottomSheetDialog.getWindow().getAttributes().windowAnimations = R.style.bottom_sheet_dialogAnimation;
-//        bottomSheetDialog.getWindow().setGravity(Gravity.BOTTOM);
-//        bottomSheetDialog.show();
-//    }
-//
-//    private void showRemoveProductDialog(ProductModel productModel, Activity context, ProductViewDialogBinding productViewDialogBinding) {
-//        Dialog removeBottomSheetDialog = new Dialog(context);
-//        RemoveProductBoxAlertBinding boxAlertBinding = RemoveProductBoxAlertBinding.inflate(getLayoutInflater());
-//        removeBottomSheetDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-//        removeBottomSheetDialog.setContentView(boxAlertBinding.getRoot());
-//        Window window = removeBottomSheetDialog.getWindow();
-//        if (window != null) {
-//            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//            WindowManager.LayoutParams layoutParams = window.getAttributes();
-//            layoutParams.windowAnimations = R.style.bottom_sheet_dialogAnimation;
-//            layoutParams.gravity = Gravity.CENTER_VERTICAL;
-//            window.setAttributes(layoutParams);
-//        }
-//
-//        boxAlertBinding.confirmRemoveButton.setOnClickListener(remove -> {
-//            productManager.RemoveCartProductById(userId, productModel.getProductId());
-//            productViewDialogBinding.AddTOCart.setVisibility(View.VISIBLE);
-//            productViewDialogBinding.quantityBox.setVisibility(View.GONE);
-//            removeBottomSheetDialog.dismiss();
-//        });
-//
-//        boxAlertBinding.cancelRemoveButton.setOnClickListener(remove -> removeBottomSheetDialog.dismiss());
-//
-//        if (!removeBottomSheetDialog.isShowing()) {
-//            removeBottomSheetDialog.show();
-//        }
-//    }
-//
-//    private void showImageInDialog(int position, List<String> imageUrls, Activity context) {
-//        Dialog dialog = new Dialog(context);
-//        DialogFullscreenImageBinding dialogBinding = DialogFullscreenImageBinding.inflate(LayoutInflater.from(context));
-//        dialog.setContentView(dialogBinding.getRoot());
-//        dialogBinding.getRoot().setOnClickListener(v -> dialog.dismiss());
-//        dialogBinding.close.setOnClickListener(v -> dialog.dismiss());
-//
-//        DialogSliderAdapter dialogAdapter = new DialogSliderAdapter(context, imageUrls);
-//        dialogBinding.dialogViewPager.setAdapter(dialogAdapter);
-//        dialogBinding.dialogViewPager.setCurrentItem(position);
-//
-//        if (dialog.getWindow() != null) {
-//            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//            dialog.getWindow().setBackgroundDrawableResource(android.R.color.white);
-//        }
-//
-//        Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_in_up);
-//        dialogBinding.getRoot().startAnimation(animation);
-//
-//        dialog.show();
-//    }
 }

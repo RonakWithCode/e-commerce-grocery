@@ -1,186 +1,174 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/MainBackgroundColor"
-    tools:context=".Fragment.ShoppingCartsFragment">
+    android:background="@color/background">
 
+    <!-- Main Content -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:clipToPadding="false"
+        android:paddingBottom="80dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Cart Summary Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/cart_summary"
+                        android:textAppearance="?attr/textAppearanceSubtitle1"/>
+
+                    <TextView
+                        android:id="@+id/SubTotal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:textAppearance="?attr/textAppearanceHeadline6"
+                        tools:text="Subtotal ₹1,299"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Cart Items -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/shopping_cart"
+                android:textAppearance="?attr/textAppearanceHeadline6"
+                android:layout_marginBottom="8dp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/ProductCart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"/>
+
+            <!-- Recommendations Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/recommendations"
+                android:textAppearance="?attr/textAppearanceHeadline6"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="8dp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/Recommendations"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:paddingHorizontal="-8dp"
+                android:nestedScrollingEnabled="false"/>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Empty State -->
+    <LinearLayout
+        android:id="@+id/IsEnity"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="32dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:src="@drawable/empty_cartcart_is_empty"
+            android:contentDescription="@string/empty_cart"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/cart_is_empty"
+            android:textAppearance="?attr/textAppearanceHeadline6"
+            android:textAlignment="center"/>
+    </LinearLayout>
+
+    <!-- Loading State -->
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/linearLayout_placeHolder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+        
+        <include layout="@layout/shopping_carts_placeholder_layout"/>
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <!-- Not Authenticated State -->
+    <LinearLayout
+        android:id="@+id/relative_not_auth"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="32dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/please_make_a_account_or_sign_up"
+            android:textAppearance="?attr/textAppearanceHeadline6"
+            android:textAlignment="center"
+            android:layout_marginBottom="16dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/siginUp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sign_up"
+            android:textAllCaps="false"
+            app:cornerRadius="24dp"/>
+    </LinearLayout>
+
+    <!-- Bottom Checkout Bar -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:cardElevation="8dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/Buy"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_margin="8dp"
+            android:text="@string/proceed_to_checkout"
+            android:textAllCaps="false"
+            app:cornerRadius="8dp"/>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Loading Progress -->
     <ProgressBar
         android:id="@+id/progress_circular"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true" />
+        android:layout_gravity="center"/>
 
-    <ScrollView
-        android:id="@+id/main"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:textSize="@dimen/_24ssp"
-                android:textColor="@color/MainTextColor"
-                android:id="@+id/SubTotal"
-                android:layout_marginTop="@dimen/_7sdp"
-                android:layout_marginStart="@dimen/_15sdp"
-                android:layout_width="wrap_content"
-                android:text="Subtotal 00.0"
-                android:layout_height="wrap_content"/>
-
-            <Button
-                android:id="@+id/Buy"
-                android:textSize="@dimen/_18ssp"
-                android:text="@string/buy_now"
-                android:layout_width="match_parent"
-                android:layout_marginStart="@dimen/_25sdp"
-                android:layout_marginEnd="@dimen/_25sdp"
-                android:background="@drawable/round_button"
-                android:layout_height="wrap_content"/>
-            <View
-                android:layout_marginTop="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:id="@id/line2"
-                android:background="@color/MainBorderColor"
-                android:alpha="0.9"/>
-
-            <TextView
-                android:id="@+id/text132"
-                android:layout_marginTop="@dimen/_7sdp"
-                android:layout_marginStart="@dimen/_15sdp"
-                android:textSize="@dimen/_24ssp"
-                android:textColor="@color/MainTextColor"
-                android:text="@string/shopping_cart"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/ProductCart"
-                android:layout_margin="@dimen/_3sdp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-            <View
-                android:layout_marginTop="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:id="@id/line1"
-                android:background="@color/MainBorderColor"
-                android:alpha="0.9"/>
-
-            <TextView
-                android:id="@+id/BuyItAgain"
-                android:layout_marginTop="@dimen/_7sdp"
-                android:layout_marginStart="@dimen/_15sdp"
-                android:textSize="@dimen/_24ssp"
-                android:textColor="@color/MainTextColor"
-                android:text="@string/buy_it_again"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/ProductBuyAng"
-                android:layout_margin="@dimen/_3sdp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-
-
-
-        </LinearLayout>
-
-    </ScrollView>
-
-    <ImageView
-        android:id="@+id/IsEnity"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_marginStart="@dimen/_3sdp"
-        android:layout_marginTop="@dimen/_3sdp"
-        android:layout_marginEnd="@dimen/_3sdp"
-        android:layout_marginBottom="@dimen/_3sdp"
-        android:src="@drawable/empty_cartcart_is_empty"
-        android:text="@string/cart_is_enity"
-        android:textSize="@dimen/_45ssp" />
-
-
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/linearLayout_placeHolder"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <LinearLayout
-        android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_height="wrap_content">
-        <TextView
-            android:textSize="@dimen/_24ssp"
-            android:textColor="@color/MainTextColor"
-            android:layout_marginTop="@dimen/_7sdp"
-            android:layout_marginStart="@dimen/_15sdp"
-            android:layout_gravity="center"
-            android:layout_width="@dimen/_170sdp"
-            android:background="@drawable/skeleton_shape"
-            android:layout_height="wrap_content"/>
-
-        <ImageView
-            android:textSize="@dimen/_18ssp"
-            android:layout_width="@dimen/_170sdp"
-            android:layout_gravity="center"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:background="@drawable/skeleton_shape"
-            android:layout_height="@dimen/_40sdp"/>
-        <View
-            android:layout_marginTop="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@drawable/skeleton_shape"
-            android:alpha="0.9"/>
-
-        <include layout="@layout/shopping_carts_placeholder_layout" />
-        <include layout="@layout/shopping_carts_placeholder_layout" />
-        <include layout="@layout/shopping_carts_placeholder_layout" />
-        <include layout="@layout/shopping_carts_placeholder_layout" />
-        <include layout="@layout/shopping_carts_placeholder_layout" />
-        <include layout="@layout/shopping_carts_placeholder_layout" />
-
-    </LinearLayout>
-</com.facebook.shimmer.ShimmerFrameLayout>
-
-
-    <RelativeLayout
-        android:visibility="gone"
-        android:id="@+id/relative_not_auth"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/view"
-            android:textAlignment="center"
-            android:textSize="@dimen/_25ssp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:textColor="@color/MainTextColor"
-            android:text="@string/please_make_a_account_or_sign_up"
-            android:layout_marginStart="@dimen/_25sdp"
-            android:layout_marginTop="@dimen/_25sdp"
-            android:layout_marginEnd="@dimen/_25sdp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <Button style="@style/MoreButtonLight"
-            android:padding="@dimen/_1sdp"
-            android:id="@+id/siginUp"
-            android:layout_below="@id/view"
-            android:text="SIGN-UP"
-            />
-    </RelativeLayout>
-
-
-
-</RelativeLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

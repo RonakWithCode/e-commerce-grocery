@@ -2,6 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     >
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
 
     <!-- Permissions -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -12,7 +18,6 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
 
     <application
         android:name=".MyApplication"
@@ -42,7 +47,10 @@
         <activity android:name=".Activity.BrandActivity" android:exported="false" />
         <activity android:name=".Activity.SettingsActivity" android:exported="false" android:label="@string/title_activity_settings" />
         <activity android:name=".Activity.AllOrderActivity" android:exported="false" />
-        <activity android:name=".Activity.OrderDetailsActivity" android:exported="false" />
+        <activity
+            android:name=".Activity.OrderDetailsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity android:name=".Activity.FragmentLoader" android:exported="false" />
         <activity android:name=".Activity.OderActivity" android:exported="false" />
         <activity android:name=".Activity.AuthMangerActivity" android:exported="true"
@@ -78,5 +86,14 @@
             android:name="firebase_appcheck_debug_token"
             android:value="true" />
 
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
     </application>
 </manifest>

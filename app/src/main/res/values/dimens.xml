@@ -4,4 +4,5 @@
     <dimen name="et_otp_height">@dimen/_40sdp</dimen>
     <dimen name="margin_right_otp">@dimen/_5sdp</dimen>
     <dimen name="subtitle">@dimen/_15ssp</dimen>
+    <dimen name="image_corner_radius">8dp</dimen>
 </resources>

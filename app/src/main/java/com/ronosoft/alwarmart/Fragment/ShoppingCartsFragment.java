@@ -12,26 +12,32 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.ronosoft.alwarmart.Activity.AuthMangerActivity;
 import com.ronosoft.alwarmart.Activity.OderActivity;
+import com.ronosoft.alwarmart.Adapter.ProductAdapter;
+import com.ronosoft.alwarmart.Adapter.RecommendationsAdapter;
 import com.ronosoft.alwarmart.Adapter.ShoppingCartsAdapter;
+import com.ronosoft.alwarmart.Component.ProductViewCard;
 import com.ronosoft.alwarmart.HelperClass.ShoppingCartHelper;
 import com.ronosoft.alwarmart.Manager.ProductManager;
+import com.ronosoft.alwarmart.Model.ProductModel;
 import com.ronosoft.alwarmart.Model.ShoppingCartsProductModel;
 import com.ronosoft.alwarmart.Services.AuthService;
 import com.ronosoft.alwarmart.Services.DatabaseService;
+import com.ronosoft.alwarmart.Services.RecommendationSystemService;
 import com.ronosoft.alwarmart.databinding.FragmentShoppingCartsBinding;
+import com.ronosoft.alwarmart.interfaceClass.RecommendationsInterface;
 import com.ronosoft.alwarmart.interfaceClass.ShoppingCartsInterface;
+import com.ronosoft.alwarmart.interfaceClass.onClickProductAdapter;
 
 import java.util.ArrayList;
 
 public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInterface {
     FragmentShoppingCartsBinding binding;
     DatabaseService service;
-
     ShoppingCartsAdapter cartsAdapter;
-
     ArrayList<ShoppingCartsProductModel> models;
     AuthService authService;
     String uid;
@@ -72,15 +78,12 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
         });
         binding.linearLayoutPlaceHolder.startShimmer();
 
-//        if (!authService.IsLogin()) {
-//            binding.relativeNotAuth.setVisibility(View.VISIBLE);
-//            binding.main.setVisibility(View.GONE);
-//            binding.progressCircular.setVisibility(View.GONE);
-//            binding.linearLayoutPlaceHolder.stopShimmer();
-//            binding.linearLayoutPlaceHolder.setVisibility(View.GONE);
-//        }  else {
-//            init();
-//        }
+
+
+
+
+
+
         return binding.getRoot();
     }
 
@@ -93,18 +96,10 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
         binding.ProductCart.setLayoutManager(layoutManager);
         binding.ProductCart.setAdapter(cartsAdapter);
         service.getUserCartById(uid, new DatabaseService.GetUserCartByIdCallback() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onSuccess(ArrayList<ShoppingCartsProductModel> cartsProductModels) {
-                models.clear();
-                models.addAll(cartsProductModels);
-                binding.progressCircular.setVisibility(View.GONE);
-                cartsAdapter.notifyDataSetChanged();
-                double totalPrice = ShoppingCartHelper.calculateTotalPrices(models);
-                binding.SubTotal.setText("SubTotal ₹"+totalPrice);
-                binding.main.setVisibility(View.VISIBLE);
-                binding.IsEnity.setVisibility(View.GONE);
-                binding.linearLayoutPlaceHolder.stopShimmer();
-                binding.linearLayoutPlaceHolder.setVisibility(View.GONE);
+                updateCartUI(cartsProductModels);
             }
 
             @Override
@@ -115,11 +110,79 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
                     binding.linearLayoutPlaceHolder.stopShimmer();
                     binding.linearLayoutPlaceHolder.setVisibility(View.GONE);
                 }
-//                basicFun.AlertDialog(requireContext(), errorMessage);
                 Log.i("ERRORDATABASE", "onError: "+errorMessage);
             }
         });
 
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void updateCartUI(ArrayList<ShoppingCartsProductModel> cartItems) {
+        binding.progressCircular.setVisibility(View.GONE);
+        binding.linearLayoutPlaceHolder.stopShimmer();
+        binding.linearLayoutPlaceHolder.setVisibility(View.GONE);
+
+        if (cartItems.isEmpty()) {
+            binding.main.setVisibility(View.GONE);
+            binding.IsEnity.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        binding.main.setVisibility(View.VISIBLE);
+        binding.IsEnity.setVisibility(View.GONE);
+
+        // Update cart items
+        models.clear();
+        models.addAll(cartItems);
+        cartsAdapter.notifyDataSetChanged();
+
+        // Update total
+        double totalPrice = ShoppingCartHelper.calculateTotalPrices(models);
+        binding.SubTotal.setText(String.format("₹%.2f", totalPrice));
+
+        // Load recommendations
+        loadRecommendations(cartItems);
+    }
+
+    private void loadRecommendations(ArrayList<ShoppingCartsProductModel> cartItems) {
+        ArrayList<String> categories = new ArrayList<>();
+        for (ShoppingCartsProductModel item : cartItems) {
+            categories.add(item.getCategory());
+        }
+
+        new RecommendationSystemService(requireContext())
+            .getByCategoryMatching(categories, new RecommendationSystemService.addCategoryListener() {
+                @Override
+                public void onSuccess(ArrayList<ProductModel> recommendations) {
+                    if (!recommendations.isEmpty()) {
+                        binding.Recommendations.setVisibility(View.VISIBLE);
+                        setupRecommendationsRecyclerView(recommendations);
+                    }
+                }
+
+                @Override
+                public void onError(Exception error) {
+                    Log.e("Recommendations", "Error loading recommendations", error);
+                }
+            });
+    }
+
+    private void setupRecommendationsRecyclerView(ArrayList<ProductModel> recommendations) {
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(
+            requireContext(), 
+            LinearLayoutManager.HORIZONTAL, 
+            false
+        );
+        binding.Recommendations.setLayoutManager(layoutManager);
+        
+        ProductAdapter adapter = new ProductAdapter(
+            recommendations,
+            (product, similarProducts) -> new ProductViewCard(requireActivity())
+                .showProductViewDialog(product, similarProducts),
+            requireContext(),
+            ""
+        );
+        binding.Recommendations.setAdapter(adapter);
     }
 
     @SuppressLint("NotifyDataSetChanged")

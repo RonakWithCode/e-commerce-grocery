@@ -32,9 +32,8 @@ public class AddressFragment extends Fragment implements AddressInterface {
     FragmentAddressBinding binding;
     AddressAdapter addressAdapter;
     UserinfoModels userInfo;
-
     ArrayList<AddressModel> adders;
-   NavController navController;
+    NavController navController;
 
     private ShimmerFrameLayout shimmerLayout;
 
