@@ -62,8 +62,8 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
         setupActionBar();
         initializeFirebase();
 //        binding.download.setVisibility();
-//        binding.orderDetailsViewBack.setOnClickListener(view -> onBackPressed());
-//        binding.download.setOnClickListener(v -> downloadBill());
+        binding.orderDetailsViewBack.setOnClickListener(view -> onBackPressed());
+        binding.download.setOnClickListener(v -> downloadBill());
         binding.ContinueShopping.setOnClickListener(v -> finish());
 
         String orderID = getIntent().getStringExtra("orderID");
@@ -136,7 +136,7 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
             int centerX = 204 / 2;
 
             // Logo - smaller size
-            Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.logo);
+            Bitmap logo = BitmapFactory.decodeResource(getResources(), R.drawable.transparent_logo);
             if (logo != null) {
                 float aspectRatio = (float) logo.getWidth() / logo.getHeight();
                 int targetWidth = 60; // Smaller logo
@@ -390,7 +390,7 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
                 binding.orderDeliveryOnBox.setVisibility(View.VISIBLE);
                 String formattedDateOfDeliveredOrder = dateFormat.format(orderModel.getShipping().getDeliveredData());
                 binding.orderDeliveryDate.setText(formattedDateOfDeliveredOrder);
-//                binding.download.setVisibility(View.VISIBLE);
+                binding.download.setVisibility(View.VISIBLE);
             }
 
 

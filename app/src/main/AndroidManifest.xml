@@ -77,7 +77,7 @@
 
         <!-- API Keys and Firebase Configuration -->
         <meta-data android:name="com.mapmyindia.sdk.apikey" android:value="92c446c1026304f56fa21f15dcd41be6" />
-        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyBjqPOXVmKyL9ETPSTxJB7mQfuFlXNqQq8" />
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyDtHQQXgNaO_mJLA-YPRXTgSYEi9RojK4Y" />
         <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
         <meta-data android:name="firebase_analytics_collection_enabled" android:value="true" />
 

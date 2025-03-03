@@ -12,23 +12,23 @@
     android:gravity="center_vertical"
     android:baselineAligned="false">
 
-
-
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="vertical">
 
+        <!-- Weight/Size -->
         <TextView
             android:id="@+id/variation_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="3 * 80 g"
             android:textAlignment="center"
-            android:textSize="@dimen/_16ssp"
+            android:textSize="@dimen/_14ssp"
             android:textStyle="bold" />
 
+        <!-- Price Information -->
         <TextView
             android:id="@+id/variation_weight"
             android:layout_width="match_parent"
@@ -37,6 +37,6 @@
             android:textColor="@color/FixBlack"
             android:textStyle="bold"
             android:text="₹45 ₹60"
-            android:textSize="@dimen/_14ssp" />
+            android:textSize="@dimen/_12ssp" />
     </LinearLayout>
 </LinearLayout>

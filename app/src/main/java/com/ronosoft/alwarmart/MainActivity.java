@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
@@ -13,6 +12,7 @@ import android.view.WindowManager;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -21,14 +21,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.ronosoft.alwarmart.Activity.OrderDetailsActivity;
-import com.ronosoft.alwarmart.DAO.CartDAOHelper;
-import com.ronosoft.alwarmart.DAO.ShoppingCartFirebaseModelDAO;
 import com.ronosoft.alwarmart.Fragment.HomeFragment;
 import com.ronosoft.alwarmart.Fragment.MoreFragment;
 import com.ronosoft.alwarmart.Fragment.ProductWithSlideCategoryFragment;
 import com.ronosoft.alwarmart.Fragment.SearchFragment;
 import com.ronosoft.alwarmart.Fragment.ShoppingCartsFragment;
-import com.ronosoft.alwarmart.Manager.ProductManager;
 import com.ronosoft.alwarmart.databinding.ActivityMainBinding;
 import com.google.firebase.FirebaseApp;
 //import com.google.firebase.appcheck.FirebaseAppCheck;
@@ -37,99 +34,86 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
-    private final ActivityResultLauncher<String> pushNotificationPermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-                if (isGranted) {
-                    // Permission granted, you can show notifications
-                } else {
-                    // Permission denied, handle accordingly
-                }
-            });
+    private static final String TAG = "MainActivity";
+    private static final String ORDER_VIEW = "OrderView";
+    private static final String ORDER_ID = "orderId";
+    private static final String LOAD_ID = "LoadID";
 
-    @SuppressLint("NonConstantResourceId")
+    private final ActivityResultLauncher<String> pushNotificationPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), this::handleNotificationPermissionResult);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-//        applySavedLanguage(); // Ensure language is applied before anything else
         super.onCreate(savedInstanceState);
-        FirebaseApp.initializeApp(this);
-//        FirebaseAppCheck firebaseAppCheck = FirebaseAppCheck.getInstance();
-//        firebaseAppCheck.installAppCheckProviderFactory(
-//                PlayIntegrityAppCheckProviderFactory.getInstance());
+        initializeApp();
+        setupUI();
+        handleIntent();
+        setupBottomNavigation();
+    }
 
+    private void initializeApp() {
+        FirebaseApp.initializeApp(this);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+    }
 
-
-//        new ProductManager(this).deleteProduct();
-
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            CartManger(user.getUid());
-        }
-
-        if (getIntent() != null && getIntent().hasExtra("LoadID")) {
-            if ("OrderView".equals(getIntent().getStringExtra("LoadID"))) {
-                Intent i = new Intent(MainActivity.this, OrderDetailsActivity.class);
-                i.putExtra("Type", "seeOrderNotification");
-                i.putExtra("orderID", getIntent().getStringExtra("orderId"));
-                startActivity(i);
-            }
-        }
-
-        loader(new HomeFragment(), "null");
+    private void setupUI() {
+        loadInitialFragment();
         requestNotificationPermission();
-
         binding.bottomNavigationView.setBackground(null);
-        binding.bottomNavigationView.setOnItemSelectedListener(item -> {
-            switch (item.getItemId()) {
-                case R.id.homeBtn:
-                    loader(new HomeFragment(), "HomeFragment");
-                    break;
-                case R.id.GoCategory:
-                    loader(new ProductWithSlideCategoryFragment(), "CategoryFragment");
-                    break;
-                case R.id.shoppingCartsBtn:
-                    loader(new ShoppingCartsFragment(), "ShoppingCartsFragment");
-                    break;
-                case R.id.moreBtn:
-                    loader(new MoreFragment(), "MoreFragment");
-                    break;
+    }
+
+    private void loadInitialFragment() {
+        loadFragment(new HomeFragment(), "HomeFragment");
+    }
+
+    private void handleIntent() {
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra(LOAD_ID)) {
+            if (ORDER_VIEW.equals(intent.getStringExtra(LOAD_ID))) {
+                openOrderDetails(intent.getStringExtra(ORDER_ID));
             }
+        }
+    }
+
+    private void openOrderDetails(String orderId) {
+        Intent intent = new Intent(this, OrderDetailsActivity.class);
+        intent.putExtra("Type", "seeOrderNotification");
+        intent.putExtra(ORDER_ID, orderId);
+        startActivity(intent);
+    }
+
+    private void setupBottomNavigation() {
+        binding.bottomNavigationView.setOnItemSelectedListener(item -> {
+            handleBottomNavigation(item.getItemId());
             return true;
         });
     }
 
-//    private void applySavedLanguage() {
-//        SharedPreferences preferences = getSharedPreferences("LanguagePrefs", Context.MODE_PRIVATE);
-//        String languageCode = preferences.getString("languageCode", "en");
-//        Locale locale = new Locale(languageCode);
-//        Locale.setDefault(locale);
-//        Configuration config = new Configuration(getResources().getConfiguration());
-//        config.setLocale(locale);
-//        Resources resources = getResources();
-//        resources.updateConfiguration(config, resources.getDisplayMetrics());
-//    }
-
-    private void CartManger(String id) {
-        CartDAOHelper databaseHelper = CartDAOHelper.getDB(this);
-        List<ShoppingCartFirebaseModelDAO> data = databaseHelper.ModelDAO().getAllModel();
-
-        for (ShoppingCartFirebaseModelDAO item : data) {
-            Log.i("MAIN", "CartManger: " + item.getProductId() + " QTY " + item.getProductSelectQuantity());
+    @SuppressLint("NonConstantResourceId")
+    private void handleBottomNavigation(int itemId) {
+        if (itemId == R.id.homeBtn) {
+            loadFragment(new HomeFragment(), "HomeFragment");
+        } else if (itemId == R.id.GoCategory) {
+            loadFragment(new ProductWithSlideCategoryFragment(), "CategoryFragment");
+        } else if (itemId == R.id.shoppingCartsBtn) {
+            loadFragment(new ShoppingCartsFragment(), "ShoppingCartsFragment");
+        } else if (itemId == R.id.moreBtn) {
+            loadFragment(new MoreFragment(), "MoreFragment");
         }
     }
 
-    public void ActionBarShow() {
+    public void showActionBar() {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null && !actionBar.isShowing()) {
             actionBar.show();
         }
+        updateStatusBarColor();
+    }
 
-        // Change Status Bar color
+    private void updateStatusBarColor() {
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.OrderYellowColor));
@@ -142,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_search) {
             openSearchFragment();
             return true;
@@ -151,11 +135,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void requestNotificationPermission() {
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                pushNotificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS);
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) 
+            != PackageManager.PERMISSION_GRANTED) {
+            pushNotificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS);
         }
+    }
+
+    private void handleNotificationPermissionResult(boolean isGranted) {
+        // Handle permission result if needed
     }
 
     private void openSearchFragment() {
@@ -165,11 +153,17 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
-    public void loader(Fragment fragment, String tag) {
+    public void loadFragment(Fragment fragment, String tag) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.loader, fragment, tag);
         transaction.addToBackStack(tag);
         transaction.commit();
-        ActionBarShow();
+        showActionBar();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        binding = null;
     }
 }

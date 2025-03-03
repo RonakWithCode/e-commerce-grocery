@@ -2,91 +2,166 @@ package com.ronosoft.alwarmart.Model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-
 import androidx.annotation.Nullable;
-
 import java.util.ArrayList;
 
-
 public class ProductModel implements Parcelable {
-    private boolean isAvailable; //
-    private String productId; // id
+    // Base fields
+    private boolean isAvailable;
+    private String productId;
     private String productName;
     private String productDescription;
-    private String Brand;
+    private String brand;
     private String category;
     private String subCategory;
     private double price;
     private double mrp;
-    private double discount; // this discount on product
-    private int stockCount; // Stock
-    private int minSelectableQuantity; // number of min select quantity of product
-    private int MaxSelectableQuantity; // number of max select quantity of product
-    private int SelectableQuantity; // number of max select quantity of product
+    private double purchasePrice;
+    private double discount;
+    private String discountType;
+    private int stockCount;
+    private int minSelectableQuantity;
+    private int maxSelectableQuantity;
+    private int selectableQuantity;
     private String weight;
     private String weightSIUnit;
-    private String productLife; // product life, expiry date
-    private String productType; // productType is eg home , etc
-    private String productIsFoodItem; // is veg or non veg or something else
-    private ArrayList<String> keywords; // for SEO
-    private ArrayList<String> ProductImage;
+    private String productType;
+    private String productIsFoodItem;
+    private String time;
+    private ArrayList<String> keywords;
+    private ArrayList<String> productImage;
     @Nullable
     private ArrayList<Variations> variations;
-
     private String barcode;
+    private String productLayoutType;
+
+    // Layout-specific fields
+    // Cloth
+    private String fabric;
+    private String fit;
+    private String color;
+    // Shoes
+    private String material;
+    private String closureType;
+    private String style;
+    private String availableColor;
+    // Grocery
+    private ArrayList<License> licenses;
+    private String productShelfLife;
+    private String productPackagingDetails;
+
+    // License inner class
+    public static class License implements Parcelable {
+        private String name;
+        private String code;
+
+        public License(){}
+
+        public License(String name, String code) {
+            this.name = name;
+            this.code = code;
+        }
+
+        protected License(Parcel in) {
+            name = in.readString();
+            code = in.readString();
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(name);
+            dest.writeString(code);
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<License> CREATOR = new Creator<License>() {
+            @Override
+            public License createFromParcel(Parcel in) {
+                return new License(in);
+            }
+
+            @Override
+            public License[] newArray(int size) {
+                return new License[size];
+            }
+        };
 
 
-    public ProductModel() {}
+        public String getName() {
+            return name;
+        }
 
-    public ProductModel(boolean isAvailable, String productId, String productName, String productDescription, String brand, String category, String subCategory, double price, double mrp, double discount, int stockCount, int minSelectableQuantity, int maxSelectableQuantity, String weight, String weightSIUnit, String productLife, String productType, String productIsFoodItem, ArrayList<String> keywords, ArrayList<String> productImage, @Nullable ArrayList<Variations> variations) {
-        this.isAvailable = isAvailable;
-        this.productId = productId;
-        this.productName = productName;
-        this.productDescription = productDescription;
-        Brand = brand;
-        this.category = category;
-        this.subCategory = subCategory;
-        this.price = price;
-        this.mrp = mrp;
-        this.discount = discount;
-        this.stockCount = stockCount;
-        this.minSelectableQuantity = minSelectableQuantity;
-        MaxSelectableQuantity = maxSelectableQuantity;
-        this.SelectableQuantity = minSelectableQuantity;
-        this.weight = weight;
-        this.weightSIUnit = weightSIUnit;
-        this.productLife = productLife;
-        this.productType = productType;
-        this.productIsFoodItem = productIsFoodItem;
-        this.keywords = keywords;
-        ProductImage = productImage;
-        this.variations = variations;
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getCode() {
+            return code;
+        }
+
+        public void setCode(String code) {
+            this.code = code;
+        }
     }
 
+    // Constants
+//    Cloth: "Cloth",
+//    Shoes: "Shoes",
+//    Grocery: "Grocery"
+    public static final String LAYOUT_TYPE_CLOTH = "Cloth";
+    public static final String LAYOUT_TYPE_SHOES = "Shoes";
+    public static final String LAYOUT_TYPE_GROCERY = "Grocery";
+
+    public static final String DISCOUNT_TYPE_PERCENTAGE = "Percentage";
+    public static final String DISCOUNT_TYPE_FLAT = "Flat Amount";
+    public static final String DISCOUNT_TYPE_NO_DISCOUNT = "No Discount";
+
+    // Default constructor
+    public ProductModel() {}
+
+    // Parcelable implementation
     protected ProductModel(Parcel in) {
         isAvailable = in.readByte() != 0;
         productId = in.readString();
         productName = in.readString();
         productDescription = in.readString();
-        Brand = in.readString();
+        brand = in.readString();
         category = in.readString();
         subCategory = in.readString();
         price = in.readDouble();
         mrp = in.readDouble();
+        purchasePrice = in.readDouble();
         discount = in.readDouble();
+        discountType = in.readString();
         stockCount = in.readInt();
         minSelectableQuantity = in.readInt();
-        MaxSelectableQuantity = in.readInt();
-        SelectableQuantity = in.readInt();
+        maxSelectableQuantity = in.readInt();
+        selectableQuantity = in.readInt();
         weight = in.readString();
         weightSIUnit = in.readString();
-        productLife = in.readString();
         productType = in.readString();
         productIsFoodItem = in.readString();
         keywords = in.createStringArrayList();
-        ProductImage = in.createStringArrayList();
+        productImage = in.createStringArrayList();
         variations = in.createTypedArrayList(Variations.CREATOR);
-
+        barcode = in.readString();
+        productLayoutType = in.readString();
+        time = in.readString();
+        // Layout-specific fields
+        fabric = in.readString();
+        fit = in.readString();
+        color = in.readString();
+        material = in.readString();
+        closureType = in.readString();
+        style = in.readString();
+        availableColor = in.readString();
+        licenses = in.createTypedArrayList(License.CREATOR);
+        productShelfLife = in.readString();
+        productPackagingDetails = in.readString();
     }
 
     @Override
@@ -95,26 +170,44 @@ public class ProductModel implements Parcelable {
         dest.writeString(productId);
         dest.writeString(productName);
         dest.writeString(productDescription);
-        dest.writeString(Brand);
+        dest.writeString(brand);
         dest.writeString(category);
         dest.writeString(subCategory);
+        dest.writeString(time);
         dest.writeDouble(price);
         dest.writeDouble(mrp);
+        dest.writeDouble(purchasePrice);
         dest.writeDouble(discount);
+        dest.writeString(discountType);
         dest.writeInt(stockCount);
         dest.writeInt(minSelectableQuantity);
-        dest.writeInt(MaxSelectableQuantity);
-        dest.writeInt(SelectableQuantity);
+        dest.writeInt(maxSelectableQuantity);
+        dest.writeInt(selectableQuantity);
         dest.writeString(weight);
         dest.writeString(weightSIUnit);
-        dest.writeString(productLife);
         dest.writeString(productType);
         dest.writeString(productIsFoodItem);
         dest.writeStringList(keywords);
-        dest.writeStringList(ProductImage);
+        dest.writeStringList(productImage);
         dest.writeTypedList(variations);
+        dest.writeString(barcode);
+        dest.writeString(productLayoutType);
 
+        // Layout-specific fields
+        dest.writeString(fabric);
+        dest.writeString(fit);
+        dest.writeString(color);
+        dest.writeString(material);
+        dest.writeString(closureType);
+        dest.writeString(style);
+        dest.writeString(availableColor);
+        dest.writeTypedList(licenses);
+        dest.writeString(productShelfLife);
+        dest.writeString(productPackagingDetails);
     }
+
+
+
 
     @Override
     public int describeContents() {
@@ -133,18 +226,9 @@ public class ProductModel implements Parcelable {
         }
     };
 
-    // Getter and Setter methods
 
     public boolean isAvailable() {
         return isAvailable;
-    }
-
-    public int getSelectableQuantity() {
-        return SelectableQuantity;
-    }
-
-    public void setSelectableQuantity(int selectableQuantity) {
-        SelectableQuantity = selectableQuantity;
     }
 
     public void setAvailable(boolean available) {
@@ -176,11 +260,11 @@ public class ProductModel implements Parcelable {
     }
 
     public String getBrand() {
-        return Brand;
+        return brand;
     }
 
     public void setBrand(String brand) {
-        Brand = brand;
+        this.brand = brand;
     }
 
     public String getCategory() {
@@ -215,12 +299,28 @@ public class ProductModel implements Parcelable {
         this.mrp = mrp;
     }
 
+    public double getPurchasePrice() {
+        return purchasePrice;
+    }
+
+    public void setPurchasePrice(double purchasePrice) {
+        this.purchasePrice = purchasePrice;
+    }
+
     public double getDiscount() {
         return discount;
     }
 
     public void setDiscount(double discount) {
         this.discount = discount;
+    }
+
+    public String getDiscountType() {
+        return discountType;
+    }
+
+    public void setDiscountType(String discountType) {
+        this.discountType = discountType;
     }
 
     public int getStockCount() {
@@ -240,11 +340,19 @@ public class ProductModel implements Parcelable {
     }
 
     public int getMaxSelectableQuantity() {
-        return MaxSelectableQuantity;
+        return maxSelectableQuantity;
     }
 
     public void setMaxSelectableQuantity(int maxSelectableQuantity) {
-        MaxSelectableQuantity = maxSelectableQuantity;
+        this.maxSelectableQuantity = maxSelectableQuantity;
+    }
+
+    public int getSelectableQuantity() {
+        return selectableQuantity;
+    }
+
+    public void setSelectableQuantity(int selectableQuantity) {
+        this.selectableQuantity = selectableQuantity;
     }
 
     public String getWeight() {
@@ -261,14 +369,6 @@ public class ProductModel implements Parcelable {
 
     public void setWeightSIUnit(String weightSIUnit) {
         this.weightSIUnit = weightSIUnit;
-    }
-
-    public String getProductLife() {
-        return productLife;
-    }
-
-    public void setProductLife(String productLife) {
-        this.productLife = productLife;
     }
 
     public String getProductType() {
@@ -296,21 +396,124 @@ public class ProductModel implements Parcelable {
     }
 
     public ArrayList<String> getProductImage() {
-        return ProductImage;
+        return productImage;
     }
 
     public void setProductImage(ArrayList<String> productImage) {
-        ProductImage = productImage;
+        this.productImage = productImage;
     }
 
+    @Nullable
     public ArrayList<Variations> getVariations() {
         return variations;
     }
 
-    public void setVariations(ArrayList<Variations> variations) {
+    public void setVariations(@Nullable ArrayList<Variations> variations) {
         this.variations = variations;
     }
 
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
+    }
+
+    public String getProductLayoutType() {
+        return productLayoutType;
+    }
+
+    public void setProductLayoutType(String productLayoutType) {
+        this.productLayoutType = productLayoutType;
+    }
+
+    public String getFabric() {
+        return fabric;
+    }
+
+    public void setFabric(String fabric) {
+        this.fabric = fabric;
+    }
+
+    public String getFit() {
+        return fit;
+    }
+
+    public void setFit(String fit) {
+        this.fit = fit;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public String getMaterial() {
+        return material;
+    }
+
+    public void setMaterial(String material) {
+        this.material = material;
+    }
+
+    public String getClosureType() {
+        return closureType;
+    }
+
+    public void setClosureType(String closureType) {
+        this.closureType = closureType;
+    }
+
+    public String getStyle() {
+        return style;
+    }
+
+    public void setStyle(String style) {
+        this.style = style;
+    }
+
+    public String getAvailableColor() {
+        return availableColor;
+    }
+
+    public void setAvailableColor(String availableColor) {
+        this.availableColor = availableColor;
+    }
 
 
+    public ArrayList<License> getLicenses() {
+        return licenses;
+    }
+
+    public void setLicenses(ArrayList<License> licenses) {
+        this.licenses = licenses;
+    }
+
+    public String getProductShelfLife() {
+        return productShelfLife;
+    }
+
+    public void setProductShelfLife(String productShelfLife) {
+        this.productShelfLife = productShelfLife;
+    }
+
+    public String getProductPackagingDetails() {
+        return productPackagingDetails;
+    }
+
+    public void setProductPackagingDetails(String productPackagingDetails) {
+        this.productPackagingDetails = productPackagingDetails;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
 }

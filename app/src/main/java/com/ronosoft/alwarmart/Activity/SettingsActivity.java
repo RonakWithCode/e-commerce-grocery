@@ -1,5 +1,6 @@
 package com.ronosoft.alwarmart.Activity;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -14,6 +15,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -113,6 +116,7 @@ public class SettingsActivity extends AppCompatActivity implements
         setTitle(pref.getTitle());
         return true;
     }
+
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
 
@@ -409,20 +413,82 @@ public class SettingsActivity extends AppCompatActivity implements
             });
         }
     }
-    public static class TermsConditionsFragment extends Fragment{
+
+    public static class DeveloperInformationFragment extends Fragment {
         TermsConditionsBinding binding;
 
+        @SuppressLint("SetJavaScriptEnabled")
         @Nullable
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            binding = TermsConditionsBinding.inflate(inflater,container,false);
+            binding = TermsConditionsBinding.inflate(inflater, container, false);
 
-            // Load the web page
-            String url = "LOAD MY PAGE ";
+            // Configure WebView settings
             WebSettings webSettings = binding.webView.getSettings();
-            webSettings.setJavaScriptEnabled(true); // Enable JavaScript if needed
-            binding.webView.loadUrl(url);
+            webSettings.setJavaScriptEnabled(true);
+            webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+            webSettings.setDomStorageEnabled(true);
+            
+            // Restrict navigation to only allowed domains
+            binding.webView.setWebViewClient(new WebViewClient() {
+                @Override
+                public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                    if (url.startsWith("https://www.alwarmart.in/")) {
+                        return false; // Allow navigation within alwarmart.in
+                    }
+                    return true; // Block navigation to other domains
+                }
+            });
+            
+            // Load terms and conditions page
+            binding.webView.loadUrl("https://www.alwarmart.in/developer-information");
+            
             return binding.getRoot();
+        }
+
+        @Override
+        public void onDestroyView() {
+            super.onDestroyView();
+            binding = null;
+        }
+    }
+
+    public static class TermsConditionsFragment extends Fragment {
+        TermsConditionsBinding binding;
+
+        @SuppressLint("SetJavaScriptEnabled")
+        @Nullable
+        @Override
+        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            binding = TermsConditionsBinding.inflate(inflater, container, false);
+
+            // Configure WebView settings
+            WebSettings webSettings = binding.webView.getSettings();
+            webSettings.setJavaScriptEnabled(true);
+            webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+            webSettings.setDomStorageEnabled(true);
+
+            // Restrict navigation to only allowed domains
+            binding.webView.setWebViewClient(new WebViewClient() {
+                @Override
+                public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                    if (url.startsWith("https://www.alwarmart.in/")) {
+                        return false; // Allow navigation within alwarmart.in
+                    }
+                    return true; // Block navigation to other domains
+                }
+            });
+
+            // Load terms and conditions page
+            binding.webView.loadUrl("https://www.alwarmart.in/terms-and-conditions");
+
+            return binding.getRoot();
+        }
+
+        @Override
+        public void onDestroyView() {
+            super.onDestroyView();
+            binding = null;
         }
     }
 
@@ -434,40 +500,104 @@ public class SettingsActivity extends AppCompatActivity implements
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             binding = AboutFragmentBinding.inflate(inflater,container,false);
 //            LOAD a WEB PAGE
+
+            // Configure WebView settings
+            WebSettings webSettings = binding.webView.getSettings();
+            webSettings.setJavaScriptEnabled(true);
+            webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+            webSettings.setDomStorageEnabled(true);
+
+            // Restrict navigation to only allowed domains
+            binding.webView.setWebViewClient(new WebViewClient() {
+                @Override
+                public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                    if (url.startsWith("https://www.alwarmart.in/")) {
+                        return false; // Allow navigation within alwarmart.in
+                    }
+                    return true; // Block navigation to other domains
+                }
+            });
+            binding.webView.loadUrl("www.alwarmart.in/about");
             return binding.getRoot();
         }
     }
 
-    public static class OpenSourceLicenses extends Fragment{
+    public static class OpenSourceLicenses extends Fragment {
+        private OpenSourceLicensesBinding binding;
+
+        @SuppressLint("SetJavaScriptEnabled")
         @Nullable
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            OpenSourceLicensesBinding binding;
-            binding = OpenSourceLicensesBinding.inflate(inflater,container,false);
-//            LOAD a WEB PAGE
+            binding = OpenSourceLicensesBinding.inflate(inflater, container, false);
+
+            // Configure WebView settings
+            WebSettings webSettings = binding.webView.getSettings();
+            webSettings.setJavaScriptEnabled(true);
+            webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+            webSettings.setDomStorageEnabled(true);
+
+            // Restrict navigation to only allowed domains
+            binding.webView.setWebViewClient(new WebViewClient() {
+                @Override
+                public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                    if (url.startsWith("https://www.alwarmart.in/")) {
+                        return false; // Allow navigation within alwarmart.in
+                    }
+                    return true; // Block navigation to other domains
+                }
+            });
+
+            // Load open source licenses page
+            binding.webView.loadUrl("https://www.alwarmart.in/open-source");
 
             return binding.getRoot();
         }
+
+        @Override
+        public void onDestroyView() {
+            super.onDestroyView();
+            binding = null;
+        }
     }
 
+    public static class PrivacyPolicyWebFragment extends Fragment {
+        private PrivacyPolicyWebBinding binding;
 
-
-    public static class PrivacyPolicyWebFragment extends Fragment{
         @Nullable
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//            privacy_policy_web
-            PrivacyPolicyWebBinding binding;
-            binding = PrivacyPolicyWebBinding.inflate(inflater,container,false);
-//            LOAD a WEB PAGE
+            binding = PrivacyPolicyWebBinding.inflate(inflater, container, false);
+
+            // Configure WebView settings
+            WebSettings webSettings = binding.webView.getSettings();
+            webSettings.setJavaScriptEnabled(true);
+            webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+            webSettings.setDomStorageEnabled(true);
+
+            // Restrict navigation to only allowed domains
+            binding.webView.setWebViewClient(new WebViewClient() {
+                @Override
+                public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                    if (url.startsWith("https://www.alwarmart.in/")) {
+                        return false; // Allow navigation within alwarmart.in
+                    }
+                    return true; // Block navigation to other domains
+                }
+            });
+
+            // Load privacy policy page
+            binding.webView.loadUrl("https://www.alwarmart.in/privacy-policy");
 
             return binding.getRoot();
         }
+
+        @Override
+        public void onDestroyView() {
+            super.onDestroyView();
+            binding = null;
+        }
     }
-
-
-
-
 
     public static class SettingAboutFragment extends PreferenceFragmentCompat{
         @Override

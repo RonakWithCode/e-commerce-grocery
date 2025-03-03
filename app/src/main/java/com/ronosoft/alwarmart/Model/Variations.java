@@ -5,24 +5,30 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
-
 public class Variations implements Parcelable {
     private String id;
     private String name;
-    private String weightWithSIUnit;
+    private String weight;
+    private String weightSIUnit;
+    private String image;
+
 
     public Variations() {}
 
-    public Variations(String id, String name, String weightWithSIUnit) {
+    public Variations(String id, String name, String weight, String weightSIUnit, String image) {
         this.id = id;
         this.name = name;
-        this.weightWithSIUnit = weightWithSIUnit;
+        this.weight = weight;
+        this.weightSIUnit = weightSIUnit;
+        this.image = image;
     }
 
     protected Variations(Parcel in) {
         id = in.readString();
         name = in.readString();
-        weightWithSIUnit = in.readString();
+        weight = in.readString();
+        weightSIUnit = in.readString();
+        image = in.readString();
     }
 
     public static final Creator<Variations> CREATOR = new Creator<Variations>() {
@@ -53,12 +59,28 @@ public class Variations implements Parcelable {
         this.name = name;
     }
 
-    public String getWeightWithSIUnit() {
-        return weightWithSIUnit;
+    public String getWeight() {
+        return weight;
     }
 
-    public void setWeightWithSIUnit(String weightWithSIUnit) {
-        this.weightWithSIUnit = weightWithSIUnit;
+    public void setWeight(String weight) {
+        this.weight = weight;
+    }
+
+    public String getWeightSIUnit() {
+        return weightSIUnit;
+    }
+
+    public void setWeightSIUnit(String weightSIUnit) {
+        this.weightSIUnit = weightSIUnit;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     @Override
@@ -70,6 +92,8 @@ public class Variations implements Parcelable {
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeString(id);
         dest.writeString(name);
-        dest.writeString(weightWithSIUnit);
+        dest.writeString(weight);
+        dest.writeString(weightSIUnit);
+        dest.writeString(image);
     }
 }

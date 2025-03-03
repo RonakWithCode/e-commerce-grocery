@@ -164,8 +164,11 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
         holder.binding.AddTOCart.setOnClickListener(view -> {
             if (IsLogin) {
+                ShoppingCartFirebaseModel shoppingCartFirebaseModel = new ShoppingCartFirebaseModel();
+                shoppingCartFirebaseModel =  new ShoppingCartFirebaseModel(data.getProductId(), data.getMinSelectableQuantity());
+
                 productManager.addToBothDatabase(
-                        new ShoppingCartFirebaseModel(data.getProductId(), data.getMinSelectableQuantity()),
+                        shoppingCartFirebaseModel,
                         new ProductManager.AddListenerForAddToBothInDatabase() {
                             @Override
                             public void added(ShoppingCartFirebaseModel shoppingCartFirebaseModel) {

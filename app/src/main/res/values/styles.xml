@@ -41,4 +41,13 @@
         <item name="cornerSize">8dp</item>
     </style>
     
+    <!-- Rounded top corners for variant images -->
+    <style name="RoundedTopCorners">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">@dimen/_8sdp</item>
+        <item name="cornerSizeTopRight">@dimen/_8sdp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
+    
 </resources>

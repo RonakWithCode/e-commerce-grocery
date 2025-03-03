@@ -39,19 +39,19 @@ public class ProductManager {
 
 
 
-    public void isProductInCart(String id,addListenerForIsProductInCart callback) {
-
-        ShoppingCartFirebaseModelDAO product =  databaseHelper.ModelDAO().getProductById(id);
-        if (product != null) {
-            // Product found
-            callback.FoundProduct(new ShoppingCartFirebaseModel(product.getProductId(), product.getProductSelectQuantity()));
-
-//            System.out.println("Product Name: " + product.getProductName());
-        } else {
-            callback.notFoundInCart();
-        }
-    }
-
+//    public void isProductInCart(String id,addListenerForIsProductInCart callback) {
+//
+//        ShoppingCartFirebaseModelDAO product =  databaseHelper.ModelDAO().getProductById(id);
+//        if (product != null) {
+//            // Product found
+//            callback.FoundProduct(new ShoppingCartFirebaseModel(product.getProductId(), product.getProductSelectQuantity()));
+//
+////            System.out.println("Product Name: " + product.getProductName());
+//        } else {
+//            callback.notFoundInCart();
+//        }
+//    }
+//
 
 
     public void addToBothDatabase(ShoppingCartFirebaseModel shoppingCartsProductModel,AddListenerForAddToBothInDatabase listener){

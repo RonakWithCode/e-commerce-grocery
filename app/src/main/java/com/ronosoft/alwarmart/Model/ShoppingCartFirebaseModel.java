@@ -4,7 +4,6 @@ package com.ronosoft.alwarmart.Model;
 public class ShoppingCartFirebaseModel {
     private String productId;
     private int productSelectQuantity;
-
     public ShoppingCartFirebaseModel() {
     }
 
@@ -28,4 +27,8 @@ public class ShoppingCartFirebaseModel {
     public void setProductSelectQuantity(int productSelectQuantity) {
         this.productSelectQuantity = productSelectQuantity;
     }
+
+
+
+
 }

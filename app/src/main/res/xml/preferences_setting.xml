@@ -48,12 +48,6 @@
         android:summary="Get assistance and support for the app."
         android:key="help_support" />
 
-    <!-- Terms and Conditions -->
-    <Preference
-        app:fragment="com.ronosoft.alwarmart.Activity.SettingsActivity$TermsConditionsFragment"
-        android:title="Terms and Conditions"
-        android:summary="Read the terms and conditions of using the app."
-        android:key="terms_conditions" />
 
     <!-- About -->
     <Preference

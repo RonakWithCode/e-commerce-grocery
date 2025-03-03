@@ -4,13 +4,11 @@
     <string name="accept_terms_error">Please accept the terms and conditions</string>
 
 
-    <string name="app_name">RK</string>
+    <string name="app_name">Alwar Mart</string>
     <string name="create_account">Create a new Account</string>
 
     <string name="name">Name</string>
     <string name="mail">Mail</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="accept_terms_and_conditions">Accept Terms and Conditions</string>
     <string name="read_more"><a href="https://crazy-studio-website.web.app/PrivacyPolicy.html">Read More</a></string>
@@ -186,7 +184,7 @@
     <string name="remove_item">Remove item</string>
     <string name="apply">apply</string>
     <string name="enter_coupon_code">Enter coupon code</string>
-    <string name="add">+add</string>
+    <string name="add">ADD</string>
     <string name="place_order">Place Order</string>
     <string name="cod_amp_amp_upi"><![CDATA[(COD) && UPI]]></string>
     <string name="pay_using">Pay using</string>
@@ -196,9 +194,9 @@
     <string name="full_address_area_street">Full Address Area, Street</string>
     <string name="e_g_near_hospital">E.g near hospital</string>
     <string name="landmark">Landmark</string>
-    <string name="rajasthan">rajasthan</string>
+    <string name="rajasthan">Rajasthan</string>
     <string name="state">State</string>
-    <string name="home_">home</string>
+    <string name="home_">Home</string>
     <string name="work">Work</string>
     <string name="alwar">Alwar</string>
     <string name="town_city">Town/City</string>

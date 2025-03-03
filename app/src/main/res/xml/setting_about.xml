@@ -22,6 +22,7 @@
         android:title="Privacy policy"
         app:fragment="com.ronosoft.alwarmart.Activity.SettingsActivity$PrivacyPolicyWebFragment"/>
     <Preference
+        app:fragment="com.ronosoft.alwarmart.Activity.SettingsActivity$DeveloperInformationFragment"
         android:icon="@drawable/item_license"
         android:title="Developer Information"/>
     <Preference

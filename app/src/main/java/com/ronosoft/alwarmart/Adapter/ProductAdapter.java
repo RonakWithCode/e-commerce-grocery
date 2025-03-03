@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +21,6 @@ import com.ronosoft.alwarmart.Model.ProductModel;
 import com.ronosoft.alwarmart.Model.ShoppingCartFirebaseModel;
 import com.ronosoft.alwarmart.R;
 import com.ronosoft.alwarmart.Services.AuthService;
-import com.ronosoft.alwarmart.databinding.ProductboxviewBinding;
 import com.ronosoft.alwarmart.databinding.RecommendationsViewBinding;
 import com.ronosoft.alwarmart.interfaceClass.onClickProductAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -99,7 +99,16 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
         } else {
             holder.binding.discountBadge.setVisibility(View.GONE);
         }
-//         Check if product is in cart and show quantity selector
+
+        // Handle delivery time badge
+        if (!TextUtils.isEmpty(product.getTime())) {
+            holder.binding.deliveryTimeContainer.setVisibility(View.VISIBLE);
+            holder.binding.deliveryTimeBadge.setText(formatDeliveryTime(product.getTime()));
+        } else {
+            holder.binding.deliveryTimeContainer.setVisibility(View.GONE);
+        }
+
+        // Check if product is in cart and show quantity selector
         productManager.observeCartItem(product.getProductId()).observe((LifecycleOwner) context, cartItem -> {
             if (cartItem != null) {
                 holder.binding.addToCart.setVisibility(View.GONE);
@@ -111,11 +120,25 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
             }
         });
 
+        if (product.getProductLayoutType().equals(ProductModel.LAYOUT_TYPE_SHOES) || product.getProductLayoutType().equals(ProductModel.LAYOUT_TYPE_CLOTH))
+        {
+            holder.binding.deliveryTimeContainer.setVisibility(View.VISIBLE);
+            holder.binding.deliveryTimeBadge.setVisibility(View.VISIBLE);
+            holder.binding.deliveryTimeBadge.setText(product.getTime());
+//            holder.binding.productImage.setImageResource(R.drawable.shoes);
+        }
         // Add to cart click listener
         holder.binding.addToCart.setOnClickListener(view -> {
             if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-                productManager.addToBothDatabase(
-                        new ShoppingCartFirebaseModel(product.getProductId(), product.getMinSelectableQuantity()),
+                ShoppingCartFirebaseModel shoppingCartFirebaseModel = new ShoppingCartFirebaseModel();
+                shoppingCartFirebaseModel =  new ShoppingCartFirebaseModel(product.getProductId(), product.getMinSelectableQuantity());
+
+                //                if (product.isProductIsShoes()) {
+//                    shoppingCartFirebaseModel =  new ShoppingCartFirebaseModel(product.getProductId(), product.getMinSelectableQuantity(),true,"UK8");
+//                }else {
+//                    shoppingCartFirebaseModel =  new ShoppingCartFirebaseModel(product.getProductId(), product.getMinSelectableQuantity(),false,null);
+//                }
+                productManager.addToBothDatabase(shoppingCartFirebaseModel,
                         new ProductManager.AddListenerForAddToBothInDatabase() {
                             @Override
                             public void added(ShoppingCartFirebaseModel shoppingCartFirebaseModel) {
@@ -133,6 +156,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
                 context.startActivity(new Intent(context, AuthMangerActivity.class));
             }
         });
+
+
 
         // Quantity adjustment listeners
         holder.binding.increaseQuantity.setOnClickListener(v -> {
@@ -176,6 +201,13 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductA
         } else {
             return String.format(Locale.getDefault(), "%.2f", price);
         }
+    }
+
+    private String formatDeliveryTime(String time) {
+        if (time == null || time.isEmpty()) {
+            return "NA";
+        }
+        return time + " MINS"; // Format as "30 MINS"
     }
 
     @Override

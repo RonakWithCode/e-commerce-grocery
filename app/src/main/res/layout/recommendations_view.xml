@@ -112,6 +112,7 @@
                     android:id="@+id/brand_name"
                     android:layout_width="0dp"
                     android:layout_weight="1"
+                    android:visibility="gone"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/_10ssp"
                     android:textColor="@color/gray"/>
@@ -124,6 +125,34 @@
                     android:numStars="5"
                     android:rating="4.5"/>
             </LinearLayout>
+            <LinearLayout
+                android:id="@+id/delivery_time_container"
+                android:layout_width="wrap_content"
+                android:background="@drawable/time_badge_background"
+                android:gravity="center_vertical"
+                android:paddingStart="@dimen/_6sdp"
+                android:paddingEnd="@dimen/_6sdp"
+                android:paddingTop="@dimen/_4sdp"
+                android:paddingBottom="@dimen/_4sdp"
+                android:visibility="gone"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="@dimen/_12sdp"
+                    android:layout_height="@dimen/_12sdp"
+                    android:src="@drawable/ic_clock"
+                    app:tint="@color/green_primary" />
+
+                <TextView
+                    android:id="@+id/delivery_time_badge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_4sdp"
+                    android:textColor="@color/green_primary"
+                    android:textSize="@dimen/_10ssp"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
 
             <!-- Product Name -->
             <TextView
@@ -177,7 +206,7 @@
                         android:id="@+id/add_to_cart"
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/_32sdp"
-                        android:text="ADD"
+                        android:text="@string/add"
                         android:textSize="@dimen/_12ssp"
                         app:cornerRadius="@dimen/_16sdp"/>
 

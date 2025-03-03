@@ -28,6 +28,7 @@ import com.bumptech.glide.request.target.Target;
 import com.ronosoft.alwarmart.Activity.AuthMangerActivity;
 import com.ronosoft.alwarmart.Activity.BrandActivity;
 import com.ronosoft.alwarmart.Adapter.DialogSliderAdapter;
+import com.ronosoft.alwarmart.Adapter.LicensesAdapter;
 import com.ronosoft.alwarmart.Adapter.ProductAdapter;
 import com.ronosoft.alwarmart.Adapter.SliderAdapter;
 import com.ronosoft.alwarmart.Adapter.VariantsAdapter;
@@ -49,6 +50,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+
+import io.noties.markwon.Markwon;
+import io.noties.markwon.html.HtmlPlugin;
+import io.noties.markwon.image.ImagesPlugin;
+import io.noties.markwon.linkify.LinkifyPlugin;
 
 public class ProductViewCard {
     Activity context;
@@ -89,8 +97,10 @@ public class ProductViewCard {
         put("Jar", "Jar");
         put("Unit", "Unit");
         put("Other", "Other");
-    }};
 
+
+    }};
+    ProductModel mainProduct;
 
     public ProductViewCard(Activity context1){
         context=context1;
@@ -99,28 +109,22 @@ public class ProductViewCard {
         FirebaseUser currentUser = auth.getCurrentUser();
         productManager = new ProductManager(context1);
         if (currentUser != null){
-//            String defaultUserName = ValuesHelper.DEFAULT_USER_NAME;
-//            String displayName = currentUser.getDisplayName() != null ? currentUser.getDisplayName() : "Hi user";
-//            String phoneNumber = currentUser.getPhoneNumber() != null ? currentUser.getPhoneNumber() : "No phone number";
             userId = currentUser.getUid();
         }
     }
     
     @SuppressLint("NotifyDataSetChanged")
     public void showProductViewDialog(ProductModel productModel, ArrayList<ProductModel> sameProducts) {
-//        ProductManager productManager = new ProductManager(context);
-//        Log.i(TAG, "showProductViewDialog: Product ID"+ productModel.getProductId());
-        String fullUnit = productModel.getWeightSIUnit();  // This will give you the full unit name like "Grams"
 
+        mainProduct = productModel;
+        String fullUnit = productModel.getWeightSIUnit();  // This will give you the full unit name like "Grams"
         String displayUnit = WEIGHT_SI_UNITS_ABBR.getOrDefault(fullUnit, fullUnit); // Default to full name if no abbreviation is found
 
         List<String> imageUrls = productModel.getProductImage(); // Add your image URLs here
         Dialog bottomSheetDialog = new Dialog(context);
         ProductViewDialogBinding productViewDialogBinding = ProductViewDialogBinding.inflate(context.getLayoutInflater());
         ViewPager2 viewPager = productViewDialogBinding.viewPager;
-        SliderAdapter sliderAdapter = new SliderAdapter(context, imageUrls, position -> {
-            showImageInDialog(position, imageUrls);
-        });
+        SliderAdapter sliderAdapter = new SliderAdapter(context, imageUrls, position -> showImageInDialog(position, imageUrls));
         viewPager.setAdapter(sliderAdapter);
 
 
@@ -128,55 +132,48 @@ public class ProductViewCard {
 
 
 
-        List<Variations> variationsList = new ArrayList<>();
-        ArrayList<ProductModel> productModels = new ArrayList<>();
-        VariantsAdapter variantsAdapter = new VariantsAdapter(context, variationsList, productModel.getProductId(), id -> {
-            boolean isTrue = false;
-            for (int i = 0; i < productModels.size(); i++) {
-                if (id.equals(productModels.get(i).getProductId())) {
-                    showProductViewDialog(productModels.get(i), sameProducts);
-                    isTrue = true;
+        ArrayList<Variations> variations = new ArrayList<>();
+        ArrayList<ProductModel> variationsProduct = new ArrayList<>();
+        VariantsAdapter variantsAdapter = new VariantsAdapter(context,variations , productModel.getProductId(), new VariantsAdapter.VariantsCallback() {
+            @Override
+            public void Product(String id) {
+
+                Optional<ProductModel> matchingProduct = variationsProduct.stream()
+                        .filter(product -> id.equals(product.getProductId()))
+                        .findFirst();
+
+                if (matchingProduct.isPresent()) {
+                    showProductViewDialog(matchingProduct.get(), sameProducts);
+                } else {
+
+                    // Optionally handle the case when the product is not found.
+
+
+//                    TODO:3/3/25 add a function to get the product from the database with
+
                 }
+
             }
-            if (!isTrue) {
-                if (!id.equals(productModel.getProductId())) {
-                    databaseService.getAllProductById(id, new DatabaseService.GetAllProductsModelCallback() {
-                        @Override
-                        public void onSuccess(ProductModel products) {
-                            if (sameProducts != null) {
-                                showProductViewDialog(products,sameProducts);
-                            }
-                        }
-                        @Override
-                        public void onError(String errorMessage) {
-
-                        }
-                    });
-                }
-            }
-        });
-
-
+        }, productModel.getProductLayoutType());
         RecyclerView variantsRecyclerView = productViewDialogBinding.variantsList;
         variantsRecyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
         variantsRecyclerView.setAdapter(variantsAdapter);
-        variationsList.add(new Variations(productModel.getProductId(),productModel.getMinSelectableQuantity()+" * "+productModel.getWeight() + " " + displayUnit,productModel.getPrice()+""));
-        variantsAdapter.notifyDataSetChanged();
-//        Product Variations
 
-        productViewDialogBinding.Price.setText("₹" + productModel.getPrice());
+        variations.add(new Variations(productModel.getProductId(),productModel.getPrice()+"",productModel.getWeight(),productModel.getWeightSIUnit(),productModel.getProductImage().get(0)));
 
-
-
-        if (productModel.getVariations() != null) {
-//            List<Variations> finalVariationsList = new ArrayList<>();
+        assert productModel.getVariations() != null;
+        if (!productModel.getVariations().isEmpty()) {
             for (int i = 0; i < productModel.getVariations().size(); i++) {
-                int finalI = i;
+
                 databaseService.getAllProductById(productModel.getVariations().get(i).getId(), new DatabaseService.GetAllProductsModelCallback() {
                     @Override
                     public void onSuccess(ProductModel oneProduct) {
-                        variationsList.add(new Variations(oneProduct.getProductId(),productModel.getVariations().get(finalI).getWeightWithSIUnit(), ""+oneProduct.getPrice()));
-                        productModels.add(oneProduct);
+//    public Variations(String variationId, String variationName, String weight, String weightSIUnit, String image) {
+
+                        variations.add(new Variations(oneProduct.getProductId(),""+oneProduct.getPrice(),oneProduct.getWeight(),oneProduct.getWeightSIUnit(),oneProduct.getProductImage().get(0)));
+                        variationsProduct.add(oneProduct);
+//                        variationsList.add(new Variations(oneProduct.getProductId(),productModel.getVariations().get(finalI).getWeightWithSIUnit(), ""+oneProduct.getPrice()));
+//                        productModels.add(oneProduct);
                         variantsAdapter.notifyDataSetChanged();
                     }
 
@@ -185,10 +182,30 @@ public class ProductViewCard {
                         Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show();
                     }
                 });
+
+
+
+
             }
-//            variationsList.addAll(finalVariationsList);
+            variantsAdapter.notifyDataSetChanged();
+
+
+
 
         }
+
+
+
+
+
+
+
+
+
+
+
+
+//        handleVariations(productModel, productViewDialogBinding, sameProducts, displayUnit);
 
 //        End Product Variations
 
@@ -224,6 +241,9 @@ public class ProductViewCard {
         });
 
 
+
+        productViewDialogBinding.Price.setText("₹" + productModel.getPrice());
+
 //        Set Brand with logo
         productViewDialogBinding.brandNameInBox.setText(productModel.getBrand());
         BrandService brandService = new BrandService(context);
@@ -246,46 +266,57 @@ public class ProductViewCard {
         });
 
         productViewDialogBinding.brandBox.setOnClickListener(view -> {
-            // Create an instance of SliderBrandFragment with parameters
-//            SliderBrandFragment sliderBrandFragment = SliderBrandFragment.newInstance(
-//                    productModel.getBrand()
-//                     // Pass the brand name
-//            );
-
-//            SliderBrandFragment fragment  = new SliderBrandFragment();
-//            Bundle bundle = new Bundle();
-//            bundle.putString("brand",productModel.getBrand());
-//            fragment.setArguments(bundle);
-//            AppCompatActivity activity = (AppCompatActivity) context;
-//            activity.getSupportFragmentManager().beginTransaction()
-//                    .replace(R.id.loader,fragment)
-//                    .addToBackStack("HomeFragment")
-//                    .commit();
-
             Intent intent = new Intent(context, BrandActivity.class);
             intent.putExtra("brand", productModel.getBrand());
-//            .startActivity
             context.startActivity(intent);
-//            bottomSheetDialog.dismiss();
-
-
         });
 
-//TODO
-
-// Now you can display `displayUnit` in your UI
         productViewDialogBinding.size.setText(productModel.getWeight() + " " + displayUnit);
 
 //        productViewDialogBinding.size.setText(productModel.getWeight() +" "+ productModel.getWeightSIUnit());
         productViewDialogBinding.MRP.setText(":" + productModel.getMrp());
         productViewDialogBinding.MRP.setPaintFlags(productViewDialogBinding.MRP.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
-        if (!productModel.getProductDescription().isEmpty())
-        {
+        if (!productModel.getProductDescription().isEmpty()) {
             productViewDialogBinding.Description.setVisibility(View.VISIBLE);
             productViewDialogBinding.DescriptionTextView.setVisibility(View.VISIBLE);
-            productViewDialogBinding.Description.setText(productModel.getProductDescription());
+
+            try {
+                // Initialize Markwon with all required plugins
+                Markwon markwon = Markwon.builder(context)
+                        .usePlugin(HtmlPlugin.create())
+                        .usePlugin(ImagesPlugin.create())
+                        .usePlugin(LinkifyPlugin.create())
+                        .build();
+
+                // Set the markdown/HTML content
+                markwon.setMarkdown(productViewDialogBinding.Description, productModel.getProductDescription());
+            } catch (Exception e) {
+                // Fallback to plain text if Markwon fails
+                productViewDialogBinding.Description.setText(productModel.getProductDescription());
+            }
         }
+        
+        // Handle Licenses if available
+        if (productModel.getLicenses() != null && !productModel.getLicenses().isEmpty()) {
+            productViewDialogBinding.LicensesTextView.setVisibility(View.VISIBLE);
+            productViewDialogBinding.Licenses.setVisibility(View.VISIBLE);
+            
+            // Create and set adapter for licenses
+            LicensesAdapter licensesAdapter = new LicensesAdapter(context, productModel.getLicenses());
+            productViewDialogBinding.Licenses.setAdapter(licensesAdapter);
+            
+            // Set fixed height based on number of items (to avoid scrolling issues in NestedScrollView)
+            ViewGroup.LayoutParams params = productViewDialogBinding.Licenses.getLayoutParams();
+            params.height = (int) (productModel.getLicenses().size() * context.getResources().getDimension(com.intuit.sdp.R.dimen._48sdp));
+            productViewDialogBinding.Licenses.setLayoutParams(params);
+        } else {
+            productViewDialogBinding.LicensesTextView.setVisibility(View.GONE);
+            productViewDialogBinding.Licenses.setVisibility(View.GONE);
+        }
+
+
+
 // TODO  Check the cart if product in cart it set a quantity selector
         productManager.observeCartItem(productModel.getProductId()).observe((LifecycleOwner) context, cartItem -> {
             if (cartItem != null) {
@@ -363,8 +394,8 @@ public class ProductViewCard {
 //   Show the in cat
         if (sameProducts.isEmpty()){
 
-//            productViewDialogBinding.product.setVisibility(View.GONE);
-//            productViewDialogBinding.itemCategory.setVisibility(View.GONE);
+            productViewDialogBinding.similarProductsRecyclerView.setVisibility(View.GONE);
+            productViewDialogBinding.similarProductsTitle.setVisibility(View.GONE);
         }else {
             LinearLayoutManager LayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
             productViewDialogBinding.similarProductsRecyclerView.setLayoutManager(LayoutManager);
@@ -374,32 +405,6 @@ public class ProductViewCard {
         }
 
 
-
-
-
-
-//        productViewDialogBinding.AddTOCart.setOnClickListener(v -> {
-//            if (FirebaseAuth.getInstance().getCurrentUser()!=null) {
-//                productManager.addToBothDatabase(new ShoppingCartFirebaseModel(productModel.getProductId(), productModel.getMinSelectableQuantity()), new ProductManager.AddListenerForAddToBothInDatabase() {
-//                    @Override
-//                    public void added(ShoppingCartFirebaseModel shoppingCartFirebaseModel) {
-//                        productViewDialogBinding.AddTOCart.setVisibility(View.GONE);
-//                        productViewDialogBinding.quantityBox.setVisibility(View.VISIBLE);
-//                    }
-//                    @Override
-//                    public void failure(Exception e) {
-//                        productViewDialogBinding.AddTOCart.setVisibility(View.VISIBLE);
-//                        productViewDialogBinding.quantityBox.setVisibility(View.GONE);
-//                        Toast.makeText(context, "check your network connection and try again ", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//
-////            addToCart(productModel,productViewDialogBinding.AddTOCart,bottomSheetDialog,productViewDialogBinding.quantityBox);
-//            }else {
-//                context.startActivity(new Intent(context, AuthMangerActivity.class));
-//            }
-//
-//        });
 
 
 
@@ -452,7 +457,7 @@ public class ProductViewCard {
                 productViewDialogBinding.quantity.setText(String.valueOf(newQty));
                 productManager.UpdateCartQuantityById(userId, productModel.getProductId(), newQty);
             } else {
-                String message = String.format("Maximum quantity available: %d", maxAllowed);
+                @SuppressLint("DefaultLocale") String message = String.format("Maximum quantity available: %d", maxAllowed);
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
             }
         });
@@ -477,7 +482,7 @@ public class ProductViewCard {
 
 
         bottomSheetDialog.setContentView(productViewDialogBinding.getRoot());
-        bottomSheetDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        Objects.requireNonNull(bottomSheetDialog.getWindow()).setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         bottomSheetDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         bottomSheetDialog.getWindow().getAttributes().windowAnimations = R.style.bottom_sheet_dialogAnimation;
         bottomSheetDialog.getWindow().setGravity(Gravity.BOTTOM);
@@ -494,9 +499,7 @@ public class ProductViewCard {
 //        LinearLayoutManager layoutManager = new LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false);
         DialogSliderAdapter dialogAdapter = new DialogSliderAdapter(context, imageUrls);
 //        dialogViewPager.setLayoutManager(layoutManager);
-        dialogBinding.getRoot().setOnClickListener(v -> {
-            dialog.dismiss();
-        });
+        dialogBinding.getRoot().setOnClickListener(v -> dialog.dismiss());
 //        dialogBinding.close.setOnClickListener(v->{
 //            dialog.dismiss();
 //        });

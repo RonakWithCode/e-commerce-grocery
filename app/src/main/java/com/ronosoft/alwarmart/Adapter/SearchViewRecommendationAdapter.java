@@ -101,7 +101,11 @@ public class SearchViewRecommendationAdapter extends RecyclerView.Adapter<Search
         holder.binding.addToCartButton.setOnClickListener(v -> {
             if (FirebaseAuth.getInstance().getCurrentUser() != null) {
                 loadingDialog.startLoadingDialog(); // Show loading dialog
-                productManager.addToBothDatabase(new ShoppingCartFirebaseModel(model.getProductId(), model.getMinSelectableQuantity()), new ProductManager.AddListenerForAddToBothInDatabase() {
+                ShoppingCartFirebaseModel shoppingCartFirebaseModel = new ShoppingCartFirebaseModel();
+                shoppingCartFirebaseModel =  new ShoppingCartFirebaseModel(model.getProductId(), model.getMinSelectableQuantity());
+
+
+                productManager.addToBothDatabase(shoppingCartFirebaseModel, new ProductManager.AddListenerForAddToBothInDatabase() {
                     @Override
                     public void added(ShoppingCartFirebaseModel shoppingCartFirebaseModel) {
                         holder.binding.addToCartButton.setVisibility(View.GONE);

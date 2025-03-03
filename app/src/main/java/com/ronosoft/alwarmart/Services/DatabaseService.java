@@ -198,6 +198,7 @@ public class DatabaseService {
 
 
     public void getAllProductById(String id, GetAllProductsModelCallback callback) {
+        Log.i("DATABASE GETINNG PRODUCT BY ID ", "getAllProductById: "+id);
         if (id != null) {
             database.collection("Product").document(id).get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
