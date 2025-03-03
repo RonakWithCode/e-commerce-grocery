@@ -1,9 +1,12 @@
 package com.ronosoft.alwarmart.Model;
 
+
+
 import android.os.Parcel;
 import android.os.Parcelable;
 import androidx.annotation.Nullable;
 import java.util.ArrayList;
+
 
 public class ProductModel implements Parcelable {
     // Base fields

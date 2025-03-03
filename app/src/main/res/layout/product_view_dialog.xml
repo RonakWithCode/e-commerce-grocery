@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout 
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#80000000">
-
-
 
     <!-- Close Button -->
     <com.google.android.material.card.MaterialCardView
@@ -304,7 +302,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:padding="@dimen/_8sdp">
-                        
+
                         <ImageView
                             android:layout_width="@dimen/_24sdp"
                             android:layout_height="@dimen/_24sdp"
@@ -340,7 +338,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:padding="@dimen/_8sdp">
-                        
+
                         <ImageView
                             android:layout_width="@dimen/_24sdp"
                             android:layout_height="@dimen/_24sdp"
@@ -376,7 +374,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:padding="@dimen/_8sdp">
-                        
+
                         <ImageView
                             android:layout_width="@dimen/_24sdp"
                             android:layout_height="@dimen/_24sdp"
@@ -412,7 +410,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:padding="@dimen/_8sdp">
-                        
+
                         <ImageView
                             android:layout_width="@dimen/_24sdp"
                             android:layout_height="@dimen/_24sdp"
@@ -448,7 +446,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:padding="@dimen/_8sdp">
-                        
+
                         <ImageView
                             android:layout_width="@dimen/_24sdp"
                             android:layout_height="@dimen/_24sdp"

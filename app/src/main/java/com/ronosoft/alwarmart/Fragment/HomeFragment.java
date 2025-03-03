@@ -27,8 +27,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewbinding.ViewBinding;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.GetTokenResult;
 import com.ronosoft.alwarmart.Adapter.HomeCategoryAdapter;
 import com.ronosoft.alwarmart.Adapter.HomeProductAdapter;
@@ -58,6 +56,7 @@ import org.imaginativeworld.whynotimagecarousel.model.CarouselItem;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
@@ -88,22 +87,20 @@ public class HomeFragment extends Fragment {
             String phoneNumber = "No phone number";
             binding.address.setText(phoneNumber);
 
-            currentUser.getIdToken(true).addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
-                @Override
-                public void onComplete(@NonNull Task<GetTokenResult> task) {
-                    if (task.isSuccessful()){
-                        GetTokenResult tokenResult = task.getResult();
-                        if (tokenResult != null) {
-                            // Get additional claims
-                            Object phone = tokenResult.getClaims().get("phone_number"); // Example: Custom role claim
+            currentUser.getIdToken(true).addOnCompleteListener(task -> {
+                if (task.isSuccessful()){
+                    GetTokenResult tokenResult = task.getResult();
+                    if (tokenResult != null) {
+                        // Get additional claims
+                        Object phone = tokenResult.getClaims().get("phone_number"); // Example: Custom role claim
 //                            Object admin = tokenResult.getClaims().get("admin"); // Example: Admin claim
-                            Log.i("HomeFragmentTAG", "onComplete: "+phone);
-                            binding.address.setText(phone.toString());
+                        Log.i("HomeFragmentTAG", "onComplete: "+phone);
+                        assert phone != null;
+                        binding.address.setText(phone.toString());
 
-                        }
+                    }
 
-                        }
-                }
+                    }
             });
 
 //            String phoneNumber = currentUser.getPhoneNumber() != null ? currentUser.getPhoneNumber() : "No phone number";
@@ -179,7 +176,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 // Adjust the scrolling speed by multiplying dy (vertical scroll amount) with a factor
-                int newDy = (int) (dy * 2); // Increase scrolling speed by multiplying with a factor (e.g., 1.5)
+                int newDy = dy * 2; // Increase scrolling speed by multiplying with a factor (e.g., 1.5)
                 super.onScrolled(recyclerView, dx, newDy);
             }
         });
@@ -620,7 +617,7 @@ public class HomeFragment extends Fragment {
 
         HomeProductBottomSheetDialog.setContentView(productViewDialogBinding.getRoot());
 
-        HomeProductBottomSheetDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        Objects.requireNonNull(HomeProductBottomSheetDialog.getWindow()).setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         HomeProductBottomSheetDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         HomeProductBottomSheetDialog.getWindow().getAttributes().windowAnimations = R.style.bottom_sheet_dialogAnimation;
         HomeProductBottomSheetDialog.getWindow().setGravity(Gravity.BOTTOM);

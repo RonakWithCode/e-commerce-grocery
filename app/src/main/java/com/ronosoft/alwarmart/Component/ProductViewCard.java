@@ -58,6 +58,7 @@ import io.noties.markwon.html.HtmlPlugin;
 import io.noties.markwon.image.ImagesPlugin;
 import io.noties.markwon.linkify.LinkifyPlugin;
 
+
 public class ProductViewCard {
     Activity context;
     DatabaseService databaseService;
@@ -162,38 +163,33 @@ public class ProductViewCard {
         variations.add(new Variations(productModel.getProductId(),productModel.getPrice()+"",productModel.getWeight(),productModel.getWeightSIUnit(),productModel.getProductImage().get(0)));
 
         assert productModel.getVariations() != null;
+
         if (!productModel.getVariations().isEmpty()) {
             for (int i = 0; i < productModel.getVariations().size(); i++) {
-
-                databaseService.getAllProductById(productModel.getVariations().get(i).getId(), new DatabaseService.GetAllProductsModelCallback() {
-                    @Override
-                    public void onSuccess(ProductModel oneProduct) {
-//    public Variations(String variationId, String variationName, String weight, String weightSIUnit, String image) {
-
-                        variations.add(new Variations(oneProduct.getProductId(),""+oneProduct.getPrice(),oneProduct.getWeight(),oneProduct.getWeightSIUnit(),oneProduct.getProductImage().get(0)));
-                        variationsProduct.add(oneProduct);
-//                        variationsList.add(new Variations(oneProduct.getProductId(),productModel.getVariations().get(finalI).getWeightWithSIUnit(), ""+oneProduct.getPrice()));
-//                        productModels.add(oneProduct);
-                        variantsAdapter.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onError(String errorMessage) {
-                        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-
-
-
+                databaseService.getAllProductById(
+                        productModel.getVariations().get(i).getId(),
+                        new DatabaseService.GetAllProductsModelCallback() {
+                            @Override
+                            public void onSuccess(ProductModel oneProduct) {
+                                variations.add(new Variations(
+                                        oneProduct.getProductId(),
+                                        String.valueOf(oneProduct.getPrice()),
+                                        oneProduct.getWeight(),
+                                        oneProduct.getWeightSIUnit(),
+                                        oneProduct.getProductImage().get(0)
+                                ));
+                                variationsProduct.add(oneProduct);
+                                variantsAdapter.notifyDataSetChanged(); // Update adapter after each successful load
+                            }
+                            @Override
+                            public void onError(String errorMessage) {
+                                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                );
             }
-            variantsAdapter.notifyDataSetChanged();
-
-
-
-
+            // Remove notifyDataSetChanged() call here if already handled inside callbacks.
         }
-
 
 
 
@@ -239,8 +235,6 @@ public class ProductViewCard {
                 productViewDialogBinding.seeMoreButton.setVisibility(View.GONE);
             }
         });
-
-
 
         productViewDialogBinding.Price.setText("₹" + productModel.getPrice());
 
@@ -390,23 +384,22 @@ public class ProductViewCard {
 
 
 
+        ArrayList<ProductModel> similarProducts = new ArrayList<>(sameProducts);
 
-//   Show the in cat
-        if (sameProducts.isEmpty()){
+// Remove the current product from the copy only
+        similarProducts.remove(productModel);
 
+// Now, set up your adapter with this new list
+        if (similarProducts.isEmpty()) {
             productViewDialogBinding.similarProductsRecyclerView.setVisibility(View.GONE);
             productViewDialogBinding.similarProductsTitle.setVisibility(View.GONE);
-        }else {
-            LinearLayoutManager LayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
-            productViewDialogBinding.similarProductsRecyclerView.setLayoutManager(LayoutManager);
-            productViewDialogBinding.similarProductsRecyclerView.setAdapter(new ProductAdapter(sameProducts, this::showProductViewDialog,context,"Main"));
-            sameProducts.remove(productModel);
-
+        } else {
+            LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+            productViewDialogBinding.similarProductsRecyclerView.setLayoutManager(layoutManager);
+            productViewDialogBinding.similarProductsRecyclerView.setAdapter(
+                    new ProductAdapter(similarProducts, this::showProductViewDialog, context, "Main")
+            );
         }
-
-
-
-
 
 
         productViewDialogBinding.AddTOCart.setOnClickListener(view -> {
