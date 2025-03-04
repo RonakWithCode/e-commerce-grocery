@@ -7,6 +7,8 @@
     android:layout_height="wrap_content"
     android:background="#80000000">
 
+
+
     <!-- Close Button -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/close_button_container"
