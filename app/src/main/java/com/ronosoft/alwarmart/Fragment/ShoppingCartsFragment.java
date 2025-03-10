@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ronosoft.alwarmart.Activity.AuthMangerActivity;
 import com.ronosoft.alwarmart.Activity.OderActivity;
 import com.ronosoft.alwarmart.Adapter.ProductAdapter;
-import com.ronosoft.alwarmart.Adapter.RecommendationsAdapter;
 import com.ronosoft.alwarmart.Adapter.ShoppingCartsAdapter;
 import com.ronosoft.alwarmart.Component.ProductViewCard;
 import com.ronosoft.alwarmart.HelperClass.ShoppingCartHelper;
@@ -28,9 +27,7 @@ import com.ronosoft.alwarmart.Services.AuthService;
 import com.ronosoft.alwarmart.Services.DatabaseService;
 import com.ronosoft.alwarmart.Services.RecommendationSystemService;
 import com.ronosoft.alwarmart.databinding.FragmentShoppingCartsBinding;
-import com.ronosoft.alwarmart.interfaceClass.RecommendationsInterface;
 import com.ronosoft.alwarmart.interfaceClass.ShoppingCartsInterface;
-import com.ronosoft.alwarmart.interfaceClass.onClickProductAdapter;
 
 import java.util.ArrayList;
 
@@ -169,19 +166,30 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
 
     private void setupRecommendationsRecyclerView(ArrayList<ProductModel> recommendations) {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(
-            requireContext(), 
-            LinearLayoutManager.HORIZONTAL, 
+            requireContext(),
+            LinearLayoutManager.HORIZONTAL,
             false
         );
         binding.Recommendations.setLayoutManager(layoutManager);
-        
+
+//        ProductAdapter adapter = new ProductAdapter(
+//            recommendations,
+//            (product, similarProducts) -> new ProductViewCard(requireActivity())
+//                .showProductViewDialog(product, similarProducts),
+//            requireContext(),
+//            ""
+//        );
+
+
         ProductAdapter adapter = new ProductAdapter(
-            recommendations,
-            (product, similarProducts) -> new ProductViewCard(requireActivity())
-                .showProductViewDialog(product, similarProducts),
-            requireContext(),
-            ""
+                this,
+                recommendations,
+                (ProductModel product, ArrayList<ProductModel> similarProducts) ->
+                        new ProductViewCard(requireActivity()).showProductViewDialog(product, similarProducts),
+                requireContext()
         );
+
+
         binding.Recommendations.setAdapter(adapter);
     }
 

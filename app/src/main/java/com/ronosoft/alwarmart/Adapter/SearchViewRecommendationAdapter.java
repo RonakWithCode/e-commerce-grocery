@@ -151,7 +151,7 @@ public class SearchViewRecommendationAdapter extends RecyclerView.Adapter<Search
                 holder.binding.productQty.setText(String.valueOf(model.getSelectableQuantity()));
             } else if (quantity == minSelected) {
                 loadingDialog.startLoadingDialog(); // Show loading dialog
-                productManager.RemoveCartProductById(new AuthService().getUserId(), model.getProductId());
+                productManager.RemoveCartProductById(model.getProductId());
                 holder.binding.addToCartButton.setVisibility(View.VISIBLE);
                 holder.binding.productQtyLayout.setVisibility(View.GONE);
                 loadingDialog.dismissDialog(); // Dismiss loading dialog

@@ -30,17 +30,17 @@ public class ProductFilterFragment extends Fragment implements onClickProductAda
     private String category;
     private ProductAdapter productAdapter;
     private ArrayList<ProductModel> model;
+
     public ProductFilterFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             category = getArguments().getString(FILTER);
-        }else {
+        } else {
             requireActivity().finish();
         }
     }
@@ -48,7 +48,7 @@ public class ProductFilterFragment extends Fragment implements onClickProductAda
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        binding = FragmentProductFilterBinding.inflate(inflater,container,false);
+        binding = FragmentProductFilterBinding.inflate(inflater, container, false);
         ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
@@ -56,28 +56,22 @@ public class ProductFilterFragment extends Fragment implements onClickProductAda
         binding.titleSpinner.setText(category);
         getProduct();
 
-        binding.search.setOnClickListener(view ->{
+        binding.search.setOnClickListener(view -> {
             requireActivity().getSupportFragmentManager().beginTransaction()
                     .replace(R.id.loader, new SearchFragment())
                     .addToBackStack("ProductFilterFragment")
                     .commit();
         });
 
-        binding.orderDetailsViewBack.setOnClickListener(back-> requireActivity().onBackPressed());
-
-
-
-
-
-
+        binding.orderDetailsViewBack.setOnClickListener(back -> requireActivity().onBackPressed());
 
         return binding.getRoot();
-
     }
 
     private void getProduct() {
         model = new ArrayList<>();
-        productAdapter = new ProductAdapter(model, this, requireContext(), "Main");
+        // Pass getViewLifecycleOwner() as the first parameter.
+        productAdapter = new ProductAdapter(getViewLifecycleOwner(), model, this, requireContext());
         GridLayoutManager layoutManager = new GridLayoutManager(requireContext(), 2);
         binding.ProductLIST.setAdapter(productAdapter);
         binding.ProductLIST.setLayoutManager(layoutManager);
@@ -103,7 +97,6 @@ public class ProductFilterFragment extends Fragment implements onClickProductAda
                 });
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
@@ -121,10 +114,6 @@ public class ProductFilterFragment extends Fragment implements onClickProductAda
             actionBar.show();
         }
     }
-    
-
-
-
 
     @Override
     public void onClick(ProductModel productModel, ArrayList<ProductModel> sameProducts) {
@@ -133,10 +122,8 @@ public class ProductFilterFragment extends Fragment implements onClickProductAda
         bundle.putParcelable("productDetails", productModel);
         ProductDetailsFragment productDetailsFragment = new ProductDetailsFragment();
         productDetailsFragment.setArguments(bundle);
-//        productDetailsFragment.setArguments(bundle);
-        transaction.replace(R.id.loader,productDetailsFragment,"ProductFilterFragment");
+        transaction.replace(R.id.loader, productDetailsFragment, "ProductFilterFragment");
         transaction.addToBackStack("ProductFilterFragment");
         transaction.commit();
-
     }
 }

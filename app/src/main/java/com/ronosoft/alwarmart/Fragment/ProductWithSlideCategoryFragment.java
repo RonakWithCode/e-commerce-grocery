@@ -2,14 +2,18 @@ package com.ronosoft.alwarmart.Fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -26,17 +30,18 @@ import com.ronosoft.alwarmart.databinding.FragmentProductWithSlideCategoryBindin
 import java.util.ArrayList;
 
 public class ProductWithSlideCategoryFragment extends Fragment {
+
     private FragmentProductWithSlideCategoryBinding binding;
     private ProductAdapter productAdapter;
     private SlideCategoryAdapter categoryAdapter;
     private DatabaseService databaseService;
     private ArrayList<ProductModel> productModels;
     private ArrayList<ProductCategoryModel> categoryModels;
-    private String currentFilter;
-    
+    private String currentFilter = "no";
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                           Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         binding = FragmentProductWithSlideCategoryBinding.inflate(inflater, container, false);
         initializeViews();
         setupAdapters();
@@ -50,21 +55,26 @@ public class ProductWithSlideCategoryFragment extends Fragment {
         productModels = new ArrayList<>();
         categoryModels = new ArrayList<>();
         databaseService = new DatabaseService();
-        currentFilter = getArguments() != null ? getArguments().getString("filter", "no") : "no";
+        if (getArguments() != null) {
+            currentFilter = getArguments().getString("filter", "no");
+        }
     }
 
     private void setupAdapters() {
-        // Setup category adapter
-        categoryAdapter = new SlideCategoryAdapter(categoryModels, requireContext(), 
-            productModel -> loadProductByCategory(productModel.getTag()));
-        binding.slideView.setLayoutManager(new LinearLayoutManager(getContext()));
+        // Initialize and set category adapter
+        categoryAdapter = new SlideCategoryAdapter(categoryModels, requireContext(),
+                productCategory -> loadProductByCategory(productCategory.getTag()));
+        binding.slideView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         binding.slideView.setAdapter(categoryAdapter);
 
-        // Setup product adapter
-        productAdapter = new ProductAdapter(productModels, 
-            (productModel, sameProducts) -> new ProductViewCard(getActivity())
-                .showProductViewDialog(productModel, sameProducts), 
-            requireContext(), "main");
+        // Initialize and set product adapter; using getViewLifecycleOwner() for LiveData observation
+        productAdapter = new ProductAdapter(
+                getViewLifecycleOwner(),
+                productModels,
+                (ProductModel productModel, ArrayList<ProductModel> sameProducts) ->
+                        new ProductViewCard(getActivity()).showProductViewDialog(productModel, sameProducts),
+                requireContext()
+        );
         binding.Products.setLayoutManager(new GridLayoutManager(requireContext(), 2));
         binding.Products.setAdapter(productAdapter);
     }
@@ -82,18 +92,15 @@ public class ProductWithSlideCategoryFragment extends Fragment {
             @Override
             public void onSuccess(ArrayList<ProductCategoryModel> categories) {
                 if (!isAdded()) return;
-                
                 categoryModels.clear();
                 categoryModels.addAll(categories);
                 categoryAdapter.notifyDataSetChanged();
-                
                 if (categories.isEmpty()) {
                     showError("No categories found");
                     return;
                 }
-
-                String categoryToLoad = currentFilter.equals("no") ? 
-                    categories.get(0).getTag() : currentFilter;
+                String categoryToLoad = currentFilter.equals("no") ?
+                        categories.get(0).getTag() : currentFilter;
                 loadProductByCategory(categoryToLoad);
             }
 
@@ -111,12 +118,10 @@ public class ProductWithSlideCategoryFragment extends Fragment {
             @Override
             public void onSuccess(ArrayList<ProductModel> products) {
                 if (!isAdded()) return;
-                
                 productModels.clear();
                 productModels.addAll(products);
                 productAdapter.notifyDataSetChanged();
                 binding.title.setText(category);
-                
                 hideLoading();
                 if (products.isEmpty()) {
                     showError("No products found in this category");
@@ -135,6 +140,7 @@ public class ProductWithSlideCategoryFragment extends Fragment {
         loadInitialData();
     }
 
+    // Helper methods for UI feedback
     private void showLoading() {
         binding.loadingProgress.setVisibility(View.VISIBLE);
         binding.errorState.setVisibility(View.GONE);
@@ -152,9 +158,11 @@ public class ProductWithSlideCategoryFragment extends Fragment {
     }
 
     private void hideActionBar() {
-        ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.hide();
+        if (getActivity() instanceof AppCompatActivity) {
+            ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.hide();
+            }
         }
     }
 
@@ -165,34 +173,8 @@ public class ProductWithSlideCategoryFragment extends Fragment {
     }
 
     private void openSearchFragment() {
-        // Create bundle to pass current products if needed
-//        Bundle bundle = new Bundle();
-//        bundle.putParcelableArrayList("model", productModels);
-//
-//        // Create and navigate to search fragment
-//        SearchFragment searchFragment = new SearchFragment();
-//        searchFragment.setArguments(bundle);
-//
-//        // Replace current fragment with search fragment
-//        if (getActivity() != null) {
-//            getActivity().getSupportFragmentManager()
-//                .beginTransaction()
-////                .setCustomAnimations(
-////                    R.anim.slide_in_right,  // enter
-////                    R.anim.slide_out_left,   // exit
-////                    R.anim.slide_in_left,    // popEnter
-////                    R.anim.slide_out_right   // popExit
-////                )
-//                .replace(R.id.fragment_container, searchFragment)
-//                .addToBackStack(null)
-//                .commit();
-//        }
-
-
-
         Intent intent = new Intent(requireContext(), FragmentLoader.class);
-        intent.putExtra("LoadID","search");
-//        intent.putParcelableArrayListExtra("model",productModel);
+        intent.putExtra("LoadID", "search");
         startActivity(intent);
     }
 

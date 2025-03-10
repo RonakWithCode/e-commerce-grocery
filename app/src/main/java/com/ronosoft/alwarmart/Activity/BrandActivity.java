@@ -1,6 +1,5 @@
 package com.ronosoft.alwarmart.Activity;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -21,14 +20,12 @@ import com.ronosoft.alwarmart.databinding.ActivityBrandBinding;
 import java.util.ArrayList;
 
 public class BrandActivity extends AppCompatActivity {
-    ActivityBrandBinding binding;
+    private ActivityBrandBinding binding;
     private static final String ARG_BRAND = "brand";
-    private static final String TAG = "BrandActivity";
-    private String BrandName;
-    ArrayList<ProductModel> productModel;
-    DatabaseService databaseService;
-    BrandService brandService;
-    ProductAdapter productAdapter;
+    private String brandName;
+    private DatabaseService databaseService;
+    private BrandService brandService;
+    private ProductAdapter productAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,15 +40,13 @@ public class BrandActivity extends AppCompatActivity {
     }
 
     private void initializeComponents() {
-        BrandName = getIntent().getStringExtra(ARG_BRAND);
-        if (BrandName == null) {
+        brandName = getIntent().getStringExtra(ARG_BRAND);
+        if (brandName == null) {
             finish();
             return;
         }
-        
         databaseService = new DatabaseService();
         brandService = new BrandService(this);
-        productModel = new ArrayList<>();
     }
 
     private void setupListeners() {
@@ -66,7 +61,7 @@ public class BrandActivity extends AppCompatActivity {
     }
 
     private void loadBrandData() {
-        brandService.getAllBrandWithIconsById(BrandName, new BrandService.addBrandsByIdListener() {
+        brandService.getAllBrandWithIconsById(brandName, new BrandService.addBrandsByIdListener() {
             @Override
             public void onFailure(Exception error) {
                 runOnUiThread(() -> {
@@ -88,9 +83,9 @@ public class BrandActivity extends AppCompatActivity {
     private void updateBrandUI(BrandModel brandModel) {
         binding.brandName.setText(brandModel.getBrandName());
         Glide.with(this)
-            .load(brandModel.getBrandIcon())
-            .placeholder(R.drawable.product_image_shimmee_effect)
-            .into(binding.brandIcon);
+                .load(brandModel.getBrandIcon())
+                .placeholder(R.drawable.product_image_shimmee_effect)
+                .into(binding.brandIcon);
     }
 
     private void getProducts(BrandModel brandModel) {
@@ -98,9 +93,8 @@ public class BrandActivity extends AppCompatActivity {
             @Override
             public void onSuccess(ArrayList<ProductModel> products) {
                 runOnUiThread(() -> {
-                    productModel.clear();
-                    productModel.addAll(products);
-                    productAdapter.notifyDataSetChanged();
+                    // Submit a new list to the adapter instead of using notifyDataSetChanged()
+                    productAdapter.submitList(new ArrayList<>(products));
                     binding.errorState.setVisibility(View.GONE);
                 });
             }
@@ -116,28 +110,30 @@ public class BrandActivity extends AppCompatActivity {
     }
 
     private void setupAdapter() {
+        // Initialize the adapter with an empty list.
         productAdapter = new ProductAdapter(
-            productModel,
-            (productModel, sameProducts) -> {
-                ArrayList<ProductModel> limitedProducts = new ArrayList<>(
-                    sameProducts.subList(0, Math.min(sameProducts.size(), 10))
-                );
-                new ProductViewCard(this).showProductViewDialog(productModel, limitedProducts);
-            },
-            this,
-            ""
+                this, // LifecycleOwner (BrandActivity implements LifecycleOwner)
+                new ArrayList<>(),
+                (clickedProduct, productList) -> {
+                    // Using renamed lambda parameters to avoid conflict with field names.
+                    ArrayList<ProductModel> limitedProducts = new ArrayList<>(
+                            productList.subList(0, Math.min(productList.size(), 10))
+                    );
+                    new ProductViewCard(this).showProductViewDialog(clickedProduct, limitedProducts);
+                },
+                this
         );
 
         binding.Products.setAdapter(productAdapter);
         binding.Products.setLayoutManager(
-            new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+                new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         );
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         Bundle clean = new Bundle();
-        clean.putString(ARG_BRAND, BrandName);
+        clean.putString(ARG_BRAND, brandName);
         super.onSaveInstanceState(clean);
     }
 }

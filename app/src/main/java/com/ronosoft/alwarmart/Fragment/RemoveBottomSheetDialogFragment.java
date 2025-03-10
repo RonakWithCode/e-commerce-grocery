@@ -88,7 +88,7 @@ public class RemoveBottomSheetDialogFragment  extends BottomSheetDialogFragment 
 
         binding.btnRemove.setOnClickListener(v->{
             binding.progressCircular.setVisibility(View.VISIBLE);
-            productManager.RemoveCartProductById(uid,id);
+            productManager.RemoveCartProductById(id);
 //            new DatabaseService().removeCartItemById(uid,id);
             cartsAdapter.notifyDataSetChanged();
             binding.progressCircular.setVisibility(View.GONE);

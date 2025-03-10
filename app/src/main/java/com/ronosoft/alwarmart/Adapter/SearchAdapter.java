@@ -213,7 +213,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
                 // Show remove confirmation dialog or handle minimum quantity reached
 //                Toast.makeText(context, "Minimum quantity is " + data.getMinSelectableQuantity(),
 //                        Toast.LENGTH_SHORT).show();
-                productManager.RemoveCartProductById(userId, data.getProductId());
+                productManager.RemoveCartProductById(data.getProductId());
                 holder.binding.AddTOCartLayout.setVisibility(View.VISIBLE);
                 holder.binding.AddTOCart.setVisibility(View.VISIBLE);
                 holder.binding.productQtyLayout.setVisibility(View.GONE);

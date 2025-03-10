@@ -29,6 +29,7 @@
             android:layout_marginTop="@dimen/_2ssp"
             android:textSize="@dimen/_20ssp"
             android:textStyle="bold"
+            android:maxLength="20"
             android:id="@+id/title"
             android:text="@string/chips_and_snacks"
             android:layout_width="wrap_content"

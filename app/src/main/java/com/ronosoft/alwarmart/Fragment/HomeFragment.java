@@ -599,7 +599,18 @@ public class HomeFragment extends Fragment {
 //        HomeProductBottomSheetDialog = new Dialog(requireContext());
         CategoryViewDialogBinding productViewDialogBinding = CategoryViewDialogBinding.inflate(getLayoutInflater());
         productViewDialogBinding.productsRecyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
-        productViewDialogBinding.productsRecyclerView.setAdapter(new ProductAdapter(model.getProduct(), (productModel, sameProducts) -> new ProductViewCard(getActivity()).showProductViewDialog(productModel,sameProducts), requireContext(), "Main"));
+//        productViewDialogBinding.productsRecyclerView.setAdapter(new ProductAdapter(model.getProduct(), (productModel, sameProducts) -> new ProductViewCard(getActivity()).showProductViewDialog(productModel,sameProducts), requireContext(), "Main"));
+        productViewDialogBinding.productsRecyclerView.setAdapter(
+                new ProductAdapter(
+                        getViewLifecycleOwner(),
+                        model.getProduct(),
+                        (ProductModel product, ArrayList<ProductModel> productList) ->
+                                new ProductViewCard(getActivity()).showProductViewDialog(product, productList),
+                        requireContext()
+                )
+        );
+
+
         productViewDialogBinding.title.setText(model.getTitle());
         productViewDialogBinding.seeMore.setOnClickListener(v -> {
             HomeProductBottomSheetDialog.dismiss();

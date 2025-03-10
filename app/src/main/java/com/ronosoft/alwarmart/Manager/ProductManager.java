@@ -84,9 +84,11 @@ public class ProductManager {
     }
 
     @SuppressLint("LogNotTimber")
-    public void RemoveCartProductById(String uid, String itemId){
+    public void RemoveCartProductById(String itemId){
+        AuthService authService = new AuthService();
+
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        firebaseDatabase.getReference().child("Cart").child(Objects.requireNonNull(uid)).child(itemId).removeValue().addOnCompleteListener(task -> {
+        firebaseDatabase.getReference().child("Cart").child(Objects.requireNonNull(authService.getUserId())).child(itemId).removeValue().addOnCompleteListener(task -> {
             databaseHelper.ModelDAO().deleteByProductId(itemId);
         }).addOnFailureListener(e -> {
             Log.e("ProductMnager","Remove " + e);
