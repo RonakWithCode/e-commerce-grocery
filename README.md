@@ -20,5 +20,6 @@ Alwar Mart is a fully-featured Android application developed in Java, designed t
 ### Cloning the Repository
 Clone the repository to your local machine:
 ```bash
-git clone https://github.com/yourusername/alwar-mart-java-android-app.git
-cd alwar-mart-java-android-app
+git clone [https://github.com/RonakWithCode/e-commerce-grocery]
+cd e-commerce-grocery
+
