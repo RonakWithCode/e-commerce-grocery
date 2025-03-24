@@ -141,13 +141,15 @@ public class AllOrderActivity extends AppCompatActivity {
             i.putExtra("orderModel", orderModel);
             startActivity(i);
         });
+
+
         binding.itemRecycler.setAdapter(orderProductAdapter);
+
 
         binding.itemRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-
                 int totalItemCount = layoutManager.getItemCount();
                 int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
 
@@ -241,6 +243,7 @@ public class AllOrderActivity extends AppCompatActivity {
         // Increase itemCount for loading more items
         pageSize += 10;
         loadInitialData();
+
     }
 
     @Override

@@ -35,6 +35,7 @@ import com.ronosoft.alwarmart.MainActivity;
 import com.ronosoft.alwarmart.Model.QueryModel;
 import com.ronosoft.alwarmart.Model.RecentLoginsModels;
 import com.ronosoft.alwarmart.R;
+import com.ronosoft.alwarmart.Services.AuthService;
 import com.ronosoft.alwarmart.databinding.AboutFragmentBinding;
 import com.ronosoft.alwarmart.databinding.HelpSupportBinding;
 import com.ronosoft.alwarmart.databinding.OpenSourceLicensesBinding;
@@ -58,7 +59,7 @@ import java.util.Objects;
 public class SettingsActivity extends AppCompatActivity implements
         PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
 
-    private static final String TITLE_TAG = "settingsActivityTitle";
+    private static final String TITLE_TAG = "Settings";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -315,7 +316,9 @@ public class SettingsActivity extends AppCompatActivity implements
                                 progressDialog.setTitle("sign Out");
                                 progressDialog.show();
                                 progressDialog.setCancelable(false);
-                                FirebaseAuth.getInstance().signOut();
+
+                                new AuthService().signOut(requireContext());
+
                                 progressDialog.dismiss();
                                 Intent intent = new Intent(requireContext(), MainActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -343,29 +346,32 @@ public class SettingsActivity extends AppCompatActivity implements
 //                });
 //            }
 
+
             if (deleteAccountPref != null) {
                 deleteAccountPref.setOnPreferenceClickListener(preference -> {
                     // Handle click for Delete Account
-                    // Example: Show a confirmation dialog and delete the account if confirmed
+                    // Example: Show a confirmation dialog and delete the account if confirmed.
                     AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
                     builder.setMessage("Are you sure you want to delete your account?")
                             .setPositiveButton("Delete", (dialog, id) -> {
-                                // User clicked the Delete button
-//                                    deleteAccount();
-                                Toast.makeText(requireContext(), "contact this number XXXXXXXXXX", Toast.LENGTH_SHORT).show();
+                                // User clicked the Delete button.
+                                // deleteAccount();
+                                Toast.makeText(requireContext(), "Please send an email to alwar.mart.in@gmail.com", Toast.LENGTH_SHORT).show();
                                 dialog.dismiss();
-
                             })
                             .setNegativeButton("Cancel", (dialog, id) -> {
-                                // User clicked the Cancel button
+                                // User clicked the Cancel button.
                                 dialog.dismiss();
                             });
-                    // Create the AlertDialog object and show it
+                    // Create and show the AlertDialog.
                     builder.create().show();
                     return true;
                 });
             }
+
+
         }
+
         }
 
     public static class HelpSupportFragment extends Fragment{
@@ -491,6 +497,7 @@ public class SettingsActivity extends AppCompatActivity implements
             binding = null;
         }
     }
+//    057014
 
 
     public static class AboutFragment extends Fragment{

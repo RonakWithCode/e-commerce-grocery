@@ -13,7 +13,7 @@
     import androidx.recyclerview.widget.LinearLayoutManager;
 
     import com.ronosoft.alwarmart.Adapter.AddressAdapter;
-    import com.ronosoft.alwarmart.Adapter.newAddressFragment;
+    import com.ronosoft.alwarmart.Adapter.NewAddressFragment;
     import com.ronosoft.alwarmart.Model.AddressModel;
     import com.ronosoft.alwarmart.Model.UserinfoModels;
     import com.ronosoft.alwarmart.R;
@@ -71,7 +71,7 @@
 
             binding.AddAddress.setOnClickListener(address->{
                 FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container,new newAddressFragment(),"newAddress");
+                transaction.replace(R.id.fragment_container,new NewAddressFragment(),"newAddress");
                 transaction.addToBackStack("newAddress");
                 transaction.commit();
             });

@@ -460,9 +460,88 @@
                 android:layout_marginTop="@dimen/_8sdp" />
 
 
+            <!-- Improved Gift Section Layout -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/freeGiftCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_below="@id/CardView"
+                android:layout_margin="16dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp">
 
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
 
+                    <!-- Gift Image -->
+                    <ImageView
+                        android:id="@+id/giftImage"
+                        android:layout_width="60dp"
+                        android:layout_height="55dp"
+                        android:scaleType="centerCrop"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
 
+                    <!-- Gift Title -->
+                    <TextView
+                        android:id="@+id/title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="Gift Title"
+                        android:textColor="@color/green_primary"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toEndOf="@id/giftImage"
+                        app:layout_constraintTop_toTopOf="@id/giftImage"
+                        app:layout_constraintEnd_toStartOf="@id/freeType"/>
+
+                    <!-- Gift Subtitle -->
+                    <TextView
+                        android:id="@+id/subTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="Gift Subtitle"
+                        android:textColor="@color/FixBlack"
+                        android:textSize="14sp"
+                        android:textStyle="italic"
+                        app:layout_constraintStart_toEndOf="@id/giftImage"
+                        app:layout_constraintTop_toBottomOf="@id/title"
+                        app:layout_constraintBottom_toBottomOf="@id/giftImage"
+                        app:layout_constraintEnd_toStartOf="@id/freeType"/>
+
+                    <!-- Gift Type / Free Label -->
+                    <TextView
+                        android:id="@+id/freeType"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Free"
+                        android:textColor="@color/green_primary"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Extra Message TextView (shown when gift is not yet eligible) -->
+            <TextView
+                android:id="@+id/freeText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_below="@id/freeGiftCard"
+                android:layout_margin="16dp"
+                android:text="Add products worth ₹0 more to get a free gift"
+                android:textColor="@color/green_primary"
+                android:textSize="16sp"
+                android:textStyle="bold"/>
 
 
 
@@ -472,7 +551,7 @@
                 android:layout_width="match_parent"
                 android:orientation="horizontal"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/CardView"
+                android:layout_below="@id/freeText"
                 android:layout_marginTop="@dimen/_10sdp">
 
                 <com.google.android.material.textfield.TextInputLayout

@@ -9,7 +9,7 @@ import java.util.Date;
 
 public class Shipping implements Parcelable {
     private String shippingMethod;
-    private String ShippingFee;
+    private double ShippingFee;
     private Date deliveredData;
     private AddressModel shippingAddress;
     private String shippingStatus;
@@ -17,7 +17,7 @@ public class Shipping implements Parcelable {
     public Shipping() {
     }
 
-    public Shipping(String shippingMethod, String shippingFee, Date deliveredData, AddressModel shippingAddress, String shippingStatus) {
+    public Shipping(String shippingMethod, double shippingFee, Date deliveredData, AddressModel shippingAddress, String shippingStatus) {
         this.shippingMethod = shippingMethod;
         ShippingFee = shippingFee;
         this.deliveredData = deliveredData;
@@ -27,7 +27,7 @@ public class Shipping implements Parcelable {
 
     protected Shipping(Parcel in) {
         shippingMethod = in.readString();
-        ShippingFee = in.readString();
+        ShippingFee = in.readDouble();
         shippingAddress = in.readParcelable(AddressModel.class.getClassLoader());
         shippingStatus = in.readString();
     }
@@ -44,11 +44,11 @@ public class Shipping implements Parcelable {
         }
     };
 
-    public String getShippingFee() {
+    public double getShippingFee() {
         return ShippingFee;
     }
 
-    public void setShippingFee(String shippingFee) {
+    public void setShippingFee(double shippingFee) {
         ShippingFee = shippingFee;
     }
 
@@ -90,7 +90,7 @@ public class Shipping implements Parcelable {
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeString(shippingMethod);
-        dest.writeString(ShippingFee);
+        dest.writeDouble(ShippingFee);
         dest.writeLong(deliveredData != null ? deliveredData.getTime() : -1);
         dest.writeParcelable(shippingAddress, flags);
         dest.writeString(shippingStatus);

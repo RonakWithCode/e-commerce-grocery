@@ -1,5 +1,6 @@
 package com.ronosoft.alwarmart.Services;
 
+import android.content.Context;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
@@ -16,7 +17,11 @@ import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.ronosoft.alwarmart.DAO.CartDAO;
+import com.ronosoft.alwarmart.Manager.ProductManager;
 import com.ronosoft.alwarmart.Model.UserinfoModels;
+import com.ronosoft.alwarmart.javaClasses.AddressDeliveryService;
+import com.ronosoft.alwarmart.javaClasses.TokenManager;
 
 import java.util.Objects;
 
@@ -184,4 +189,28 @@ public class AuthService {
         FirebaseUser currentUser = auth.getCurrentUser();
         return currentUser != null && currentUser.isEmailVerified();
     }
+
+
+
+    public void signOut(Context context){
+        TokenManager.getInstance(context).clearToken();
+        new AddressDeliveryService().clearDefaultAddress(context);
+        new ProductManager(context).removeCartProducts();
+
+        auth.signOut();
+    }
+    public void ClearData(Context context){
+        TokenManager.getInstance(context).clearToken();
+        new AddressDeliveryService().clearDefaultAddress(context);
+        new ProductManager(context).removeCartProducts();
+
+//        auth.signOut();
+    }
+
+
+
+
 }
+
+
+

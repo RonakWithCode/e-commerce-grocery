@@ -2,6 +2,7 @@ package com.ronosoft.alwarmart.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -107,12 +108,29 @@ public class ProductAdapter extends ListAdapter<ProductModel, ProductAdapter.Pro
         }
 
         // Handle delivery time badge
-        if (!TextUtils.isEmpty(product.getTime())) {
+
+        if (product.getProductLayoutType().equals("Shoes") || product.getProductLayoutType().equals("Cloth")) {
+            // Code to execute for Shoes or Cloth
+
             holder.binding.deliveryTimeContainer.setVisibility(android.view.View.VISIBLE);
-            holder.binding.deliveryTimeBadge.setText(formatDeliveryTime(product.getTime()));
-        } else {
-            holder.binding.deliveryTimeContainer.setVisibility(android.view.View.GONE);
+            holder.binding.deliveryTimeBadge.setVisibility(android.view.View.VISIBLE);
+            holder.binding.deliveryTimeBadge.setText(product.getTime());
+
+
+        }else {
+
+            // add code for get time by Google Map
         }
+
+
+//        if (!TextUtils.isEmpty(product.getTime())) {
+//            holder.binding.deliveryTimeContainer.setVisibility(android.view.View.VISIBLE);
+//            holder.binding.deliveryTimeBadge.setText(product.getTime());
+//
+//        }
+//        else {
+//            holder.binding.deliveryTimeContainer.setVisibility(android.view.View.GONE);
+//        }
 
         // Observe cart changes using the provided LifecycleOwner
         productManager.observeCartItem(product.getProductId()).observe(lifecycleOwner, cartItem -> {

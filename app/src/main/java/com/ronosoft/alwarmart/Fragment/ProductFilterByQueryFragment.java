@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.ronosoft.alwarmart.Adapter.ProductAdapter;
+import com.ronosoft.alwarmart.Component.ProductViewCard;
 import com.ronosoft.alwarmart.Model.ProductModel;
 import com.ronosoft.alwarmart.R;
 import com.ronosoft.alwarmart.databinding.FragmentProductFilterByQueryBinding;
@@ -136,13 +137,15 @@ public class ProductFilterByQueryFragment extends Fragment implements onClickPro
 
     @Override
     public void onClick(ProductModel productModel, ArrayList<ProductModel> sameProducts) {
-        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("productDetails", productModel);
-        ProductDetailsFragment productDetailsFragment = new ProductDetailsFragment();
-        productDetailsFragment.setArguments(bundle);
-        transaction.replace(R.id.loader, productDetailsFragment, "ProductFilterFragment");
-        transaction.addToBackStack("ProductFilterFragment");
-        transaction.commit();
+        new ProductViewCard(requireActivity()).showProductViewDialog(productModel,sameProducts);
+
+        //        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+//        Bundle bundle = new Bundle();
+//        bundle.putParcelable("productDetails", productModel);
+//        ProductDetailsFragment productDetailsFragment = new ProductDetailsFragment();
+//        productDetailsFragment.setArguments(bundle);
+//        transaction.replace(R.id.loader, productDetailsFragment, "ProductFilterFragment");
+//        transaction.addToBackStack("ProductFilterFragment");
+//        transaction.commit();
     }
 }

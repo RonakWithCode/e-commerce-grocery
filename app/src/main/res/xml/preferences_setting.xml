@@ -38,8 +38,8 @@
 
     <Preference
         app:fragment="com.ronosoft.alwarmart.Activity.SettingsActivity$PrivacyPolicyFragment"
-        android:title="Privacy and Security:"
-        android:summary="Configure your privacy and security settings."
+        android:title="Manage Permissions and Login"
+        android:summary="Configure your permissions and login settings."
         android:key="Privacy_Security" />
     <!-- Help and Support -->
     <Preference

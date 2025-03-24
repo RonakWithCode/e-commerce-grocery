@@ -1,8 +1,9 @@
 
 package com.ronosoft.alwarmart.Fragment;
-
+//cqJlUK9cRtSbCGivXDBJXc:APA91bGlBmDiSDZqLnmg93PFituWHrqYtr_CPsHDqRCNxgUh0Ma7UOHM8E42cchp0_AVH0tJcjDjI5kN-yZOFG_Uyh33vKizIAnQT6-mBruJjtOFlfZJPyo
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,19 +29,24 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewbinding.ViewBinding;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.auth.GetTokenResult;
 import com.ronosoft.alwarmart.Adapter.HomeCategoryAdapter;
 import com.ronosoft.alwarmart.Adapter.HomeProductAdapter;
 import com.ronosoft.alwarmart.Adapter.ProductAdapter;
 import com.ronosoft.alwarmart.Component.ProductViewCard;
+import com.ronosoft.alwarmart.Model.AddressModel;
 import com.ronosoft.alwarmart.Model.BannerModels;
 import com.ronosoft.alwarmart.Model.HomeProductModel;
 import com.ronosoft.alwarmart.Model.ProductModel;
+import com.ronosoft.alwarmart.Model.UserinfoModels;
 import com.ronosoft.alwarmart.R;
 import com.ronosoft.alwarmart.Services.DatabaseService;
 import com.ronosoft.alwarmart.databinding.CategoryViewDialogBinding;
 import com.ronosoft.alwarmart.databinding.FragmentHomeBinding;
+import com.ronosoft.alwarmart.javaClasses.AddressDeliveryService;
 import com.ronosoft.alwarmart.javaClasses.CustomSmoothScroller;
+import com.ronosoft.alwarmart.javaClasses.DeliveryManagement;
 import com.ronosoft.alwarmart.javaClasses.basicFun;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -55,6 +62,7 @@ import org.imaginativeworld.whynotimagecarousel.model.CarouselItem;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -64,7 +72,6 @@ public class HomeFragment extends Fragment {
     private HomeCategoryAdapter homeCategoryAdapter;
     private HomeCategoryAdapter homeProductBoysSkinAdapter;
     private HomeProductAdapter MultiViewAdapter;
-
     private ArrayList<HomeProductModel> MultiViewModel; // multiply product
     private ArrayList<HomeProductModel> homeProductModel;
     private ArrayList<HomeProductModel> homeProductModelBoysSkin;
@@ -79,60 +86,117 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentHomeBinding.inflate(inflater, container, false);
+
+        // Initialize DatabaseService early to avoid NPE
+        databaseService = new DatabaseService();
+
         FirebaseAuth auth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = auth.getCurrentUser();
-        if (currentUser != null){
-//            String defaultUserName = ValuesHelper.DEFAULT_USER_NAME;
-            String displayName = currentUser.getDisplayName() != null ? currentUser.getDisplayName() : "Hi user";
-            String phoneNumber = "No phone number";
-            binding.address.setText(phoneNumber);
 
-            currentUser.getIdToken(true).addOnCompleteListener(task -> {
-                if (task.isSuccessful()){
-                    GetTokenResult tokenResult = task.getResult();
-                    if (tokenResult != null) {
-                        // Get additional claims
-                        Object phone = tokenResult.getClaims().get("phone_number"); // Example: Custom role claim
-//                            Object admin = tokenResult.getClaims().get("admin"); // Example: Admin claim
-                        Log.i("HomeFragmentTAG", "onComplete: "+phone);
-                        assert phone != null;
-                        binding.address.setText(phone.toString());
-
-                    }
-
-                    }
-            });
-
-//            String phoneNumber = currentUser.getPhoneNumber() != null ? currentUser.getPhoneNumber() : "No phone number";
+        // Set greeting and header based on login state
+        if (currentUser != null) {
             userId = currentUser.getUid();
-            binding.UserName.setText(displayName);
-        }else {
-            binding.UserName.setText("Hi user");
-            binding.address.setText("Alwar Mart");
+            String displayName = currentUser.getDisplayName() != null ? currentUser.getDisplayName() : "User";
+            binding.UserName.setText("Hello, " + displayName.toUpperCase(Locale.ROOT));
+        } else {
+            binding.UserName.setText("Hello, Guest");
+            binding.address.setVisibility(View.GONE);
+            binding.arrowDropdown .setVisibility(View.GONE);
+
+            binding.txtDeliveryTime.setText("Alwar Mart in 10 minutes");
         }
+
+        // Load default address from SharedPreferences using AddressDeliveryService if user is logged in
+        AddressDeliveryService addressDeliveryService = new AddressDeliveryService();
+        if (currentUser != null) {
+            AddressModel defaultAddress = addressDeliveryService.getDefaultAddress(requireContext());
+            if (defaultAddress != null) {
+                int deliveryTime = addressDeliveryService.calculateDeliveryTime(defaultAddress);
+                binding.txtDeliveryTime.setText("Alwar Mart in " + deliveryTime + " minutes");
+
+                String addrText = "HOME - " + defaultAddress.getFlatHouse() + ", " + defaultAddress.getAddress();
+                int maxLength = 30;
+                if (addrText.length() > maxLength) {
+                    addrText = addrText.substring(0, maxLength) + "...";
+                }
+                binding.address.setText(addrText);
+
+                Toast.makeText(requireContext(), "Default address loaded. Delivery Time: " + deliveryTime + " minutes", Toast.LENGTH_SHORT).show();
+            } else {
+                binding.address.setText("HOME - Add Address");
+                binding.txtDeliveryTime.setText("Alwar Mart in 10 minutes");
+            }
+        }
+
+        // Retrieve user info from Firestore if user is logged in
+        final UserinfoModels[] userInfo = new UserinfoModels[1];
+        if (currentUser != null) {
+            databaseService.getUserInfo(userId, new DatabaseService.getUserInfoCallback() {
+                @Override
+                public void onSuccess(UserinfoModels user) {
+                    userInfo[0] = user;
+                }
+                @Override
+                public void onError(String errorMessage) {
+                    Toast.makeText(requireContext(), "Error retrieving user info: " + errorMessage, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        // Set arrow dropdown click listener to show default address bottom sheet
+        binding.arrowDropdown.setOnClickListener(view -> {
+            if (currentUser == null) {
+                Toast.makeText(requireContext(), "Please log in to manage your addresses", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            ArrayList<AddressModel> addresses = new ArrayList<>();
+            if (userInfo[0] != null && userInfo[0].getAddress() != null) {
+                addresses.addAll(userInfo[0].getAddress());
+            }
+            if (addresses.isEmpty()) {
+                Toast.makeText(requireContext(), "No addresses found. Please add one.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            DefaultAddressBottomSheetFragment bottomSheet = new DefaultAddressBottomSheetFragment(addresses);
+            bottomSheet.setOnAddressSelectedListener(selectedAddress -> {
+                addressDeliveryService.saveDefaultAddress(requireContext(), selectedAddress);
+                int newDeliveryTime = addressDeliveryService.calculateDeliveryTime(selectedAddress);
+
+                String addrText = "HOME - " + selectedAddress.getFlatHouse() + ", " + selectedAddress.getAddress();
+
+
+                int maxLength = 30;
+                if (addrText.length() > maxLength) {
+                    addrText = addrText.substring(0, maxLength) + "...";
+                }
+                binding.address.setText(addrText);
+
+                binding.txtDeliveryTime.setText("Alwar Mart in " + newDeliveryTime + " minutes");
+                Toast.makeText(requireContext(), "Default address updated. Delivery Time: " + newDeliveryTime + " minutes", Toast.LENGTH_SHORT).show();
+            });
+            bottomSheet.show(getChildFragmentManager(), "DefaultAddressBottomSheet");
+        });
+
+        // Set up the status bar and search view
         HomeProductBottomSheetDialog = new Dialog(requireContext());
         ActionBar actionBar = ((AppCompatActivity) requireActivity()).getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
         }
-
-//       // Change Status Bar color
         Window window = requireActivity().getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(ContextCompat.getColor(requireContext(), R.color.OrderYellowColor));
+        binding.searchView.setOnClickListener(view -> openSearchFragment());
 
-        binding.searchView.setOnClickListener(view->openSearchFragment());
-
-        databaseService = new DatabaseService();
-
+        // Initialize product lists and adapters
         homeProductModel = new ArrayList<>();
         MultiViewModel = new ArrayList<>();
         homeProductModelBoysSkin = new ArrayList<>();
 
         homeCategoryAdapter = new HomeCategoryAdapter(homeProductModel, requireContext(), this::ViewCat);
         homeProductBoysSkinAdapter = new HomeCategoryAdapter(homeProductModelBoysSkin, requireContext(), this::ViewCat);
-        MultiViewAdapter = new HomeProductAdapter(MultiViewModel, (productModel, sameProducts) -> new ProductViewCard(getActivity()).showProductViewDialog(productModel,sameProducts), requireActivity());
-
+        MultiViewAdapter = new HomeProductAdapter(MultiViewModel, (productModel, sameProducts) ->
+                new ProductViewCard(getActivity()).showProductViewDialog(productModel, sameProducts), requireActivity());
 
         binding.BestsellersSee.setOnClickListener(v -> SeeAll());
         binding.boysSkinCareSee.setOnClickListener(v -> SeeAll());
@@ -140,10 +204,8 @@ public class HomeFragment extends Fragment {
         setupAdapters();
         loadInitialData();
 
-
-
-
         return binding.getRoot();
+
     }
 
 
@@ -189,8 +251,9 @@ public class HomeFragment extends Fragment {
         LoadProductCategory();
 
 //        loadProductsMultiViewForLoop(new String[]{"chips and Snacks"});
-        loadProductsMultiViewForLoop(new String[]{"Detergent Powder & Bars","Soaps & Body Care", "snacks", "Dishwashing Bars & Tubs", "BISCUITS"});
-        loadProductsForCategories(new String[]{"Detergent Powder & Bars","Soaps & Body Care", "snacks", "Dishwashing Bars & Tubs", "BISCUITS"});
+        loadProductsMultiViewForLoop(new String[]{"hair oil","SKIN CARE", "Edible Oils", "Honey & Spreads", "Digestive Care"});
+        loadProductsForCategories(new String[]{"hair oil","SKIN CARE", "Edible Oils", "Honey & Spreads", "Digestive Care"});
+//        loadProductsForCategories(new String[]{"Detergent Powder & Bars","Soaps & Body Care", "snacks", "Dishwashing Bars & Tubs", "BISCUITS"});
 //        loadProductsForCategories(new String[]{"ha","hahahah","aw","oil","this is me new \uD83D\uDC08" });
 //        loadProductsForCategoriesByBoysSkin(new String[]{"toothpaste", "drinks"});
     }
@@ -224,24 +287,45 @@ public class HomeFragment extends Fragment {
 
 
     private void LoadProductCategory() {
+        Context context = requireContext();
 
-        Glide.with(requireContext()).load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/all_category%2Fskin%20care.png?alt=media&token=6edf6d22-e31e-4935-abfd-6b5ddde4ea28").placeholder(R.drawable.skeleton_shape).into(binding.skin);
-        Glide.with(requireContext()).load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/all_category%2F6.png?alt=media&token=032ccdeb-9a48-4d2e-976d-238b20172b1a").placeholder(R.drawable.skeleton_shape).into(binding.AttaRiceDal);
-        Glide.with(requireContext()).load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/all_category%2F3.png?alt=media&token=30804049-0835-4197-a25c-637b75f0f5d4").placeholder(R.drawable.skeleton_shape).into(binding.milk);
-        Glide.with(requireContext()).load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/all_category%2F1.png?alt=media&token=4608d93f-add0-4e26-bbce-e17275024b06").placeholder(R.drawable.skeleton_shape).into(binding.oil);
-        Glide.with(requireContext()).load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/all_category%2F2.png?alt=media&token=fc901685-49db-4b11-a053-231c7cfa7380").placeholder(R.drawable.skeleton_shape).into(binding.Bakery);
-        Glide.with(requireContext()).load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/all_category%2F4.png?alt=media&token=8aad396a-a33a-4d71-94bb-b1bf9052d425").placeholder(R.drawable.skeleton_shape).into(binding.drinks);
-//// TODO:  More set in this
-////          some are : onClicks and view category etc
-//
-        Glide.with(requireContext()).load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/all_category%2Fbrand%2Fdabur.png?alt=media&token=26e97c85-3c03-47d9-8971-0b496ab5100f").placeholder(R.drawable.skeleton_shape).into(binding.Dabur);
-        Glide.with(requireContext()).load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/all_category%2Fbrand%2Fitc.png?alt=media&token=34307cc3-bba2-492c-9393-8306898f7757").placeholder(R.drawable.skeleton_shape).into(binding.itc);
-        Glide.with(requireContext()).load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/all_category%2Fbrand%2Fitc.png?alt=media&token=34307cc3-bba2-492c-9393-8306898f7757").placeholder(R.drawable.skeleton_shape).into(binding.View1);
-        Glide.with(requireContext()).load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/all_category%2Fbrand%2Fitc.png?alt=media&token=34307cc3-bba2-492c-9393-8306898f7757").placeholder(R.drawable.skeleton_shape).into(binding.View2);
-        Glide.with(requireContext()).load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/all_category%2F4.png?alt=media&token=8aad396a-a33a-4d71-94bb-b1bf9052d425").placeholder(R.drawable.skeleton_shape).into(binding.drinks);
+        Glide.with(context)
+                .load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/brand%2F1742447881857-download.png?alt=media&token=af2fe592-67cb-45b6-9de1-4c37adc87d6c")
+                .placeholder(R.drawable.skeleton_shape)
+                .error(R.drawable.error_placeholder)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .centerCrop()
+                .override(300, 300) // Adjust these values based on your ImageView size
+                .into(binding.Dabur);
 
+        Glide.with(context)
+                .load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/brand%2F1742798121205-download.png?alt=media&token=1f2a0e9e-8af1-4471-9b26-52a0ced5185f")
+                .placeholder(R.drawable.skeleton_shape)
+                .error(R.drawable.error_placeholder)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .centerCrop()
+                .override(300, 300)
+                .into(binding.Colgate);
 
+        Glide.with(context)
+                .load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/brand%2F1742797315362-ITC_Limited-Logo.wine.png?alt=media&token=35a715ee-51de-4eeb-a56c-ae8ae47c881a")
+                .placeholder(R.drawable.skeleton_shape)
+                .error(R.drawable.error_placeholder)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .centerCrop()
+                .override(300, 300)
+                .into(binding.itc);
+
+        Glide.with(context)
+                .load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/brand%2F1742797426395-4ba62de6fa4103a0c4a7e0f7f34afff9.w800.h800.png?alt=media&token=43a11f24-f7c4-44a2-9bb4-3d3d640fadcf")
+                .placeholder(R.drawable.skeleton_shape)
+                .error(R.drawable.error_placeholder)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .centerCrop()
+                .override(300, 300)
+                .into(binding.Aashirvaad);
     }
+
 
 
 

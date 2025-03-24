@@ -114,12 +114,21 @@ public class VariantsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private void bindFashionViewHolder(FashionViewHolder holder, Variations variation, int position) {
         // Set size (for shoes/clothes)
         String sizeText = variation.getWeight() != null ? variation.getWeight() : "";
+        if (productType.equals("Cloth")) {
+            if (!variation.getWeightSIUnit().isEmpty()) {
+                sizeText =  variation.getWeightSIUnit();
+            }
+        }
+        else {
+
         if (variation.getWeightSIUnit() != null && !variation.getWeightSIUnit().isEmpty()) {
             sizeText += " " + variation.getWeightSIUnit();
         }
+        }
+
 
         holder.variantSize.setText(sizeText);
-        
+
         // Set name/color
         holder.variantName.setText(variation.getName() != null ? "₹ "+variation.getName() : "click to check price");
         

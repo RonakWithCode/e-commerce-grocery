@@ -21,11 +21,12 @@ public class OrderModel implements Parcelable {
     private String token;
     private double Donate; ;
     private double ProcessingFees;
+    private Gift mainGift;
 //    private Date Date;
     public OrderModel() {
     }
 
-    public OrderModel(String orderId, Customer customer, ArrayList<ShoppingCartsProductModel> orderItems, double orderTotalPrice, String couponCode, String orderStatus, Payment payment, Shipping shipping, Date orderDate, String notes, String token,double CouponCodeValue,double Donate,double ProcessingFees) {
+    public OrderModel(String orderId, Customer customer, ArrayList<ShoppingCartsProductModel> orderItems, double orderTotalPrice, String couponCode, String orderStatus, Payment payment, Shipping shipping, Date orderDate, String notes, String token,double CouponCodeValue,double Donate,double ProcessingFees,Gift mainGift) {
         this.orderId = orderId;
         this.customer = customer;
         this.orderItems = orderItems;
@@ -40,6 +41,7 @@ public class OrderModel implements Parcelable {
         this.CouponCodeValue =CouponCodeValue;
         this.Donate = Donate;
         this.ProcessingFees = ProcessingFees;
+        this.mainGift = mainGift;
 
     }
 
@@ -58,6 +60,7 @@ public class OrderModel implements Parcelable {
         CouponCodeValue = in.readDouble();
         Donate = in.readDouble();
         ProcessingFees = in.readDouble();
+        mainGift = in.readParcelable(Gift.class.getClassLoader());
     }
 
     public static final Creator<OrderModel> CREATOR = new Creator<OrderModel>() {
@@ -183,7 +186,18 @@ public class OrderModel implements Parcelable {
     public void setProcessingFees(double processingFees) {
         ProcessingFees = processingFees;
     }
-//
+
+    public Gift getMainGift() {
+        return mainGift;
+    }
+
+    public void setMainGift(Gift mainGift) {
+        this.mainGift = mainGift;
+    }
+
+
+    //
+
 //    public java.util.Date getDate() {
 //        return Date;
 //    }
@@ -216,5 +230,7 @@ public class OrderModel implements Parcelable {
         dest.writeDouble(CouponCodeValue);
         dest.writeDouble(Donate);
         dest.writeDouble(ProcessingFees);
+        dest.writeParcelable(mainGift, flags);
+
     }
 }

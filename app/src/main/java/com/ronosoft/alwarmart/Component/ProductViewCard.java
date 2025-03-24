@@ -115,6 +115,8 @@ public class ProductViewCard {
     public void showProductViewDialog(ProductModel productModel, ArrayList<ProductModel> sameProducts) {
         mainProduct = productModel;
         String fullUnit = productModel.getWeightSIUnit();
+
+
         String displayUnit = WEIGHT_SI_UNITS_ABBR.getOrDefault(fullUnit, fullUnit);
 
         List<String> imageUrls = productModel.getProductImage();
@@ -217,7 +219,16 @@ public class ProductViewCard {
             context.startActivity(intent);
         });
 
-        binding.size.setText(productModel.getWeight() + " " + displayUnit);
+
+        if (productModel.getProductLayoutType().equals("Cloth")) {
+//            displayUnit = fullUnit;
+            binding.size.setText(displayUnit);
+
+
+        }
+        else {
+            binding.size.setText(productModel.getWeight() + " " + displayUnit);
+        }
         binding.MRP.setText(":" + productModel.getMrp());
         binding.MRP.setPaintFlags(binding.MRP.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 

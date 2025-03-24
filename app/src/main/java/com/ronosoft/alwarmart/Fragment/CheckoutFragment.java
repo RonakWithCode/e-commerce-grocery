@@ -25,6 +25,9 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.ronosoft.alwarmart.Adapter.ShoppingCartsAdapter;
 import com.ronosoft.alwarmart.Dialog.CustomErrorDialog;
 import com.ronosoft.alwarmart.HelperClass.ShoppingCartHelper;
@@ -32,6 +35,7 @@ import com.ronosoft.alwarmart.HelperClass.ValuesHelper;
 import com.ronosoft.alwarmart.Model.AddressModel;
 import com.ronosoft.alwarmart.Model.CouponModel;
 import com.ronosoft.alwarmart.Model.Customer;
+import com.ronosoft.alwarmart.Model.Gift;
 import com.ronosoft.alwarmart.Model.OrderModel;
 import com.ronosoft.alwarmart.Model.Payment;
 import com.ronosoft.alwarmart.Model.Shipping;
@@ -76,6 +80,10 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
     private boolean couponIsApply = false;
     private final String TAG = "CheckoutFragment";
 
+
+
+    private Gift mainGift;
+
     public CheckoutFragment() {}
 
 
@@ -105,6 +113,7 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
         uid = authService.getUserId();
         binding.shimmerLayout.startShimmer();
         models = new ArrayList<>();
+        mainGift= new Gift();
         cartsAdapter = new ShoppingCartsAdapter(models, this, requireContext());
         binding.CardView.setAdapter(cartsAdapter);
         binding.CardView.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -174,56 +183,138 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
 
 
 
+
+
+
+
     private void placeOrder(String shippingMethod, String shippingStatus) {
         Date orderDate = new Date();
         Log.d(TAG, "placeOrder: " + orderDate);
 
-        Shipping shipping = new Shipping(shippingMethod, "00", new Date(), addressModel, shippingStatus);
+        Shipping shipping = new Shipping(shippingMethod, shippingFee, new Date(), addressModel, shippingStatus);
         Payment payment = new Payment("cash", "Pending");
         String userID = authService.getUserId();
 
         // Get phone number asynchronously before creating the order
         authService.getUserPhoneNumber()
-            .addOnSuccessListener(phoneNumber -> {
-                // Create customer with retrieved phone number
-                Customer customer = new Customer(
-                    userID, 
-                    addressModel.getFullName(), 
-                    addressModel.getMobileNumber(), 
-                    phoneNumber
-                );
+                .addOnSuccessListener(phoneNumber -> {
+                    // Create customer with retrieved phone number
+                    Customer customer = new Customer(
+                            userID,
+                            addressModel.getFullName(),
+                            addressModel.getMobileNumber(),
+                            phoneNumber
+                    );
 
-                String orderId = generateUniqueOrderId();
+                    String orderId = generateUniqueOrderId();
 
-                OrderModel orderModel = new OrderModel(
-                    orderId,
-                    customer,
-                    models,
-                    grandTotal,
-                    couponCode,
-                    shippingStatus,
-                    payment,
-                    shipping,
-                    orderDate,
-                    binding.note.getEditText().getText().toString(),
-                    TokenManager.getInstance(requireContext()).getToken(),
-                    couponValue,
-                    donate,
-                    processingFee
-                );
+                    OrderModel orderModel = new OrderModel(
+                            orderId,
+                            customer,
+                            models,
+                            grandTotal,
+                            couponCode,
+                            shippingStatus,
+                            payment,
+                            shipping,
+                            orderDate,
+                            Objects.requireNonNull(binding.note.getEditText()).getText().toString(),
+                            TokenManager.getInstance(requireContext()).getToken(),
+                            couponValue,
+                            donate,
+                            processingFee,
+                            mainGift
+                    );
 
-                placeOrder(orderModel);
-            })
-            .addOnFailureListener(e -> {
-                Log.e(TAG, "Error getting phone number", e);
-                // Show error to user
-                Toast.makeText(requireContext(), 
-                    "Error: Unable to get phone number", 
-                    Toast.LENGTH_SHORT
-                ).show();
-            });
+                    placeOrder(orderModel);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error getting phone number", e);
+                    // Show error to user
+                    Toast.makeText(requireContext(),
+                            "Error: Unable to get phone number",
+                            Toast.LENGTH_SHORT
+                    ).show();
+                });
     }
 
+
+
+
+
+
+    private void updateUsageAfterOrder() {
+        // Only update coupon usage if a coupon was applied (couponCode is not empty).
+        if (couponIsApply && couponCode != null && !couponCode.trim().isEmpty()) {
+            DatabaseReference couponRef = FirebaseDatabase.getInstance()
+                    .getReference("admin")
+                    .child("Coupon")
+                    .child(couponCode);
+
+            couponRef.runTransaction(new Transaction.Handler() {
+                @NonNull
+                @Override
+                public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                    CouponModel coupon = mutableData.getValue(CouponModel.class);
+                    if (coupon == null) {
+                        return Transaction.success(mutableData);
+                    }
+                    int currentTotalUse = coupon.getTotalUse();
+                    if (currentTotalUse > 0) {
+                        coupon.setTotalUse(currentTotalUse - 1);
+                        mutableData.setValue(coupon);
+                    }
+                    return Transaction.success(mutableData);
+                }
+                @Override
+                public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot dataSnapshot) {
+                    if (databaseError != null) {
+                        Log.e(TAG, "Coupon update failed: " + databaseError.getMessage());
+                    } else {
+                        Log.d(TAG, "Coupon totalUse decremented successfully.");
+                    }
+                }
+            });
+        } else {
+            Log.d(TAG, "No coupon applied; skipping coupon usage update.");
+        }
+
+        // For the free gift update, you might want to update it only when a coupon is applied.
+        // Adjust this check if your business logic allows a free gift without a coupon.
+        if (couponIsApply && mainGift != null && mainGift.getGiftId() != null && !mainGift.getGiftId().trim().isEmpty()
+                && mainGift.getStockLimit() != null) {
+            DatabaseReference giftRef = FirebaseDatabase.getInstance()
+                    .getReference("freeGifts")
+                    .child(mainGift.getGiftId());
+
+            giftRef.runTransaction(new Transaction.Handler() {
+                @NonNull
+                @Override
+                public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                    Gift gift = mutableData.getValue(Gift.class);
+                    if (gift == null) {
+                        return Transaction.success(mutableData);
+                    }
+                    Integer currentStock = gift.getStockLimit();
+                    if (currentStock != null && currentStock > 0) {
+                        gift.setStockLimit(currentStock - 1);
+                        mutableData.setValue(gift);
+                    }
+                    return Transaction.success(mutableData);
+                }
+                @Override
+                public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot dataSnapshot) {
+                    if (databaseError != null) {
+                        Log.e(TAG, "Gift stock update failed: " + databaseError.getMessage());
+                    } else {
+                        Log.d(TAG, "Gift stock decremented successfully.");
+                    }
+                }
+            });
+        } else {
+            Log.d(TAG, "No coupon applied or gift key is missing; skipping gift stock update.");
+        }
+    }
 
     private static String generateUniqueOrderId() {
         Random random = new Random();
@@ -250,6 +341,8 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
     }
 
     private void updateCouponButtonState() {
+        if (!isAdded()) return; // Check if the fragment is attached
+
         if (couponIsApply) {
             // Change to remove state
             binding.couponCodeApplyBtn.setText("Remove");
@@ -409,7 +502,67 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
         }
         updateCouponButtonState();
         setupPricing();
+        setupGift();
     }
+    private void setupGift() {
+        DatabaseReference giftRef = FirebaseDatabase.getInstance().getReference("freeGifts");
+        giftRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!isAdded()) return; // Ensure the fragment is still attached.
+                long now = System.currentTimeMillis();
+                String userGroup = "First Order"; // Adjust as needed.
+                int redeemedCount = 0; // Adjust if you track redemptions.
+
+                boolean eligibleGiftFound = false;
+                double minAdditionalNeeded = Double.MAX_VALUE;
+
+                for (DataSnapshot giftSnapshot : snapshot.getChildren()) {
+                    Gift gift = giftSnapshot.getValue(Gift.class);
+                    Log.i(TAG, "onDataChange: "+gift.getGiftId());
+                    if (gift != null) {
+                        if (gift.isEligible(subTotalPrice, userGroup, now, redeemedCount)) {
+                            eligibleGiftFound = true;
+                            binding.freeGiftCard.setVisibility(View.VISIBLE);
+                            binding.freeText.setVisibility(View.GONE);
+                            Glide.with(requireContext())
+                                    .load(gift.getImageUrl())
+                                    .placeholder(R.drawable.placeholder)
+                                    .into(binding.giftImage);
+                            binding.title.setText(gift.getTitle());
+                            binding.subTitle.setText(gift.getSubtitle());
+                            binding.freeType.setText(gift.getCategory());
+                            mainGift = gift;
+                            break;
+                        } else {
+                            if (subTotalPrice < gift.getMinOrderValue()) {
+                                double additionalNeeded = gift.getMinOrderValue() - subTotalPrice;
+                                if (additionalNeeded < minAdditionalNeeded) {
+                                    minAdditionalNeeded = additionalNeeded;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (!eligibleGiftFound) {
+                    binding.freeGiftCard.setVisibility(View.GONE);
+                    if (minAdditionalNeeded != Double.MAX_VALUE) {
+                        binding.freeText.setVisibility(View.VISIBLE);
+                        binding.freeText.setText("Add products worth ₹" + (int) minAdditionalNeeded + " more to get a free gift");
+                    } else {
+                        binding.freeText.setVisibility(View.GONE);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                binding.freeGiftCard.setVisibility(View.GONE);
+                binding.freeText.setVisibility(View.GONE);
+            }
+        });
+    }
+
 
     private void setupPricing() {
         binding.SubTotalPrice.setText(ValuesHelper.RupeeSymbols + subTotalPrice);
@@ -421,8 +574,6 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
             Objects.requireNonNull(binding.couponCode.getEditText()).getText().toString();
         }
         binding.progressCircular.setVisibility(View.GONE);
-
-
     }
 
     @Override
@@ -445,11 +596,10 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
 
     }
 
-
-
-
-
     public void placeOrder(OrderModel orderModel){
+
+//        Log.i(TAG, "placeOrder: ");
+
         ProgressDialog progressDialog = new ProgressDialog(requireContext());
         progressDialog.setTitle("Placing Order");
         progressDialog.setMessage("Please wait while we process your order...");
@@ -462,9 +612,17 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
             @Override
             public void onSuccess() {
                 databaseService.removeCartItems(getContext(),orderModel.getCustomer().getCustomerId());
-                String totalSaving = ValuesHelper.RupeeSymbols + saveAmount;
+                updateUsageAfterOrder();
+
+                double totalSavingInDouble =  orderModel.getOrderTotalPrice() - ShoppingCartHelper.calculateTotalPrices(orderModel.getOrderItems());
+
+                String totalSaving = ValuesHelper.RupeeSymbols + totalSavingInDouble;
+
                 PlaceOrderFragment placeOrderFragment = new PlaceOrderFragment(orderModel.getOrderId(),totalSaving);
                 placeOrderFragment.show(requireActivity().getSupportFragmentManager(), "place_order_dialog");
+
+
+
                 progressDialog.dismiss();
 
             }

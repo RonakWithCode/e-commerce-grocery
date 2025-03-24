@@ -1,6 +1,6 @@
 <resources>
-       <string name="phone_required">Phone number is required</string>
-<!--    <string name="invalid_phone">Enter a valid 10-digit phone number</string>-->
+    <string name="phone_required">Phone number is required</string>
+    <!--    <string name="invalid_phone">Enter a valid 10-digit phone number</string>-->
     <string name="accept_terms_error">Please accept the terms and conditions</string>
 
 
@@ -18,7 +18,7 @@
 
     <string name="otp_title">OTP Verification</string>
     <string name="otp_button_text">VERIFY</string>
-<!--    <string name="resend_msg">Did't you receive the OTP?</string>-->
+    <!--    <string name="resend_msg">Did't you receive the OTP?</string>-->
     <string name="resend_again_msg">Resend OTP</string>
     <string name="change">Change</string>
     <string name="phone_number">Phone Number</string>
@@ -60,7 +60,6 @@
     <string name="tap_to_add_new_address">Tap to add new Address</string>
     <string name="current_location">Current location</string>
     <string name="address">Address</string>
-    <string name="save_address">Save Address</string>
     <string name="deliver_to_this_address">Deliver to this address</string>
     <string name="edit_address">Edit</string>
     <string name="user_name">User Name</string>
@@ -161,7 +160,6 @@
     <string name="you_can_change_latter">You can change latter</string>
     <string name="continue_text">Continue</string>
     <string name="information">Information</string>
-    <string name="create_new_address">Create New Address</string>
     <string name="choose_your_language">choose your language</string>
     <string name="change_your_language">Change your language</string>
     <string name="english">English</string>
@@ -188,16 +186,9 @@
     <string name="place_order">Place Order</string>
     <string name="cod_amp_amp_upi"><![CDATA[(COD) && UPI]]></string>
     <string name="pay_using">Pay using</string>
-    <string name="full_name">full name</string>
-    <string name="mobile_number">Mobile number</string>
     <string name="be_use_to_assist_delivery">be use to assist delivery</string>
-    <string name="full_address_area_street">Full Address Area, Street</string>
     <string name="e_g_near_hospital">E.g near hospital</string>
-    <string name="landmark">Landmark</string>
-    <string name="rajasthan">Rajasthan</string>
     <string name="state">State</string>
-    <string name="home_">Home</string>
-    <string name="work">Work</string>
     <string name="alwar">Alwar</string>
     <string name="town_city">Town/City</string>
     <string name="notes">Notes</string>
@@ -216,7 +207,7 @@
     <string name="request_to_call">Request to Call</string>
     <string name="language">language</string>
     <string name="see_all">see all</string>
-    <string name="dabur">Dabur</string>
+    <string name="dabur">DABUR</string>
     <string name="itc">ITC</string>
     <string name="go_to_current_location">Go to current location</string>
     <string name="welcome_to">Welcome to</string>
@@ -305,7 +296,7 @@
     <string name="loading_more">Loading more orders…</string>
 
     <!-- Error Messages -->
-<!--    <string name="network_error">Network error. Please check your connection.</string>-->
+    <!--    <string name="network_error">Network error. Please check your connection.</string>-->
     <string name="generic_error">Something went wrong. Please try again.</string>
 
     <!-- Filter Descriptions -->
@@ -374,5 +365,62 @@
     <string name="sign_up">Sign Up</string>
     <string name="proceed_to_checkout">Proceed to Checkout</string>
     <string name="in_stock_green_color">In Stock</string>
+
+
+    <!-- Screen Titles and Headings -->
+    <string name="create_new_address">Create New Address</string>
+
+    <!-- Location Messages -->
+    <string name="failed_to_get_location">Failed to get location</string>
+    <string name="out_of_delivery_area">Sorry, we deliver only in Alwar, Rajasthan</string>
+    <string name="delivery_location">Delivery Location</string>
+    <string name="could_not_get_address">Could not get address details</string>
+    <string name="select_delivery_location">Please select a delivery location</string>
+
+    <!-- Form Validation Errors -->
+    <string name="full_name_required">Full name is required</string>
+    <string name="mobile_number_required">Mobile number is required</string>
+    <string name="flat_house_required">Flat/House number is required</string>
+    <string name="address_required">Address is required</string>
+    <string name="landmark_required">Landmark is required</string>
+
+    <!-- Save and Success/Error Messages -->
+    <string name="address_saved_successfully">Address saved successfully</string>
+    <string name="failed_to_save_address">Failed to save address</string>
+
+    <!-- Permission Messages -->
+    <string name="location_permission_denied">Location permission denied</string>
+
+    <!-- Delivery Indicator -->
+    <string name="delivery_available_indicator">Delivery available in your area</string>
+
+    <!-- Form Field Hints -->
+    <string name="full_name">Full Name</string>
+    <string name="mobile_number">Mobile Number</string>
+    <string name="flat_house">Flat, House no</string>
+    <string name="full_address_area_street">Full Address, Area, Street</string>
+    <string name="landmark">Landmark</string>
+
+    <!-- Radio Button Labels -->
+    <string name="home_">Home</string>
+    <string name="work">Work</string>
+
+    <!-- Button Text -->
+    <string name="save_address">Save Address</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+
+    <string name="confirm_location">Confirm Location</string>
+<!--    <string name="full_name">Full Name</string>-->
+<!--    <string name="landmark">Landmark</string>-->
+    <string name="location_confirmed">Location Confirmed</string>
+<!--    <string name="select_delivery_location">Please select a delivery location</string>-->
+<!--    <string name="could_not_get_address">Could not get address details</string>-->
+<!--    <string name="failed_to_get_location">Failed to get location</string>-->
+<!--    <string name="location_permission_denied">Location permission denied</string>-->
+
+    <string name="cart_is_enity">Your cart is empty</string>
 
 </resources>

@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
@@ -35,6 +36,8 @@ import com.google.firebase.FirebaseApp;
 //import com.google.firebase.appcheck.safetynet.SafetyNetAppCheckProviderFactory;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.ronosoft.alwarmart.javaClasses.TokenManager;
+
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
@@ -49,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        String token = TokenManager.getInstance(this).getToken();
+        Log.i(TAG, "onCreate: "+token);
         initializeApp();
         setupUI();
         handleIntent();

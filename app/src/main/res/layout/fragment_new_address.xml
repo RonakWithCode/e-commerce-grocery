@@ -1,43 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/MainBackgroundColor"
-    tools:context=".Adapter.newAddressFragment">
+    android:background="@color/MainBackgroundColor">
 
+    <!-- Back Button -->
     <com.makeramen.roundedimageview.RoundedImageView
         android:id="@+id/backButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="@dimen/_15sdp"
-        android:layout_marginTop="@dimen/_15sdp"
-        android:layout_marginEnd="@dimen/_15sdp"
         android:src="@drawable/baseline_arrow_back_ios_new_24"
-        app:riv_oval="true" />
+        app:riv_oval="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="@dimen/_15sdp"
+        android:layout_marginTop="@dimen/_15sdp" />
 
+    <!-- Title -->
     <TextView
         android:id="@+id/ViewText"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/backButton"
-        android:layout_marginStart="@dimen/_25sdp"
-        android:layout_marginTop="@dimen/_1sdp"
-        android:layout_marginEnd="@dimen/_25sdp"
         android:text="@string/create_new_address"
         android:textAlignment="center"
         android:textColor="@color/MainTextColor"
-        android:textSize="@dimen/_25ssp" />
+        android:textSize="@dimen/_25ssp"
+        app:layout_constraintTop_toBottomOf="@id/backButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginHorizontal="@dimen/_25sdp" />
 
     <!-- Map Container -->
     <FrameLayout
         android:id="@+id/map_container"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="300dp"
-        android:layout_below="@id/ViewText"
+        app:layout_constraintTop_toBottomOf="@id/ViewText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="@dimen/_10sdp">
 
         <fragment
@@ -46,6 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
+        <!-- Optional: Display delivery information -->
         <TextView
             android:id="@+id/radius_indicator"
             android:layout_width="wrap_content"
@@ -54,14 +58,19 @@
             android:layout_margin="16dp"
             android:background="@drawable/radius_indicator_background"
             android:padding="8dp"
-            android:text="Delivery available within 15km"
+            android:text="@string/delivery_available_indicator"
             android:textColor="@android:color/white" />
     </FrameLayout>
 
+    <!-- Scrollable Form -->
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/map_container">
+        android:id="@+id/form_scroll"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/map_container"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -69,41 +78,31 @@
             android:orientation="vertical"
             android:padding="@dimen/_15sdp">
 
-            <TextView
-                android:id="@+id/hintView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/give_some_basic_information"
-                android:textAlignment="center"
-                android:textColor="@color/HintMainTextColor"
-                android:textSize="@dimen/_15ssp" />
-
+            <!-- Example TextInputLayout for Full Name -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_5sdp"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:hint="@string/full_name"
-                app:hintTextColor="@color/MainTextColor"
-                app:counterTextColor="@color/MainTextColor">
+                app:hintTextColor="@color/MainTextColor">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/Name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPersonName"
-                    android:textColor="@color/MainTextColor" />
+                    android:textColor="@color/MainTextColor"/>
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Add similar TextInputLayouts for Phone, Flat/House, Address, Landmark -->
+            <!-- Example for Phone -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_5sdp"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:hint="@string/mobile_number"
-                app:hintTextColor="@color/MainTextColor"
-                app:counterTextColor="@color/MainTextColor"
-                app:helperText="@string/be_use_to_assist_delivery">
+                app:hintTextColor="@color/MainTextColor">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/Phone"
@@ -111,27 +110,27 @@
                     android:layout_height="wrap_content"
                     android:inputType="phone"
                     android:maxLength="10"
-                    android:textColor="@color/MainTextColor" />
+                    android:textColor="@color/MainTextColor"/>
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Example for Flat/House -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_5sdp"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:hint="Flat, house no"
-                app:hintTextColor="@color/MainTextColor"
-                app:helperText="Flat or house no"
-                app:counterTextColor="@color/MainTextColor">
+                android:hint="@string/flat_house"
+                app:hintTextColor="@color/MainTextColor">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/flat_house"
+                    android:id="@+id/flatHouse"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPostalAddress"
-                    android:textColor="@color/MainTextColor" />
+                    android:textColor="@color/MainTextColor"/>
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Example for Address -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/house"
                 android:layout_width="match_parent"
@@ -141,101 +140,65 @@
                 android:hint="@string/full_address_area_street"
                 app:endIconDrawable="@drawable/ic_baseline_my_location_24"
                 app:endIconMode="custom"
-                app:hintTextColor="@color/MainTextColor"
-                app:counterTextColor="@color/MainTextColor">
+                app:hintTextColor="@color/MainTextColor">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/address"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPostalAddress"
-                    android:textColor="@color/MainTextColor" />
+                    android:textColor="@color/MainTextColor"/>
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Example for Landmark -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_5sdp"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:hint="@string/landmark"
-                app:helperText="@string/e_g_near_hospital"
-                app:hintTextColor="@color/MainTextColor"
-                app:counterTextColor="@color/MainTextColor">
+                app:hintTextColor="@color/MainTextColor">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/landmark"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPostalAddress"
-                    android:textColor="@color/MainTextColor" />
+                    android:textColor="@color/MainTextColor"/>
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
+            <!-- RadioGroup for Home/Work -->
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_5sdp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:hint="@string/town_city"
-                android:enabled="false"
-                app:hintTextColor="@color/MainTextColor"
-                app:counterTextColor="@color/MainTextColor">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/alwar"
-                    android:textColor="@color/MainTextColor" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_5sdp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:hint="@string/state"
-                android:enabled="false"
-                app:hintTextColor="@color/MainTextColor"
-                app:counterTextColor="@color/MainTextColor">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/rajasthan"
-                    android:textColor="@color/MainTextColor" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <RadioGroup
-                android:id="@+id/types"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="@dimen/_5sdp"
                 android:orientation="horizontal"
-                android:padding="3dp">
+                android:layout_marginTop="@dimen/_5sdp"
+                android:gravity="center">
 
-                <RadioButton
+                <com.google.android.material.radiobutton.MaterialRadioButton
                     android:id="@+id/home"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true"
-                    android:text="@string/home_" />
+                    android:text="@string/home_"/>
 
-                <RadioButton
+                <com.google.android.material.radiobutton.MaterialRadioButton
                     android:id="@+id/work"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_5sdp"
-                    android:text="@string/work" />
-            </RadioGroup>
+                    android:text="@string/work"/>
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
+            <!-- Save Button -->
             <Button
                 android:id="@+id/save"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:text="@string/save_address"
                 android:layout_marginTop="@dimen/_15sdp"
-                android:text="@string/save_address" />
-
+                android:layout_gravity="center"/>
         </LinearLayout>
     </ScrollView>
-</RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

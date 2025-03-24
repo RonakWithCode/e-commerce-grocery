@@ -11,14 +11,18 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.ronosoft.alwarmart.Activity.AllOrderActivity;
 import com.ronosoft.alwarmart.Activity.AuthMangerActivity;
 import com.ronosoft.alwarmart.Activity.FragmentLoader;
 import com.ronosoft.alwarmart.Activity.SettingsActivity;
 import com.ronosoft.alwarmart.MainActivity;
+import com.ronosoft.alwarmart.Model.AddressModel;
 import com.ronosoft.alwarmart.R;
 import com.ronosoft.alwarmart.Services.AuthService;
 import com.ronosoft.alwarmart.databinding.FragmentMoreBinding;
+import com.ronosoft.alwarmart.javaClasses.AddressDeliveryService;
 
 
 public class MoreFragment extends Fragment {
@@ -46,7 +50,12 @@ public class MoreFragment extends Fragment {
         if (authService.IsLogin()) {
             binding.mainLayout.setVisibility(View.VISIBLE);
             binding.relativeNotAuth.setVisibility(View.GONE);
-            binding.Username.setText(authService.getUserName());
+
+            AddressDeliveryService service = new AddressDeliveryService();
+            AddressModel model =  service.getDefaultAddress(requireContext());
+
+            binding.Username.setText(model.getFullName());
+            binding.userEmail.setText(model.getMobileNumber());
 
             Glide.with(requireContext())
                     .load(R.drawable.ic_profile)

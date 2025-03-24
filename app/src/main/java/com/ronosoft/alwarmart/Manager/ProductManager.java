@@ -4,8 +4,12 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.ronosoft.alwarmart.DAO.CartDAOHelper;
 import com.ronosoft.alwarmart.DAO.ShoppingCartFirebaseModelDAO;
 import com.ronosoft.alwarmart.Model.ShoppingCartFirebaseModel;
@@ -13,6 +17,8 @@ import com.ronosoft.alwarmart.Services.AuthService;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class ProductManager {
@@ -39,19 +45,6 @@ public class ProductManager {
 
 
 
-//    public void isProductInCart(String id,addListenerForIsProductInCart callback) {
-//
-//        ShoppingCartFirebaseModelDAO product =  databaseHelper.ModelDAO().getProductById(id);
-//        if (product != null) {
-//            // Product found
-//            callback.FoundProduct(new ShoppingCartFirebaseModel(product.getProductId(), product.getProductSelectQuantity()));
-//
-////            System.out.println("Product Name: " + product.getProductName());
-//        } else {
-//            callback.notFoundInCart();
-//        }
-//    }
-//
 
 
     public void addToBothDatabase(ShoppingCartFirebaseModel shoppingCartsProductModel,AddListenerForAddToBothInDatabase listener){
@@ -117,6 +110,49 @@ public class ProductManager {
 
 
 
+
+    public interface SyncCartCallback {
+        void onSyncSuccess();
+        void onSyncFailure(String error);
+    }
+
+    public void syncCartFromFirebase(SyncCartCallback callback) {
+        String uId = new AuthService().getUserId();
+        DatabaseReference cartRef = FirebaseDatabase.getInstance().getReference().child("Cart").child(uId);
+
+        cartRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<ShoppingCartFirebaseModelDAO> daoList = new ArrayList<>();
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    ShoppingCartFirebaseModel model = child.getValue(ShoppingCartFirebaseModel.class);
+                    if (model != null) {
+                        ShoppingCartFirebaseModelDAO dao = new ShoppingCartFirebaseModelDAO(
+                                model.getProductId(),
+                                model.getProductSelectQuantity()
+                        );
+                        daoList.add(dao);
+                    }
+                }
+                databaseHelper.ModelDAO().deleteAll();
+                for (ShoppingCartFirebaseModelDAO dao : daoList) {
+                    databaseHelper.ModelDAO().insertAll(dao);
+                }
+                Log.i("ProductManager", "Cart synchronized: " + daoList.size() + " items");
+                if (callback != null) {
+                    callback.onSyncSuccess();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("ProductManager", "Failed to sync cart: " + error.getMessage());
+                if (callback != null) {
+                    callback.onSyncFailure(error.getMessage());
+                }
+            }
+        });
+    }
 
 
 }

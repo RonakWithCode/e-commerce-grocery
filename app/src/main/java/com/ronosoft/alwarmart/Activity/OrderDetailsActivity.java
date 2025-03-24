@@ -313,7 +313,7 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
             startY += 8;
         }
 
-        double shippingFee = Double.parseDouble(orderModel.getShipping().getShippingFee());
+        double shippingFee = orderModel.getShipping().getShippingFee();
         drawThermalTotalLine(canvas, paint, "Shipping:", formatPrice(shippingFee), totalsX, startY);
         startY += 8;
 
