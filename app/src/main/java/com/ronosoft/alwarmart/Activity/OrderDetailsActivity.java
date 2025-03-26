@@ -66,13 +66,16 @@ public class OrderDetailsActivity extends AppCompatActivity implements OrderProd
         binding.download.setOnClickListener(v -> downloadBill());
         binding.ContinueShopping.setOnClickListener(v -> finish());
 
-        String orderID = getIntent().getStringExtra("orderID");
+        String orderID = getIntent().getStringExtra("orderId");
+
+
+
         if (orderID != null && !orderID.isEmpty()) {
             fetchOrderDetails(orderID);
         }
         else {
             Toast.makeText(this, "Order ID is missing", Toast.LENGTH_SHORT).show();
-            finish();
+//            finish();
         }
     }
 

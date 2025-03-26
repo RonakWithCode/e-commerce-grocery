@@ -422,5 +422,6 @@
 <!--    <string name="location_permission_denied">Location permission denied</string>-->
 
     <string name="cart_is_enity">Your cart is empty</string>
+    <string name="care">Care</string>
 
 </resources>

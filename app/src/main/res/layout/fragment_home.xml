@@ -146,17 +146,29 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_by_Database"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/recycler_category"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+
+
+
         <TextView
             android:id="@+id/boysSkinCare"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="boys skin care"
+            android:text="@string/care"
             android:layout_marginStart="@dimen/_5sdp"
             android:layout_marginTop="@dimen/_2ssp"
             android:textSize="@dimen/_20ssp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/recycler_category"
+            app:layout_constraintTop_toBottomOf="@id/recycler_by_Database"
             />
 
         <TextView
@@ -169,7 +181,7 @@
             android:textColor="@color/green_primary"
             android:textSize="@dimen/_17ssp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/recycler_category" />
+            app:layout_constraintTop_toBottomOf="@id/recycler_by_Database" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/boys_skin_care_RecyclerView"

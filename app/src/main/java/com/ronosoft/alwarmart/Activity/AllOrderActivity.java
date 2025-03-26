@@ -137,7 +137,7 @@ public class AllOrderActivity extends AppCompatActivity {
         orderModels = new ArrayList<>();
         orderProductAdapter = new ViewOrderProductAdapter(orderModels, this, orderModel -> {
             Intent i = new Intent(AllOrderActivity.this, OrderDetailsActivity.class);
-            i.putExtra("orderID", orderModel.getOrderId());
+            i.putExtra("orderId", orderModel.getOrderId());
             i.putExtra("orderModel", orderModel);
             startActivity(i);
         });

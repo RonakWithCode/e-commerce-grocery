@@ -35,6 +35,7 @@
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             app:labelVisibilityMode="labeled"
+
             app:menu="@menu/bottombarmenu" />
 
     </com.google.android.material.bottomappbar.BottomAppBar>
