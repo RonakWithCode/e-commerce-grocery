@@ -1,14 +1,13 @@
 package com.ronosoft.alwarmart.Adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Paint;
-import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
@@ -38,134 +37,126 @@ public class ProductAdapter extends ListAdapter<ProductModel, ProductAdapter.Pro
     private final ProductManager productManager;
     private final LifecycleOwner lifecycleOwner;
 
-    public ProductAdapter(@NonNull LifecycleOwner lifecycleOwner, ArrayList<ProductModel> productModels,
-                          onClickProductAdapter clickListener, Context context) {
+    public ProductAdapter(@NonNull LifecycleOwner lifecycleOwner,
+                          ArrayList<ProductModel> productModels,
+                          onClickProductAdapter clickListener,
+                          Context context) {
         super(DIFF_CALLBACK);
         this.context = context;
         this.clickListener = clickListener;
         this.lifecycleOwner = lifecycleOwner;
         this.productManager = new ProductManager(context);
+        // ListAdapter handles diffing automatically.
         submitList(productModels);
     }
 
-    private static final DiffUtil.ItemCallback<ProductModel> DIFF_CALLBACK = new DiffUtil.ItemCallback<ProductModel>() {
-        @Override
-        public boolean areItemsTheSame(@NonNull ProductModel oldItem, @NonNull ProductModel newItem) {
-            return oldItem.getProductId().equals(newItem.getProductId());
-        }
+    // DiffUtil for efficient updates
+    private static final DiffUtil.ItemCallback<ProductModel> DIFF_CALLBACK =
+            new DiffUtil.ItemCallback<ProductModel>() {
+                @Override
+                public boolean areItemsTheSame(@NonNull ProductModel oldItem, @NonNull ProductModel newItem) {
+                    return oldItem.getProductId().equals(newItem.getProductId());
+                }
 
-        @Override
-        public boolean areContentsTheSame(@NonNull ProductModel oldItem, @NonNull ProductModel newItem) {
-            // Manually compare key fields instead of using equals()
-            return oldItem.getProductName().equals(newItem.getProductName()) &&
-                    oldItem.getPrice() == newItem.getPrice() &&
-                    oldItem.getMrp() == newItem.getMrp() &&
-                    oldItem.getStockCount() == newItem.getStockCount() &&
-                    (oldItem.getTime() == null ? newItem.getTime() == null : oldItem.getTime().equals(newItem.getTime()));
-        }
-    };
+                @Override
+                public boolean areContentsTheSame(@NonNull ProductModel oldItem, @NonNull ProductModel newItem) {
+                    // Compare key fields for equality
+                    return oldItem.getProductName().equals(newItem.getProductName())
+                            && oldItem.getPrice() == newItem.getPrice()
+                            && oldItem.getMrp() == newItem.getMrp()
+                            && oldItem.getStockCount() == newItem.getStockCount()
+                            && (oldItem.getTime() == null
+                            ? newItem.getTime() == null
+                            : oldItem.getTime().equals(newItem.getTime()));
+                }
+            };
 
     @NonNull
     @Override
     public ProductAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        RecommendationsViewBinding binding = RecommendationsViewBinding.inflate(LayoutInflater.from(context), parent, false);
+        RecommendationsViewBinding binding = RecommendationsViewBinding.inflate(
+                LayoutInflater.from(context), parent, false);
         return new ProductAdapterViewHolder(binding);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ProductAdapterViewHolder holder, int position) {
         ProductModel product = getItem(position);
+        if (product == null) return;
 
-        // Set product details
+        // Set product name and price information
         holder.binding.productName.setText(product.getProductName());
         holder.binding.productPrice.setText("₹" + formatPrice(product.getPrice()));
         holder.binding.productMRP.setText("₹" + formatPrice(product.getMrp()));
         holder.binding.productMRP.setPaintFlags(holder.binding.productMRP.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
-        // Pass an ArrayList to onClick to match the interface signature
+        // Use a unified click listener for the item
         holder.binding.getRoot().setOnClickListener(v ->
                 clickListener.onClick(product, new ArrayList<>(getCurrentList()))
         );
 
         // Out-of-stock overlay handling
         if (product.getStockCount() == 0) {
-            holder.binding.outOfStockOverlay.setVisibility(android.view.View.VISIBLE);
-            holder.binding.outOfStockText.setVisibility(android.view.View.VISIBLE);
+            holder.binding.outOfStockOverlay.setVisibility(View.VISIBLE);
+            holder.binding.outOfStockText.setVisibility(View.VISIBLE);
         } else {
-            holder.binding.outOfStockOverlay.setVisibility(android.view.View.GONE);
-            holder.binding.outOfStockText.setVisibility(android.view.View.GONE);
+            holder.binding.outOfStockOverlay.setVisibility(View.GONE);
+            holder.binding.outOfStockText.setVisibility(View.GONE);
         }
 
-        // Calculate and show discount badge
+        // Calculate and display discount badge if MRP > price
         double mrp = product.getMrp();
         double sellingPrice = product.getPrice();
-        int roundedDiscount = (int) Math.round(((mrp - sellingPrice) / mrp) * 100);
-        if (roundedDiscount > 0) {
-            holder.binding.discountBadge.setVisibility(android.view.View.VISIBLE);
-            holder.binding.discountBadge.setText(roundedDiscount + "% OFF");
+        if (mrp > 0 && sellingPrice < mrp) {
+            int roundedDiscount = (int) Math.round(((mrp - sellingPrice) / mrp) * 100);
+            if (roundedDiscount > 0) {
+                holder.binding.discountBadge.setVisibility(View.VISIBLE);
+                holder.binding.discountBadge.setText(roundedDiscount + "% OFF");
+            } else {
+                holder.binding.discountBadge.setVisibility(View.GONE);
+            }
         } else {
-            holder.binding.discountBadge.setVisibility(android.view.View.GONE);
+            holder.binding.discountBadge.setVisibility(View.GONE);
         }
 
-        // Handle delivery time badge
-
-        if (product.getProductLayoutType().equals("Shoes") || product.getProductLayoutType().equals("Cloth")) {
-            // Code to execute for Shoes or Cloth
-
-            holder.binding.deliveryTimeContainer.setVisibility(android.view.View.VISIBLE);
-            holder.binding.deliveryTimeBadge.setVisibility(android.view.View.VISIBLE);
+        // Delivery time handling for specific layout types (e.g., Shoes, Cloth)
+        if ("Shoes".equalsIgnoreCase(product.getProductLayoutType()) ||
+                "Cloth".equalsIgnoreCase(product.getProductLayoutType())) {
+            holder.binding.deliveryTimeContainer.setVisibility(View.VISIBLE);
+            holder.binding.deliveryTimeBadge.setVisibility(View.VISIBLE);
             holder.binding.deliveryTimeBadge.setText(product.getTime());
-
-
-        }else {
-
-            // add code for get time by Google Map
+        } else {
+            holder.binding.deliveryTimeContainer.setVisibility(View.GONE);
         }
 
-
-//        if (!TextUtils.isEmpty(product.getTime())) {
-//            holder.binding.deliveryTimeContainer.setVisibility(android.view.View.VISIBLE);
-//            holder.binding.deliveryTimeBadge.setText(product.getTime());
-//
-//        }
-//        else {
-//            holder.binding.deliveryTimeContainer.setVisibility(android.view.View.GONE);
-//        }
-
-        // Observe cart changes using the provided LifecycleOwner
+        // Observe cart changes (if supported by your productManager)
         productManager.observeCartItem(product.getProductId()).observe(lifecycleOwner, cartItem -> {
             if (cartItem != null) {
-                holder.binding.addToCart.setVisibility(android.view.View.GONE);
-                holder.binding.quantityLayout.setVisibility(android.view.View.VISIBLE);
+                holder.binding.addToCart.setVisibility(View.GONE);
+                holder.binding.quantityLayout.setVisibility(View.VISIBLE);
                 holder.binding.quantity.setText(String.valueOf(cartItem.getProductSelectQuantity()));
             } else {
-                holder.binding.addToCart.setVisibility(android.view.View.VISIBLE);
-                holder.binding.quantityLayout.setVisibility(android.view.View.GONE);
+                holder.binding.addToCart.setVisibility(View.VISIBLE);
+                holder.binding.quantityLayout.setVisibility(View.GONE);
             }
         });
 
-        // Additional layout type handling (e.g., shoes, cloth)
-        if (product.getProductLayoutType().equals(ProductModel.LAYOUT_TYPE_SHOES) ||
-                product.getProductLayoutType().equals(ProductModel.LAYOUT_TYPE_CLOTH)) {
-            holder.binding.deliveryTimeContainer.setVisibility(android.view.View.VISIBLE);
-            holder.binding.deliveryTimeBadge.setVisibility(android.view.View.VISIBLE);
-            holder.binding.deliveryTimeBadge.setText(product.getTime());
-        }
-
-        // Add to cart listener
-        holder.binding.addToCart.setOnClickListener(view -> {
+        // Add to cart action
+        holder.binding.addToCart.setOnClickListener(v -> {
             if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-                ShoppingCartFirebaseModel cartItem = new ShoppingCartFirebaseModel(product.getProductId(), product.getMinSelectableQuantity());
+                ShoppingCartFirebaseModel cartItem = new ShoppingCartFirebaseModel(
+                        product.getProductId(), product.getMinSelectableQuantity());
                 productManager.addToBothDatabase(cartItem, new ProductManager.AddListenerForAddToBothInDatabase() {
                     @Override
                     public void added(ShoppingCartFirebaseModel shoppingCartFirebaseModel) {
-                        holder.binding.addToCart.setVisibility(android.view.View.GONE);
-                        holder.binding.quantityLayout.setVisibility(android.view.View.VISIBLE);
+                        holder.binding.addToCart.setVisibility(View.GONE);
+                        holder.binding.quantityLayout.setVisibility(View.VISIBLE);
                         holder.binding.quantity.setText(String.valueOf(shoppingCartFirebaseModel.getProductSelectQuantity()));
                     }
                     @Override
                     public void failure(Exception e) {
-                        // Handle error appropriately
+                        Log.e("ProductAdapter", "Error adding to cart", e);
                     }
                 });
             } else {
@@ -173,59 +164,73 @@ public class ProductAdapter extends ListAdapter<ProductModel, ProductAdapter.Pro
             }
         });
 
-        // Quantity adjustment listeners
+        // Quantity adjustment listeners with safe number parsing
         holder.binding.increaseQuantity.setOnClickListener(v -> {
-            int currentQty = Integer.parseInt(holder.binding.quantity.getText().toString());
-            int newQty = currentQty + 1;
-            if (newQty <= product.getMaxSelectableQuantity()) {
-                holder.binding.quantity.setText(String.valueOf(newQty));
-                updateQuantity(product.getProductId(), newQty);
+            try {
+                int currentQty = Integer.parseInt(holder.binding.quantity.getText().toString());
+                int newQty = currentQty + 1;
+                if (newQty <= product.getMaxSelectableQuantity()) {
+                    holder.binding.quantity.setText(String.valueOf(newQty));
+                    updateQuantity(product.getProductId(), newQty);
+                }
+            } catch (NumberFormatException e) {
+                Log.e("ProductAdapter", "Invalid quantity format", e);
             }
         });
 
         holder.binding.decreaseQuantity.setOnClickListener(v -> {
-            int currentQty = Integer.parseInt(holder.binding.quantity.getText().toString());
-            int newQty = currentQty - 1;
-            if (newQty >= product.getMinSelectableQuantity()) {
-                holder.binding.quantity.setText(String.valueOf(newQty));
-                updateQuantity(product.getProductId(), newQty);
-            }else {
-//                binding.progressCircular.setVisibility(View.VISIBLE);
-                productManager.RemoveCartProductById(product.getProductId());
-//            new DatabaseService().removeCartItemById(uid,id);
-//                cartsAdapter.notifyDataSetChanged();
-//                binding.progressCircular.setVisibility(View.GONE);
-
+            try {
+                int currentQty = Integer.parseInt(holder.binding.quantity.getText().toString());
+                int newQty = currentQty - 1;
+                if (newQty >= product.getMinSelectableQuantity()) {
+                    holder.binding.quantity.setText(String.valueOf(newQty));
+                    updateQuantity(product.getProductId(), newQty);
+                } else {
+                    // Remove product from cart if quantity drops below minimum
+                    productManager.RemoveCartProductById(product.getProductId());
+                }
+            } catch (NumberFormatException e) {
+                Log.e("ProductAdapter", "Invalid quantity format", e);
             }
-            
         });
 
-        // Load product image with Glide
-        Glide.with(context)
-                .load(product.getProductImage().get(0))
-                .placeholder(R.drawable.product_image_shimmee_effect)
-                .error(R.drawable.product_image_shimmee_effect)
-                .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-                .centerCrop()
-                .into(holder.binding.productImage);
+        // Load product image safely using Glide
+        if (product.getProductImage() != null && !product.getProductImage().isEmpty()) {
+            Glide.with(context)
+                    .load(product.getProductImage().get(0))
+                    .placeholder(R.drawable.product_image_shimmee_effect)
+                    .error(R.drawable.product_image_shimmee_effect)
+                    .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                    .centerCrop()
+                    .into(holder.binding.productImage);
+        } else {
+            // Set a default image if no images are available
+            holder.binding.productImage.setImageResource(R.drawable.product_image_shimmee_effect);
+        }
     }
 
+    /**
+     * Updates the cart quantity using the ProductManager.
+     */
     private void updateQuantity(String productId, int quantity) {
-        productManager.UpdateCartQuantityById(new AuthService().getUserId(), productId, quantity);
+        String uid = new AuthService().getUserId();
+        if (uid != null) {
+            productManager.UpdateCartQuantityById(uid, productId, quantity);
+        }
     }
 
+    /**
+     * Formats price by removing unnecessary decimals.
+     */
     private String formatPrice(double price) {
         return (price == (long) price)
                 ? String.format(Locale.getDefault(), "%d", (long) price)
                 : String.format(Locale.getDefault(), "%.2f", price);
     }
 
-    private String formatDeliveryTime(String time) {
-        return (time == null || time.isEmpty()) ? "NA" : time + " MINS";
-    }
-
     public static class ProductAdapterViewHolder extends RecyclerView.ViewHolder {
         RecommendationsViewBinding binding;
+
         public ProductAdapterViewHolder(@NonNull RecommendationsViewBinding binding) {
             super(binding.getRoot());
             this.binding = binding;

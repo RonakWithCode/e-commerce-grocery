@@ -32,26 +32,29 @@ import com.ronosoft.alwarmart.interfaceClass.ShoppingCartsInterface;
 import java.util.ArrayList;
 
 public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInterface {
-    FragmentShoppingCartsBinding binding;
-    DatabaseService service;
-    ShoppingCartsAdapter cartsAdapter;
-    ArrayList<ShoppingCartsProductModel> models;
-    AuthService authService;
-    String uid;
+
+    private static final String TAG = "ShoppingCartsFragment";
+    private FragmentShoppingCartsBinding binding;
+    private DatabaseService service;
+    private ShoppingCartsAdapter cartsAdapter;
+    private ArrayList<ShoppingCartsProductModel> models;
+    private AuthService authService;
+    private String uid;
 
     public ShoppingCartsFragment() {
         // Required empty public constructor
     }
-    @SuppressLint("SetTextI18n")
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        binding = FragmentShoppingCartsBinding.inflate(inflater,container,false);
+        binding = FragmentShoppingCartsBinding.inflate(inflater, container, false);
         authService = new AuthService();
         service = new DatabaseService();
+
+        // Check user authentication
         if (authService.IsLogin()) {
-            uid  = authService.getUserId();
+            uid = authService.getUserId();
             models = new ArrayList<>();
             init();
             binding.relativeNotAuth.setVisibility(View.GONE);
@@ -64,122 +67,122 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
             binding.linearLayoutPlaceHolder.setVisibility(View.GONE);
         }
 
-        binding.siginUp.setOnClickListener(view -> startActivity(new Intent(requireContext(), AuthMangerActivity.class)));
-        binding.Buy.setOnClickListener(Buy->{
-            if (models.isEmpty()){
+        // Buy button: check if cart is empty before proceeding
+        binding.Buy.setOnClickListener(view -> {
+            if (models == null || models.isEmpty() || cartsAdapter.getItemCount() == 0) {
                 Toast.makeText(requireContext(), "Select Product", Toast.LENGTH_SHORT).show();
-            }else {
-                Intent intent = new Intent(requireContext(), OderActivity.class);
-                startActivity(intent);
+            } else {
+                startActivity(new Intent(requireContext(), OderActivity.class));
             }
         });
+
+        binding.siginUp.setOnClickListener(view ->
+                startActivity(new Intent(requireContext(), AuthMangerActivity.class))
+        );
+
+        // Start shimmer animation for loading placeholder
         binding.linearLayoutPlaceHolder.startShimmer();
-
-
-
-
-
-
 
         return binding.getRoot();
     }
 
-
-
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("NotifyDataSetChanged")
     private void init() {
-        cartsAdapter = new ShoppingCartsAdapter(models,this,requireContext());
-        LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL,false);
+        cartsAdapter = new ShoppingCartsAdapter(models, this, requireContext());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false);
         binding.ProductCart.setLayoutManager(layoutManager);
         binding.ProductCart.setAdapter(cartsAdapter);
+
         service.getUserCartById(uid, new DatabaseService.GetUserCartByIdCallback() {
-            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onSuccess(ArrayList<ShoppingCartsProductModel> cartsProductModels) {
+                if (!isAdded() || binding == null) return;
                 updateCartUI(cartsProductModels);
             }
 
             @Override
             public void onError(String errorMessage) {
-                if (errorMessage.equals("Cart is empty")) {
+                if (!isAdded() || binding == null) return;
+                if ("Cart is empty".equals(errorMessage)) {
                     binding.main.setVisibility(View.GONE);
+                    binding.Buy.setVisibility(View.GONE);
                     binding.IsEnity.setVisibility(View.VISIBLE);
                     binding.linearLayoutPlaceHolder.stopShimmer();
                     binding.linearLayoutPlaceHolder.setVisibility(View.GONE);
                 }
-                Log.i("ERRORDATABASE", "onError: "+errorMessage);
+                Log.i(TAG, "onError: " + errorMessage);
             }
         });
-
     }
 
     @SuppressLint("SetTextI18n")
     private void updateCartUI(ArrayList<ShoppingCartsProductModel> cartItems) {
+        if (!isAdded() || binding == null) return;
+
         binding.progressCircular.setVisibility(View.GONE);
         binding.linearLayoutPlaceHolder.stopShimmer();
         binding.linearLayoutPlaceHolder.setVisibility(View.GONE);
 
+        // If the cart is empty, update the UI and finish the activity
         if (cartItems.isEmpty()) {
             binding.main.setVisibility(View.GONE);
             binding.IsEnity.setVisibility(View.VISIBLE);
+            binding.Buy.setVisibility(View.GONE);
+            Toast.makeText(requireContext(), "Your cart is empty", Toast.LENGTH_SHORT).show();
+            if (getActivity() != null) {
+                getActivity().finish();
+            }
             return;
         }
 
         binding.main.setVisibility(View.VISIBLE);
         binding.IsEnity.setVisibility(View.GONE);
+        binding.Buy.setVisibility(View.VISIBLE);
 
-        // Update cart items
         models.clear();
         models.addAll(cartItems);
         cartsAdapter.notifyDataSetChanged();
 
-        // Update total
+        // Update subtotal using helper calculation
         double totalPrice = ShoppingCartHelper.calculateTotalPrices(models);
         binding.SubTotal.setText(String.format("₹%.2f", totalPrice));
 
-        // Load recommendations
+        // Load recommendations based on cart items
         loadRecommendations(cartItems);
     }
 
     private void loadRecommendations(ArrayList<ShoppingCartsProductModel> cartItems) {
+        if (!isAdded() || binding == null) return;
+
         ArrayList<String> categories = new ArrayList<>();
         for (ShoppingCartsProductModel item : cartItems) {
-            categories.add(item.getCategory());
+            if (item.getCategory() != null) {
+                categories.add(item.getCategory());
+            }
         }
 
         new RecommendationSystemService(requireContext())
-            .getByCategoryMatching(categories, new RecommendationSystemService.addCategoryListener() {
-                @Override
-                public void onSuccess(ArrayList<ProductModel> recommendations) {
-                    if (!recommendations.isEmpty()) {
-                        binding.Recommendations.setVisibility(View.VISIBLE);
-                        setupRecommendationsRecyclerView(recommendations);
+                .getByCategoryMatching(categories, new RecommendationSystemService.addCategoryListener() {
+                    @Override
+                    public void onSuccess(ArrayList<ProductModel> recommendations) {
+                        if (!isAdded() || binding == null) return;
+                        if (!recommendations.isEmpty()) {
+                            binding.Recommendations.setVisibility(View.VISIBLE);
+                            setupRecommendationsRecyclerView(recommendations);
+                        }
                     }
-                }
 
-                @Override
-                public void onError(Exception error) {
-                    Log.e("Recommendations", "Error loading recommendations", error);
-                }
-            });
+                    @Override
+                    public void onError(Exception error) {
+                        Log.e(TAG, "Error loading recommendations", error);
+                    }
+                });
     }
 
     private void setupRecommendationsRecyclerView(ArrayList<ProductModel> recommendations) {
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(
-            requireContext(),
-            LinearLayoutManager.HORIZONTAL,
-            false
-        );
+        if (!isAdded() || binding == null) return;
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
         binding.Recommendations.setLayoutManager(layoutManager);
-
-//        ProductAdapter adapter = new ProductAdapter(
-//            recommendations,
-//            (product, similarProducts) -> new ProductViewCard(requireActivity())
-//                .showProductViewDialog(product, similarProducts),
-//            requireContext(),
-//            ""
-//        );
-
 
         ProductAdapter adapter = new ProductAdapter(
                 this,
@@ -188,31 +191,44 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
                         new ProductViewCard(requireActivity()).showProductViewDialog(product, similarProducts),
                 requireContext()
         );
-
-
         binding.Recommendations.setAdapter(adapter);
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     @Override
-    public void remove(int pos,String id,ShoppingCartsProductModel cartsProductModel) {
-      // cart.removeItem(models.get(pos));
-//        binding.progressCircular.setVisibility(View.VISIBLE);
-
-
-// Show the bottom sheet
+    public void remove(int pos, String id, ShoppingCartsProductModel cartsProductModel) {
+        // Show bottom sheet dialog to remove item if not already showing
         if (requireActivity().getSupportFragmentManager().findFragmentByTag("bottom_sheet_fragment") == null) {
-            RemoveBottomSheetDialogFragment bottomSheet = new RemoveBottomSheetDialogFragment(uid, id, cartsAdapter, cartsProductModel);
+            RemoveBottomSheetDialogFragment bottomSheet =
+                    new RemoveBottomSheetDialogFragment(uid, id, cartsAdapter, cartsProductModel, () -> {
+                        // Callback: reload the cart data after removal.
+                        service.getUserCartById(uid, new DatabaseService.GetUserCartByIdCallback() {
+                            @Override
+                            public void onSuccess(ArrayList<ShoppingCartsProductModel> cartsProductModels) {
+                                if (!isAdded() || binding == null) return;
+                                updateCartUI(cartsProductModels);
+                            }
+
+                            @Override
+                            public void onError(String errorMessage) {
+                                Log.i(TAG, "onError after removal: " + errorMessage);
+                            }
+                        });
+                    });
             bottomSheet.show(requireActivity().getSupportFragmentManager(), "bottom_sheet_fragment");
         }
-
-//        binding.progressCircular.setVisibility(View.GONE);
     }
 
     @Override
-    public void UpdateQuantity(ShoppingCartsProductModel UpdateModel, String id) {
-        binding.progressCircular.setVisibility(View.VISIBLE);
-        new ProductManager(requireActivity()).UpdateCartQuantityById(uid,id, UpdateModel.getSelectableQuantity());
-//        service.UpdateCartQuantityById(uid,id,UpdateModel.getSelectableQuantity());
+    public void UpdateQuantity(ShoppingCartsProductModel updateModel, String id) {
+        if (binding != null) {
+            binding.progressCircular.setVisibility(View.VISIBLE);
+        }
+        new ProductManager(requireActivity()).UpdateCartQuantityById(uid, id, updateModel.getSelectableQuantity());
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }

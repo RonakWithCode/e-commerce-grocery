@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-//import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,6 +35,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.ronosoft.alwarmart.Activity.BrandActivity;
+import com.ronosoft.alwarmart.Activity.FragmentLoader;
 import com.ronosoft.alwarmart.Adapter.HomeCategoryAdapter;
 import com.ronosoft.alwarmart.Adapter.HomeProductAdapter;
 import com.ronosoft.alwarmart.Adapter.ProductAdapter;
@@ -121,7 +121,6 @@ public class HomeFragment extends Fragment {
                     addrText = addrText.substring(0, 30) + "...";
                 }
                 binding.address.setText(addrText);
-//                Toast.makeText(requireContext(), "Default address loaded. Delivery Time: " + deliveryTime + " minutes", Toast.LENGTH_SHORT).show();
             } else {
                 binding.address.setText("HOME - Add Address");
                 binding.txtDeliveryTime.setText("Alwar Mart in 10 minutes");
@@ -134,27 +133,28 @@ public class HomeFragment extends Fragment {
             databaseService.getUserInfo(userId, new DatabaseService.getUserInfoCallback() {
                 @Override
                 public void onSuccess(UserinfoModels user) {
-                    userInfo[0] = user;
+                    if (isAdded()) {
+                        userInfo[0] = user;
+                    }
                 }
                 @Override
                 public void onError(String errorMessage) {
-//                    Toast.makeText(requireContext(), "Error retrieving user info: " + errorMessage, Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Error retrieving user info: " + errorMessage);
                 }
             });
         }
 
         // Set dropdown listener for addresses
         binding.arrowDropdown.setOnClickListener(view -> {
-            if (currentUser == null) {
-//                Toast.makeText(requireContext(), "Please log in to manage your addresses", Toast.LENGTH_SHORT).show();
-                return;
-            }
+            if (currentUser == null) return;
             ArrayList<AddressModel> addresses = new ArrayList<>();
             if (userInfo[0] != null && userInfo[0].getAddress() != null) {
                 addresses.addAll(userInfo[0].getAddress());
             }
             if (addresses.isEmpty()) {
-//                Toast.makeText(requireContext(), "No addresses found. Please add one.", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(requireContext(), FragmentLoader.class);
+                intent.putExtra("LoadID", "UserAccountFragment");
+                startActivity(intent);
                 return;
             }
             DefaultAddressBottomSheetFragment bottomSheet = new DefaultAddressBottomSheetFragment(addresses);
@@ -167,7 +167,6 @@ public class HomeFragment extends Fragment {
                 }
                 binding.address.setText(addrText);
                 binding.txtDeliveryTime.setText("Alwar Mart in " + newDeliveryTime + " minutes");
-//                Toast.makeText(requireContext(), "Default address updated. Delivery Time: " + newDeliveryTime + " minutes", Toast.LENGTH_SHORT).show();
             });
             bottomSheet.show(getChildFragmentManager(), "DefaultAddressBottomSheet");
         });
@@ -186,8 +185,11 @@ public class HomeFragment extends Fragment {
         homeProductModelBoysSkin = new ArrayList<>();
         homeCategoryAdapter = new HomeCategoryAdapter(homeProductModel, requireContext(), this::ViewCat);
         homeProductBoysSkinAdapter = new HomeCategoryAdapter(homeProductModelBoysSkin, requireContext(), this::ViewCat);
-        multiViewAdapter = new HomeProductAdapter(multiViewModel, (product, productList) ->
-                new ProductViewCard(getActivity()).showProductViewDialog(product, productList), requireActivity());
+        multiViewAdapter = new HomeProductAdapter(multiViewModel, (product, productList) -> {
+            if (isAdded() && getActivity() != null) {
+                new ProductViewCard(getActivity()).showProductViewDialog(product, productList);
+            }
+        }, requireActivity());
 
         binding.BestsellersSee.setOnClickListener(v -> SeeAll());
         binding.boysSkinCareSee.setOnClickListener(v -> SeeAll());
@@ -198,10 +200,14 @@ public class HomeFragment extends Fragment {
     }
 
     public void SeeAll() {
-        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.loader, new ProductWithSlideCategoryFragment());
-        transaction.addToBackStack("SelectLanguageFragment");
-        transaction.commit();
+        try {
+            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.loader, new ProductWithSlideCategoryFragment());
+            transaction.addToBackStack("SelectLanguageFragment");
+            transaction.commit();
+        } catch (Exception e) {
+            Log.e(TAG, "Error in SeeAll()", e);
+        }
     }
 
     private void setupAdapters() {
@@ -232,40 +238,34 @@ public class HomeFragment extends Fragment {
         LoadCarousel();
         LoadProductCategory();
         LoadFromDBBestseller();
+
+        // Get categories from Firestore and load multi-view data randomly (limit up to 15)
         databaseService.getAllCategory(new DatabaseService.GetAllCategoryCallback() {
             @Override
             public void onSuccess(ArrayList<ProductCategoryModel> categories) {
-                // Extract unique tags from the fetched categories.
                 ArrayList<String> tags = new ArrayList<>();
                 for (ProductCategoryModel model : categories) {
                     if (model.getTag() != null && !tags.contains(model.getTag())) {
                         tags.add(model.getTag());
                     }
                 }
-                // Shuffle the list for randomness.
                 Collections.shuffle(tags);
-
-                // Limit the result to at most 15 items.
                 int limit = 15;
                 if (tags.size() > limit) {
                     tags = new ArrayList<>(tags.subList(0, limit));
                 }
-
-                // Convert the list to a String array.
                 String[] tagArray = tags.toArray(new String[0]);
-
-                // Call the multi-view loader with the randomized and limited array.
                 loadProductsMultiViewForLoop(tagArray);
             }
-
             @Override
             public void onError(String errorMessage) {
-                // Handle error as needed.
+                Log.e(TAG, "Error getting categories: " + errorMessage);
             }
         });
 
-
-        loadProductsForCategories(new String[]{"Dairy","snacks","BISCUITS","hair oil","Grains","Pulses" ,"Honey & Spreads"});  /// this seller
+        // Load fixed category groups
+//        loadProductsForCategories(new String[]{"Dairy", "snacks", "BISCUITS", "hair oil", "Grains", "Pulses", "Honey & Spreads"});
+        loadProductsForCategories(new String[]{"hair oil", "Honey & Spreads", "SKIN CARE"});
         loadProductsForCategoriesByBoysSkin(new String[]{"SKIN CARE", "hair oil"});
     }
 
@@ -277,7 +277,10 @@ public class HomeFragment extends Fragment {
                 if (document != null && document.exists()) {
                     BestsellersModels bestsellersModels = document.toObject(BestsellersModels.class);
                     if (bestsellersModels != null && bestsellersModels.getProductIds() != null) {
-                        loadProductsForBestseller(bestsellersModels);
+                        // Ensure the fragment is still added and view is available
+                        if (isAdded() && getView() != null) {
+                            loadProductsForBestseller(bestsellersModels);
+                        }
                     } else {
                         Log.e(TAG, "Bestsellers model or productIds is null.");
                     }
@@ -291,14 +294,20 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadProductsForBestseller(BestsellersModels bestsellersModels) {
+        // Protect against updating UI when view is not available
+        if (!isAdded() || getView() == null) return;
         List<String> productIds = bestsellersModels.getProductIds();
         ArrayList<ProductModel> bestsellerProductModel = new ArrayList<>();
         ProductAdapter productAdapter = new ProductAdapter(
                 getViewLifecycleOwner(),
                 bestsellerProductModel,
-                (product, productList) -> new ProductViewCard(getActivity()).showProductViewDialog(product, productList),
-                requireContext());
-
+                (product, productList) -> {
+                    if (isAdded() && getActivity() != null) {
+                        new ProductViewCard(getActivity()).showProductViewDialog(product, productList);
+                    }
+                },
+                requireContext()
+        );
         if (!productIds.isEmpty()) {
             if (productIds.size() <= 10) {
                 firestore.collection("Product")
@@ -355,7 +364,7 @@ public class HomeFragment extends Fragment {
         return chunks;
     }
 
-    // Load products for multi-view (e.g. a list of categories with products)
+    // Load products for multi-view (e.g., a list of categories with products)
     private void loadProductsMultiViewForLoop(String[] categories) {
         multiViewModel.clear();
         for (String category : categories) {
@@ -368,8 +377,10 @@ public class HomeFragment extends Fragment {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onSuccess(ArrayList<ProductModel> products) {
-                multiViewModel.add(new HomeProductModel(category, products));
-                multiViewAdapter.notifyDataSetChanged();
+                if (isAdded()) {
+                    multiViewModel.add(new HomeProductModel(category, products));
+                    multiViewAdapter.notifyDataSetChanged();
+                }
             }
             @Override
             public void onError(String errorMessage) {
@@ -425,7 +436,6 @@ public class HomeFragment extends Fragment {
             context.startActivity(intent);
         });
 
-
         Glide.with(context)
                 .load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/brand%2F1742797426395-4ba62de6fa4103a0c4a7e0f7f34afff9.w800.h800.png?alt=media&token=43a11f24-f7c4-44a2-9bb4-3d3d640fadcf")
                 .placeholder(R.drawable.skeleton_shape)
@@ -435,16 +445,12 @@ public class HomeFragment extends Fragment {
                 .override(300, 300)
                 .into(binding.Aashirvaad);
 
-
         binding.Aashirvaad.setOnClickListener(view -> {
             Intent intent = new Intent(context, BrandActivity.class);
             intent.putExtra("brand", "Aashirvaad");
             context.startActivity(intent);
         });
-
     }
-
-
 
     void LoadCarousel() {
         ArrayList<BannerModels> topBannerModels = new ArrayList<>();
@@ -458,8 +464,9 @@ public class HomeFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 topBannerModels.clear();
                 bottomBannerModels.clear();
-//                topCarousel.clearData();
-//                bottomCarousel.clearData();
+                // Optionally clear carousel data:
+                // topCarousel.clearData();
+                // bottomCarousel.clearData();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     BannerModels banner = snapshot.getValue(BannerModels.class);
                     if (banner != null && banner.isActive()) {
@@ -554,7 +561,11 @@ public class HomeFragment extends Fragment {
                 new ProductAdapter(
                         getViewLifecycleOwner(),
                         model.getProduct(),
-                        (product, productList) -> new ProductViewCard(getActivity()).showProductViewDialog(product, productList),
+                        (product, productList) -> {
+                            if (isAdded() && getActivity() != null) {
+                                new ProductViewCard(getActivity()).showProductViewDialog(product, productList);
+                            }
+                        },
                         requireContext()
                 )
         );
@@ -593,14 +604,16 @@ public class HomeFragment extends Fragment {
     }
 
     // --- Helper method: loadProduct ---
-    // This method fetches products by category and adds them to a given list using a provided adapter.
+    // Fetch products by category and add them to the given list using the provided adapter.
     private void loadProduct(String category, ArrayList<HomeProductModel> productList, HomeCategoryAdapter adapter) {
         databaseService.getAllProductsByCategoryOnly(category, new DatabaseService.GetAllProductsCallback() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onSuccess(ArrayList<ProductModel> products) {
-                productList.add(new HomeProductModel(category, products));
-                adapter.notifyDataSetChanged();
+                if (isAdded()) {
+                    productList.add(new HomeProductModel(category, products));
+                    adapter.notifyDataSetChanged();
+                }
             }
             @Override
             public void onError(String errorMessage) {
@@ -609,14 +622,14 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    // Method to load products for multiple categories into homeProductModel list.
+    // Load products for multiple categories into homeProductModel.
     private void loadProductsForCategories(String[] categories) {
         for (String category : categories) {
             loadProduct(category, homeProductModel, homeCategoryAdapter);
         }
     }
 
-    // Method to load products for multiple categories into homeProductModelBoysSkin list.
+    // Load products for multiple categories into homeProductModelBoysSkin.
     private void loadProductsForCategoriesByBoysSkin(String[] categories) {
         for (String category : categories) {
             loadProduct(category, homeProductModelBoysSkin, homeProductBoysSkinAdapter);

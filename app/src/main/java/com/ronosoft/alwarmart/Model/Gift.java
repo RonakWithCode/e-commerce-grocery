@@ -22,7 +22,7 @@ public class Gift implements Parcelable {
     private String terms;
     private int priority;
     private Integer maxRedemptions;  // Optional: Limit on the number of redemptions
-    private List<String> eligibleUserGroups; // E.g., "First Order", "Second Order", "All Customers"
+    private String eligibleUserGroups; // E.g., "First Order", "Second Order", "All Customers"
     private String imageUrl;
     private String createdAt;
     private String updatedAt;
@@ -33,7 +33,7 @@ public class Gift implements Parcelable {
 
     public Gift(String title, String subtitle, String description, double minOrderValue, String category, boolean active,
                 Validity validity, Integer stockLimit, String terms, int priority, Integer maxRedemptions,
-                List<String> eligibleUserGroups, String imageUrl, String createdAt, String updatedAt,String GiftId) {
+                String eligibleUserGroups, String imageUrl, String createdAt, String updatedAt,String GiftId) {
         this.title = title;
         this.subtitle = subtitle;
         this.description = description;
@@ -141,8 +141,6 @@ public class Gift implements Parcelable {
     public Integer getMaxRedemptions() { return maxRedemptions; }
     public void setMaxRedemptions(Integer maxRedemptions) { this.maxRedemptions = maxRedemptions; }
 
-    public List<String> getEligibleUserGroups() { return eligibleUserGroups; }
-    public void setEligibleUserGroups(List<String> eligibleUserGroups) { this.eligibleUserGroups = eligibleUserGroups; }
 
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
@@ -161,17 +159,24 @@ public class Gift implements Parcelable {
         GiftId = giftId;
     }
 
+    public String getEligibleUserGroups() {
+        return eligibleUserGroups;
+    }
+
+    public void setEligibleUserGroups(String eligibleUserGroups) {
+        this.eligibleUserGroups = eligibleUserGroups;
+    }
+
     /**
      * Checks whether this gift is eligible for a given order.
      * Validity dates are expected to be in the "yyyy-MM-dd" format.
      *
      * @param orderValue    the total value of the order.
-     * @param userGroup     the customer’s user group (e.g., "First Order").
      * @param currentTimeMs the current time in milliseconds.
-     * @param redeemedCount the number of times this gift has been redeemed.
      * @return true if eligible; false otherwise.
      */
-    public boolean isEligible(double orderValue, String userGroup, long currentTimeMs, int redeemedCount) {
+
+    public boolean isEligible(double orderValue, long currentTimeMs) {
         if (!active) return false;
         if (orderValue < minOrderValue) return false;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
@@ -188,14 +193,9 @@ public class Gift implements Parcelable {
             e.printStackTrace();
             return false;
         }
-        if (eligibleUserGroups != null && !eligibleUserGroups.isEmpty() && !eligibleUserGroups.contains(userGroup)) {
-            return false;
-        }
-        if (stockLimit != null && redeemedCount >= stockLimit) return false;
-        if (maxRedemptions != null && redeemedCount >= maxRedemptions) return false;
+        // Additional checks for stock or max redemptions can be added here if desired.
         return true;
     }
-
 
 
 
@@ -220,7 +220,7 @@ public class Gift implements Parcelable {
         } else {
             maxRedemptions = in.readInt();
         }
-        eligibleUserGroups = in.createStringArrayList();
+        eligibleUserGroups = in.readString();
         imageUrl = in.readString();
         createdAt = in.readString();
         updatedAt = in.readString();
@@ -267,7 +267,7 @@ public class Gift implements Parcelable {
             dest.writeByte((byte) 1);
             dest.writeInt(maxRedemptions);
         }
-        dest.writeStringList(eligibleUserGroups);
+        dest.writeString(eligibleUserGroups);
         dest.writeString(imageUrl);
         dest.writeString(createdAt);
         dest.writeString(updatedAt);

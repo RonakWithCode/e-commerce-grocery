@@ -11,7 +11,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -31,6 +30,7 @@ import java.util.ArrayList;
 
 public class ProductWithSlideCategoryFragment extends Fragment {
 
+    private static final String TAG = "ProductSlideCategory";
     private FragmentProductWithSlideCategoryBinding binding;
     private ProductAdapter productAdapter;
     private SlideCategoryAdapter categoryAdapter;
@@ -50,6 +50,9 @@ public class ProductWithSlideCategoryFragment extends Fragment {
         return binding.getRoot();
     }
 
+    /**
+     * Initialize required variables and check incoming filter arguments.
+     */
     private void initializeViews() {
         hideActionBar();
         productModels = new ArrayList<>();
@@ -60,25 +63,38 @@ public class ProductWithSlideCategoryFragment extends Fragment {
         }
     }
 
+    /**
+     * Sets up adapters for category list and products grid.
+     */
     private void setupAdapters() {
-        // Initialize and set category adapter
-        categoryAdapter = new SlideCategoryAdapter(categoryModels, requireContext(),
-                productCategory -> loadProductByCategory(productCategory.getTag()));
+        // SlideCategoryAdapter: When a category is clicked, load its products.
+        categoryAdapter = new SlideCategoryAdapter(categoryModels, requireContext(), productCategory -> {
+            if (productCategory != null && productCategory.getTag() != null) {
+                loadProductByCategory(productCategory.getTag());
+            }
+        });
         binding.slideView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         binding.slideView.setAdapter(categoryAdapter);
 
-        // Initialize and set product adapter; using getViewLifecycleOwner() for LiveData observation
+        // ProductAdapter: Displays products in a grid.
         productAdapter = new ProductAdapter(
                 getViewLifecycleOwner(),
                 productModels,
-                (ProductModel productModel, ArrayList<ProductModel> sameProducts) ->
-                        new ProductViewCard(getActivity()).showProductViewDialog(productModel, sameProducts),
+                (ProductModel productModel, ArrayList<ProductModel> sameProducts) -> {
+                    // Show product view dialog.
+                    if (isAdded() && getActivity() != null) {
+                        new ProductViewCard(getActivity()).showProductViewDialog(productModel, sameProducts);
+                    }
+                },
                 requireContext()
         );
         binding.Products.setLayoutManager(new GridLayoutManager(requireContext(), 2));
         binding.Products.setAdapter(productAdapter);
     }
 
+    /**
+     * Sets up click and refresh listeners.
+     */
     private void setupListeners() {
         binding.backBtn.setOnClickListener(v -> handleBackPress());
         binding.searchBta.setOnClickListener(v -> openSearchFragment());
@@ -86,12 +102,16 @@ public class ProductWithSlideCategoryFragment extends Fragment {
         binding.retryButton.setOnClickListener(v -> loadInitialData());
     }
 
+    /**
+     * Loads initial data: categories and products.
+     */
     private void loadInitialData() {
         showLoading();
+        // Load categories first.
         databaseService.getAllCategory(new DatabaseService.GetAllCategoryCallback() {
             @Override
             public void onSuccess(ArrayList<ProductCategoryModel> categories) {
-                if (!isAdded()) return;
+                if (!isAdded() || binding == null) return;
                 categoryModels.clear();
                 categoryModels.addAll(categories);
                 categoryAdapter.notifyDataSetChanged();
@@ -99,25 +119,28 @@ public class ProductWithSlideCategoryFragment extends Fragment {
                     showError("No categories found");
                     return;
                 }
-                String categoryToLoad = currentFilter.equals("no") ?
-                        categories.get(0).getTag() : currentFilter;
+                // Determine which category to load products for.
+                String categoryToLoad = currentFilter.equals("no") ? categories.get(0).getTag() : currentFilter;
                 loadProductByCategory(categoryToLoad);
             }
 
             @Override
             public void onError(String errorMessage) {
-                if (!isAdded()) return;
+                if (!isAdded() || binding == null) return;
                 showError(errorMessage);
             }
         });
     }
 
+    /**
+     * Loads products for the given category.
+     */
     private void loadProductByCategory(String category) {
         showLoading();
         databaseService.getAllProductsByCategoryOnly(category, new DatabaseService.GetAllProductsCallback() {
             @Override
             public void onSuccess(ArrayList<ProductModel> products) {
-                if (!isAdded()) return;
+                if (!isAdded() || binding == null) return;
                 productModels.clear();
                 productModels.addAll(products);
                 productAdapter.notifyDataSetChanged();
@@ -130,33 +153,55 @@ public class ProductWithSlideCategoryFragment extends Fragment {
 
             @Override
             public void onError(String errorMessage) {
-                if (!isAdded()) return;
+                if (!isAdded() || binding == null) return;
                 showError(errorMessage);
             }
         });
     }
 
+    /**
+     * Refresh data on swipe.
+     */
     private void refreshData() {
         loadInitialData();
     }
 
-    // Helper methods for UI feedback
+    /**
+     * Shows a loading indicator and hides error state.
+     */
     private void showLoading() {
-        binding.loadingProgress.setVisibility(View.VISIBLE);
-        binding.errorState.setVisibility(View.GONE);
+        if (binding != null) {
+            binding.loadingProgress.setVisibility(View.VISIBLE);
+            binding.errorState.setVisibility(View.GONE);
+        }
     }
 
+    /**
+     * Hides the loading indicator and stops the swipe refresh.
+     */
     private void hideLoading() {
-        binding.loadingProgress.setVisibility(View.GONE);
-        binding.swipeRefresh.setRefreshing(false);
+        if (binding != null) {
+            binding.loadingProgress.setVisibility(View.GONE);
+            binding.swipeRefresh.setRefreshing(false);
+        }
     }
 
+    /**
+     * Displays an error message.
+     */
     private void showError(String message) {
         hideLoading();
-        binding.errorState.setVisibility(View.VISIBLE);
-        binding.errorMessage.setText(message);
+        if (binding != null) {
+            binding.errorState.setVisibility(View.VISIBLE);
+            binding.errorMessage.setText(message);
+            // Optionally, you can also show a Toast:
+            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        }
     }
 
+    /**
+     * Hides the ActionBar.
+     */
     private void hideActionBar() {
         if (getActivity() instanceof AppCompatActivity) {
             ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
@@ -166,12 +211,18 @@ public class ProductWithSlideCategoryFragment extends Fragment {
         }
     }
 
+    /**
+     * Handles the back press.
+     */
     private void handleBackPress() {
         if (getActivity() != null) {
             getActivity().onBackPressed();
         }
     }
 
+    /**
+     * Opens the search fragment by starting the FragmentLoader activity.
+     */
     private void openSearchFragment() {
         Intent intent = new Intent(requireContext(), FragmentLoader.class);
         intent.putExtra("LoadID", "search");

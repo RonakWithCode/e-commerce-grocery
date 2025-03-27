@@ -42,7 +42,7 @@ public class PlaceOrderFragment extends DialogFragment {
             // TODO: Handle order status button click
             requireActivity().finish();
             Intent intent = new Intent(requireContext(), OrderDetailsActivity.class);
-            intent.putExtra("orderID",orderId);
+            intent.putExtra("orderId",orderId);
 //            intent.putExtra("DialogUtils",true);
             startActivity(intent);
         });

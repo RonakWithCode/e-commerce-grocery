@@ -3,8 +3,10 @@ package com.ronosoft.alwarmart.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.GridLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
@@ -126,7 +128,7 @@ public class BrandActivity extends AppCompatActivity {
 
         binding.Products.setAdapter(productAdapter);
         binding.Products.setLayoutManager(
-                new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+                new GridLayoutManager(this, 2, LinearLayoutManager.VERTICAL, false)
         );
     }
 

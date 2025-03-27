@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/order_manager_nav"
@@ -9,7 +10,7 @@
         android:id="@+id/addressFragment"
         android:name="com.ronosoft.alwarmart.Fragment.AddressFragment"
         android:label="Address Fragment"
-        tools:layout="@layout/fragment_address" >
+        tools:layout="@layout/fragment_address">
         <action
             android:id="@+id/action_addressFragment_to_newAddressFragment"
             app:destination="@id/newAddressFragment" />

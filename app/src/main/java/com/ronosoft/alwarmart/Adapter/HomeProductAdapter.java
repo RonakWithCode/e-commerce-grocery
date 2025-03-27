@@ -25,9 +25,10 @@ import com.ronosoft.alwarmart.javaClasses.CustomSmoothScroller;
 import java.util.ArrayList;
 
 public class HomeProductAdapter extends RecyclerView.Adapter<HomeProductAdapter.ViewHolder> {
-    ArrayList<HomeProductModel> homeProductModel;
-    HomeProductInterface homeProductInterface;
-    FragmentActivity context;
+
+    private ArrayList<HomeProductModel> homeProductModel;
+    private HomeProductInterface homeProductInterface;
+    private FragmentActivity context;
 
     public HomeProductAdapter(ArrayList<HomeProductModel> homeProductModel, HomeProductInterface homeProductInterface, FragmentActivity context) {
         this.homeProductModel = homeProductModel;
@@ -38,56 +39,61 @@ public class HomeProductAdapter extends RecyclerView.Adapter<HomeProductAdapter.
     @NonNull
     @Override
     public HomeProductAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new HomeProductAdapter.ViewHolder(LayoutInflater.from(context).inflate(R.layout.home_product_view, parent, false));
+        View view = LayoutInflater.from(context).inflate(R.layout.home_product_view, parent, false);
+        return new ViewHolder(view);
     }
 
     @SuppressLint("NotifyDataSetChanged")
     @Override
     public void onBindViewHolder(@NonNull HomeProductAdapter.ViewHolder holder, int position) {
-        HomeProductModel homeProductModel1 = homeProductModel.get(position);
-        holder.binding.title.setText(homeProductModel1.getTitle());
+        HomeProductModel model = homeProductModel.get(position);
+        // Set the title from the model
+        holder.binding.title.setText(model.getTitle());
 
-        // Pass the LifecycleOwner (cast context to LifecycleOwner) as the first parameter.
-        ProductAdapter productAdapter = new ProductAdapter(
-                (androidx.lifecycle.LifecycleOwner) context,
-                homeProductModel1.getProduct(),
-                new onClickProductAdapter() {
-                    @Override
-                    public void onClick(ProductModel productModel, ArrayList<ProductModel> sameProducts) {
-                        homeProductInterface.HomeProductOnclick(productModel, sameProducts);
-                    }
-                },
-                context
-        );
+        // Create and set the nested adapter if product list is available
+        ArrayList<ProductModel> products = model.getProduct();
+        if (products != null && !products.isEmpty()) {
+            ProductAdapter productAdapter = new ProductAdapter(
+                    (androidx.lifecycle.LifecycleOwner) context,
+                    products,
+                    new onClickProductAdapter() {
+                        @Override
+                        public void onClick(ProductModel productModel, ArrayList<ProductModel> sameProducts) {
+                            homeProductInterface.HomeProductOnclick(productModel, sameProducts);
+                        }
+                    },
+                    context
+            );
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
-        holder.binding.recycler.setAdapter(productAdapter);
-        holder.binding.recycler.setLayoutManager(layoutManager);
-        layoutManager.setSmoothScrollbarEnabled(true);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+            holder.binding.recycler.setAdapter(productAdapter);
+            holder.binding.recycler.setLayoutManager(layoutManager);
+            layoutManager.setSmoothScrollbarEnabled(true);
 
-        CustomSmoothScroller smoothScroller = new CustomSmoothScroller(context);
-        smoothScroller.setTargetPosition(0);
-        layoutManager.startSmoothScroll(smoothScroller);
+            CustomSmoothScroller smoothScroller = new CustomSmoothScroller(context);
+            smoothScroller.setTargetPosition(0);
+            layoutManager.startSmoothScroll(smoothScroller);
 
-        holder.binding.seeMore.setOnClickListener(view -> {
+            // Optionally, if product data has been updated within the adapter,
+            // you can call productAdapter.notifyDataSetChanged() here.
+        }
+
+        // "See More" click uses the model title as the filter/category.
+        holder.binding.seeMore.setOnClickListener(v -> {
             FragmentTransaction transaction = context.getSupportFragmentManager().beginTransaction();
             Bundle bundle = new Bundle();
-            if (position >= 0 && position < homeProductModel1.getProduct().size()) {
-                String category = homeProductModel1.getProduct().get(position).getCategory();
-                bundle.putString("filter", category);
-                Log.i("HomeProductAdapter", "onBindViewHolder: " + category);
-
-                ProductWithSlideCategoryFragment fragment = new ProductWithSlideCategoryFragment();
-                fragment.setArguments(bundle);
-                transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
-                transaction.addToBackStack("ProductFilterFragment");
-                transaction.commit();
-            } else {
-                Log.e("HomeProductAdapter", "Invalid position: " + position + ", Product list size: " + homeProductModel1.getProduct().size());
-            }
+            // Use the model title (or a dedicated category field if available)
+            String category = model.getTitle();
+            bundle.putString("filter", category);
+            Log.i("HomeProductAdapter", "See more clicked: " + category);
+            ProductWithSlideCategoryFragment fragment = new ProductWithSlideCategoryFragment();
+            fragment.setArguments(bundle);
+            transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
+            transaction.addToBackStack("ProductFilterFragment");
+            transaction.commit();
         });
 
-        productAdapter.notifyDataSetChanged();
+        // Set fixed size and disable nested scrolling for smooth performance.
         holder.binding.recycler.setHasFixedSize(true);
         holder.binding.recycler.setNestedScrollingEnabled(false);
     }

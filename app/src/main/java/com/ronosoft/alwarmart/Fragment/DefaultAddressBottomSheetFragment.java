@@ -1,6 +1,7 @@
 package com.ronosoft.alwarmart.Fragment;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.ronosoft.alwarmart.Activity.FragmentLoader;
 import com.ronosoft.alwarmart.Adapter.AddressAdapterBottomSheet;
 import com.ronosoft.alwarmart.Model.AddressModel;
 import com.ronosoft.alwarmart.databinding.FragmentDefaultAddressBottomSheetBinding;
@@ -65,6 +67,9 @@ public class DefaultAddressBottomSheetFragment extends BottomSheetDialogFragment
         binding.btnAddAddress.setOnClickListener(v -> {
             // Handle "Add New Address" action (e.g., navigate to AddAddressFragment)
             dismiss();
+            Intent intent = new Intent(requireContext(), FragmentLoader.class);
+            intent.putExtra("LoadID", "UserAccountFragment");
+            startActivity(intent);
         });
 
         return binding.getRoot();

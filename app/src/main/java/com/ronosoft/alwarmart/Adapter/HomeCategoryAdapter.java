@@ -18,12 +18,11 @@ import com.ronosoft.alwarmart.interfaceClass.HomeCategoryInterface;
 
 import java.util.ArrayList;
 
-public class HomeCategoryAdapter extends RecyclerView.Adapter<HomeCategoryAdapter.HomeCategoryAdapterViewHolder>{
+public class HomeCategoryAdapter extends RecyclerView.Adapter<HomeCategoryAdapter.HomeCategoryAdapterViewHolder> {
 
-    ArrayList<HomeProductModel> models;
-    Context context;
-    HomeCategoryInterface homeCategoryInterface;
-
+    private ArrayList<HomeProductModel> models;
+    private Context context;
+    private HomeCategoryInterface homeCategoryInterface;
 
     public HomeCategoryAdapter(ArrayList<HomeProductModel> models, Context context, HomeCategoryInterface homeCategoryInterface) {
         this.models = models;
@@ -33,59 +32,81 @@ public class HomeCategoryAdapter extends RecyclerView.Adapter<HomeCategoryAdapte
 
     @NonNull
     @Override
-    public HomeCategoryAdapter.HomeCategoryAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new HomeCategoryAdapter.HomeCategoryAdapterViewHolder(LayoutInflater.from(context).inflate(R.layout.home_category_layout, parent, false));
+    public HomeCategoryAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.home_category_layout, parent, false);
+        return new HomeCategoryAdapterViewHolder(view);
     }
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(@NonNull HomeCategoryAdapter.HomeCategoryAdapterViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull HomeCategoryAdapterViewHolder holder, int position) {
         HomeProductModel homeCategoryModel = models.get(position);
-
         holder.binding.ProductName.setText(homeCategoryModel.getTitle());
-        holder.binding.ProductSize.setText(homeCategoryModel.getProduct().size() + " products");
-        holder.binding.Text1.setText("+" + homeCategoryModel.getProduct().size());
 
-        int productSize = homeCategoryModel.getProduct().size();
+        // Safely get product list and its size.
+        int productSize = 0;
+        if (homeCategoryModel.getProduct() != null) {
+            productSize = homeCategoryModel.getProduct().size();
+        }
+        holder.binding.ProductSize.setText(productSize + " products");
+        holder.binding.Text1.setText("+" + productSize);
 
-        if (productSize > 0) {
-            Glide.with(context).load(homeCategoryModel.getProduct().get(0).getProductImage().get(0))
-                    .placeholder(R.drawable.product_image_shimmee_effect) // Placeholder image while loading
-                    .error(R.drawable.product_image_shimmee_effect) // Error image if loading fails
-                    .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL) // Resize the image
-                    .centerCrop() // Scale type for resizing
-                    .into(holder.binding.View1);
+        // Load images for first three products if available.
+        try {
+            if (productSize > 0) {
+                if (homeCategoryModel.getProduct().get(0) != null &&
+                        homeCategoryModel.getProduct().get(0).getProductImage() != null &&
+                        !homeCategoryModel.getProduct().get(0).getProductImage().isEmpty()) {
+                    Glide.with(context)
+                            .load(homeCategoryModel.getProduct().get(0).getProductImage().get(0))
+                            .placeholder(R.drawable.product_image_shimmee_effect)
+                            .error(R.drawable.product_image_shimmee_effect)
+                            .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                            .centerCrop()
+                            .into(holder.binding.View1);
+                }
+            }
+            if (productSize > 1) {
+                if (homeCategoryModel.getProduct().get(1) != null &&
+                        homeCategoryModel.getProduct().get(1).getProductImage() != null &&
+                        !homeCategoryModel.getProduct().get(1).getProductImage().isEmpty()) {
+                    Glide.with(context)
+                            .load(homeCategoryModel.getProduct().get(1).getProductImage().get(0))
+                            .placeholder(R.drawable.product_image_shimmee_effect)
+                            .error(R.drawable.product_image_shimmee_effect)
+                            .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                            .centerCrop()
+                            .into(holder.binding.View2);
+                }
+            }
+            if (productSize > 2) {
+                if (homeCategoryModel.getProduct().get(2) != null &&
+                        homeCategoryModel.getProduct().get(2).getProductImage() != null &&
+                        !homeCategoryModel.getProduct().get(2).getProductImage().isEmpty()) {
+                    Glide.with(context)
+                            .load(homeCategoryModel.getProduct().get(2).getProductImage().get(0))
+                            .placeholder(R.drawable.product_image_shimmee_effect)
+                            .error(R.drawable.product_image_shimmee_effect)
+                            .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                            .centerCrop()
+                            .into(holder.binding.View3);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        if (productSize > 1) {
-            Glide.with(context).load(homeCategoryModel.getProduct().get(1).getProductImage().get(0))
-                    .placeholder(R.drawable.product_image_shimmee_effect) // Placeholder image while loading
-                    .error(R.drawable.product_image_shimmee_effect) // Error image if loading fails
-                    .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL) // Resize the image
-                    .centerCrop() // Scale type for resizing
-                    .into(holder.binding.View2); // Fix: Using index 0 for the second product's image URL
-        }
-        if (productSize > 2) {
-            Glide.with(context).load(homeCategoryModel.getProduct().get(2).getProductImage().get(0))
-                    .placeholder(R.drawable.product_image_shimmee_effect) // Placeholder image while loading
-                    .error(R.drawable.product_image_shimmee_effect) // Error image if loading fails
-                    .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL) // Resize the image
-                    .centerCrop() // Scale type for resizing
-                    .into(holder.binding.View3); // Fix: Using index 0 for the third product's image URL
-        }
-        holder.binding.getRoot().setOnClickListener(v -> homeCategoryInterface.onClick(homeCategoryModel));
-        holder.binding.seeAllButton.setOnClickListener(v -> homeCategoryInterface.onClick(homeCategoryModel));
-        holder.binding.View1.setOnClickListener(v -> homeCategoryInterface.onClick(homeCategoryModel));
-        holder.binding.View2.setOnClickListener(v -> homeCategoryInterface.onClick(homeCategoryModel));
-        holder.binding.View3.setOnClickListener(v -> homeCategoryInterface.onClick(homeCategoryModel));
-        holder.binding.Text1.setOnClickListener(v -> homeCategoryInterface.onClick(homeCategoryModel));
-        holder.binding.ProductSize.setOnClickListener(v -> homeCategoryInterface.onClick(homeCategoryModel));
-        holder.binding.ProductName.setOnClickListener(v -> homeCategoryInterface.onClick(homeCategoryModel));
 
+        // Set click listeners on multiple views to trigger the interface callback.
+        View.OnClickListener clickListener = v -> homeCategoryInterface.onClick(homeCategoryModel);
+        holder.binding.getRoot().setOnClickListener(clickListener);
+        holder.binding.seeAllButton.setOnClickListener(clickListener);
+        holder.binding.View1.setOnClickListener(clickListener);
+        holder.binding.View2.setOnClickListener(clickListener);
+        holder.binding.View3.setOnClickListener(clickListener);
+        holder.binding.Text1.setOnClickListener(clickListener);
+        holder.binding.ProductSize.setOnClickListener(clickListener);
+        holder.binding.ProductName.setOnClickListener(clickListener);
     }
-
-
-
-
 
     @Override
     public int getItemCount() {
@@ -94,6 +115,7 @@ public class HomeCategoryAdapter extends RecyclerView.Adapter<HomeCategoryAdapte
 
     public static class HomeCategoryAdapterViewHolder extends RecyclerView.ViewHolder {
         HomeCategoryLayoutBinding binding;
+
         public HomeCategoryAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
             binding = HomeCategoryLayoutBinding.bind(itemView);

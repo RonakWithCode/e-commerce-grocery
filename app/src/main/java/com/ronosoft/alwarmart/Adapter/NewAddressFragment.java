@@ -50,7 +50,7 @@ public class NewAddressFragment extends Fragment implements OnMapReadyCallback {
     // Updated warehouse location for Alwar, Rajasthan (from Google Maps)
     private static final LatLng WAREHOUSE_LOCATION = new LatLng(27.528968, 76.604573);
     // Set new delivery radius (in km) for Alwar area – adjust as needed.
-    private static final float DELIVERY_RADIUS_KM = 20f;
+    private static final float DELIVERY_RADIUS_KM = 3f;
 
     private FragmentNewAddressBinding binding;
     private GoogleMap mMap;
