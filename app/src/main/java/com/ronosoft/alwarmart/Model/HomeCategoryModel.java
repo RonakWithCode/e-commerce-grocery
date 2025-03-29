@@ -1,6 +1,9 @@
 package com.ronosoft.alwarmart.Model;
 
+import androidx.annotation.Keep;
+
 import java.util.ArrayList;
+@Keep
 
 public class HomeCategoryModel {
     private String CategoryName;

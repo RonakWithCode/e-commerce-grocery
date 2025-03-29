@@ -27,17 +27,21 @@
         android:background="@color/white"
         app:fabCradleMargin="10dp"
         app:fabCradleRoundedCornerRadius="50dp"
-        tools:ignore="BottomAppBar">
+        app:elevation="0dp"
+    app:backgroundTint="@color/white"
+    tools:ignore="BottomAppBar">
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottomNavigationView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            app:labelVisibilityMode="labeled"
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    app:labelVisibilityMode="labeled"
+    app:elevation="0dp"
+    app:itemIconTint="@drawable/bottom_nav_icon_tint"
+    app:itemTextColor="@drawable/bottom_nav_text_tint"
+    app:menu="@menu/bottombarmenu" />
 
-            app:menu="@menu/bottombarmenu" />
+</com.google.android.material.bottomappbar.BottomAppBar>
 
-    </com.google.android.material.bottomappbar.BottomAppBar>
-
-</RelativeLayout>
+    </RelativeLayout>

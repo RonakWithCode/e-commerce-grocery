@@ -79,6 +79,7 @@ public class ProductAdapter extends ListAdapter<ProductModel, ProductAdapter.Pro
         return new ProductAdapterViewHolder(binding);
     }
 
+
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ProductAdapterViewHolder holder, int position) {
@@ -198,7 +199,7 @@ public class ProductAdapter extends ListAdapter<ProductModel, ProductAdapter.Pro
         if (product.getProductImage() != null && !product.getProductImage().isEmpty()) {
             Glide.with(context)
                     .load(product.getProductImage().get(0))
-                    .placeholder(R.drawable.product_image_shimmee_effect)
+                    .placeholder(R.drawable.spinner_gif)
                     .error(R.drawable.product_image_shimmee_effect)
                     .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                     .centerCrop()

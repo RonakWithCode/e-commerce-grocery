@@ -3,7 +3,10 @@ package com.ronosoft.alwarmart.Model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.Keep;
+
 import java.util.ArrayList;
+@Keep
 
 public class UserinfoModels implements Parcelable {
     private String userId;

@@ -3,6 +3,7 @@ package com.ronosoft.alwarmart.Activity;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -185,24 +186,27 @@ public class SettingsActivity extends AppCompatActivity implements
 
 
 
-
-
     public static class ManagePermissionsFragment extends PreferenceFragmentCompat {
         private PreferenceCategory permissionCategory;
+
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             // Load the preferences from the XML resource
             setPreferencesFromResource(R.xml.manage_permissions, rootKey);
             permissionCategory = findPreference("permissions_category");
 
-            // Add permissions dynamically
-            addAppPermission("LOCATION","android.permission.ACCESS_COARSE_LOCATION", R.drawable.ic_location);
-            addAppPermission("NOTIFICATIONS","android.permission.POST_NOTIFICATIONS", R.drawable.ic_notifications);
-            addAppPermission("STORAGE","android.permission.READ_EXTERNAL_STORAGE", R.drawable.ic_storage);
-            addAppPermission("CAMERA","android.permission.CAMERA", R.drawable.ic_baseline_camera_enhance_24);
+            // Add permissions dynamically (only those present in the manifest)
+            addAppPermission("LOCATION", "android.permission.ACCESS_COARSE_LOCATION", R.drawable.ic_location);
+            addAppPermission("NOTIFICATIONS", "android.permission.POST_NOTIFICATIONS", R.drawable.ic_notifications);
+            // Removed STORAGE (android.permission.READ_EXTERNAL_STORAGE) as it's not in manifest
+            // Removed CAMERA (android.permission.CAMERA) as it's not in manifest
+
+            // Optionally add other manifest permissions if they should be user-facing
+            addAppPermission("FINE LOCATION", "android.permission.ACCESS_FINE_LOCATION", R.drawable.ic_location);
+//            addAppPermission("PHONE STATE", "android.permission.READ_PHONE_STATE", R.drawable.ic_phone);
         }
 
-        private void addAppPermission(String permissionName,String permission, int iconResId) {
+        private void addAppPermission(String permissionName, String permission, int iconResId) {
             if (permissionCategory != null) {
                 Preference checkBoxPreference = new Preference(requireContext());
                 checkBoxPreference.setTitle(permissionName);
@@ -223,6 +227,7 @@ public class SettingsActivity extends AppCompatActivity implements
             return ContextCompat.checkSelfPermission(requireContext(), permission) == PackageManager.PERMISSION_GRANTED;
         }
     }
+
     public static class ReviewRecentLoginsFragment extends Fragment{
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -350,25 +355,32 @@ public class SettingsActivity extends AppCompatActivity implements
             if (deleteAccountPref != null) {
                 deleteAccountPref.setOnPreferenceClickListener(preference -> {
                     // Handle click for Delete Account
-                    // Example: Show a confirmation dialog and delete the account if confirmed.
                     AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
                     builder.setMessage("Are you sure you want to delete your account?")
                             .setPositiveButton("Delete", (dialog, id) -> {
-                                // User clicked the Delete button.
-                                // deleteAccount();
-                                Toast.makeText(requireContext(), "Please send an email to alwar.mart.in@gmail.com", Toast.LENGTH_SHORT).show();
+                                // User clicked the Delete button
+                                String url = "https://alwarmart.in/account-delete";
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setData(Uri.parse(url));
+                                try {
+                                    startActivity(intent);
+                                } catch (ActivityNotFoundException e) {
+                                    // If no browser is available, show an error message
+                                    Toast.makeText(requireContext(),
+                                            "No browser found to open the link",
+                                            Toast.LENGTH_SHORT).show();
+                                }
                                 dialog.dismiss();
                             })
                             .setNegativeButton("Cancel", (dialog, id) -> {
-                                // User clicked the Cancel button.
+                                // User clicked the Cancel button
                                 dialog.dismiss();
                             });
-                    // Create and show the AlertDialog.
+                    // Create and show the AlertDialog
                     builder.create().show();
                     return true;
                 });
             }
-
 
         }
 

@@ -3,8 +3,9 @@ package com.ronosoft.alwarmart.Model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
-
+@Keep
 public class Customer implements Parcelable {
     private String customerId;
     private String fullName;

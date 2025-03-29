@@ -23,6 +23,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.ronosoft.alwarmart.HelperClass.ValuesHelper;
@@ -45,6 +47,8 @@ import org.json.JSONObject;
 import org.json.JSONArray;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -60,10 +64,7 @@ public class AuthOTP extends Fragment {
 
     private static final String TAG = "AuthOTP";
     private static final String ARG_NUMBER = "number";
-    // Make sure this URL points to your deployed Cloud Function
-//    private static final String API_BASE_URL = "https://us-centrxal1-e-commerce-11d7d.cloudfunctions.net/generateCustomToken";
     private static final String API_BASE_URL = "https://alwar-mart-admin-on-web-for-mobile-app.vercel.app/api/generate-token";
-//    private static final String API_BASE_URL = "https://generatecustomtoken-zmrolg7tsq-uc.a.run.app";
 
     private FragmentAuthOTPBinding binding;
     private EditText mEt1, mEt2, mEt3, mEt4, mEt5, mEt6;
@@ -74,6 +75,7 @@ public class AuthOTP extends Fragment {
     private FirebaseAuth mAuth;
     private DatabaseService databaseService;
     private NavController navController;
+    private boolean isLoading = false;
 
     public AuthOTP() {
         // Required empty public constructor
@@ -98,7 +100,6 @@ public class AuthOTP extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentAuthOTPBinding.inflate(inflater, container, false);
         loadingDialog = new LoadingDialog(requireActivity());
-        loadingDialog.startLoadingDialog();
         navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
 
         initializeOTPless();
@@ -109,19 +110,25 @@ public class AuthOTP extends Fragment {
             sendOTP();
         }
 
-        binding.btnVerify.setOnClickListener(view -> verifyOTP());
+        binding.btnVerify.setOnClickListener(view -> {
+            if (!isLoading) {
+                verifyOTP();
+            }
+        });
 
         return binding.getRoot();
     }
 
     private void initializeOTPless() {
         try {
+            showLoading();
             otplessView = OtplessManager.getInstance().getOtplessView(requireActivity());
-            otplessView.initHeadless("JU7POLNCN4P9VT1GY3LD"); // Your OTPless App ID
+            otplessView.initHeadless("JU7POLNCN4P9VT1GY3LD");
             otplessView.setHeadlessCallback(this::onHeadlessCallback);
             Log.d(TAG, "OTPless initialized successfully");
         } catch (Exception e) {
             Log.e(TAG, "Error initializing OTPless: " + e.getMessage());
+            hideLoading();
             showError("Failed to initialize authentication");
         }
     }
@@ -131,10 +138,10 @@ public class AuthOTP extends Fragment {
     }
 
     private void sendOTP() {
+        showLoading();
         HeadlessRequest request = new HeadlessRequest();
         request.setPhoneNumber("+91", number);
         otplessView.startHeadless(request, this::onHeadlessCallback);
-        loadingDialog.dismissDialog();
     }
 
     private void verifyOTP() {
@@ -143,6 +150,7 @@ public class AuthOTP extends Fragment {
             Snackbar.make(binding.getRoot(), "Please enter a valid OTP", Snackbar.LENGTH_SHORT).show();
             return;
         }
+        showLoading();
         HeadlessRequest request = new HeadlessRequest();
         request.setPhoneNumber("+91", number);
         request.setOtp(userOTP);
@@ -162,16 +170,20 @@ public class AuthOTP extends Fragment {
                         break;
                     case "VERIFY":
                         Log.d(TAG, "Verification completed");
+                        hideLoading();
                         break;
                     default:
+                        hideLoading();
                         Log.d(TAG, "Unhandled response type: " + response.getResponseType());
                         break;
                 }
             } catch (Exception e) {
+                hideLoading();
                 Log.e(TAG, "Error processing response: " + e.getMessage(), e);
                 showError("Authentication failed: " + e.getMessage());
             }
         } else {
+            hideLoading();
             Log.e(TAG, "Error response: " + response.getResponse().toString());
             showError("Authentication failed with status: " + response.getStatusCode());
         }
@@ -181,20 +193,15 @@ public class AuthOTP extends Fragment {
         try {
             String userId = responseData.getString("userId");
             Log.d(TAG, "Got userId from OTPless: " + userId);
-            // Optionally extract phone number if needed from identities array
             JSONArray identities = responseData.getJSONArray("identities");
             JSONObject identity = identities.getJSONObject(0);
-            // String phoneFromResponse = identity.getString("identityValue");
-
-            // Get the OTPless token if needed (not used for Firebase sign-in)
             String otplessToken = responseData.getString("token");
             String idToken = responseData.getString("idToken");
 
-            // Save tokens locally if needed
             saveTokens(otplessToken, idToken);
-            // Now request the Firebase custom token
             getCustomToken(userId);
         } catch (Exception e) {
+            hideLoading();
             Log.e(TAG, "Error handling authentication: " + e.getMessage(), e);
             showError("Failed to process authentication data");
         }
@@ -211,6 +218,7 @@ public class AuthOTP extends Fragment {
     }
 
     private void getCustomToken(String userId) {
+        showLoading();
         Log.d(TAG, "Requesting custom token for userId: " + userId);
         JSONObject jsonBody = new JSONObject();
         try {
@@ -218,6 +226,7 @@ public class AuthOTP extends Fragment {
             jsonBody.put("phone", number);
             jsonBody.put("premium", false);
         } catch (JSONException e) {
+            hideLoading();
             Log.e(TAG, "Error creating request body", e);
             showError("Failed to create authentication request");
             return;
@@ -237,9 +246,10 @@ public class AuthOTP extends Fragment {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 Log.e(TAG, "Network request failed", e);
-                requireActivity().runOnUiThread(() ->
-                        showError("Network error: " + e.getMessage())
-                );
+                requireActivity().runOnUiThread(() -> {
+                    hideLoading();
+                    showError("Network error: " + e.getMessage());
+                });
             }
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
@@ -251,12 +261,12 @@ public class AuthOTP extends Fragment {
                         JSONObject jsonResponse = new JSONObject(responseBody);
                         if (jsonResponse.getBoolean("success")) {
                             String customToken = jsonResponse.getString("token");
-                            // Debug: Check if token looks like a JWT (it should have three parts separated by '.')
                             if (!customToken.contains(".")) {
                                 Log.e(TAG, "Invalid custom token format: " + customToken);
-                                requireActivity().runOnUiThread(() ->
-                                        showError("Received invalid token format")
-                                );
+                                requireActivity().runOnUiThread(() -> {
+                                    hideLoading();
+                                    showError("Received invalid token format");
+                                });
                                 return;
                             }
                             Log.i(TAG, "Got custom token successfully: " + customToken);
@@ -264,63 +274,91 @@ public class AuthOTP extends Fragment {
                         } else {
                             String error = jsonResponse.optString("error", "Unknown error");
                             Log.e(TAG, "Error in response: " + error);
-                            requireActivity().runOnUiThread(() ->
-                                    showError("Authentication failed: " + error)
-                            );
+                            requireActivity().runOnUiThread(() -> {
+                                hideLoading();
+                                showError("Authentication failed: " + error);
+                            });
                         }
                     } catch (Exception e) {
                         Log.e(TAG, "Error parsing response", e);
-                        requireActivity().runOnUiThread(() ->
-                                showError("Failed to process server response")
-                        );
+                        requireActivity().runOnUiThread(() -> {
+                            hideLoading();
+                            showError("Failed to process server response");
+                        });
                     }
                 } else {
                     Log.e(TAG, "Server error: " + response.code());
-                    requireActivity().runOnUiThread(() ->
-                            showError("Server error: " + response.code())
-                    );
+                    requireActivity().runOnUiThread(() -> {
+                        hideLoading();
+                        showError("Server error: " + response.code());
+                    });
                 }
             }
         });
     }
 
     private void signInWithCustomToken(String customToken) {
+        showLoading();
         Log.d(TAG, "Signing in with custom token");
+
         mAuth.signInWithCustomToken(customToken)
                 .addOnCompleteListener(requireActivity(), task -> {
+                    DatabaseReference authRef = FirebaseDatabase.getInstance().getReference().child("AuthLogs");
+                    String logId = authRef.push().getKey();
+
                     if (task.isSuccessful()) {
-//                        Log.d(TAG, "signInWithCustomToken:success");
                         FirebaseUser user = mAuth.getCurrentUser();
 
+                        if (user != null) {
+                            Map<String, Object> authData = new HashMap<>();
+                            authData.put("status", "success");
+                            authData.put("uid", user.getUid());
+                            authData.put("email", user.getEmail());
+                            authData.put("displayName", user.getDisplayName());
+                            authData.put("phoneNumber", user.getPhoneNumber());
+                            authData.put("provider", user.getProviderId());
+                            authData.put("tenantId", mAuth.getTenantId());
+                            authData.put("timestamp", System.currentTimeMillis());
 
+                            authRef.child("firebase").child(logId).setValue(authData);
+                        }
 
-//                        Log.i(TAG, "Firebase user: " + user);
-//                        Log.i(TAG, "User UID: " + mAuth.getUid());
-//                        Log.i(TAG, "Tenant ID: " + mAuth.getTenantId());
+                        Log.i(TAG, "Firebase user: " + user);
+                        Log.i(TAG, "User UID: " + mAuth.getUid());
+                        Log.i(TAG, "Tenant ID: " + mAuth.getTenantId());
                         navigateToNextScreen();
                     } else {
-                        Log.e(TAG, "signInWithCustomToken:failure", task.getException());
-                        showError("Firebase authentication failed: " +
-                                (task.getException() != null ? task.getException().getMessage() : "Unknown error"));
+                        Exception exception = task.getException();
+                        String errorMessage = (exception != null) ? exception.getMessage() : "Unknown error";
+
+                        Map<String, Object> errorData = new HashMap<>();
+                        errorData.put("status", "failure");
+                        errorData.put("error", errorMessage);
+                        errorData.put("timestamp", System.currentTimeMillis());
+
+                        authRef.child("firebase").child(logId).setValue(errorData);
+
+                        Log.e(TAG, "signInWithCustomToken:failure", exception);
+                        hideLoading();
+                        showError("Firebase authentication failed: " + errorMessage);
                     }
                 });
     }
 
     private void navigateToNextScreen() {
+        showLoading();
         new AuthService().ClearData(requireContext());
         if (mAuth.getCurrentUser() != null && mAuth.getCurrentUser().getDisplayName() == null) {
             databaseService.CheckNotificationToken(new DatabaseService.UpdateTokenCallback() {
                 @Override
                 public void onSuccess(String token) {
-//                 it mena user login first tine
                     TokenManager.getInstance(requireContext()).clearToken();
                     TokenManager.getInstance(requireContext()).saveToken(token);
                     setupUser(token);
-
-
                 }
                 @Override
                 public void onError(String errorMessage) {
+                    hideLoading();
                     Log.i("onError", "onError: " + errorMessage);
                 }
             });
@@ -330,24 +368,27 @@ public class AuthOTP extends Fragment {
     }
 
     void setupUser(String token) {
+        showLoading();
         String defaultUserName = ValuesHelper.DEFAULT_USER_NAME;
         UserinfoModels userInfo = new UserinfoModels(token, mAuth.getUid(), defaultUserName, number, true);
         databaseService.setUserInfo(userInfo, new DatabaseService.SetUserInfoCallback() {
             @Override
             public void onSuccess(Task<Void> task) {
+                hideLoading();
                 Bundle bundle = new Bundle();
                 bundle.putString("number", number);
-                loadingDialog.dismissDialog();
                 navController.navigate(R.id.action_authOTP_to_authUserDetailsFragment, bundle);
             }
             @Override
             public void onError(String errorMessage) {
+                hideLoading();
                 basicFun.AlertDialog(requireContext(), errorMessage);
             }
         });
     }
 
     private void updateToken() {
+        showLoading();
         databaseService.CheckNotificationToken(new DatabaseService.UpdateTokenCallback() {
             @Override
             public void onSuccess(String token) {
@@ -360,28 +401,31 @@ public class AuthOTP extends Fragment {
                             CheckUserCart();
                         })
                         .addOnFailureListener(e -> {
+                            hideLoading();
                             Toast.makeText(requireContext(), "Failed to update token", Toast.LENGTH_SHORT).show();
                         });
             }
             @Override
             public void onError(String errorMessage) {
+                hideLoading();
                 Log.e(TAG, "Token update error: " + errorMessage);
             }
         });
     }
 
     private void CheckUserCart() {
+        showLoading();
         ProductManager productManager = new ProductManager(requireContext());
         productManager.syncCartFromFirebase(new ProductManager.SyncCartCallback() {
             @Override
             public void onSyncSuccess() {
-                loadingDialog.dismissDialog();
+                hideLoading();
                 requireActivity().finish();
             }
 
             @Override
             public void onSyncFailure(String error) {
-                loadingDialog.dismissDialog();
+                hideLoading();
                 Toast.makeText(requireContext(), "Sync failed: " + error, Toast.LENGTH_SHORT).show();
             }
         });
@@ -389,9 +433,29 @@ public class AuthOTP extends Fragment {
 
     private void showError(String message) {
         requireActivity().runOnUiThread(() -> {
-            loadingDialog.dismissDialog();
+            hideLoading();
             Snackbar.make(binding.getRoot(), message, Snackbar.LENGTH_LONG).show();
         });
+    }
+
+    private void showLoading() {
+        if (!isLoading) {
+            isLoading = true;
+            requireActivity().runOnUiThread(() -> {
+                loadingDialog.startLoadingDialog();
+                binding.btnVerify.setEnabled(false);
+            });
+        }
+    }
+
+    private void hideLoading() {
+        if (isLoading) {
+            isLoading = false;
+            requireActivity().runOnUiThread(() -> {
+                loadingDialog.dismissDialog();
+                binding.btnVerify.setEnabled(true);
+            });
+        }
     }
 
     private void initializeEditTexts() {

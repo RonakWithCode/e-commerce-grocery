@@ -1,10 +1,10 @@
 plugins {
     id 'com.android.application'
     id 'com.google.gms.google-services' // Firebase services
+    id 'com.google.firebase.crashlytics'
 }
 
 android {
-
     namespace 'com.ronosoft.alwarmart'
     compileSdk 34
 
@@ -12,17 +12,28 @@ android {
         applicationId "com.ronosoft.alwarmart"
         minSdk 24
         targetSdk 34
-        versionCode 1
-        versionName "1.0"
-
+        versionCode 10 // this no on play
+        versionName "1.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        multiDexEnabled true // Enables multidex for compatibility with large dependencies
+        multiDexEnabled true
+    }
+
+    signingConfigs {
+
+        release {
+            storeFile file("/Users/ronakjain/ALWAR complete business/play list file/key/alwar_key")
+            storePassword "Ronak@7023"
+            keyAlias "alwar0"
+            keyPassword "Ronak@9414"
+        }
     }
 
     buildTypes {
         release {
-            minifyEnabled false // Disable code shrinking for release
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            minifyEnabled false
+            shrinkResources false
+
+            signingConfig signingConfigs.release
         }
     }
 
@@ -32,21 +43,18 @@ android {
     }
 
     buildFeatures {
-        viewBinding = true // Enable view binding for easier UI handling
+        viewBinding = true
     }
 }
 
 dependencies {
-    // Modern HTML Rendering Libraries
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
     implementation 'io.noties.markwon:core:4.6.2'
     implementation 'io.noties.markwon:html:4.6.2'
     implementation 'io.noties.markwon:image:4.6.2'
     implementation 'io.noties.markwon:linkify:4.6.2'
-
-    // OTPLess
     implementation 'io.github.otpless-tech:otpless-android-sdk:2.5.3'
-
-    // AndroidX Core Libraries
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.activity:activity:1.8.2'
@@ -54,72 +62,42 @@ dependencies {
     implementation 'androidx.preference:preference:1.2.1'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'androidx.core:core-ktx:1.12.0'
-
-    // Material Design Components
     implementation 'com.google.android.material:material:1.11.0'
-
-    // Firebase BOM and dependencies
-    implementation platform('com.google.firebase:firebase-bom:32.7.1')
+    implementation(platform("com.google.firebase:firebase-bom:33.11.0"))
+    implementation("com.google.firebase:firebase-crashlytics")
+    implementation("com.google.firebase:firebase-analytics")
     implementation 'androidx.browser:browser:1.7.0'
-    implementation 'com.google.android.play:integrity:1.3.0'
+    implementation 'com.google.android.play:integrity:1.4.0'
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.firebase:firebase-firestore'
     implementation 'com.google.firebase:firebase-database'
     implementation 'com.google.firebase:firebase-storage'
     implementation 'com.google.firebase:firebase-messaging'
-
-    // Google Play Services
     implementation 'com.google.android.gms:play-services-maps:18.2.0'
     implementation 'com.google.android.gms:play-services-location:21.0.1'
     implementation 'com.google.android.libraries.places:places:3.3.0'
     implementation 'com.google.firebase:firebase-appcheck-playintegrity'
-
-    // Navigation Component
     def nav_version = "2.7.6"
     implementation "androidx.navigation:navigation-fragment:$nav_version"
     implementation "androidx.navigation:navigation-ui:$nav_version"
-
-    // Room Database
     def room_version = "2.6.1"
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
-
-    // Image Loading and Processing
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
     implementation 'com.github.dhaval2404:imagepicker:2.1'
     implementation 'com.makeramen:roundedimageview:2.3.0'
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
-
-    // UI Components and Effects
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
     implementation 'com.github.ibrahimsn98:SmoothBottomBar:1.7.9'
     implementation 'com.github.mancj:MaterialSearchBar:0.8.5'
     implementation 'org.imaginativeworld.whynotimagecarousel:whynotimagecarousel:2.1.0'
-
-    // Maps SDK (Mappls)
-    implementation 'com.mappls.sdk:mappls-android-sdk:8.0.4'
-    implementation 'com.mappls.sdk:place-widget:2.0.1'
-
-    // Networking
-    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
-
-    // Shopping Cart
-    implementation 'com.github.hishd:TinyCart:1.0.1'
-
-    // Unit/Size Utilities
     implementation 'com.intuit.sdp:sdp-android:1.1.0'
     implementation 'com.intuit.ssp:ssp-android:1.1.0'
-
-    // MultiDex Support
     implementation 'androidx.multidex:multidex:2.0.1'
-
-    // Testing Libraries
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-
-    // Kotlin Standard Library Fix
     constraints {
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0") {
             because("kotlin-stdlib-jdk7 is now a part of kotlin-stdlib")
@@ -128,5 +106,4 @@ dependencies {
             because("kotlin-stdlib-jdk8 is now a part of kotlin-stdlib")
         }
     }
-
 }

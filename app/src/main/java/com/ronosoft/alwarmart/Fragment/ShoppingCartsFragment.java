@@ -59,12 +59,16 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
             init();
             binding.relativeNotAuth.setVisibility(View.GONE);
             binding.main.setVisibility(View.VISIBLE);
+            binding.Buy.setVisibility(View.VISIBLE);
+
         } else {
             binding.relativeNotAuth.setVisibility(View.VISIBLE);
             binding.main.setVisibility(View.GONE);
             binding.progressCircular.setVisibility(View.GONE);
             binding.linearLayoutPlaceHolder.stopShimmer();
             binding.linearLayoutPlaceHolder.setVisibility(View.GONE);
+            binding.Buy.setVisibility(View.GONE);
+
         }
 
         // Buy button: check if cart is empty before proceeding

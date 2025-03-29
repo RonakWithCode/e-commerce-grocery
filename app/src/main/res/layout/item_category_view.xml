@@ -6,7 +6,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
-        android:layout_below="@+id/carousel"
         android:id="@+id/category_view_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,7 +15,6 @@
         android:textSize="@dimen/_17ssp" />
     <TextView
         android:id="@+id/category_see_more"
-        android:layout_below="@+id/carousel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"

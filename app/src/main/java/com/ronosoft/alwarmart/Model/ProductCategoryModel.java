@@ -1,5 +1,8 @@
 package com.ronosoft.alwarmart.Model;
 
+import androidx.annotation.Keep;
+
+@Keep
 public class ProductCategoryModel {
     private String Tag,ImageUri;
 

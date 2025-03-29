@@ -3,9 +3,11 @@ package com.ronosoft.alwarmart.Model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 
 import java.util.Date;
+@Keep
 
 public class Shipping implements Parcelable {
     private String shippingMethod;

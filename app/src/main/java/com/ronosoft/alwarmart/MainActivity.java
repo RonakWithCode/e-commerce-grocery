@@ -1,5 +1,7 @@
 package com.ronosoft.alwarmart;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -7,13 +9,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Window;
-import android.view.WindowManager;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -22,13 +24,14 @@ import com.ronosoft.alwarmart.Activity.OrderDetailsActivity;
 import com.ronosoft.alwarmart.Fragment.HomeFragment;
 import com.ronosoft.alwarmart.Fragment.MoreFragment;
 import com.ronosoft.alwarmart.Fragment.ProductFilterByQueryFragment;
-import com.ronosoft.alwarmart.Fragment.ProductFilterFragment;
 import com.ronosoft.alwarmart.Fragment.ProductWithSlideCategoryFragment;
 import com.ronosoft.alwarmart.Fragment.SearchFragment;
 import com.ronosoft.alwarmart.Fragment.ShoppingCartsFragment;
-import com.ronosoft.alwarmart.Model.BannerModels;
 import com.ronosoft.alwarmart.databinding.ActivityMainBinding;
 import com.ronosoft.alwarmart.javaClasses.TokenManager;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,33 +39,107 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final String ORDER_ID = "orderId";
     private static final String OFFERID = "offerId";
-    private static final String LOAD_ID = "LoadID";
     private static final String NOTIFICATION_TYPE = "notification_type";
+
+    // Permission Launchers
+    private ActivityResultLauncher<String[]> multiplePermissionLauncher;
+    private final Map<String, Boolean> permissionStatus = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        try {
-            // Initialize Firebase safely
-            FirebaseApp.initializeApp(this);
-        } catch (Exception e) {
-            Log.e(TAG, "FirebaseApp initialization failed", e);
-        }
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Log the current token for debugging
-        try {
-            String token = TokenManager.getInstance(this).getToken();
-            Log.i(TAG, "onCreate: token=" + token);
-        } catch (Exception e) {
-            Log.e(TAG, "Error retrieving token", e);
-        }
+//        // Initialize token
+//        try {
+//            String token = TokenManager.getInstance(this).getToken();
+//            Log.i(TAG, "onCreate: token=" + token);
+//        } catch (Exception e) {
+//            Log.e(TAG, "Error retrieving token", e);
+//        }
+
+        // Initialize permission launcher
+        initializePermissionLauncher();
 
         setupUI();
         handleNotificationIntent(getIntent());
         setupBottomNavigation();
+        requestRequiredPermissions();
+    }
+
+    private void initializePermissionLauncher() {
+        multiplePermissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestMultiplePermissions(),
+                result -> {
+                    permissionStatus.clear();
+                    permissionStatus.putAll(result);
+
+                    // Handle permission results
+                    for (Map.Entry<String, Boolean> entry : result.entrySet()) {
+                        String permission = entry.getKey();
+                        boolean granted = entry.getValue();
+                        Log.i(TAG, "Permission " + permission + " " + (granted ? "granted" : "denied"));
+
+                        if (!granted) {
+                            handlePermissionDenied(permission);
+                        }
+                    }
+                }
+        );
+    }
+
+    private void requestRequiredPermissions() {
+        String[] permissions;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissions = new String[]{
+                    Manifest.permission.POST_NOTIFICATIONS,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+            };
+        } else {
+            permissions = new String[]{
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+            };
+        }
+
+        // Filter out already granted permissions
+        String[] permissionsToRequest = filterUngrantedPermissions(permissions);
+
+        if (permissionsToRequest.length > 0) {
+            multiplePermissionLauncher.launch(permissionsToRequest);
+        }
+    }
+
+    private String[] filterUngrantedPermissions(String[] permissions) {
+        return java.util.Arrays.stream(permissions)
+                .filter(permission -> ContextCompat.checkSelfPermission(this, permission)
+                        != PackageManager.PERMISSION_GRANTED)
+                .toArray(String[]::new);
+    }
+
+    private void handlePermissionDenied(String permission) {
+        switch (permission) {
+            case Manifest.permission.POST_NOTIFICATIONS:
+                Log.w(TAG, "Notification permission denied - Push notifications won't work");
+                break;
+            case Manifest.permission.ACCESS_FINE_LOCATION:
+            case Manifest.permission.ACCESS_COARSE_LOCATION:
+                Log.w(TAG, "Location permission denied - Location features will be limited");
+                break;
+
+        }
+
+        // Optionally show rationale if permission was denied
+        if (shouldShowRequestPermissionRationale(permission)) {
+            // You can show a dialog explaining why the permission is needed
+            Log.i(TAG, "Should show rationale for " + permission);
+        }
     }
 
     @Override
@@ -72,67 +149,59 @@ public class MainActivity extends AppCompatActivity {
         handleNotificationIntent(intent);
     }
 
-    /**
-     * Sets up the UI by loading the initial fragment and requesting permissions if needed.
-     */
     private void setupUI() {
         try {
             loadInitialFragment();
         } catch (Exception e) {
             Log.e(TAG, "Error loading initial fragment", e);
         }
-        requestNotificationPermission();
     }
 
-    /**
-     * Loads the HomeFragment as the initial fragment.
-     */
     private void loadInitialFragment() {
         loadFragment(new HomeFragment(), "HomeFragment");
     }
 
-    /**
-     * Handles notifications passed via the Intent.
-     */
     private void handleNotificationIntent(Intent intent) {
-        if (intent == null) return;
-        if (intent.hasExtra(NOTIFICATION_TYPE)) {
-            String notificationType = intent.getStringExtra(NOTIFICATION_TYPE);
-            Log.i(TAG, "handleNotificationIntent: notificationType=" + notificationType);
-            if ("order_status".equals(notificationType)) {
+        if (intent == null || !intent.hasExtra(NOTIFICATION_TYPE)) return;
+
+        String notificationType = intent.getStringExtra(NOTIFICATION_TYPE);
+        Log.i(TAG, "handleNotificationIntent: notificationType=" + notificationType);
+
+        switch (notificationType) {
+            case "order_status":
                 String orderId = intent.getStringExtra(ORDER_ID);
                 if (orderId != null && !orderId.isEmpty()) {
                     openOrderDetails(orderId);
                 } else {
-                    Log.w(TAG, "Order ID missing in notification intent.");
+                    Log.w(TAG, "Order ID missing in notification intent");
                 }
-            }
-            else if ("offer".equals(notificationType)) {
-                String OfferID = intent.getStringExtra(OFFERID);
+                break;
+            case "offer":
+                String offerId = intent.getStringExtra(OFFERID);
                 String filterName = intent.getStringExtra("filterName");
-                if (OfferID != null && !OfferID.isEmpty()) {
-
-                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                    Bundle bundle = new Bundle();
-                    bundle.putString("filter", OfferID);
-                    bundle.putString("filterName", filterName);
-                    ProductFilterByQueryFragment fragment = new ProductFilterByQueryFragment();
-                    fragment.setArguments(bundle);
-                    transaction.replace(R.id.loader, fragment, "ProductFilterByQueryFragment");
-                    transaction.addToBackStack(null);
-                    transaction.commit();
-
-//                    openOrderDetails(orderId);
-                } else {
-//                    Log.w(TAG, "Order ID missing in notification intent.");
+                if (offerId != null && !offerId.isEmpty()) {
+                    loadOfferFragment(offerId, filterName);
                 }
-            }
+                break;
         }
     }
 
-    /**
-     * Opens the OrderDetailsActivity.
-     */
+    private void loadOfferFragment(String offerId, String filterName) {
+        try {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            Bundle bundle = new Bundle();
+            bundle.putString("filter", offerId);
+            bundle.putString("filterName", filterName);
+            ProductFilterByQueryFragment fragment = new ProductFilterByQueryFragment();
+            fragment.setArguments(bundle);
+            transaction.replace(R.id.loader, fragment, "ProductFilterByQueryFragment");
+            transaction.addToBackStack(null);
+            transaction.commit();
+        } catch (Exception e) {
+            Log.e(TAG, "Error loading offer fragment", e);
+        }
+    }
+
     private void openOrderDetails(String orderId) {
         try {
             Intent intent = new Intent(this, OrderDetailsActivity.class);
@@ -144,9 +213,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Sets up the bottom navigation and handles selection events.
-     */
     private void setupBottomNavigation() {
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             handleBottomNavigation(item.getItemId());
@@ -154,9 +220,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Handles bottom navigation item selection.
-     */
+    @SuppressLint("NonConstantResourceId")
     private void handleBottomNavigation(int itemId) {
         Fragment fragment = null;
         try {
@@ -173,9 +237,6 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.moreBtn:
                     fragment = new MoreFragment();
                     break;
-                default:
-                    Log.w(TAG, "Unknown navigation item selected");
-                    break;
             }
             if (fragment != null) {
                 loadFragment(fragment, fragment.getClass().getSimpleName());
@@ -185,9 +246,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Loads a fragment into the container with error handling.
-     */
     public void loadFragment(Fragment fragment, String tag) {
         try {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -199,28 +257,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Request notification permission for Android 13+.
-     */
-    private void requestNotificationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
-                    != PackageManager.PERMISSION_GRANTED) {
-                // Here you could use the new ActivityResultLauncher to request permissions.
-                // For example: requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS);
-                Log.i(TAG, "POST_NOTIFICATIONS permission not granted.");
-            }
-        }
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         try {
             getMenuInflater().inflate(R.menu.toolba_rmenu_main, menu);
+            return true;
         } catch (Exception e) {
             Log.e(TAG, "Error inflating options menu", e);
+            return false;
         }
-        return true;
     }
 
     @Override
@@ -230,15 +275,13 @@ public class MainActivity extends AppCompatActivity {
                 openSearchFragment();
                 return true;
             }
+            return super.onOptionsItemSelected(item);
         } catch (Exception e) {
             Log.e(TAG, "Error in options item selected", e);
+            return false;
         }
-        return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Opens the search fragment.
-     */
     private void openSearchFragment() {
         try {
             getSupportFragmentManager().beginTransaction()
@@ -254,5 +297,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         binding = null;
+    }
+
+    // Public method to check if a specific permission is granted
+    public boolean isPermissionGranted(String permission) {
+        return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;
     }
 }

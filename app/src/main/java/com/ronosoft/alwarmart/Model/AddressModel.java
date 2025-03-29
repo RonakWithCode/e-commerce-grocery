@@ -3,6 +3,9 @@ package com.ronosoft.alwarmart.Model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.Keep;
+
+@Keep
 public class AddressModel implements Parcelable {
     private String fullName;
     private String mobileNumber;

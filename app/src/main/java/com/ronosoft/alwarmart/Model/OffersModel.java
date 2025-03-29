@@ -1,5 +1,9 @@
 package com.ronosoft.alwarmart.Model;
 
+import androidx.annotation.Keep;
+
+@Keep
+
 public class OffersModel {
     private String offerImage;
     private String offerTitle;

@@ -81,6 +81,7 @@ public class HomeFragment extends Fragment {
     private String userId;
     private Dialog homeProductBottomSheetDialog;
     private FirebaseFirestore firestore;
+    private Dialog loadingDialog;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -199,6 +200,22 @@ public class HomeFragment extends Fragment {
         return binding.getRoot();
     }
 
+    private void showLoadingDialog() {
+        loadingDialog = new Dialog(requireContext());
+        loadingDialog.setContentView(R.layout.loading_dialog);
+        loadingDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        loadingDialog.setCancelable(false);
+        loadingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        loadingDialog.show();
+    }
+
+    private void hideLoadingDialog() {
+        if (loadingDialog != null && loadingDialog.isShowing()) {
+            loadingDialog.dismiss();
+        }
+    }
+
+
     public void SeeAll() {
         try {
             FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
@@ -235,9 +252,18 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadInitialData() {
+        showLoadingDialog();
         LoadCarousel();
-        LoadProductCategory();
+        // Load fixed category groups
+        loadProductsForCategories(new String[]{"Dairy", "snacks", "BISCUITS", "hair oil", "Grains", "Pulses", "Honey & Spreads"});
         LoadFromDBBestseller();
+        //        loadProductsForCategories(new String[]{"hair oil", "Honey & Spreads", "SKIN CARE"});
+        loadProductsForCategoriesByBoysSkin(new String[]{"SKIN CARE", "hair oil","Toothpaste","Edible Oils"});
+
+
+
+
+        LoadProductCategory();
 
         // Get categories from Firestore and load multi-view data randomly (limit up to 15)
         databaseService.getAllCategory(new DatabaseService.GetAllCategoryCallback() {
@@ -263,10 +289,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        // Load fixed category groups
-//        loadProductsForCategories(new String[]{"Dairy", "snacks", "BISCUITS", "hair oil", "Grains", "Pulses", "Honey & Spreads"});
-        loadProductsForCategories(new String[]{"hair oil", "Honey & Spreads", "SKIN CARE"});
-        loadProductsForCategoriesByBoysSkin(new String[]{"SKIN CARE", "hair oil"});
+
     }
 
     private void LoadFromDBBestseller() {
@@ -319,8 +342,11 @@ public class HomeFragment extends Fragment {
                                     ProductModel product = doc.toObject(ProductModel.class);
                                     if (product != null && product.isAvailable()) {
                                         bestsellerProductModel.add(product);
+
                                     }
                                 }
+                                hideLoadingDialog();
+
                                 productAdapter.notifyDataSetChanged();
                             } else {
                                 Log.e(TAG, "Error fetching bestseller products: ", task.getException());
@@ -339,8 +365,11 @@ public class HomeFragment extends Fragment {
                                         ProductModel product = doc.toObject(ProductModel.class);
                                         if (product != null && product.isAvailable()) {
                                             bestsellerProductModel.add(product);
+
                                         }
                                     }
+
+                                    hideLoadingDialog();
                                 } else {
                                     Log.e(TAG, "Error fetching chunk: ", task.getException());
                                 }
@@ -450,6 +479,8 @@ public class HomeFragment extends Fragment {
             intent.putExtra("brand", "Aashirvaad");
             context.startActivity(intent);
         });
+        hideLoadingDialog();
+
     }
 
     void LoadCarousel() {

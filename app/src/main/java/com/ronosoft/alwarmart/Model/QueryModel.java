@@ -1,6 +1,9 @@
 package com.ronosoft.alwarmart.Model;
 
+import androidx.annotation.Keep;
+
 // QueryModel.java
+@Keep
 public class QueryModel {
     private String UserId;
     private String name;

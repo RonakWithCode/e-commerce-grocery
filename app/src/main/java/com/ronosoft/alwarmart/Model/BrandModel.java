@@ -1,6 +1,8 @@
 package com.ronosoft.alwarmart.Model;
 
+import androidx.annotation.Keep;
 
+@Keep
 public class BrandModel {
     String BrandName;
     String brandIcon;

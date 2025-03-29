@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="OtpEditText">
+        <item name="android:layout_width">@dimen/et_otp_width</item>
+        <item name="android:layout_height">@dimen/et_otp_height</item>
+        <item name="android:layout_marginEnd">@dimen/margin_right_otp</item>
+        <item name="android:background">@drawable/otp_edittext</item>
+        <item name="android:inputType">number</item>
+        <item name="android:maxLength">1</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">@color/trueBlack</item>
+        <item name="android:importantForAutofill">no</item>
+    </style>
+</resources>

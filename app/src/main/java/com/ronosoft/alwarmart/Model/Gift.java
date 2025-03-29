@@ -2,11 +2,14 @@ package com.ronosoft.alwarmart.Model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import androidx.annotation.Keep;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
-
+@Keep
 public class Gift implements Parcelable {
 
     private String GiftId;

@@ -3,8 +3,11 @@ package com.ronosoft.alwarmart.Model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.Keep;
+
 import java.util.ArrayList;
 import java.util.Date;
+@Keep
 
 public class OrderModel implements Parcelable {
     private String orderId;

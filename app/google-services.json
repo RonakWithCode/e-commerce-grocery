@@ -8,15 +8,24 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:24117533764:android:c4754ad13ddc21eab97011",
+        "mobilesdk_app_id": "1:24117533764:android:a3a884e174d2d551b97011",
         "android_client_info": {
           "package_name": "com.ronosoft.alwarmart"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "24117533764-4gmi8huisg328bi74q3eqgno7ugpcni4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ronosoft.alwarmart",
+            "certificate_hash": "135ef3a076ffac94b0a5571b60a81c09615b6a55"
+          }
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyBtA_IEKG_n58RM6v0I2cuN7oiFsMzYbi8"
+          "current_key": "AIzaSyDC74XXfipn0jMel9_J6Lefw65wAYNNZsQ"
         }
       ],
       "services": {

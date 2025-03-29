@@ -1,7 +1,9 @@
 package com.ronosoft.alwarmart.Model;
 
-import java.util.ArrayList;
+import androidx.annotation.Keep;
 
+import java.util.ArrayList;
+@Keep
 public class customProductModel {
     private String lastUpdated;
     private String version;

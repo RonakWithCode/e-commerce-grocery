@@ -56,51 +56,51 @@ public class AuthService {
         }
 
         return currentUser.getIdToken(true)
-            .continueWith(task -> {
-                if (!task.isSuccessful()) {
-                    throw Objects.requireNonNull(task.getException());
-                }
+                .continueWith(task -> {
+                    if (!task.isSuccessful()) {
+                        throw Objects.requireNonNull(task.getException());
+                    }
 
-                GetTokenResult tokenResult = task.getResult();
-                if (tokenResult == null) {
-                    throw new Exception("Token claims not available");
-                }
+                    GetTokenResult tokenResult = task.getResult();
+                    if (tokenResult == null) {
+                        throw new Exception("Token claims not available");
+                    }
 
-                Object phoneObj = tokenResult.getClaims().get("phone_number");
-                if (phoneObj != null) {
-                    return phoneObj.toString();
-                }
+                    Object phoneObj = tokenResult.getClaims().get("phone_number");
+                    if (phoneObj != null) {
+                        return phoneObj.toString();
+                    }
 
-                // Fallback to user profile phone number
-                String profilePhone = currentUser.getPhoneNumber();
-                if (profilePhone != null) {
-                    return profilePhone;
-                }
+                    // Fallback to user profile phone number
+                    String profilePhone = currentUser.getPhoneNumber();
+                    if (profilePhone != null) {
+                        return profilePhone;
+                    }
 
-                // If no phone number found, get it from DatabaseService
-                return Tasks.call(() -> {
-                    TaskCompletionSource<String> tcs = new TaskCompletionSource<>();
-                    
-                    new DatabaseService().getUserInfo(getUserId(), new DatabaseService.getUserInfoCallback() {
-                        @Override
-                        public void onSuccess(UserinfoModels user) {
-                            String phone = user.getPhoneNumber();
-                            if (phone != null) {
-                                tcs.setResult(phone);
-                            } else {
-                                tcs.setException(new Exception("Phone number not found in database"));
+                    // If no phone number found, get it from DatabaseService
+                    return Tasks.call(() -> {
+                        TaskCompletionSource<String> tcs = new TaskCompletionSource<>();
+
+                        new DatabaseService().getUserInfo(getUserId(), new DatabaseService.getUserInfoCallback() {
+                            @Override
+                            public void onSuccess(UserinfoModels user) {
+                                String phone = user.getPhoneNumber();
+                                if (phone != null) {
+                                    tcs.setResult(phone);
+                                } else {
+                                    tcs.setException(new Exception("Phone number not found in database"));
+                                }
                             }
-                        }
 
-                        @Override
-                        public void onError(String errorMessage) {
-                            tcs.setException(new Exception(errorMessage));
-                        }
-                    });
-                    
-                    return Tasks.await(tcs.getTask());
-                }).getResult();
-            });
+                            @Override
+                            public void onError(String errorMessage) {
+                                tcs.setException(new Exception(errorMessage));
+                            }
+                        });
+
+                        return Tasks.await(tcs.getTask());
+                    }).getResult();
+                });
     }
 
     public String getUserEmail() {
@@ -211,6 +211,3 @@ public class AuthService {
 
 
 }
-
-
-

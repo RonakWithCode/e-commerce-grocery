@@ -1,5 +1,7 @@
 package com.ronosoft.alwarmart.Fragment;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -40,15 +42,10 @@ public class SiginFragment extends Fragment {
             }
         });
 
-//        binding.changeLanguage.setOnClickListener(view -> {
-//            SelectLanguageFragment dialogFragment = new SelectLanguageFragment();
-//            dialogFragment.show(requireActivity().getSupportFragmentManager(), "selectLanguageDialog");
-//
-////            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-////            transaction.replace(R.id.loader, new SelectLanguageFragment(), "CategoryFragment");
-////            transaction.addToBackStack("SelectLanguageFragment");
-////            transaction.commit();
-//        });
+        binding.link.setOnClickListener(view -> {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.alwarmart.in/terms-and-conditions"));
+            startActivity(intent);
+        });
 
         return binding.getRoot();
     }
