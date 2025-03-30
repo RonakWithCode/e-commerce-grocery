@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -8,32 +8,42 @@
     android:theme="@style/Theme.ECommerceGrocery.Home"
     tools:context=".Fragment.HomeFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/Category_RelativeLayout"
+    <!-- NestedScrollView for Main Content -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/mainContent"
         android:layout_width="match_parent"
-        android:visibility="visible"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/TopNav"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:background="@color/OrderYellowColor"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            android:id="@+id/Category_RelativeLayout"
+            android:layout_width="match_parent"
+            android:visibility="visible"
+            android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/UserName"
-                android:layout_width="wrap_content"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/TopNav"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Hello, User"
-                android:textSize="18sp"
-                android:textColor="@android:color/black"
-                android:textStyle="bold"
+                android:padding="16dp"
+                android:background="@color/OrderYellowColor"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
+                <TextView
+                    android:id="@+id/UserName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hello, User"
+                    android:textSize="18sp"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
 
                 <TextView
                     android:id="@+id/address"
@@ -57,490 +67,580 @@
                     app:layout_constraintStart_toEndOf="@id/address"
                     app:layout_constraintTop_toTopOf="@id/address"/>
 
-            <TextView
-                android:id="@+id/txtDeliveryTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Alwar Mart in 10 minutes"
-                android:textSize="22sp"
-                android:textColor="@android:color/black"
-                android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@id/address"
-
-                app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginTop="5dp"/>
-
-
-
+                <TextView
+                    android:id="@+id/txtDeliveryTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Alwar Mart in 10 minutes"
+                    android:textSize="22sp"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toBottomOf="@id/address"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginTop="5dp"/>
 
                 <com.mancj.materialsearchbar.MaterialSearchBar
-                android:id="@+id/search_view"
+                    android:id="@+id/search_view"
+                    android:layout_width="0dp"
+                    android:layout_marginTop="@dimen/_14sdp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/search_view_background"
+                    app:mt_hint="Search"
+                    app:mt_placeholder="Search milk"
+                    app:layout_constraintTop_toBottomOf="@id/txtDeliveryTime"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+
+                <ImageView
+                    android:id="@+id/profile_icon"
+                    android:layout_width="@dimen/_35sdp"
+                    android:layout_height="@dimen/_35sdp"
+                    android:src="@drawable/ic_profile"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <org.imaginativeworld.whynotimagecarousel.ImageCarousel
+                android:id="@+id/carousel"
                 android:layout_width="0dp"
-                android:layout_marginTop="@dimen/_14sdp"
-                android:layout_height="wrap_content"
-                android:background="@drawable/search_view_background"
-                app:mt_hint="Search"
-                app:mt_placeholder="Search &quot;milk&quot;"
-                app:layout_constraintTop_toBottomOf="@id/txtDeliveryTime"
+                android:layout_height="@dimen/_190sdp"
+                android:background="@color/Banner_Colors"
+                app:autoWidthFixing="true"
+                app:layout_constraintTop_toBottomOf="@id/TopNav"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:showTopShadow="false"
+                app:showBottomShadow="false"
+                app:showNavigationButtons="true" />
 
-
-            <ImageView
-                android:id="@+id/profile_icon"
-                android:layout_width="@dimen/_35sdp"
-                android:layout_height="@dimen/_35sdp"
-                android:src="@drawable/ic_profile"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-        <org.imaginativeworld.whynotimagecarousel.ImageCarousel
-            android:id="@+id/carousel"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/_190sdp"
-            android:background="@color/Banner_Colors"
-            app:autoWidthFixing="true"
-            app:layout_constraintTop_toBottomOf="@id/TopNav"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:showTopShadow="false"
-            app:showBottomShadow="false"
-            app:showNavigationButtons="true" />
-
-
-
-        <TextView
-            android:id="@+id/CategoryTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Top Categories"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginTop="@dimen/_2ssp"
-            android:textSize="@dimen/_20ssp"
-            android:textStyle="bold"
-            android:textColor="@color/MainTextColor"
-            app:layout_constraintTop_toBottomOf="@id/carousel"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <!-- See All Text -->
-        <TextView
-            android:id="@+id/CategoryTextViewSee"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/see_more"
-            android:layout_marginTop="@dimen/_2ssp"
-            android:layout_marginEnd="@dimen/_9sdp"
-            android:textColor="@color/green_primary"
-            android:textSize="@dimen/_17ssp"
-            app:layout_constraintTop_toBottomOf="@id/carousel"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-
-        <LinearLayout
-            android:layout_marginTop="@dimen/_10sdp"
-            android:id="@+id/Categories"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_80sdp"
-            android:orientation="horizontal"
-            android:gravity="center"
-            app:layout_constraintTop_toBottomOf="@id/CategoryTextViewSee"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/layoutAata"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center">
-
-                <com.makeramen.roundedimageview.RoundedImageView
-                    android:id="@+id/imageViewAata"
-                    android:layout_width="@dimen/_48sdp"
-                    android:layout_height="@dimen/_48sdp"
-                    app:riv_oval="true"
-                    app:riv_border_color="@color/grey_300"
-                    app:riv_border_width="1dp"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:src="@drawable/ic_aata" />
-
-                <TextView
-                    android:id="@+id/titleAata"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_4sdp"
-                    android:ellipsize="end"
-                    android:maxLines="2"
-                    android:textAlignment="center"
-                    android:textColor="@color/MainTextColor"
-                    android:textSize="@dimen/_12ssp"
-                    android:textStyle="bold"
-                    android:text="Aata"
-                    app:layout_constraintTop_toBottomOf="@id/imageViewAata"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/layoutDairy"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center">
-
-                <com.makeramen.roundedimageview.RoundedImageView
-                    android:id="@+id/imageViewDairy"
-                    android:layout_width="@dimen/_48sdp"
-                    android:layout_height="@dimen/_48sdp"
-                    app:riv_oval="true"
-                    app:riv_border_color="@color/grey_300"
-                    app:riv_border_width="1dp"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:src="@drawable/ic_dairy" />
-
-                <TextView
-                    android:id="@+id/titleDairy"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_4sdp"
-                    android:ellipsize="end"
-                    android:maxLines="2"
-                    android:textAlignment="center"
-                    android:textColor="@color/MainTextColor"
-                    android:textSize="@dimen/_12ssp"
-                    android:textStyle="bold"
-                    android:text="Dairy"
-                    app:layout_constraintTop_toBottomOf="@id/imageViewDairy"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/layoutMasala"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center">
-
-                <com.makeramen.roundedimageview.RoundedImageView
-                    android:id="@+id/imageViewMasala"
-                    android:layout_width="@dimen/_48sdp"
-                    android:layout_height="@dimen/_48sdp"
-                    app:riv_oval="true"
-                    app:riv_border_color="@color/grey_300"
-                    app:riv_border_width="1dp"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:src="@drawable/ic_masala" />
-
-                <TextView
-                    android:id="@+id/titleMasala"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_4sdp"
-                    android:ellipsize="end"
-                    android:maxLines="2"
-                    android:textAlignment="center"
-                    android:textColor="@color/MainTextColor"
-                    android:textSize="@dimen/_12ssp"
-                    android:textStyle="bold"
-                    android:text="Masala"
-                    app:layout_constraintTop_toBottomOf="@id/imageViewMasala"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/layoutOil"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center">
-
-                <com.makeramen.roundedimageview.RoundedImageView
-                    android:id="@+id/imageViewOil"
-                    android:layout_width="@dimen/_48sdp"
-                    android:layout_height="@dimen/_48sdp"
-                    app:riv_oval="true"
-                    app:riv_border_color="@color/grey_300"
-                    app:riv_border_width="1dp"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:src="@drawable/ic_oil" />
-
-                <TextView
-                    android:id="@+id/titleOil"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_4sdp"
-                    android:ellipsize="end"
-                    android:maxLines="2"
-                    android:textAlignment="center"
-                    android:textColor="@color/MainTextColor"
-                    android:textSize="@dimen/_12ssp"
-                    android:textStyle="bold"
-                    android:text="Oil"
-                    app:layout_constraintTop_toBottomOf="@id/imageViewOil"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </LinearLayout>
-
-
-
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Bestsellers"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginTop="@dimen/_2ssp"
-            android:textSize="@dimen/_20ssp"
-            android:textStyle="bold"
-            android:textColor="@color/MainTextColor"
-            app:layout_constraintTop_toBottomOf="@id/Categories"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <!-- See All Text -->
-        <TextView
-            android:id="@+id/BestsellersSee"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/see_more"
-            android:layout_marginTop="@dimen/_2ssp"
-            android:layout_marginEnd="@dimen/_9sdp"
-            android:textColor="@color/green_primary"
-            android:textSize="@dimen/_17ssp"
-            app:layout_constraintTop_toBottomOf="@id/Categories"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <!-- RecyclerView for Categories -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_category"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/textView"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/boysSkinCare"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/care"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginTop="@dimen/_2ssp"
-            android:textSize="@dimen/_20ssp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/recycler_category"
-            />
-
-        <TextView
-            android:id="@+id/boysSkinCareSee"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/_10sdp"
-            android:text="@string/see_more"
-            android:layout_marginTop="@dimen/_2ssp"
-            android:textColor="@color/green_primary"
-            android:textSize="@dimen/_17ssp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/recycler_category" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/boys_skin_care_RecyclerView"
-            android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/boysSkinCare" />
-
-
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:id="@+id/TopBrandText"
-            android:layout_height="wrap_content"
-            android:text="Top Brand"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginTop="@dimen/_2ssp"
-            android:textSize="@dimen/_20ssp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/boys_skin_care_RecyclerView" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:id="@+id/TopBrand"
-            android:layout_below="@+id/TopBrandText"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/TopBrandText"
-            android:layout_height="wrap_content">
-
-            <GridLayout
+            <TextView
+                android:id="@+id/CategoryTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/_4sdp"
-                android:columnCount="4"
-                android:padding="@dimen/_4sdp"
-                android:rowCount="1"
-                android:background="@color/light_gray"
+                android:text="Top Categories"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_2ssp"
+                android:textSize="@dimen/_20ssp"
+                android:textStyle="bold"
+                android:textColor="@color/MainTextColor"
+                app:layout_constraintTop_toBottomOf="@id/carousel"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/CategoryTextViewSee"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/see_more"
+                android:layout_marginTop="@dimen/_2ssp"
+                android:layout_marginEnd="@dimen/_9sdp"
+                android:textColor="@color/green_primary"
+                android:textSize="@dimen/_17ssp"
+                app:layout_constraintTop_toBottomOf="@id/carousel"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <LinearLayout
+                android:layout_marginTop="@dimen/_10sdp"
+                android:id="@+id/Categories"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_80sdp"
+                android:orientation="horizontal"
+                android:gravity="center"
+                app:layout_constraintTop_toBottomOf="@id/CategoryTextViewSee"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/layoutAata"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center">
+
+                    <com.makeramen.roundedimageview.RoundedImageView
+                        android:id="@+id/imageViewAata"
+                        android:layout_width="@dimen/_48sdp"
+                        android:layout_height="@dimen/_48sdp"
+                        app:riv_oval="true"
+                        app:riv_border_color="@color/grey_300"
+                        app:riv_border_width="1dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:src="@drawable/ic_aata" />
+
+                    <TextView
+                        android:id="@+id/titleAata"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:textAlignment="center"
+                        android:textColor="@color/MainTextColor"
+                        android:textSize="@dimen/_12ssp"
+                        android:textStyle="bold"
+                        android:text="Aata"
+                        app:layout_constraintTop_toBottomOf="@id/imageViewAata"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/layoutDairy"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center">
+
+                    <com.makeramen.roundedimageview.RoundedImageView
+                        android:id="@+id/imageViewDairy"
+                        android:layout_width="@dimen/_48sdp"
+                        android:layout_height="@dimen/_48sdp"
+                        app:riv_oval="true"
+                        app:riv_border_color="@color/grey_300"
+                        app:riv_border_width="1dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:src="@drawable/ic_dairy" />
+
+                    <TextView
+                        android:id="@+id/titleDairy"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:textAlignment="center"
+                        android:textColor="@color/MainTextColor"
+                        android:textSize="@dimen/_12ssp"
+                        android:textStyle="bold"
+                        android:text="Dairy"
+                        app:layout_constraintTop_toBottomOf="@id/imageViewDairy"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/layoutMasala"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center">
+
+                    <com.makeramen.roundedimageview.RoundedImageView
+                        android:id="@+id/imageViewMasala"
+                        android:layout_width="@dimen/_48sdp"
+                        android:layout_height="@dimen/_48sdp"
+                        app:riv_oval="true"
+                        app:riv_border_color="@color/grey_300"
+                        app:riv_border_width="1dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:src="@drawable/ic_masala" />
+
+                    <TextView
+                        android:id="@+id/titleMasala"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:textAlignment="center"
+                        android:textColor="@color/MainTextColor"
+                        android:textSize="@dimen/_12ssp"
+                        android:textStyle="bold"
+                        android:text="Masala"
+                        app:layout_constraintTop_toBottomOf="@id/imageViewMasala"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/layoutOil"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center">
+
+                    <com.makeramen.roundedimageview.RoundedImageView
+                        android:id="@+id/imageViewOil"
+                        android:layout_width="@dimen/_48sdp"
+                        android:layout_height="@dimen/_48sdp"
+                        app:riv_oval="true"
+                        app:riv_border_color="@color/grey_300"
+                        app:riv_border_width="1dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:src="@drawable/ic_oil" />
+
+                    <TextView
+                        android:id="@+id/titleOil"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:textAlignment="center"
+                        android:textColor="@color/MainTextColor"
+                        android:textSize="@dimen/_12ssp"
+                        android:textStyle="bold"
+                        android:text="Oil"
+                        app:layout_constraintTop_toBottomOf="@id/imageViewOil"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bestsellers"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_2ssp"
+                android:textSize="@dimen/_20ssp"
+                android:textStyle="bold"
+                android:textColor="@color/MainTextColor"
+                app:layout_constraintTop_toBottomOf="@id/Categories"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/BestsellersSee"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/see_more"
+                android:layout_marginTop="@dimen/_2ssp"
+                android:layout_marginEnd="@dimen/_9sdp"
+                android:textColor="@color/green_primary"
+                android:textSize="@dimen/_17ssp"
+                app:layout_constraintTop_toBottomOf="@id/Categories"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_category"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/textView"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
+                android:id="@+id/boysSkinCare"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/care"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_2ssp"
+                android:textSize="@dimen/_20ssp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/recycler_category" />
+
+            <TextView
+                android:id="@+id/boysSkinCareSee"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:text="@string/see_more"
+                android:layout_marginTop="@dimen/_2ssp"
+                android:textColor="@color/green_primary"
+                android:textSize="@dimen/_17ssp"
                 app:layout_constraintEnd_toEndOf="parent"
-                >
+                app:layout_constraintTop_toBottomOf="@id/recycler_category" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/boys_skin_care_RecyclerView"
+                android:layout_width="match_parent"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/boysSkinCare" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:id="@+id/TopBrandText"
+                android:layout_height="wrap_content"
+                android:text="Top Brand"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_2ssp"
+                android:textSize="@dimen/_20ssp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/boys_skin_care_RecyclerView" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:id="@+id/TopBrand"
+                android:layout_below="@+id/TopBrandText"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/TopBrandText"
+                android:layout_height="wrap_content">
+
+                <GridLayout
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_row="0"
-                    android:layout_column="0"
-                    android:orientation="vertical">
+                    android:layout_margin="@dimen/_4sdp"
+                    android:columnCount="4"
+                    android:padding="@dimen/_4sdp"
+                    android:rowCount="1"
+                    android:background="@color/light_gray"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
 
-                    <ImageView
-                        android:id="@+id/Dabur"
-                        android:layout_width="@dimen/_70sdp"
-                        android:layout_height="@dimen/_80sdp"
-                        android:layout_margin="@dimen/_3sdp"
-                        android:background="@color/FixColorWhite"
-                        android:src="@drawable/delivery_truck" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="@string/dabur"
-                        android:textAlignment="center"
-                        android:textColor="@color/MainTextColor" />
-                </LinearLayout>
+                        android:layout_row="0"
+                        android:layout_column="0"
+                        android:orientation="vertical">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                        <ImageView
+                            android:id="@+id/Dabur"
+                            android:layout_width="@dimen/_70sdp"
+                            android:layout_height="@dimen/_80sdp"
+                            android:layout_margin="@dimen/_3sdp"
+                            android:background="@color/FixColorWhite"
+                            android:src="@drawable/delivery_truck" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="@string/dabur"
+                            android:textAlignment="center"
+                            android:textColor="@color/MainTextColor" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_row="0"
+                        android:layout_column="1"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/itc"
+                            android:layout_width="@dimen/_70sdp"
+                            android:layout_height="@dimen/_80sdp"
+                            android:layout_margin="@dimen/_3sdp"
+                            android:background="@color/FixColorWhite"
+                            android:src="@drawable/delivery_truck" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="@string/itc"
+                            android:textAlignment="center"
+                            android:textColor="@color/MainTextColor" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_row="0"
+                        android:layout_column="2"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/Colgate"
+                            android:layout_width="@dimen/_70sdp"
+                            android:layout_height="@dimen/_80sdp"
+                            android:layout_margin="@dimen/_3sdp"
+                            android:background="@color/FixColorWhite"
+                            android:src="@drawable/delivery_truck" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="Colgate"
+                            android:textAlignment="center"
+                            android:textColor="@color/MainTextColor" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_row="0"
+                        android:layout_column="3"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/Aashirvaad"
+                            android:layout_width="@dimen/_70sdp"
+                            android:layout_height="@dimen/_80sdp"
+                            android:layout_margin="@dimen/_3sdp"
+                            android:background="@color/FixColorWhite"
+                            android:src="@drawable/delivery_truck" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="Aashirvaad"
+                            android:textAlignment="center"
+                            android:textColor="@color/MainTextColor" />
+                    </LinearLayout>
+                </GridLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <org.imaginativeworld.whynotimagecarousel.ImageCarousel
+                android:id="@+id/BottomCarousel"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_190sdp"
+                android:background="@color/Banner_Colors"
+                app:autoWidthFixing="true"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/TopBrand"
+                app:showTopShadow="false"
+                app:showBottomShadow="false"
+                app:showNavigationButtons="true" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/MultiViewAdapter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/BottomCarousel" />
+
+            <!-- Bottom Loading View (for pagination) -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/customLoadingView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:background="@android:color/transparent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/MultiViewAdapter">
+
+                <ImageView
+                    android:id="@+id/loadingTruck"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/delivery_truck"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginTop="16dp" />
+
+                <TextView
+                    android:id="@+id/loadingFunFact"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_row="0"
-                    android:layout_column="1"
-                    android:orientation="vertical">
+                    android:text="Did you know? Snacking on dry fruits can boost your energy!"
+                    android:textColor="@color/green_primary"
+                    android:textSize="16sp"
+                    android:textAlignment="center"
+                    android:padding="16dp"
+                    app:layout_constraintTop_toBottomOf="@id/loadingTruck"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <ImageView
-                        android:id="@+id/itc"
-                        android:layout_width="@dimen/_70sdp"
-                        android:layout_height="@dimen/_80sdp"
-                        android:layout_margin="@dimen/_3sdp"
-                        android:background="@color/FixColorWhite"
-                        android:src="@drawable/delivery_truck" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="@string/itc"
-                        android:textAlignment="center"
-                        android:textColor="@color/MainTextColor" />
-                </LinearLayout>
-
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_row="0"
-                    android:layout_column="2"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:id="@+id/Colgate"
-                        android:layout_width="@dimen/_70sdp"
-                        android:layout_height="@dimen/_80sdp"
-                        android:layout_margin="@dimen/_3sdp"
-                        android:background="@color/FixColorWhite"
-                        android:src="@drawable/delivery_truck" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="Colgate"
-                        android:textAlignment="center"
-                        android:textColor="@color/MainTextColor" />
-                </LinearLayout>
-
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_row="0"
-                    android:layout_column="3"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:id="@+id/Aashirvaad"
-                        android:layout_width="@dimen/_70sdp"
-                        android:layout_height="@dimen/_80sdp"
-                        android:layout_margin="@dimen/_3sdp"
-                        android:background="@color/FixColorWhite"
-                        android:src="@drawable/delivery_truck" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="Aashirvaad"
-                        android:textAlignment="center"
-                        android:textColor="@color/MainTextColor" />
-                </LinearLayout>
-
-            </GridLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 
+    <!-- Full-Screen Loading View (for initial load) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/fullScreenLoadingView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/loading_gradient"
+        android:visibility="visible"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <org.imaginativeworld.whynotimagecarousel.ImageCarousel
-            android:id="@+id/BottomCarousel"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/_190sdp"
-            android:background="@color/Banner_Colors"
-            app:autoWidthFixing="true"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/TopBrand"
-            app:showTopShadow="false"
-            app:showBottomShadow="false"
-            app:showNavigationButtons="true" />
-
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/MultiViewAdapter"
+        <!-- Wave Background -->
+        <ImageView
+            android:id="@+id/waveBackground"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_height="200dp"
+            android:src="@drawable/wave_background"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/BottomCarousel" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
-        <ProgressBar
-            android:visibility="gone"
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/loadingAnimation"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            app:lottie_rawRes="@raw/delivery_truck"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/loadingPrimaryText"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="@dimen/_9sdp"
-            android:id="@id/progressBar"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:id="@+id/loadingPrimaryText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/MultiViewAdapter" />
+            android:text="Groceries on the way!"
+            android:textColor="@color/green_primary"
+            android:textSize="24sp"
+            android:fontFamily="sans-serif-medium"
+            android:textStyle="bold"
+            android:padding="8dp"
+            app:layout_constraintTop_toBottomOf="@id/loadingAnimation"
+            app:layout_constraintBottom_toTopOf="@id/loadingSecondaryText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
+        <TextView
+            android:id="@+id/loadingSecondaryText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Did you know? We deliver in under 10 minutes!"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif-light"
+            android:padding="8dp"
+            app:layout_constraintTop_toBottomOf="@id/loadingPrimaryText"
+            app:layout_constraintBottom_toTopOf="@id/loadingTipText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
+        <TextView
+            android:id="@+id/loadingTipText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Loading Tip: Add milk to your cart for a healthy breakfast!"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif-light"
+            android:padding="8dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/loadingSecondaryText"
+            app:layout_constraintBottom_toTopOf="@id/loadingProgress"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ProgressBar
+            android:id="@+id/loadingProgress"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginBottom="32dp"
+            style="@android:style/Widget.ProgressBar.Small"
+            app:layout_constraintTop_toBottomOf="@id/loadingTipText"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-    
-</androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

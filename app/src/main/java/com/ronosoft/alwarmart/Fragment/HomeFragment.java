@@ -7,13 +7,19 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,9 +37,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.ronosoft.alwarmart.Activity.BrandActivity;
 import com.ronosoft.alwarmart.Activity.FragmentLoader;
@@ -43,9 +49,7 @@ import com.ronosoft.alwarmart.Adapter.ProductAdapter;
 import com.ronosoft.alwarmart.Component.ProductViewCard;
 import com.ronosoft.alwarmart.Model.AddressModel;
 import com.ronosoft.alwarmart.Model.BannerModels;
-import com.ronosoft.alwarmart.Model.BestsellersModels;
 import com.ronosoft.alwarmart.Model.HomeProductModel;
-import com.ronosoft.alwarmart.Model.ProductCategoryModel;
 import com.ronosoft.alwarmart.Model.ProductModel;
 import com.ronosoft.alwarmart.Model.UserinfoModels;
 import com.ronosoft.alwarmart.R;
@@ -53,27 +57,30 @@ import com.ronosoft.alwarmart.Services.DatabaseService;
 import com.ronosoft.alwarmart.databinding.CategoryViewDialogBinding;
 import com.ronosoft.alwarmart.databinding.FragmentHomeBinding;
 import com.ronosoft.alwarmart.javaClasses.AddressDeliveryService;
-import com.ronosoft.alwarmart.javaClasses.CustomSmoothScroller;
 import com.ronosoft.alwarmart.javaClasses.basicFun;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
 import org.imaginativeworld.whynotimagecarousel.ImageCarousel;
 import org.imaginativeworld.whynotimagecarousel.listener.CarouselListener;
 import org.imaginativeworld.whynotimagecarousel.model.CarouselItem;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class HomeFragment extends Fragment {
 
-    private static final String TAG = "HomeFragment";
     private FragmentHomeBinding binding;
     private DatabaseService databaseService;
     private HomeCategoryAdapter homeCategoryAdapter, homeProductBoysSkinAdapter;
@@ -86,8 +93,27 @@ public class HomeFragment extends Fragment {
     private boolean isLoadingSecondList = false;
     private boolean secondListLoaded = false;
 
-    private String[] firstList = {"Dry Fruits", "Stationery", "Namkeen", "Noodles"};
-    private String[] secondList = {"Chocolate", "Candies", "Toilet & Bathroom Cleaners"};
+    private final String[] firstList = {"Dry Fruits", "Stationery", "Namkeen", "Noodles"};
+    private final String[] secondList = {"Chocolate", "Candies", "Toilet & Bathroom Cleaners"};
+    private final String[] fixedCategories = {"Dairy", "snacks", "BISCUITS", "hair oil", "Grains", "Pulses", "Honey & Spreads"};
+    private final String[] boysSkinCategories = {"Toothpaste", "Soaps & Body Care", "Edible Oils"};
+
+    // Pagination variables
+    private static final int PAGE_SIZE = 5;
+    private Map<String, DocumentSnapshot> lastDocuments = new HashMap<>();
+    private Map<String, Boolean> hasMoreData = new HashMap<>();
+
+    // Fun facts and animation handler for bottom loading and full-screen loading
+    private String[] funFacts;
+    private Handler funFactHandler;
+    private Runnable funFactRunnable;
+    private final long FUN_FACT_INTERVAL = 2000; // Change fact every 2 seconds
+
+    // Track initial loading state
+    private AtomicBoolean isCarouselLoaded = new AtomicBoolean(false);
+    private AtomicBoolean areCategoriesLoaded = new AtomicBoolean(false);
+    private AtomicBoolean areBoysSkinCategoriesLoaded = new AtomicBoolean(false);
+    private AtomicBoolean areMultiViewFirstListLoaded = new AtomicBoolean(false);
 
     public HomeFragment() {
         // Required empty public constructor
@@ -102,6 +128,15 @@ public class HomeFragment extends Fragment {
         databaseService = new DatabaseService();
         firestore = FirebaseFirestore.getInstance();
         homeProductBottomSheetDialog = new Dialog(requireContext());
+
+        // Load fun facts for both bottom loading and full-screen loading
+        funFacts = getResources().getStringArray(R.array.fun_facts);
+        funFactHandler = new Handler(Looper.getMainLooper());
+
+        // Show full-screen loading view and start cycling fun facts
+        binding.fullScreenLoadingView.setVisibility(View.VISIBLE);
+        binding.mainContent.setVisibility(View.GONE);
+        startFunFactCycle();
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = auth.getCurrentUser();
@@ -134,7 +169,7 @@ public class HomeFragment extends Fragment {
             }
         }
 
-        // Retrieve user info if logged in
+        // Retrieve user info if logged in (background task, no UI block)
         final UserinfoModels[] userInfo = new UserinfoModels[1];
         if (currentUser != null) {
             databaseService.getUserInfo(userId, new DatabaseService.getUserInfoCallback() {
@@ -146,7 +181,7 @@ public class HomeFragment extends Fragment {
                 }
                 @Override
                 public void onError(String errorMessage) {
-                    Log.e(TAG, "Error retrieving user info: " + errorMessage);
+                    // Silent fail, Crashlytics will catch if critical
                 }
             });
         }
@@ -209,7 +244,7 @@ public class HomeFragment extends Fragment {
     private void showLoadingDialog() {
         loadingDialog = new Dialog(requireContext());
         loadingDialog.setContentView(R.layout.loading_dialog);
-        loadingDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        Objects.requireNonNull(loadingDialog.getWindow()).setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         loadingDialog.setCancelable(false);
         loadingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         loadingDialog.show();
@@ -221,7 +256,6 @@ public class HomeFragment extends Fragment {
         }
     }
 
-
     public void SeeAll() {
         try {
             FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
@@ -229,7 +263,7 @@ public class HomeFragment extends Fragment {
             transaction.addToBackStack("SelectLanguageFragment");
             transaction.commit();
         } catch (Exception e) {
-            Log.e(TAG, "Error in SeeAll()", e);
+            // Silent fail, Crashlytics will catch if critical
         }
     }
 
@@ -249,56 +283,45 @@ public class HomeFragment extends Fragment {
         binding.MultiViewAdapter.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                if (!recyclerView.canScrollVertically(1)) {
-                    if (!isLoadingSecondList && !secondListLoaded) {
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                int visibleItemCount = layoutManager.getChildCount();
+                int totalItemCount = layoutManager.getItemCount();
+                int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+
+                if (!isLoadingSecondList && (visibleItemCount + firstVisibleItemPosition) >= totalItemCount - 2) {
+                    if (!secondListLoaded) {
                         isLoadingSecondList = true;
                         showBottonLoading();
                         loadSecondList(secondList);
+                    } else {
+                        for (HomeProductModel model : multiViewModel) {
+                            String category = model.getTitle();
+                            if (Boolean.TRUE.equals(hasMoreData.getOrDefault(category, true))) {
+                                showBottonLoading();
+                                loadProductsMultiView(category, PAGE_SIZE);
+                            }
+                        }
                     }
                 }
             }
         });
-
-
-
     }
 
     private void loadInitialData() {
-        showLoadingDialog();
+        binding.recyclerCategory.setVisibility(View.VISIBLE);
         LoadCarousel();
-        // Load fixed category groups
-        loadProductsForCategories(new String[]{"Dairy", "snacks", "BISCUITS", "hair oil", "Grains", "Pulses", "Honey & Spreads"});
-        //        loadProductsForCategories(new String[]{"hair oil", "Honey & Spreads", "SKIN CARE"});
-        loadProductsForCategoriesByBoysSkin(new String[]{"Toothpaste", "Soaps & Body Care","Toothpaste","Edible Oils"});
-
-
-
-
-
+        loadProductsForCategories(fixedCategories);
+        loadProductsForCategoriesByBoysSkin(boysSkinCategories);
         LoadProductCategory();
-
-
-
-
         setupOnclick();
-
-
-
-        loadProductsForMultiView(firstList,secondList);
-
+        loadProductsForMultiView(firstList, secondList);
     }
 
     private void setupOnclick() {
         binding.layoutAata.setOnClickListener(v -> openCategory("Grains"));
-
         binding.layoutDairy.setOnClickListener(v -> openCategory("Dairy"));
-
         binding.layoutMasala.setOnClickListener(v -> openCategory("Masala"));
-
         binding.layoutOil.setOnClickListener(v -> openCategory("Edible Oils"));
-
-
-
     }
 
     private void openCategory(String category) {
@@ -312,50 +335,78 @@ public class HomeFragment extends Fragment {
         transaction.commit();
     }
 
-
-
     private void loadProductsForMultiView(String[] firstCategory, String[] secondCategory) {
+        Set<String> categories = new HashSet<>();
         for (String category : firstCategory) {
-            loadProductsMultiView(category);
+            categories.add(category);
+            hasMoreData.put(category, true);
+            loadProductsMultiView(category, PAGE_SIZE);
         }
-        // The second list will be loaded on scroll.
     }
 
     private void loadSecondList(String[] secondCategory) {
         for (String category : secondCategory) {
-            loadProductsMultiView(category);
+            hasMoreData.put(category, true);
+            loadProductsMultiView(category, PAGE_SIZE);
         }
         secondListLoaded = true;
         isLoadingSecondList = false;
         hideBottonLoading();
     }
 
-    private void loadProductsMultiView(String category) {
-        firestore.collection("Product")
+    private void loadProductsMultiView(String category, int limit) {
+        Query query = firestore.collection("Product")
                 .whereEqualTo("category", category)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        ArrayList<ProductModel> products = new ArrayList<>();
-                        QuerySnapshot querySnapshot = task.getResult();
-                        if (querySnapshot != null) {
-                            for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-                                ProductModel product = document.toObject(ProductModel.class);
-                                if (product != null && product.isAvailable()) {
-                                    products.add(product);
-                                }
-                            }
-                            if (isAdded()) {
-                                multiViewModel.add(new HomeProductModel(category, products));
-                                multiViewAdapter.notifyDataSetChanged();
+                .orderBy("available", Query.Direction.DESCENDING)
+                .limit(limit);
+
+        DocumentSnapshot lastDoc = lastDocuments.get(category);
+        if (lastDoc != null) {
+            query = query.startAfter(lastDoc);
+        }
+
+        query.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                ArrayList<ProductModel> products = new ArrayList<>();
+                QuerySnapshot querySnapshot = task.getResult();
+                if (querySnapshot != null) {
+                    List<DocumentSnapshot> documents = querySnapshot.getDocuments();
+                    for (DocumentSnapshot document : documents) {
+                        ProductModel product = document.toObject(ProductModel.class);
+                        if (product != null && product.isAvailable()) {
+                            products.add(product);
+                        }
+                    }
+                    if (isAdded()) {
+                        HomeProductModel existingModel = null;
+                        for (HomeProductModel model : multiViewModel) {
+                            if (model.getTitle().equals(category)) {
+                                existingModel = model;
+                                break;
                             }
                         }
-                    } else {
-                        Log.e("HomeFragment", "Error retrieving products: " + task.getException());
-                    }
-                });
-    }
+                        if (existingModel != null) {
+                            existingModel.getProduct().addAll(products);
+                            multiViewAdapter.notifyItemChanged(multiViewModel.indexOf(existingModel));
+                        } else {
+                            multiViewModel.add(new HomeProductModel(category, products));
+                            multiViewAdapter.notifyItemInserted(multiViewModel.size() - 1);
+                        }
 
+                        if (!documents.isEmpty()) {
+                            lastDocuments.put(category, documents.get(documents.size() - 1));
+                            hasMoreData.put(category, documents.size() == limit);
+                        } else {
+                            hasMoreData.put(category, false);
+                        }
+                    }
+                }
+                areMultiViewFirstListLoaded.set(true);
+                checkIfInitialLoadingComplete();
+            }
+            hideBottonLoading();
+        });
+    }
 
     private void LoadProductCategory() {
         Context context = requireContext();
@@ -419,7 +470,6 @@ public class HomeFragment extends Fragment {
             context.startActivity(intent);
         });
         hideLoadingDialog();
-
     }
 
     void LoadCarousel() {
@@ -434,9 +484,6 @@ public class HomeFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 topBannerModels.clear();
                 bottomBannerModels.clear();
-                // Optionally clear carousel data:
-                // topCarousel.clearData();
-                // bottomCarousel.clearData();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     BannerModels banner = snapshot.getValue(BannerModels.class);
                     if (banner != null && banner.isActive()) {
@@ -451,9 +498,15 @@ public class HomeFragment extends Fragment {
                         }
                     }
                 }
+                isCarouselLoaded.set(true);
+                checkIfInitialLoadingComplete();
             }
             @Override
-            public void onCancelled(@NonNull DatabaseError error) { }
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Silent fail, Crashlytics will catch if critical
+                isCarouselLoaded.set(true);
+                checkIfInitialLoadingComplete();
+            }
         });
         topCarousel.setCarouselListener(new CarouselListener() {
             @Nullable
@@ -466,7 +519,6 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(int i, @NonNull CarouselItem carouselItem) {
                 if (topBannerModels.size() > i && carouselItem.getHeaders() != null) {
-                    String id = carouselItem.getHeaders().get("bannerId");
                     BannerModels banner = topBannerModels.get(i);
                     FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
                     Bundle bundle = new Bundle();
@@ -499,7 +551,6 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(int i, @NonNull CarouselItem carouselItem) {
                 if (bottomBannerModels.size() > i && carouselItem.getHeaders() != null) {
-                    String id = carouselItem.getHeaders().get("bannerId");
                     BannerModels banner = bottomBannerModels.get(i);
                     FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
                     Bundle bundle = new Bundle();
@@ -523,7 +574,6 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    // Show category view in a bottom sheet dialog
     void ViewCat(HomeProductModel model) {
         CategoryViewDialogBinding dialogBinding = CategoryViewDialogBinding.inflate(getLayoutInflater());
         dialogBinding.productsRecyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
@@ -573,46 +623,120 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    // --- Helper method: loadProduct ---
-    // Fetch products by category and add them to the given list using the provided adapter.
-    private void loadProduct(String category, ArrayList<HomeProductModel> productList, HomeCategoryAdapter adapter) {
+    private void loadProduct(String category, ArrayList<HomeProductModel> productList, HomeCategoryAdapter adapter, AtomicBoolean loadingFlag) {
         databaseService.getAllProductsByCategoryOnly(category, new DatabaseService.GetAllProductsCallback() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onSuccess(ArrayList<ProductModel> products) {
                 if (isAdded()) {
                     productList.add(new HomeProductModel(category, products));
-                    adapter.notifyDataSetChanged();
+                    adapter.notifyItemInserted(productList.size() - 1);
+                    loadingFlag.set(true);
+                    checkIfInitialLoadingComplete();
                 }
             }
             @Override
             public void onError(String errorMessage) {
                 basicFun.AlertDialog(requireContext(), errorMessage);
+                loadingFlag.set(true);
+                checkIfInitialLoadingComplete();
             }
         });
     }
 
-    // Load products for multiple categories into homeProductModel.
     private void loadProductsForCategories(String[] categories) {
         for (String category : categories) {
-            loadProduct(category, homeProductModel, homeCategoryAdapter);
+            loadProduct(category, homeProductModel, homeCategoryAdapter, areCategoriesLoaded);
         }
     }
 
-    // Load products for multiple categories into homeProductModelBoysSkin.
     private void loadProductsForCategoriesByBoysSkin(String[] categories) {
         for (String category : categories) {
-            loadProduct(category, homeProductModelBoysSkin, homeProductBoysSkinAdapter);
+            loadProduct(category, homeProductModelBoysSkin, homeProductBoysSkinAdapter, areBoysSkinCategoriesLoaded);
         }
     }
 
-
-
     private void showBottonLoading() {
-        binding.progressBar.setVisibility(View.VISIBLE);
+        binding.customLoadingView.setVisibility(View.VISIBLE);
+
+        // Animate the truck
+        ImageView truck = binding.loadingTruck;
+        TranslateAnimation animation = new TranslateAnimation(
+                Animation.RELATIVE_TO_PARENT, 0f,
+                Animation.RELATIVE_TO_PARENT, 1f,
+                Animation.RELATIVE_TO_PARENT, 0f,
+                Animation.RELATIVE_TO_PARENT, 0f
+        );
+        animation.setDuration(2000);
+        animation.setRepeatCount(Animation.INFINITE);
+        animation.setRepeatMode(Animation.RESTART);
+        truck.startAnimation(animation);
+
+        // Cycle through fun facts for bottom loading
+        funFactRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (binding.customLoadingView.getVisibility() == View.VISIBLE) {
+                    Random random = new Random();
+                    int index = random.nextInt(funFacts.length);
+                    binding.loadingFunFact.setText(funFacts[index]);
+                    funFactHandler.postDelayed(this, FUN_FACT_INTERVAL);
+                }
+            }
+        };
+        funFactHandler.post(funFactRunnable);
     }
 
     private void hideBottonLoading() {
-        binding.progressBar.setVisibility(View.GONE);
+        binding.customLoadingView.setVisibility(View.GONE);
+        binding.loadingTruck.clearAnimation();
+        funFactHandler.removeCallbacks(funFactRunnable);
+    }
+
+    private void startFunFactCycle() {
+        // Fade-in animation for primary text
+        AlphaAnimation fadeInPrimary = new AlphaAnimation(0f, 1f);
+        fadeInPrimary.setDuration(1000);
+        binding.loadingPrimaryText.startAnimation(fadeInPrimary);
+
+        // Cycle through fun facts for the full-screen loading
+        funFactRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (binding.fullScreenLoadingView.getVisibility() == View.VISIBLE) {
+                    Random random = new Random();
+                    int index = random.nextInt(funFacts.length);
+                    TextView secondaryText = binding.loadingSecondaryText;
+                    AlphaAnimation fadeOut = new AlphaAnimation(1f, 0f);
+                    fadeOut.setDuration(500);
+                    fadeOut.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {}
+
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            secondaryText.setText(funFacts[index]);
+                            AlphaAnimation fadeIn = new AlphaAnimation(0f, 1f);
+                            fadeIn.setDuration(500);
+                            secondaryText.startAnimation(fadeIn);
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {}
+                    });
+                    secondaryText.startAnimation(fadeOut);
+                    funFactHandler.postDelayed(this, FUN_FACT_INTERVAL);
+                }
+            }
+        };
+        funFactHandler.post(funFactRunnable);
+    }
+
+    private void checkIfInitialLoadingComplete() {
+        if (isCarouselLoaded.get() && areCategoriesLoaded.get() && areBoysSkinCategoriesLoaded.get() && areMultiViewFirstListLoaded.get()) {
+            binding.fullScreenLoadingView.setVisibility(View.GONE);
+            binding.mainContent.setVisibility(View.VISIBLE);
+            funFactHandler.removeCallbacks(funFactRunnable);
+        }
     }
 }

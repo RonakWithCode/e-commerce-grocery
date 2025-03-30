@@ -1,7 +1,6 @@
 package com.ronosoft.alwarmart.Services;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -17,7 +16,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -39,7 +37,6 @@ import java.util.Objects;
 
 public class DatabaseService {
     private final FirebaseFirestore database = FirebaseFirestore.getInstance();
-    private static final String TAG = "DatabaseService";
 
     public interface GetAllProductsCallback {
         void onSuccess(ArrayList<ProductModel> products);
@@ -132,11 +129,12 @@ public class DatabaseService {
     }
 
     /**
-     * Retrieves products filtered by category.
+     * Retrieves products filtered by category with index on "available".
      */
     public void getAllProductsByCategoryOnly(String category, GetAllProductsCallback callback) {
         database.collection("Product")
                 .whereEqualTo("category", category)
+                .orderBy("available", Query.Direction.DESCENDING) // Changed to "available"
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -145,7 +143,7 @@ public class DatabaseService {
                         if (querySnapshot != null) {
                             for (DocumentSnapshot document : querySnapshot.getDocuments()) {
                                 ProductModel product = document.toObject(ProductModel.class);
-                                if (product != null && product.isAvailable()) {
+                                if (product != null && product.isAvailable()) { // Assuming isAvailable() checks "available"
                                     products.add(product);
                                 }
                             }
@@ -155,15 +153,15 @@ public class DatabaseService {
                         callback.onError(Objects.requireNonNull(task.getException()).toString());
                     }
                 });
-
     }
 
     /**
-     * Retrieves products filtered by brand.
+     * Retrieves products filtered by brand, checking "available".
      */
     public void getBrandProducts(String brand, GetAllProductsCallback callback) {
         database.collection("Product")
                 .whereEqualTo("brand", brand)
+                .orderBy("available", Query.Direction.DESCENDING) // Added index and availability check
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -172,7 +170,7 @@ public class DatabaseService {
                         if (querySnapshot != null) {
                             for (DocumentSnapshot document : querySnapshot.getDocuments()) {
                                 ProductModel product = document.toObject(ProductModel.class);
-                                if (product != null && product.isAvailable()) {
+                                if (product != null && product.isAvailable()) { // Check availability
                                     products.add(product);
                                 }
                             }
@@ -185,7 +183,7 @@ public class DatabaseService {
     }
 
     /**
-     * Retrieves all products.
+     * Retrieves all products (no index needed here).
      */
     public void getAllProducts(GetAllProductsCallback callback) {
         database.collection("Product").get().addOnCompleteListener(task -> {
@@ -211,7 +209,6 @@ public class DatabaseService {
      * Retrieves a product by its document id.
      */
     public void getAllProductById(String id, GetAllProductsModelCallback callback) {
-        Log.i("DATABASE", "getAllProductById: " + id);
         if (id != null) {
             database.collection("Product").document(id).get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
@@ -314,12 +311,10 @@ public class DatabaseService {
                                     }
                                 }
                             }
-                            Log.i(TAG, "List of changed products: " + finalProduct);
                             callback.onSuccess(finalProduct);
                         }
                         @Override
                         public void onError(String errorMessage) {
-                            Log.i(TAG, "Error retrieving products: " + errorMessage);
                             callback.onError(errorMessage);
                         }
                     });
@@ -329,7 +324,6 @@ public class DatabaseService {
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.i(TAG, "Error onCancelled: " + error);
                 callback.onError(error.toString());
             }
         });
@@ -362,12 +356,10 @@ public class DatabaseService {
                                     }
                                 }
                             }
-                            Log.i(TAG, "List of changed products: " + finalProduct);
                             callback.onSuccess(finalProduct);
                         }
                         @Override
                         public void onError(String errorMessage) {
-                            Log.i(TAG, "Error retrieving products: " + errorMessage);
                             callback.onError(errorMessage);
                         }
                     });
@@ -377,7 +369,6 @@ public class DatabaseService {
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.i(TAG, "Error onCancelled: " + error);
                 callback.onError(error.toString());
             }
         });
@@ -385,7 +376,6 @@ public class DatabaseService {
 
     public void getRecommendations(ArrayList<String> categories, ArrayList<String> productNames, GetAllProductsCallback callback) {
         List<Query> queries = new ArrayList<>();
-        // Create a query for each combination
         for (String category : categories) {
             for (String productName : productNames) {
                 Query query = database.collection("Product")
@@ -395,7 +385,6 @@ public class DatabaseService {
                 queries.add(query);
             }
         }
-        // Combine queries using startAt (non-standard; for complex multi-query scenarios consider Cloud Functions)
         Query combinedQuery = queries.get(0);
         for (int i = 1; i < queries.size(); i++) {
             combinedQuery = combinedQuery.startAt(queries.get(i));
@@ -405,9 +394,11 @@ public class DatabaseService {
                 ArrayList<ProductModel> recommendations = new ArrayList<>();
                 QuerySnapshot querySnapshot = task.getResult();
                 if (querySnapshot != null) {
-                    for (QueryDocumentSnapshot document : querySnapshot) {
+                    for (DocumentSnapshot document : querySnapshot.getDocuments()) {
                         ProductModel product = document.toObject(ProductModel.class);
-                        recommendations.add(product);
+                        if (product != null && product.isAvailable()) {
+                            recommendations.add(product);
+                        }
                     }
                 }
                 callback.onSuccess(recommendations);
@@ -435,12 +426,8 @@ public class DatabaseService {
                         }
                         callback.onSuccess(products);
                     } else {
-                        Log.i(TAG, "Error retrieving products: " + task.getException());
                         callback.onError(Objects.requireNonNull(task.getException()).toString());
                     }
-                }).addOnFailureListener(e -> {
-                    Log.i(TAG, "Error onFailure: " + e);
-                    callback.onError(e.toString());
                 });
     }
 
@@ -462,12 +449,8 @@ public class DatabaseService {
                         }
                         callback.onSuccess(products);
                     } else {
-                        Log.i(TAG, "Error retrieving products: " + task.getException());
                         callback.onError(Objects.requireNonNull(task.getException()).toString());
                     }
-                }).addOnFailureListener(e -> {
-                    Log.i(TAG, "Error onFailure: " + e);
-                    callback.onError(e.toString());
                 });
     }
 
@@ -515,7 +498,6 @@ public class DatabaseService {
                     }
                     callback.onSuccess(wishListItems);
                 } else {
-                    // Wishlist is empty
                     callback.onSuccess(new ArrayList<>());
                 }
             }
@@ -552,15 +534,11 @@ public class DatabaseService {
                         String token = task.getResult();
                         callback.onSuccess(token);
                     } else {
-                        Log.e("FCM_TOKEN", "Failed to get token", task.getException());
                         callback.onError("Failed to get FCM token: " +
                                 (task.getException() != null ? task.getException().getMessage() : "Unknown error"));
                     }
                 })
-                .addOnFailureListener(e -> {
-                    Log.e("FCM_TOKEN", "Exception while getting token", e);
-                    callback.onError("Exception while getting FCM token: " + e.getMessage());
-                });
+                .addOnFailureListener(e -> callback.onError("Exception while getting FCM token: " + e.getMessage()));
     }
 
     public void getUserInfo(String userId, getUserInfoCallback callback) {
@@ -677,7 +655,9 @@ public class DatabaseService {
                         ArrayList<OffersModel> offersModelArrayList = new ArrayList<>();
                         for (DataSnapshot data : snapshot.getChildren()) {
                             OffersModel offersModel = data.getValue(OffersModel.class);
-                            offersModelArrayList.add(offersModel);
+                            if (offersModel != null) {
+                                offersModelArrayList.add(offersModel);
+                            }
                         }
                         offer.onSuccess(offersModelArrayList);
                     }
@@ -717,7 +697,7 @@ public class DatabaseService {
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Optionally log the error.
+                // Silent fail, Crashlytics will catch if critical
             }
         });
     }
@@ -742,7 +722,9 @@ public class DatabaseService {
                         }
                     }
                     @Override
-                    public void onCancelled(@NonNull DatabaseError error) { }
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        // Silent fail, Crashlytics will catch if critical
+                    }
                 });
     }
 

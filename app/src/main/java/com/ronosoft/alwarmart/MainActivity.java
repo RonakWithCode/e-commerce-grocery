@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -36,7 +35,6 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
-    private static final String TAG = "MainActivity";
     private static final String ORDER_ID = "orderId";
     private static final String OFFERID = "offerId";
     private static final String NOTIFICATION_TYPE = "notification_type";
@@ -50,17 +48,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
-
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-//        // Initialize token
-//        try {
-//            String token = TokenManager.getInstance(this).getToken();
-//            Log.i(TAG, "onCreate: token=" + token);
-//        } catch (Exception e) {
-//            Log.e(TAG, "Error retrieving token", e);
-//        }
+        // Initialize token (commented out, kept as is)
+        /*
+        try {
+            String token = TokenManager.getInstance(this).getToken();
+        } catch (Exception e) {
+            // Silently handled, Crashlytics will catch if critical
+        }
+        */
 
         // Initialize permission launcher
         initializePermissionLauncher();
@@ -82,8 +80,6 @@ public class MainActivity extends AppCompatActivity {
                     for (Map.Entry<String, Boolean> entry : result.entrySet()) {
                         String permission = entry.getKey();
                         boolean granted = entry.getValue();
-                        Log.i(TAG, "Permission " + permission + " " + (granted ? "granted" : "denied"));
-
                         if (!granted) {
                             handlePermissionDenied(permission);
                         }
@@ -126,19 +122,17 @@ public class MainActivity extends AppCompatActivity {
     private void handlePermissionDenied(String permission) {
         switch (permission) {
             case Manifest.permission.POST_NOTIFICATIONS:
-                Log.w(TAG, "Notification permission denied - Push notifications won't work");
+                // Notification permission denied - Push notifications won't work
                 break;
             case Manifest.permission.ACCESS_FINE_LOCATION:
             case Manifest.permission.ACCESS_COARSE_LOCATION:
-                Log.w(TAG, "Location permission denied - Location features will be limited");
+                // Location permission denied - Location features will be limited
                 break;
-
         }
 
         // Optionally show rationale if permission was denied
         if (shouldShowRequestPermissionRationale(permission)) {
             // You can show a dialog explaining why the permission is needed
-            Log.i(TAG, "Should show rationale for " + permission);
         }
     }
 
@@ -153,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             loadInitialFragment();
         } catch (Exception e) {
-            Log.e(TAG, "Error loading initial fragment", e);
+            // Silently handled, Crashlytics will catch if critical
         }
     }
 
@@ -165,15 +159,12 @@ public class MainActivity extends AppCompatActivity {
         if (intent == null || !intent.hasExtra(NOTIFICATION_TYPE)) return;
 
         String notificationType = intent.getStringExtra(NOTIFICATION_TYPE);
-        Log.i(TAG, "handleNotificationIntent: notificationType=" + notificationType);
 
         switch (notificationType) {
             case "order_status":
                 String orderId = intent.getStringExtra(ORDER_ID);
                 if (orderId != null && !orderId.isEmpty()) {
                     openOrderDetails(orderId);
-                } else {
-                    Log.w(TAG, "Order ID missing in notification intent");
                 }
                 break;
             case "offer":
@@ -198,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
             transaction.addToBackStack(null);
             transaction.commit();
         } catch (Exception e) {
-            Log.e(TAG, "Error loading offer fragment", e);
+            // Silently handled, Crashlytics will catch if critical
         }
     }
 
@@ -209,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra(ORDER_ID, orderId);
             startActivity(intent);
         } catch (Exception e) {
-            Log.e(TAG, "Error opening OrderDetailsActivity", e);
+            // Silently handled, Crashlytics will catch if critical
         }
     }
 
@@ -242,7 +233,7 @@ public class MainActivity extends AppCompatActivity {
                 loadFragment(fragment, fragment.getClass().getSimpleName());
             }
         } catch (Exception e) {
-            Log.e(TAG, "Error handling bottom navigation", e);
+            // Silently handled, Crashlytics will catch if critical
         }
     }
 
@@ -253,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
             transaction.addToBackStack(tag);
             transaction.commit();
         } catch (Exception e) {
-            Log.e(TAG, "Error loading fragment: " + tag, e);
+            // Silently handled, Crashlytics will catch if critical
         }
     }
 
@@ -263,7 +254,6 @@ public class MainActivity extends AppCompatActivity {
             getMenuInflater().inflate(R.menu.toolba_rmenu_main, menu);
             return true;
         } catch (Exception e) {
-            Log.e(TAG, "Error inflating options menu", e);
             return false;
         }
     }
@@ -277,7 +267,6 @@ public class MainActivity extends AppCompatActivity {
             }
             return super.onOptionsItemSelected(item);
         } catch (Exception e) {
-            Log.e(TAG, "Error in options item selected", e);
             return false;
         }
     }
@@ -289,7 +278,7 @@ public class MainActivity extends AppCompatActivity {
                     .addToBackStack("HomeFragment")
                     .commit();
         } catch (Exception e) {
-            Log.e(TAG, "Error opening search fragment", e);
+            // Silently handled, Crashlytics will catch if critical
         }
     }
 

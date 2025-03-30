@@ -424,4 +424,24 @@
     <string name="cart_is_enity">Your cart is empty</string>
     <string name="care">Care</string>
 
+
+
+    <!-- Fun Facts for Loading -->
+    <string-array name="fun_facts">
+        <item>Did you know? We deliver in under 10 minutes!</item>
+        <item>Freshness guaranteed with every order!</item>
+        <item>We’re packing your favorites with care!</item>
+        <item>Did you know? Honey can be a natural sweetener for your tea!</item>
+        <item>Tip: Add some dry fruits for a healthy snack!</item>
+    </string-array>
+
+    <!-- Loading Tips -->
+    <string-array name="loading_tips">
+        <item>Loading Tip: Add milk to your cart for a healthy breakfast!</item>
+        <item>Loading Tip: Stock up on grains for quick meals!</item>
+        <item>Loading Tip: Try our fresh fruits for a healthy snack!</item>
+        <item>Loading Tip: Don’t forget to add some spices for flavor!</item>
+        <item>Loading Tip: Check out our deals on dairy products!</item>
+    </string-array>
+
 </resources>
