@@ -54,14 +54,9 @@ public class HomeProductAdapter extends RecyclerView.Adapter<HomeProductAdapter.
         ArrayList<ProductModel> products = model.getProduct();
         if (products != null && !products.isEmpty()) {
             ProductAdapter productAdapter = new ProductAdapter(
-                    (androidx.lifecycle.LifecycleOwner) context,
+                    context,
                     products,
-                    new onClickProductAdapter() {
-                        @Override
-                        public void onClick(ProductModel productModel, ArrayList<ProductModel> sameProducts) {
-                            homeProductInterface.HomeProductOnclick(productModel, sameProducts);
-                        }
-                    },
+                    (productModel, sameProducts) -> homeProductInterface.HomeProductOnclick(productModel, sameProducts),
                     context
             );
 

@@ -19,11 +19,13 @@ import com.ronosoft.alwarmart.databinding.FragmentSiginBinding;
 
 public class SiginFragment extends Fragment {
     FragmentSiginBinding binding;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentSiginBinding.inflate(inflater, container, false);
         NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
+
         binding.button.setOnClickListener(v -> {
             if (binding.Number.getText() != null) {
                 String phoneNumber = binding.Number.getText().toString().trim();
@@ -57,11 +59,12 @@ public class SiginFragment extends Fragment {
         } else if (phoneNumber.length() != 10) {
             binding.phoneInputLayout.setError("Enter a valid 10-digit phone number");
             return false;
+        } else if (!phoneNumber.matches("\\d+")) {
+            binding.phoneInputLayout.setError("Phone number must contain only digits");
+            return false;
         } else {
             binding.phoneInputLayout.setError(null);
             return true;
         }
     }
-
-
 }

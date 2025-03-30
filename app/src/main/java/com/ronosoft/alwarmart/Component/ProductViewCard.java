@@ -68,6 +68,7 @@ public class ProductViewCard {
     static Map<String, String> WEIGHT_SI_UNITS_ABBR = new HashMap<String, String>() {{
         put("Kg", "Kg");
         put("Grams", "g");
+        put("Gram", "g");
         put("HalfKg", "0.5 Kg");
         put("QuarterKg", "0.25 Kg");
         put("Litre", "L");
@@ -120,6 +121,8 @@ public class ProductViewCard {
         String displayUnit = WEIGHT_SI_UNITS_ABBR.getOrDefault(fullUnit, fullUnit);
 
         List<String> imageUrls = productModel.getProductImage();
+
+
         Dialog bottomSheetDialog = new Dialog(context);
         ProductViewDialogBinding binding = ProductViewDialogBinding.inflate(context.getLayoutInflater());
 
@@ -414,7 +417,15 @@ public class ProductViewCard {
         Dialog dialog = new Dialog(context);
         DialogFullscreenImageBinding binding = DialogFullscreenImageBinding.inflate(LayoutInflater.from(context));
         dialog.setContentView(binding.getRoot());
-        DialogSliderAdapter adapter = new DialogSliderAdapter(context, imageUrls);
+
+        // Create a new list that includes the original image URLs plus two extra images.
+        List<String> extendedImageUrls = new ArrayList<>(imageUrls);
+        String contactUri = "android.resource://" + context.getPackageName() + "/" + R.drawable.contact_info;
+        String disclaimerUri = "android.resource://" + context.getPackageName() + "/" + R.drawable.disclaimer;
+        extendedImageUrls.add(contactUri);
+        extendedImageUrls.add(disclaimerUri);
+
+        DialogSliderAdapter adapter = new DialogSliderAdapter(context, extendedImageUrls);
         binding.dialogViewPager.setAdapter(adapter);
         binding.dialogViewPager.setCurrentItem(position);
         binding.getRoot().setOnClickListener(v -> dialog.dismiss());

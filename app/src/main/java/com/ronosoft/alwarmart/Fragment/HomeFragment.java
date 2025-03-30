@@ -34,6 +34,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.ronosoft.alwarmart.Activity.BrandActivity;
 import com.ronosoft.alwarmart.Activity.FragmentLoader;
 import com.ronosoft.alwarmart.Adapter.HomeCategoryAdapter;
@@ -82,6 +83,11 @@ public class HomeFragment extends Fragment {
     private Dialog homeProductBottomSheetDialog;
     private FirebaseFirestore firestore;
     private Dialog loadingDialog;
+    private boolean isLoadingSecondList = false;
+    private boolean secondListLoaded = false;
+
+    private String[] firstList = {"Dry Fruits", "Stationery", "Namkeen", "Noodles"};
+    private String[] secondList = {"Chocolate", "Candies", "Toilet & Bathroom Cleaners"};
 
     public HomeFragment() {
         // Required empty public constructor
@@ -239,16 +245,22 @@ public class HomeFragment extends Fragment {
         LinearLayoutManager multiViewManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false);
         binding.MultiViewAdapter.setLayoutManager(multiViewManager);
         binding.MultiViewAdapter.setAdapter(multiViewAdapter);
-        multiViewManager.setSmoothScrollbarEnabled(true);
-        CustomSmoothScroller smoothScroller = new CustomSmoothScroller(requireContext());
-        smoothScroller.setTargetPosition(0);
-        multiViewManager.startSmoothScroll(smoothScroller);
+
         binding.MultiViewAdapter.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy * 2);
+                if (!recyclerView.canScrollVertically(1)) {
+                    if (!isLoadingSecondList && !secondListLoaded) {
+                        isLoadingSecondList = true;
+                        showBottonLoading();
+                        loadSecondList(secondList);
+                    }
+                }
             }
         });
+
+
+
     }
 
     private void loadInitialData() {
@@ -256,174 +268,101 @@ public class HomeFragment extends Fragment {
         LoadCarousel();
         // Load fixed category groups
         loadProductsForCategories(new String[]{"Dairy", "snacks", "BISCUITS", "hair oil", "Grains", "Pulses", "Honey & Spreads"});
-        LoadFromDBBestseller();
         //        loadProductsForCategories(new String[]{"hair oil", "Honey & Spreads", "SKIN CARE"});
-        loadProductsForCategoriesByBoysSkin(new String[]{"SKIN CARE", "hair oil","Toothpaste","Edible Oils"});
+        loadProductsForCategoriesByBoysSkin(new String[]{"Toothpaste", "Soaps & Body Care","Toothpaste","Edible Oils"});
+
 
 
 
 
         LoadProductCategory();
 
-        // Get categories from Firestore and load multi-view data randomly (limit up to 15)
-        databaseService.getAllCategory(new DatabaseService.GetAllCategoryCallback() {
-            @Override
-            public void onSuccess(ArrayList<ProductCategoryModel> categories) {
-                ArrayList<String> tags = new ArrayList<>();
-                for (ProductCategoryModel model : categories) {
-                    if (model.getTag() != null && !tags.contains(model.getTag())) {
-                        tags.add(model.getTag());
-                    }
-                }
-                Collections.shuffle(tags);
-                int limit = 15;
-                if (tags.size() > limit) {
-                    tags = new ArrayList<>(tags.subList(0, limit));
-                }
-                String[] tagArray = tags.toArray(new String[0]);
-                loadProductsMultiViewForLoop(tagArray);
-            }
-            @Override
-            public void onError(String errorMessage) {
-                Log.e(TAG, "Error getting categories: " + errorMessage);
-            }
-        });
+
+
+
+        setupOnclick();
+
+
+
+        loadProductsForMultiView(firstList,secondList);
+
+    }
+
+    private void setupOnclick() {
+        binding.layoutAata.setOnClickListener(v -> openCategory("Grains"));
+
+        binding.layoutDairy.setOnClickListener(v -> openCategory("Dairy"));
+
+        binding.layoutMasala.setOnClickListener(v -> openCategory("Masala"));
+
+        binding.layoutOil.setOnClickListener(v -> openCategory("Edible Oils"));
+
 
 
     }
 
-    private void LoadFromDBBestseller() {
-        DocumentReference docRef = firestore.collection("Bestsellers").document("list");
-        docRef.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                DocumentSnapshot document = task.getResult();
-                if (document != null && document.exists()) {
-                    BestsellersModels bestsellersModels = document.toObject(BestsellersModels.class);
-                    if (bestsellersModels != null && bestsellersModels.getProductIds() != null) {
-                        // Ensure the fragment is still added and view is available
-                        if (isAdded() && getView() != null) {
-                            loadProductsForBestseller(bestsellersModels);
-                        }
-                    } else {
-                        Log.e(TAG, "Bestsellers model or productIds is null.");
-                    }
-                } else {
-                    Log.e(TAG, "Bestseller list not found in Firestore.");
-                }
-            } else {
-                Log.e(TAG, "Error getting bestseller document: ", task.getException());
-            }
-        });
+    private void openCategory(String category) {
+        Bundle bundle = new Bundle();
+        bundle.putString("filter", category);
+        ProductWithSlideCategoryFragment fragment = new ProductWithSlideCategoryFragment();
+        fragment.setArguments(bundle);
+        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.loader, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
-    private void loadProductsForBestseller(BestsellersModels bestsellersModels) {
-        // Protect against updating UI when view is not available
-        if (!isAdded() || getView() == null) return;
-        List<String> productIds = bestsellersModels.getProductIds();
-        ArrayList<ProductModel> bestsellerProductModel = new ArrayList<>();
-        ProductAdapter productAdapter = new ProductAdapter(
-                getViewLifecycleOwner(),
-                bestsellerProductModel,
-                (product, productList) -> {
-                    if (isAdded() && getActivity() != null) {
-                        new ProductViewCard(getActivity()).showProductViewDialog(product, productList);
-                    }
-                },
-                requireContext()
-        );
-        if (!productIds.isEmpty()) {
-            if (productIds.size() <= 10) {
-                firestore.collection("Product")
-                        .whereIn("productId", productIds)
-                        .get()
-                        .addOnCompleteListener(task -> {
-                            if (task.isSuccessful() && task.getResult() != null) {
-                                for (DocumentSnapshot doc : task.getResult()) {
-                                    ProductModel product = doc.toObject(ProductModel.class);
-                                    if (product != null && product.isAvailable()) {
-                                        bestsellerProductModel.add(product);
 
-                                    }
-                                }
-                                hideLoadingDialog();
 
-                                productAdapter.notifyDataSetChanged();
-                            } else {
-                                Log.e(TAG, "Error fetching bestseller products: ", task.getException());
-                            }
-                        });
-            } else {
-                List<List<String>> chunks = splitList(productIds, 10);
-                final int[] remaining = {chunks.size()};
-                for (List<String> chunk : chunks) {
-                    firestore.collection("Product")
-                            .whereIn("productId", chunk)
-                            .get()
-                            .addOnCompleteListener(task -> {
-                                if (task.isSuccessful() && task.getResult() != null) {
-                                    for (DocumentSnapshot doc : task.getResult()) {
-                                        ProductModel product = doc.toObject(ProductModel.class);
-                                        if (product != null && product.isAvailable()) {
-                                            bestsellerProductModel.add(product);
-
-                                        }
-                                    }
-
-                                    hideLoadingDialog();
-                                } else {
-                                    Log.e(TAG, "Error fetching chunk: ", task.getException());
-                                }
-                                if (--remaining[0] == 0) {
-                                    productAdapter.notifyDataSetChanged();
-                                }
-                            });
-                }
-            }
-        }
-        binding.recyclerByDatabase.setAdapter(productAdapter);
-        binding.recyclerByDatabase.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
-    }
-
-    // Helper method to split a list into chunks
-    private List<List<String>> splitList(List<String> list, int chunkSize) {
-        List<List<String>> chunks = new ArrayList<>();
-        for (int i = 0; i < list.size(); i += chunkSize) {
-            chunks.add(list.subList(i, Math.min(list.size(), i + chunkSize)));
-        }
-        return chunks;
-    }
-
-    // Load products for multi-view (e.g., a list of categories with products)
-    private void loadProductsMultiViewForLoop(String[] categories) {
-        multiViewModel.clear();
-        for (String category : categories) {
+    private void loadProductsForMultiView(String[] firstCategory, String[] secondCategory) {
+        for (String category : firstCategory) {
             loadProductsMultiView(category);
         }
+        // The second list will be loaded on scroll.
+    }
+
+    private void loadSecondList(String[] secondCategory) {
+        for (String category : secondCategory) {
+            loadProductsMultiView(category);
+        }
+        secondListLoaded = true;
+        isLoadingSecondList = false;
+        hideBottonLoading();
     }
 
     private void loadProductsMultiView(String category) {
-        databaseService.getAllProductsByCategoryOnly(category, new DatabaseService.GetAllProductsCallback() {
-            @SuppressLint("NotifyDataSetChanged")
-            @Override
-            public void onSuccess(ArrayList<ProductModel> products) {
-                if (isAdded()) {
-                    multiViewModel.add(new HomeProductModel(category, products));
-                    multiViewAdapter.notifyDataSetChanged();
-                }
-            }
-            @Override
-            public void onError(String errorMessage) {
-                basicFun.AlertDialog(requireContext(), errorMessage);
-            }
-        });
+        firestore.collection("Product")
+                .whereEqualTo("category", category)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        ArrayList<ProductModel> products = new ArrayList<>();
+                        QuerySnapshot querySnapshot = task.getResult();
+                        if (querySnapshot != null) {
+                            for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                                ProductModel product = document.toObject(ProductModel.class);
+                                if (product != null && product.isAvailable()) {
+                                    products.add(product);
+                                }
+                            }
+                            if (isAdded()) {
+                                multiViewModel.add(new HomeProductModel(category, products));
+                                multiViewAdapter.notifyDataSetChanged();
+                            }
+                        }
+                    } else {
+                        Log.e("HomeFragment", "Error retrieving products: " + task.getException());
+                    }
+                });
     }
+
 
     private void LoadProductCategory() {
         Context context = requireContext();
         Glide.with(context)
-                .load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/brand%2F1742976615605-download.png?alt=media&token=51e28872-3ab5-4381-ac51-1435c8a2258b")
+                .load(R.drawable.dabur)
                 .placeholder(R.drawable.skeleton_shape)
-                .error(R.drawable.error_placeholder)
+                .error(R.drawable.skeleton_shape)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .centerCrop()
                 .override(300, 300)
@@ -436,9 +375,9 @@ public class HomeFragment extends Fragment {
         });
 
         Glide.with(context)
-                .load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/brand%2F1742798121205-download.png?alt=media&token=1f2a0e9e-8af1-4471-9b26-52a0ced5185f")
+                .load(R.drawable.colgate)
                 .placeholder(R.drawable.skeleton_shape)
-                .error(R.drawable.error_placeholder)
+                .error(R.drawable.skeleton_shape)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .centerCrop()
                 .override(300, 300)
@@ -451,9 +390,9 @@ public class HomeFragment extends Fragment {
         });
 
         Glide.with(context)
-                .load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/brand%2F1742797315362-ITC_Limited-Logo.wine.png?alt=media&token=35a715ee-51de-4eeb-a56c-ae8ae47c881a")
+                .load(R.drawable.itc)
                 .placeholder(R.drawable.skeleton_shape)
-                .error(R.drawable.error_placeholder)
+                .error(R.drawable.skeleton_shape)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .centerCrop()
                 .override(300, 300)
@@ -466,9 +405,9 @@ public class HomeFragment extends Fragment {
         });
 
         Glide.with(context)
-                .load("https://firebasestorage.googleapis.com/v0/b/e-commerce-11d7d.appspot.com/o/brand%2F1742797426395-4ba62de6fa4103a0c4a7e0f7f34afff9.w800.h800.png?alt=media&token=43a11f24-f7c4-44a2-9bb4-3d3d640fadcf")
+                .load(R.drawable.aashirvaad)
                 .placeholder(R.drawable.skeleton_shape)
-                .error(R.drawable.error_placeholder)
+                .error(R.drawable.skeleton_shape)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .centerCrop()
                 .override(300, 300)
@@ -665,5 +604,15 @@ public class HomeFragment extends Fragment {
         for (String category : categories) {
             loadProduct(category, homeProductModelBoysSkin, homeProductBoysSkinAdapter);
         }
+    }
+
+
+
+    private void showBottonLoading() {
+        binding.progressBar.setVisibility(View.VISIBLE);
+    }
+
+    private void hideBottonLoading() {
+        binding.progressBar.setVisibility(View.GONE);
     }
 }

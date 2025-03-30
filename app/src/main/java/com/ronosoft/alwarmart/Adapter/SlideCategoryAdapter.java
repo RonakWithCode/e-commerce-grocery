@@ -53,7 +53,7 @@ public class SlideCategoryAdapter extends RecyclerView.Adapter<SlideCategoryAdap
                 Glide.with(context)
                         .load(imageUri)
                         .placeholder(R.drawable.skeleton_shape)
-                        .error(R.drawable.ic_error)
+                        .error(R.drawable.skeleton_shape)
                         .into(holder.binding.imageView1);
             } else {
                 holder.binding.imageView1.setImageResource(R.drawable.ic_error);

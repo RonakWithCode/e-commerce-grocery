@@ -111,6 +111,195 @@
             app:showTopShadow="false"
             app:showBottomShadow="false"
             app:showNavigationButtons="true" />
+
+
+
+        <TextView
+            android:id="@+id/CategoryTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Top Categories"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_2ssp"
+            android:textSize="@dimen/_20ssp"
+            android:textStyle="bold"
+            android:textColor="@color/MainTextColor"
+            app:layout_constraintTop_toBottomOf="@id/carousel"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- See All Text -->
+        <TextView
+            android:id="@+id/CategoryTextViewSee"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/see_more"
+            android:layout_marginTop="@dimen/_2ssp"
+            android:layout_marginEnd="@dimen/_9sdp"
+            android:textColor="@color/green_primary"
+            android:textSize="@dimen/_17ssp"
+            app:layout_constraintTop_toBottomOf="@id/carousel"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+
+        <LinearLayout
+            android:layout_marginTop="@dimen/_10sdp"
+            android:id="@+id/Categories"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_80sdp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@id/CategoryTextViewSee"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layoutAata"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center">
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:id="@+id/imageViewAata"
+                    android:layout_width="@dimen/_48sdp"
+                    android:layout_height="@dimen/_48sdp"
+                    app:riv_oval="true"
+                    app:riv_border_color="@color/grey_300"
+                    app:riv_border_width="1dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:src="@drawable/ic_aata" />
+
+                <TextView
+                    android:id="@+id/titleAata"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:textAlignment="center"
+                    android:textColor="@color/MainTextColor"
+                    android:textSize="@dimen/_12ssp"
+                    android:textStyle="bold"
+                    android:text="Aata"
+                    app:layout_constraintTop_toBottomOf="@id/imageViewAata"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layoutDairy"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center">
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:id="@+id/imageViewDairy"
+                    android:layout_width="@dimen/_48sdp"
+                    android:layout_height="@dimen/_48sdp"
+                    app:riv_oval="true"
+                    app:riv_border_color="@color/grey_300"
+                    app:riv_border_width="1dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:src="@drawable/ic_dairy" />
+
+                <TextView
+                    android:id="@+id/titleDairy"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:textAlignment="center"
+                    android:textColor="@color/MainTextColor"
+                    android:textSize="@dimen/_12ssp"
+                    android:textStyle="bold"
+                    android:text="Dairy"
+                    app:layout_constraintTop_toBottomOf="@id/imageViewDairy"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layoutMasala"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center">
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:id="@+id/imageViewMasala"
+                    android:layout_width="@dimen/_48sdp"
+                    android:layout_height="@dimen/_48sdp"
+                    app:riv_oval="true"
+                    app:riv_border_color="@color/grey_300"
+                    app:riv_border_width="1dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:src="@drawable/ic_masala" />
+
+                <TextView
+                    android:id="@+id/titleMasala"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:textAlignment="center"
+                    android:textColor="@color/MainTextColor"
+                    android:textSize="@dimen/_12ssp"
+                    android:textStyle="bold"
+                    android:text="Masala"
+                    app:layout_constraintTop_toBottomOf="@id/imageViewMasala"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layoutOil"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center">
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:id="@+id/imageViewOil"
+                    android:layout_width="@dimen/_48sdp"
+                    android:layout_height="@dimen/_48sdp"
+                    app:riv_oval="true"
+                    app:riv_border_color="@color/grey_300"
+                    app:riv_border_width="1dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:src="@drawable/ic_oil" />
+
+                <TextView
+                    android:id="@+id/titleOil"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:textAlignment="center"
+                    android:textColor="@color/MainTextColor"
+                    android:textSize="@dimen/_12ssp"
+                    android:textStyle="bold"
+                    android:text="Oil"
+                    app:layout_constraintTop_toBottomOf="@id/imageViewOil"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+
+
+
+
         <TextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
@@ -121,7 +310,7 @@
             android:textSize="@dimen/_20ssp"
             android:textStyle="bold"
             android:textColor="@color/MainTextColor"
-            app:layout_constraintTop_toBottomOf="@id/carousel"
+            app:layout_constraintTop_toBottomOf="@id/Categories"
             app:layout_constraintStart_toStartOf="parent" />
 
         <!-- See All Text -->
@@ -134,7 +323,7 @@
             android:layout_marginEnd="@dimen/_9sdp"
             android:textColor="@color/green_primary"
             android:textSize="@dimen/_17ssp"
-            app:layout_constraintTop_toBottomOf="@id/carousel"
+            app:layout_constraintTop_toBottomOf="@id/Categories"
             app:layout_constraintEnd_toEndOf="parent" />
 
         <!-- RecyclerView for Categories -->
@@ -146,18 +335,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_by_Database"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/recycler_category"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-
-
-
         <TextView
             android:id="@+id/boysSkinCare"
             android:layout_width="wrap_content"
@@ -168,7 +345,7 @@
             android:textSize="@dimen/_20ssp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/recycler_by_Database"
+            app:layout_constraintTop_toBottomOf="@id/recycler_category"
             />
 
         <TextView
@@ -181,7 +358,7 @@
             android:textColor="@color/green_primary"
             android:textSize="@dimen/_17ssp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/recycler_by_Database" />
+            app:layout_constraintTop_toBottomOf="@id/recycler_category" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/boys_skin_care_RecyclerView"
@@ -343,6 +520,7 @@
             app:showBottomShadow="false"
             app:showNavigationButtons="true" />
 
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/MultiViewAdapter"
             android:layout_width="match_parent"
@@ -351,6 +529,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/BottomCarousel" />
+
+        <ProgressBar
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="@dimen/_9sdp"
+            android:id="@id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/MultiViewAdapter" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
     

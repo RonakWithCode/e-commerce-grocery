@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -76,6 +77,7 @@ public class AuthOTP extends Fragment {
     private DatabaseService databaseService;
     private NavController navController;
     private boolean isLoading = false;
+    private CountDownTimer resendCountDownTimer;
 
     public AuthOTP() {
         // Required empty public constructor
@@ -106,6 +108,7 @@ public class AuthOTP extends Fragment {
         databaseService = new DatabaseService();
         setupViews();
 
+        binding.tvPhoneNo.setOnClickListener(view -> requireActivity().onBackPressed());
         if (number != null) {
             sendOTP();
         }
@@ -116,8 +119,16 @@ public class AuthOTP extends Fragment {
             }
         });
 
+        binding.tvResend.setOnClickListener(view -> {
+            if (!isLoading) {
+                sendOTP();
+                Toast.makeText(requireContext(), "OTP re-sent", Toast.LENGTH_SHORT).show();
+            }
+        });
         return binding.getRoot();
     }
+
+
 
     private void initializeOTPless() {
         try {
@@ -135,10 +146,14 @@ public class AuthOTP extends Fragment {
 
     private void setupViews() {
         initializeEditTexts();
+        binding.fullNumber.setText(number+"");
     }
+
+
 
     private void sendOTP() {
         showLoading();
+        startResendTimer();
         HeadlessRequest request = new HeadlessRequest();
         request.setPhoneNumber("+91", number);
         otplessView.startHeadless(request, this::onHeadlessCallback);
@@ -310,22 +325,18 @@ public class AuthOTP extends Fragment {
                         FirebaseUser user = mAuth.getCurrentUser();
 
                         if (user != null) {
-                            Map<String, Object> authData = new HashMap<>();
-                            authData.put("status", "success");
-                            authData.put("uid", user.getUid());
-                            authData.put("email", user.getEmail());
-                            authData.put("displayName", user.getDisplayName());
-                            authData.put("phoneNumber", user.getPhoneNumber());
-                            authData.put("provider", user.getProviderId());
-                            authData.put("tenantId", mAuth.getTenantId());
-                            authData.put("timestamp", System.currentTimeMillis());
-
-                            authRef.child("firebase").child(logId).setValue(authData);
+//                            Map<String, Object> authData = new HashMap<>();
+//                            authData.put("status", "success");
+//                            authData.put("uid", user.getUid());
+//                            authData.put("email", user.getEmail());
+//                            authData.put("displayName", user.getDisplayName());
+//                            authData.put("phoneNumber", user.getPhoneNumber());
+//                            authData.put("provider", user.getProviderId());
+//                            authData.put("tenantId", mAuth.getTenantId());
+//                            authData.put("timestamp", System.currentTimeMillis());
+//
+//                            authRef.child("firebase").child(logId).setValue(authData);
                         }
-
-                        Log.i(TAG, "Firebase user: " + user);
-                        Log.i(TAG, "User UID: " + mAuth.getUid());
-                        Log.i(TAG, "Tenant ID: " + mAuth.getTenantId());
                         navigateToNextScreen();
                     } else {
                         Exception exception = task.getException();
@@ -334,6 +345,7 @@ public class AuthOTP extends Fragment {
                         Map<String, Object> errorData = new HashMap<>();
                         errorData.put("status", "failure");
                         errorData.put("error", errorMessage);
+                        errorData.put("number", number);
                         errorData.put("timestamp", System.currentTimeMillis());
 
                         authRef.child("firebase").child(logId).setValue(errorData);
@@ -525,9 +537,30 @@ public class AuthOTP extends Fragment {
         }
     }
 
+
+    private void startResendTimer() {
+        // Disable the resend button and start a 60-second countdown.
+        binding.tvResend.setEnabled(false);
+        resendCountDownTimer = new CountDownTimer(60000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                binding.tvResend.setText("Resend OTP in " + (millisUntilFinished / 1000) + "s");
+            }
+            @Override
+            public void onFinish() {
+                binding.tvResend.setEnabled(true);
+                binding.tvResend.setText("Resend OTP");
+            }
+        }.start();
+    }
+
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (resendCountDownTimer != null) {
+            resendCountDownTimer.cancel();
+        }
         binding = null;
     }
 }

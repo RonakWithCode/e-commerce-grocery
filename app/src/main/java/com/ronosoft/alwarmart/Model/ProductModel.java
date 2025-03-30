@@ -7,6 +7,9 @@ import android.os.Parcelable;
 
 import androidx.annotation.Keep;
 import androidx.annotation.Nullable;
+
+import com.google.firebase.firestore.DocumentSnapshot;
+
 import java.util.ArrayList;
 
 @Keep
@@ -55,6 +58,11 @@ public class ProductModel implements Parcelable {
     private String productShelfLife;
     private String productPackagingDetails;
 
+
+
+
+
+    private DocumentSnapshot documentSnapshot; // Added for pagination
     // License inner class
     public static class License implements Parcelable {
         private String name;
@@ -520,5 +528,15 @@ public class ProductModel implements Parcelable {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+
+    // Added getter and setter for DocumentSnapshot
+    public DocumentSnapshot getDocumentSnapshot() {
+        return documentSnapshot;
+    }
+
+    public void setDocumentSnapshot(DocumentSnapshot documentSnapshot) {
+        this.documentSnapshot = documentSnapshot;
     }
 }

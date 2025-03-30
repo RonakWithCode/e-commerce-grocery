@@ -1,5 +1,6 @@
 package com.ronosoft.alwarmart.Fragment;
 
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -7,6 +8,8 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -15,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,6 +28,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -56,6 +61,7 @@ import com.ronosoft.alwarmart.javaClasses.TokenManager;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Random;
 
 public class CheckoutFragment extends Fragment implements ShoppingCartsInterface {
 
@@ -81,6 +87,16 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
     private final String TAG = "CheckoutFragment";
     private Gift mainGift;
 
+    private Handler messageHandler;
+    private Runnable messageRunnable;
+    private static final String[] LOADING_MESSAGES = {
+            "Processing your order...",
+            "Packing your items...",
+            "Verifying payment...",
+            "Preparing shipment...",
+            "Almost done..."
+    };
+    private Dialog loadingDialog;  // Add this new variable
     public CheckoutFragment() {
     }
 
@@ -133,7 +149,10 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
             RadioButton codRadioButton = dialog.findViewById(R.id.codRadioButton);
             ImageView closeButton = dialog.findViewById(R.id.closeButton);
 
-            codRadioButton.setOnClickListener(v -> placeOrder("Standard", ValuesHelper.PROCESSING));
+            codRadioButton.setOnClickListener(v -> {
+
+                placeOrder("Standard", ValuesHelper.PROCESSING);
+            });
             closeButton.setOnClickListener(v -> dialog.dismiss());
 
             dialog.show();
@@ -144,8 +163,55 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
             dialog.getWindow().setGravity(Gravity.BOTTOM);
         });
 
+        // Initialize the loading dialog
+        setupLoadingDialog();
+        startMessageUpdater();
+
         return binding.getRoot();
     }
+    private void setupLoadingDialog() {
+        loadingDialog = new Dialog(requireContext());
+        loadingDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        loadingDialog.setContentView(R.layout.dialog_custom_loading);
+
+        LottieAnimationView animationView = loadingDialog.findViewById(R.id.loadingAnimation);
+        animationView.setAnimation(R.raw.loading_animation);
+        animationView.setRepeatCount(ValueAnimator.INFINITE);
+        animationView.playAnimation(); // Ensure animation starts
+
+        loadingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        loadingDialog.getWindow().setLayout(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        loadingDialog.setCancelable(false);
+    }
+
+    private void startMessageUpdater() {
+        messageHandler = new Handler(Looper.getMainLooper());
+        messageRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (loadingDialog != null && loadingDialog.isShowing()) {
+                    TextView loadingText = loadingDialog.findViewById(R.id.loadingText);
+                    if (loadingText != null) {
+                        Random random = new Random();
+                        String randomMessage = LOADING_MESSAGES[random.nextInt(LOADING_MESSAGES.length)];
+                        loadingText.setText(randomMessage);
+                    }
+                    messageHandler.postDelayed(this, 2000); // Update every 2 seconds
+                }
+            }
+        };
+        messageHandler.post(messageRunnable);
+    }
+
+    private void stopMessageUpdater() {
+        if (messageHandler != null && messageRunnable != null) {
+            messageHandler.removeCallbacks(messageRunnable);
+        }
+    }
+
 
     private void initAddress() {
         String type;
@@ -583,81 +649,183 @@ public class CheckoutFragment extends Fragment implements ShoppingCartsInterface
     }
 
     // Overload that accepts shippingMethod and shippingStatus, builds OrderModel, then calls placeOrder(OrderModel)
+//    private void placeOrder(String shippingMethod, String shippingStatus) {
+//        if (models == null || models.isEmpty() || grandTotal <= 0) {
+//            Toast.makeText(requireContext(), "Your cart is empty. Please add some products.", Toast.LENGTH_SHORT).show();
+//            requireActivity().finish();
+//            return;
+//        }
+//        Date orderDate = new Date();
+//        Log.d(TAG, "placeOrder: " + orderDate);
+//        Shipping shipping = new Shipping(shippingMethod, shippingFee, new Date(), addressModel, shippingStatus);
+//        Payment payment = new Payment("cash", "Pending");
+//        String userID = authService.getUserId();
+//        authService.getUserPhoneNumber().addOnSuccessListener(phoneNumber -> {
+//            Customer customer = new Customer(
+//                    userID,
+//                    addressModel.getFullName(),
+//                    addressModel.getMobileNumber(),
+//                    phoneNumber
+//            );
+//            OrderIdGenerator.generateUniqueOrderId().addOnSuccessListener(orderId -> {
+//                OrderModel orderModel = new OrderModel(
+//                        orderId,
+//                        customer,
+//                        models,
+//                        grandTotal,
+//                        couponCode,
+//                        shippingStatus,
+//                        payment,
+//                        shipping,
+//                        orderDate,
+//                        binding.note.getEditText().getText().toString(),
+//                        TokenManager.getInstance(requireContext()).getToken(),
+//                        couponValue,
+//                        donate,
+//                        processingFee,
+//                        mainGift
+//                );
+//                placeOrder(orderModel);
+//            }).addOnFailureListener(e -> {
+//                Toast.makeText(requireContext(), "Failed to generate order ID: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+//            });
+//        }).addOnFailureListener(e -> {
+//            Log.e(TAG, "Error getting phone number", e);
+//            Toast.makeText(requireContext(), "Error: Unable to get phone number", Toast.LENGTH_SHORT).show();
+//        });
+//    }
+
+
+
+    // Existing placeOrder(OrderModel) method.
+
+
     private void placeOrder(String shippingMethod, String shippingStatus) {
         if (models == null || models.isEmpty() || grandTotal <= 0) {
-            Toast.makeText(requireContext(), "Your cart is empty. Please add some products.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "Your cart is empty. Please add some products.",
+                    Toast.LENGTH_SHORT).show();
             requireActivity().finish();
             return;
         }
+
+        loadingDialog.show();
+        startMessageUpdater(); // Start random message updates
+
         Date orderDate = new Date();
         Log.d(TAG, "placeOrder: " + orderDate);
-        Shipping shipping = new Shipping(shippingMethod, shippingFee, new Date(), addressModel, shippingStatus);
+        Shipping shipping = new Shipping(shippingMethod, shippingFee, new Date(),
+                addressModel, shippingStatus);
         Payment payment = new Payment("cash", "Pending");
         String userID = authService.getUserId();
-        authService.getUserPhoneNumber().addOnSuccessListener(phoneNumber -> {
-            Customer customer = new Customer(
-                    userID,
-                    addressModel.getFullName(),
-                    addressModel.getMobileNumber(),
-                    phoneNumber
-            );
-            OrderIdGenerator.generateUniqueOrderId().addOnSuccessListener(orderId -> {
-                OrderModel orderModel = new OrderModel(
-                        orderId,
-                        customer,
-                        models,
-                        grandTotal,
-                        couponCode,
-                        shippingStatus,
-                        payment,
-                        shipping,
-                        orderDate,
-                        binding.note.getEditText().getText().toString(),
-                        TokenManager.getInstance(requireContext()).getToken(),
-                        couponValue,
-                        donate,
-                        processingFee,
-                        mainGift
-                );
-                placeOrder(orderModel);
-            }).addOnFailureListener(e -> {
-                Toast.makeText(requireContext(), "Failed to generate order ID: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            });
-        }).addOnFailureListener(e -> {
-            Log.e(TAG, "Error getting phone number", e);
-            Toast.makeText(requireContext(), "Error: Unable to get phone number", Toast.LENGTH_SHORT).show();
-        });
+
+        authService.getUserPhoneNumber()
+                .addOnSuccessListener(phoneNumber -> {
+                    Customer customer = new Customer(
+                            userID,
+                            addressModel.getFullName(),
+                            addressModel.getMobileNumber(),
+                            phoneNumber
+                    );
+
+                    OrderIdGenerator.generateUniqueOrderId()
+                            .addOnSuccessListener(orderId -> {
+                                OrderModel orderModel = new OrderModel(
+                                        orderId,
+                                        customer,
+                                        models,
+                                        grandTotal,
+                                        couponCode,
+                                        shippingStatus,
+                                        payment,
+                                        shipping,
+                                        orderDate,
+                                        binding.note.getEditText().getText().toString(),
+                                        TokenManager.getInstance(requireContext()).getToken(),
+                                        couponValue,
+                                        donate,
+                                        processingFee,
+                                        mainGift
+                                );
+                                placeOrderSaveInFirebase(orderModel);
+                            })
+                            .addOnFailureListener(e -> {
+                                stopMessageUpdater();
+                                handleOrderFailure("Failed to generate order ID: " + e.getMessage());
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    stopMessageUpdater();
+                    handleOrderFailure("Error getting phone number: " + e.getMessage());
+                });
     }
 
-    // Existing placeOrder(OrderModel) method.
-    public void placeOrder(OrderModel orderModel) {
-        ProgressDialog progressDialog = new ProgressDialog(requireContext());
-        progressDialog.setTitle("Placing Order");
-        progressDialog.setMessage("Please wait while we process your order...");
-        progressDialog.setCancelable(false);
-        progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.show();
+    private void placeOrderSaveInFirebase(OrderModel orderModel) {
         databaseService.PlaceOder(orderModel, new DatabaseService.PlaceOrderCallback() {
             @SuppressLint("SetTextI18n")
             @Override
             public void onSuccess() {
-                databaseService.removeCartItems(getContext(), orderModel.getCustomer().getCustomerId());
-                updateUsageAfterOrder();
+                stopMessageUpdater();
+
+                LottieAnimationView animationView = loadingDialog.findViewById(R.id.loadingAnimation);
+                TextView loadingText = loadingDialog.findViewById(R.id.loadingText);
+
+                // Clear current animation and load success animation
+                animationView.cancelAnimation();
+                animationView.setAnimation(R.raw.success_animation);
+                animationView.setRepeatCount(0);
+                animationView.playAnimation(); // Explicitly start success animation
+                loadingText.setText("Order Placed Successfully!");
+
                 double totalSavingInDouble = ShoppingCartHelper.calculateTotalSavings(orderModel.getOrderItems())
                         - ShoppingCartHelper.calculateTotalPrices(orderModel.getOrderItems());
                 String totalSaving = ValuesHelper.RupeeSymbols + totalSavingInDouble;
-                PlaceOrderFragment placeOrderFragment = new PlaceOrderFragment(orderModel.getOrderId(), totalSaving);
-                placeOrderFragment.show(requireActivity().getSupportFragmentManager(), "place_order_dialog");
-                progressDialog.dismiss();
+
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    loadingDialog.dismiss();
+                    databaseService.removeCartItems(getContext(), orderModel.getCustomer().getCustomerId());
+                    updateUsageAfterOrder();
+
+                    PlaceOrderFragment placeOrderFragment = new PlaceOrderFragment(
+                            orderModel.getOrderId(), totalSaving);
+                    placeOrderFragment.show(requireActivity().getSupportFragmentManager(),
+                            "place_order_dialog");
+                }, 2000); // Increased to 2 seconds to ensure animation visibility
             }
+
             @Override
             public void onError(Exception errorMessage) {
-                progressDialog.dismiss();
-                CustomErrorDialog customErrorDialog = new CustomErrorDialog(requireContext());
-                customErrorDialog.setTitle("Place order error");
-                customErrorDialog.setTitle(errorMessage.getLocalizedMessage());
-                customErrorDialog.show();
+                stopMessageUpdater();
+                handleOrderFailure("Order processing failed: " + errorMessage.getMessage());
             }
         });
+    }
+
+    private void handleOrderFailure(String errorMessage) {
+        LottieAnimationView animationView = loadingDialog.findViewById(R.id.loadingAnimation);
+        TextView loadingText = loadingDialog.findViewById(R.id.loadingText);
+
+        animationView.cancelAnimation();
+        animationView.setAnimation(R.raw.error_animation);
+        animationView.setRepeatCount(0);
+        animationView.playAnimation();
+        loadingText.setText("Order Failed!");
+
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            loadingDialog.dismiss();
+            CustomErrorDialog customErrorDialog = new CustomErrorDialog(requireContext());
+            customErrorDialog.setTitle("Place order error");
+            customErrorDialog.setMessage(errorMessage);
+            customErrorDialog.show();
+        }, 1500);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        stopMessageUpdater();
+        if (loadingDialog != null && loadingDialog.isShowing()) {
+            loadingDialog.dismiss();
+        }
+        binding = null;
     }
 }
