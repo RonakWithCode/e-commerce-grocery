@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <!-- Skeleton for Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/TopNavSkeleton"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/white"
+        android:elevation="4dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp">
+
+            <!-- Back Button Skeleton -->
+            <View
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/skeleton_shape"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <!-- Title Skeleton -->
+            <View
+                android:layout_width="100dp"
+                android:layout_height="20dp"
+                android:background="@drawable/skeleton_shape"
+                app:layout_constraintStart_toEndOf="@id/backBtn"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/search_bta"/>
+
+            <!-- Search Button Skeleton -->
+            <View
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/skeleton_shape"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- Skeleton for Category List (Left Side) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/categorySkeleton"
+        android:layout_width="60dp"
+        android:layout_height="0dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintTop_toBottomOf="@id/TopNavSkeleton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!-- Repeating skeleton items for categories -->
+        <View
+            android:id="@+id/categorySkeletonItem1"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="8dp"
+            android:background="@drawable/skeleton_shape_circle"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <View
+            android:id="@+id/categorySkeletonItem2"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="8dp"
+            android:background="@drawable/skeleton_shape_circle"
+            app:layout_constraintTop_toBottomOf="@id/categorySkeletonItem1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <View
+            android:id="@+id/categorySkeletonItem3"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="8dp"
+            android:background="@drawable/skeleton_shape_circle"
+            app:layout_constraintTop_toBottomOf="@id/categorySkeletonItem2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Add more skeleton items as needed -->
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Skeleton for Product Grid (Right Side) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/productSkeleton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="8dp"
+        app:layout_constraintTop_toBottomOf="@id/TopNavSkeleton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/categorySkeleton"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- First Row -->
+        <View
+            android:id="@+id/productSkeletonImage1"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:layout_margin="8dp"
+            android:background="@drawable/skeleton_shape"
+            app:layout_constraintWidth_percent="0.45"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <View
+            android:id="@+id/productSkeletonImage2"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:layout_margin="8dp"
+            android:background="@drawable/skeleton_shape"
+            app:layout_constraintWidth_percent="0.45"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Title Skeleton for First Product -->
+        <View
+            android:id="@+id/productSkeletonTitle1"
+            android:layout_width="0dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/skeleton_shape"
+            app:layout_constraintWidth_percent="0.45"
+            app:layout_constraintTop_toBottomOf="@id/productSkeletonImage1"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <!-- Price Skeleton for First Product -->
+        <View
+            android:id="@+id/productSkeletonPrice1"
+            android:layout_width="60dp"
+            android:layout_height="14dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/skeleton_shape"
+            app:layout_constraintTop_toBottomOf="@id/productSkeletonTitle1"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <!-- Title Skeleton for Second Product -->
+        <View
+            android:id="@+id/productSkeletonTitle2"
+            android:layout_width="0dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/skeleton_shape"
+            app:layout_constraintWidth_percent="0.45"
+            app:layout_constraintTop_toBottomOf="@id/productSkeletonImage2"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Price Skeleton for Second Product -->
+        <View
+            android:id="@+id/productSkeletonPrice2"
+            android:layout_width="60dp"
+            android:layout_height="14dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/skeleton_shape"
+            app:layout_constraintTop_toBottomOf="@id/productSkeletonTitle2"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Second Row -->
+        <View
+            android:id="@+id/productSkeletonImage3"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:layout_margin="8dp"
+            android:background="@drawable/skeleton_shape"
+            app:layout_constraintWidth_percent="0.45"
+            app:layout_constraintTop_toBottomOf="@id/productSkeletonPrice1"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <View
+            android:id="@+id/productSkeletonImage4"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:layout_margin="8dp"
+            android:background="@drawable/skeleton_shape"
+            app:layout_constraintWidth_percent="0.45"
+            app:layout_constraintTop_toBottomOf="@id/productSkeletonPrice2"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Title Skeleton for Third Product -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/skeleton_shape"
+            app:layout_constraintWidth_percent="0.45"
+            app:layout_constraintTop_toBottomOf="@id/productSkeletonImage3"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <!-- Price Skeleton for Third Product -->
+        <View
+            android:layout_width="60dp"
+            android:layout_height="14dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/skeleton_shape"
+            app:layout_constraintTop_toBottomOf="@id/productSkeletonImage3"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/productSkeletonImage4"/>
+
+        <!-- Title Skeleton for Fourth Product -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/skeleton_shape"
+            app:layout_constraintWidth_percent="0.45"
+            app:layout_constraintTop_toBottomOf="@id/productSkeletonImage4"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Price Skeleton for Fourth Product -->
+        <View
+            android:layout_width="60dp"
+            android:layout_height="14dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/skeleton_shape"
+            app:layout_constraintTop_toBottomOf="@id/productSkeletonImage4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/productSkeletonImage3"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

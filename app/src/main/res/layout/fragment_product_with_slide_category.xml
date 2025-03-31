@@ -67,6 +67,22 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.appcompat.widget.Toolbar>
 
+    <!-- Skeleton Screen -->
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/skeletonLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="visible"
+        app:shimmer_duration="1000"
+        app:shimmer_direction="left_to_right"
+        app:layout_constraintTop_toBottomOf="@id/TopNav"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <include layout="@layout/fragment_product_with_slide_category_skeleton" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
     <!-- SwipeRefreshLayout with main content -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefresh"
@@ -107,17 +123,6 @@
                 app:layout_constraintStart_toEndOf="@id/slideView"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:listitem="@layout/product_grid_item" />
-
-            <!-- Centered Loading Indicator -->
-            <ProgressBar
-                android:id="@+id/loadingProgress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
 
             <!-- Centered Error State -->
             <LinearLayout

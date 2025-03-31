@@ -2,7 +2,6 @@ package com.ronosoft.alwarmart.Fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +60,8 @@ public class ProductWithSlideCategoryFragment extends Fragment {
         if (getArguments() != null) {
             currentFilter = getArguments().getString("filter", "no");
         }
+        // Start shimmer effect for skeleton screen
+        binding.skeletonLayout.startShimmer();
     }
 
     /**
@@ -167,21 +168,24 @@ public class ProductWithSlideCategoryFragment extends Fragment {
     }
 
     /**
-     * Shows a loading indicator and hides error state.
+     * Shows the skeleton screen and hides error state.
      */
     private void showLoading() {
         if (binding != null) {
-            binding.loadingProgress.setVisibility(View.VISIBLE);
+            binding.skeletonLayout.setVisibility(View.VISIBLE);
+            binding.swipeRefresh.setVisibility(View.GONE);
             binding.errorState.setVisibility(View.GONE);
         }
     }
 
     /**
-     * Hides the loading indicator and stops the swipe refresh.
+     * Hides the skeleton screen and shows the main content.
      */
     private void hideLoading() {
         if (binding != null) {
-            binding.loadingProgress.setVisibility(View.GONE);
+            binding.skeletonLayout.stopShimmer();
+            binding.skeletonLayout.setVisibility(View.GONE);
+            binding.swipeRefresh.setVisibility(View.VISIBLE);
             binding.swipeRefresh.setRefreshing(false);
         }
     }
@@ -194,7 +198,6 @@ public class ProductWithSlideCategoryFragment extends Fragment {
         if (binding != null) {
             binding.errorState.setVisibility(View.VISIBLE);
             binding.errorMessage.setText(message);
-            // Optionally, you can also show a Toast:
             Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
         }
     }
@@ -232,6 +235,9 @@ public class ProductWithSlideCategoryFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null;
+        if (binding != null) {
+            binding.skeletonLayout.stopShimmer();
+            binding = null;
+        }
     }
 }

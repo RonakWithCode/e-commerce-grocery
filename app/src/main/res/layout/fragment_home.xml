@@ -578,9 +578,10 @@
             android:id="@+id/loadingAnimation"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            app:lottie_rawRes="@raw/delivery_truck"
+            app:lottie_rawRes="@raw/loading_animation"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
+
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/loadingPrimaryText"
             app:layout_constraintStart_toStartOf="parent"

@@ -51,6 +51,7 @@ import com.ronosoft.alwarmart.Model.AddressModel;
 import com.ronosoft.alwarmart.Model.BannerModels;
 import com.ronosoft.alwarmart.Model.HomeProductModel;
 import com.ronosoft.alwarmart.Model.ProductModel;
+//import com.ronosoft.alwarmart.Model.PromotionNotification;
 import com.ronosoft.alwarmart.Model.UserinfoModels;
 import com.ronosoft.alwarmart.R;
 import com.ronosoft.alwarmart.Services.DatabaseService;
@@ -103,17 +104,22 @@ public class HomeFragment extends Fragment {
     private Map<String, DocumentSnapshot> lastDocuments = new HashMap<>();
     private Map<String, Boolean> hasMoreData = new HashMap<>();
 
-    // Fun facts and animation handler for bottom loading and full-screen loading
+    // Fun facts and animation handler
     private String[] funFacts;
     private Handler funFactHandler;
     private Runnable funFactRunnable;
     private final long FUN_FACT_INTERVAL = 2000; // Change fact every 2 seconds
+
+    // Notification-related variables
+//    private PromotionNotification activePromotion;
+//    private ArrayList<CarouselItem> promoCarouselItems = new ArrayList<>();
 
     // Track initial loading state
     private AtomicBoolean isCarouselLoaded = new AtomicBoolean(false);
     private AtomicBoolean areCategoriesLoaded = new AtomicBoolean(false);
     private AtomicBoolean areBoysSkinCategoriesLoaded = new AtomicBoolean(false);
     private AtomicBoolean areMultiViewFirstListLoaded = new AtomicBoolean(false);
+//    private AtomicBoolean isPromotionLoaded = new AtomicBoolean(false);
 
     public HomeFragment() {
         // Required empty public constructor
@@ -129,13 +135,19 @@ public class HomeFragment extends Fragment {
         firestore = FirebaseFirestore.getInstance();
         homeProductBottomSheetDialog = new Dialog(requireContext());
 
-        // Load fun facts for both bottom loading and full-screen loading
+        // Load fun facts
         funFacts = getResources().getStringArray(R.array.fun_facts);
         funFactHandler = new Handler(Looper.getMainLooper());
 
-        // Show full-screen loading view and start cycling fun facts
+        // Show full-screen loading view
         binding.fullScreenLoadingView.setVisibility(View.VISIBLE);
         binding.mainContent.setVisibility(View.GONE);
+
+        // Start Lottie animation immediately
+        if (binding != null && binding.loadingAnimation != null) {
+            binding.loadingAnimation.setAnimation("loading_animation.lottie");
+            binding.loadingAnimation.playAnimation();
+        }
         startFunFactCycle();
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -169,7 +181,7 @@ public class HomeFragment extends Fragment {
             }
         }
 
-        // Retrieve user info if logged in (background task, no UI block)
+        // Retrieve user info if logged in (background task)
         final UserinfoModels[] userInfo = new UserinfoModels[1];
         if (currentUser != null) {
             databaseService.getUserInfo(userId, new DatabaseService.getUserInfoCallback() {
@@ -238,8 +250,117 @@ public class HomeFragment extends Fragment {
 
         setupAdapters();
         loadInitialData();
+//        fetchActivePromotion(); // Fetch admin notifications
+
         return binding.getRoot();
     }
+
+//    private void fetchActivePromotion() {
+//        long currentTime = System.currentTimeMillis();
+//        firestore.collection("promotions")
+//                .whereEqualTo("isActive", true)
+//                .whereLessThanOrEqualTo("startTime", currentTime)
+//                .whereGreaterThanOrEqualTo("endTime", currentTime)
+//                .limit(1)
+//                .get()
+//                .addOnCompleteListener(task -> {
+//                    if (isAdded() && binding != null) {
+//                        if (task.isSuccessful() && !task.getResult().isEmpty()) {
+//                            DocumentSnapshot document = task.getResult().getDocuments().get(0);
+//                            activePromotion = document.toObject(PromotionNotification.class);
+//                            if (activePromotion != null) {
+//                                updateUIWithPromotion();
+//                            }
+//                        }
+//                        isPromotionLoaded.set(true);
+//                        checkIfInitialLoadingComplete();
+//                    }
+//                }).addOnFailureListener(e -> {
+//                    if (isAdded() && binding != null) {
+//                        isPromotionLoaded.set(true);
+//                        checkIfInitialLoadingComplete();
+//                    }
+//                });
+//    }
+
+//    private void updateUIWithPromotion() {
+//        if (activePromotion != null && binding != null) {
+//            binding.notificationBanner.setVisibility(View.VISIBLE);
+//            AlphaAnimation fadeIn = new AlphaAnimation(0f, 1f);
+//            fadeIn.setDuration(1000);
+//            binding.notificationBanner.startAnimation(fadeIn);
+//
+//            binding.notificationTitle.setText(activePromotion.getTitle());
+//            binding.notificationDescription.setText(activePromotion.getDescription());
+//            if (activePromotion.getBannerImageUrl() != null) {
+//                Glide.with(this)
+//                        .load(activePromotion.getBannerImageUrl())
+//                        .placeholder(R.drawable.skeleton_shape)
+//                        .into(binding.notificationImage);
+//            }
+//            if (activePromotion.getActionButtonText() != null) {
+//                binding.notificationActionButton.setText(activePromotion.getActionButtonText());
+//                binding.notificationActionButton.setVisibility(View.VISIBLE);
+//                binding.notificationActionButton.setOnClickListener(v -> {
+//                    if (activePromotion.getActionButtonUrl() != null) {
+//                        openCategory(activePromotion.getActionButtonUrl());
+//                    }
+//                });
+//            } else {
+//                binding.notificationActionButton.setVisibility(View.GONE);
+//            }
+//
+//            binding.notificationDismiss.setOnClickListener(v -> {
+//                AlphaAnimation fadeOut = new AlphaAnimation(1f, 0f);
+//                fadeOut.setDuration(500);
+//                fadeOut.setAnimationListener(new Animation.AnimationListener() {
+//                    @Override
+//                    public void onAnimationStart(Animation animation) {}
+//                    @Override
+//                    public void onAnimationEnd(Animation animation) {
+//                        if (binding != null) {
+//                            binding.notificationBanner.setVisibility(View.GONE);
+//                        }
+//                    }
+//                    @Override
+//                    public void onAnimationRepeat(Animation animation) {}
+//                });
+//                binding.notificationBanner.startAnimation(fadeOut);
+//            });
+//
+//            List<String> promoCategories = activePromotion.getCategories();
+//            if (promoCategories != null && !promoCategories.isEmpty()) {
+//                loadPromotionalProducts(promoCategories);
+//                binding.promoCarousel.setVisibility(View.VISIBLE);
+//                binding.promoCarousel.setData(promoCarouselItems);
+//            }
+//        }
+//    }
+
+//    private void loadPromotionalProducts(List<String> categories) {
+//        promoCarouselItems.clear();
+//        for (String category : categories) {
+//            firestore.collection("Product")
+//                    .whereEqualTo("category", category)
+//                    .whereEqualTo("available", true)
+//                    .limit(5)
+//                    .get()
+//                    .addOnCompleteListener(task -> {
+//                        if (isAdded() && binding != null && task.isSuccessful()) {
+//                            for (DocumentSnapshot document : task.getResult()) {
+//                                ProductModel product = document.toObject(ProductModel.class);
+//                                if (product != null && !product.getProductImage().isEmpty()) {
+//                                    promoCarouselItems.add(new CarouselItem(
+//                                            product.getProductImage().get(0),
+//                                            product.getProductName()
+//                                    ));
+//                                }
+//                            }
+//                            binding.promoCarousel.setData(promoCarouselItems);
+//                        }
+//                    });
+//        }
+//    }
 
     private void showLoadingDialog() {
         loadingDialog = new Dialog(requireContext());
@@ -305,6 +426,24 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
+
+//        binding.promoCarousel.setCarouselListener(new CarouselListener() {
+//            @Nullable
+//            @Override
+//            public ViewBinding onCreateViewHolder(@NonNull LayoutInflater layoutInflater, @NonNull ViewGroup viewGroup) {
+//                return null;
+//            }
+//            @Override
+//            public void onBindViewHolder(@NonNull ViewBinding viewBinding, @NonNull CarouselItem carouselItem, int i) {}
+//            @Override
+//            public void onClick(int i, @NonNull CarouselItem carouselItem) {
+//                if (activePromotion != null && activePromotion.getCategories() != null && !activePromotion.getCategories().isEmpty()) {
+//                    openCategory(activePromotion.getCategories().get(0));
+//                }
+//            }
+//            @Override
+//            public void onLongClick(int i, @NonNull CarouselItem carouselItem) {}
+//        });
     }
 
     private void loadInitialData() {
@@ -377,7 +516,7 @@ public class HomeFragment extends Fragment {
                             products.add(product);
                         }
                     }
-                    if (isAdded()) {
+                    if (isAdded() && binding != null) {
                         HomeProductModel existingModel = null;
                         for (HomeProductModel model : multiViewModel) {
                             if (model.getTitle().equals(category)) {
@@ -503,7 +642,6 @@ public class HomeFragment extends Fragment {
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // Silent fail, Crashlytics will catch if critical
                 isCarouselLoaded.set(true);
                 checkIfInitialLoadingComplete();
             }
@@ -515,7 +653,7 @@ public class HomeFragment extends Fragment {
                 return null;
             }
             @Override
-            public void onBindViewHolder(@NonNull ViewBinding viewBinding, @NonNull CarouselItem carouselItem, int i) { }
+            public void onBindViewHolder(@NonNull ViewBinding viewBinding, @NonNull CarouselItem carouselItem, int i) {}
             @Override
             public void onClick(int i, @NonNull CarouselItem carouselItem) {
                 if (topBannerModels.size() > i && carouselItem.getHeaders() != null) {
@@ -538,7 +676,7 @@ public class HomeFragment extends Fragment {
                 }
             }
             @Override
-            public void onLongClick(int i, @NonNull CarouselItem carouselItem) { }
+            public void onLongClick(int i, @NonNull CarouselItem carouselItem) {}
         });
         bottomCarousel.setCarouselListener(new CarouselListener() {
             @Nullable
@@ -547,7 +685,7 @@ public class HomeFragment extends Fragment {
                 return null;
             }
             @Override
-            public void onBindViewHolder(@NonNull ViewBinding viewBinding, @NonNull CarouselItem carouselItem, int i) { }
+            public void onBindViewHolder(@NonNull ViewBinding viewBinding, @NonNull CarouselItem carouselItem, int i) {}
             @Override
             public void onClick(int i, @NonNull CarouselItem carouselItem) {
                 if (bottomBannerModels.size() > i && carouselItem.getHeaders() != null) {
@@ -570,7 +708,7 @@ public class HomeFragment extends Fragment {
                 }
             }
             @Override
-            public void onLongClick(int i, @NonNull CarouselItem carouselItem) { }
+            public void onLongClick(int i, @NonNull CarouselItem carouselItem) {}
         });
     }
 
@@ -658,8 +796,6 @@ public class HomeFragment extends Fragment {
 
     private void showBottonLoading() {
         binding.customLoadingView.setVisibility(View.VISIBLE);
-
-        // Animate the truck
         ImageView truck = binding.loadingTruck;
         TranslateAnimation animation = new TranslateAnimation(
                 Animation.RELATIVE_TO_PARENT, 0f,
@@ -672,11 +808,10 @@ public class HomeFragment extends Fragment {
         animation.setRepeatMode(Animation.RESTART);
         truck.startAnimation(animation);
 
-        // Cycle through fun facts for bottom loading
         funFactRunnable = new Runnable() {
             @Override
             public void run() {
-                if (binding.customLoadingView.getVisibility() == View.VISIBLE) {
+                if (binding != null && binding.customLoadingView.getVisibility() == View.VISIBLE) {
                     Random random = new Random();
                     int index = random.nextInt(funFacts.length);
                     binding.loadingFunFact.setText(funFacts[index]);
@@ -688,22 +823,22 @@ public class HomeFragment extends Fragment {
     }
 
     private void hideBottonLoading() {
-        binding.customLoadingView.setVisibility(View.GONE);
-        binding.loadingTruck.clearAnimation();
-        funFactHandler.removeCallbacks(funFactRunnable);
+        if (binding != null) {
+            binding.customLoadingView.setVisibility(View.GONE);
+            binding.loadingTruck.clearAnimation();
+            funFactHandler.removeCallbacks(funFactRunnable);
+        }
     }
 
     private void startFunFactCycle() {
-        // Fade-in animation for primary text
         AlphaAnimation fadeInPrimary = new AlphaAnimation(0f, 1f);
         fadeInPrimary.setDuration(1000);
         binding.loadingPrimaryText.startAnimation(fadeInPrimary);
 
-        // Cycle through fun facts for the full-screen loading
         funFactRunnable = new Runnable() {
             @Override
             public void run() {
-                if (binding.fullScreenLoadingView.getVisibility() == View.VISIBLE) {
+                if (binding != null && binding.fullScreenLoadingView.getVisibility() == View.VISIBLE) {
                     Random random = new Random();
                     int index = random.nextInt(funFacts.length);
                     TextView secondaryText = binding.loadingSecondaryText;
@@ -712,15 +847,15 @@ public class HomeFragment extends Fragment {
                     fadeOut.setAnimationListener(new Animation.AnimationListener() {
                         @Override
                         public void onAnimationStart(Animation animation) {}
-
                         @Override
                         public void onAnimationEnd(Animation animation) {
-                            secondaryText.setText(funFacts[index]);
-                            AlphaAnimation fadeIn = new AlphaAnimation(0f, 1f);
-                            fadeIn.setDuration(500);
-                            secondaryText.startAnimation(fadeIn);
+                            if (binding != null) {
+                                secondaryText.setText(funFacts[index]);
+                                AlphaAnimation fadeIn = new AlphaAnimation(0f, 1f);
+                                fadeIn.setDuration(500);
+                                secondaryText.startAnimation(fadeIn);
+                            }
                         }
-
                         @Override
                         public void onAnimationRepeat(Animation animation) {}
                     });
@@ -733,10 +868,29 @@ public class HomeFragment extends Fragment {
     }
 
     private void checkIfInitialLoadingComplete() {
-        if (isCarouselLoaded.get() && areCategoriesLoaded.get() && areBoysSkinCategoriesLoaded.get() && areMultiViewFirstListLoaded.get()) {
-            binding.fullScreenLoadingView.setVisibility(View.GONE);
-            binding.mainContent.setVisibility(View.VISIBLE);
-            funFactHandler.removeCallbacks(funFactRunnable);
+        if (isCarouselLoaded.get() && areCategoriesLoaded.get() && areBoysSkinCategoriesLoaded.get() &&
+                areMultiViewFirstListLoaded.get() /*&& isPromotionLoaded.get() */) {
+            if (binding != null) {
+                if (binding.loadingAnimation != null && binding.loadingAnimation.isAnimating()) {
+                    binding.loadingAnimation.cancelAnimation();
+                }
+                binding.fullScreenLoadingView.setVisibility(View.GONE);
+                binding.mainContent.setVisibility(View.VISIBLE);
+                funFactHandler.removeCallbacks(funFactRunnable);
+            }
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (binding != null) {
+            if (binding.loadingAnimation != null && binding.loadingAnimation.isAnimating()) {
+                binding.loadingAnimation.cancelAnimation();
+            }
+            binding.loadingTruck.clearAnimation();
+            funFactHandler.removeCallbacksAndMessages(null);
+            binding = null;
         }
     }
 }
