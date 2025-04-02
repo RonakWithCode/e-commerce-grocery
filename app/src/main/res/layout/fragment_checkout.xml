@@ -452,12 +452,7 @@
 
             </RelativeLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/CardView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/TopRelative"
-                android:layout_marginTop="@dimen/_8sdp" />
+
 
 
             <!-- Improved Gift Section Layout -->
@@ -466,7 +461,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
-                android:layout_below="@id/CardView"
+                android:layout_below="@id/TopRelative"
                 android:layout_margin="16dp"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="4dp">
@@ -535,7 +530,7 @@
                 android:id="@+id/freeText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:layout_below="@id/freeGiftCard"
                 android:layout_margin="16dp"
                 android:text="Add products worth ₹0 more to get a free gift"
@@ -545,14 +540,78 @@
 
 
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_marginLeft="10dp"
+                android:id="@+id/Address_Box"
+                android:layout_marginTop="5dp"
+                android:layout_below="@id/freeText"
+
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="10dp">
+
+                <ImageView
+                    android:id="@+id/AddressType"
+                    android:scaleType="fitXY"
+
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_width="@dimen/_60sdp"
+                    android:layout_height="@dimen/_55sdp"
+                    android:src="@drawable/home_shipping" />
+
+                <TextView
+                    android:id="@+id/deliveryTo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    android:layout_toEndOf="@+id/AddressType"
+                    android:text="Delivering to Home"
+                    android:textAlignment="center"
+                    android:textColor="@color/MainTextColor"
+                    android:textSize="@dimen/_16ssp"
+                    android:textStyle="normal" />
+
+                <TextView
+                    android:id="@+id/deliveryAddress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/deliveryTo"
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:layout_toEndOf="@+id/AddressType"
+                    android:maxLines="5"
+                    android:text="6391 Elgin St. Celina, Delaware..."
+                    android:textAlignment="textStart"
+                    android:textColor="@color/HintMainTextColor"
+                    android:textSize="@dimen/_12ssp"
+                    android:textStyle="normal" />
+
+                <TextView
+                    android:id="@+id/Change"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:layout_toEndOf="@id/deliveryTo"
+                    android:text="@string/change"
+                    android:textColor="@color/orange_secondary"
+                    android:textSize="@dimen/_13ssp"
+                    tools:ignore="RelativeOverlap" />
+
+
+            </RelativeLayout>
 
             <LinearLayout
+                android:layout_below="@+id/Address_Box"
                 android:id="@+id/coupon_code_apply"
                 android:layout_width="match_parent"
                 android:orientation="horizontal"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/freeText"
                 android:layout_marginTop="@dimen/_10sdp">
+
+
+
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/coupon_code"
@@ -643,6 +702,7 @@
 
 
             <RelativeLayout
+                android:id="@+id/pricing"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/line2">
@@ -814,69 +874,14 @@
                 </LinearLayout>
 
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/grand_total_box"
-                    android:layout_marginLeft="10dp"
-                    android:id="@+id/Address_Box"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginBottom="10dp">
-
-                    <ImageView
-                        android:id="@+id/AddressType"
-                        android:scaleType="fitXY"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_width="@dimen/_60sdp"
-                        android:layout_height="@dimen/_55sdp"
-                        android:src="@drawable/home_shipping" />
-
-                    <TextView
-                        android:id="@+id/deliveryTo"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_5sdp"
-                        android:layout_toEndOf="@+id/AddressType"
-                        android:text="Delivering to Home"
-                        android:textAlignment="center"
-                        android:textColor="@color/MainTextColor"
-                        android:textSize="@dimen/_16ssp"
-                        android:textStyle="normal" />
-
-                    <TextView
-                        android:id="@+id/deliveryAddress"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/deliveryTo"
-                        android:layout_marginStart="@dimen/_8sdp"
-                        android:layout_toEndOf="@+id/AddressType"
-                        android:maxLines="5"
-                        android:text="6391 Elgin St. Celina, Delaware..."
-                        android:textAlignment="textStart"
-                        android:textColor="@color/HintMainTextColor"
-                        android:textSize="@dimen/_12ssp"
-                        android:textStyle="normal" />
-
-                    <TextView
-                        android:id="@+id/Change"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_15sdp"
-                        android:layout_toEndOf="@id/deliveryTo"
-                        android:text="@string/change"
-                        android:textColor="@color/orange_secondary"
-                        android:textSize="@dimen/_13ssp"
-                        tools:ignore="RelativeOverlap" />
 
 
-                </RelativeLayout>
+
                 <com.google.android.material.divider.MaterialDivider
                     android:id="@+id/line4"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_below="@id/Address_Box"
+                    android:layout_below="@id/grand_total_box"
                     android:layout_marginTop="3dp"
                     app:dividerColor="@color/secondary" />
 
@@ -901,12 +906,22 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/CardView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_below="@id/note"
+                    android:layout_marginTop="@dimen/_8sdp" />
+
             </RelativeLayout>
         </RelativeLayout>
 
     </ScrollView>
 
     <RelativeLayout
+
         android:id="@+id/relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
