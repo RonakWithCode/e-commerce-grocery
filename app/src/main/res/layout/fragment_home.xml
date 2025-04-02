@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/MainBackgroundColor"
     android:theme="@style/Theme.ECommerceGrocery.Home"
     tools:context=".Fragment.HomeFragment">
 
-    <!-- NestedScrollView for Main Content -->
+    <!-- Main Content -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/mainContent"
         android:layout_width="match_parent"
@@ -21,9 +21,9 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/Category_RelativeLayout"
             android:layout_width="match_parent"
-            android:visibility="visible"
             android:layout_height="wrap_content">
 
+            <!-- Top Navigation -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/TopNav"
                 android:layout_width="0dp"
@@ -100,6 +100,7 @@
                     app:layout_constraintEnd_toEndOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <!-- Top Carousel -->
             <org.imaginativeworld.whynotimagecarousel.ImageCarousel
                 android:id="@+id/carousel"
                 android:layout_width="0dp"
@@ -113,6 +114,7 @@
                 app:showBottomShadow="false"
                 app:showNavigationButtons="true" />
 
+            <!-- Top Categories -->
             <TextView
                 android:id="@+id/CategoryTextView"
                 android:layout_width="wrap_content"
@@ -294,6 +296,7 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
 
+            <!-- Bestsellers -->
             <TextView
                 android:id="@+id/textView"
                 android:layout_width="wrap_content"
@@ -327,6 +330,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
+            <!-- Care -->
             <TextView
                 android:id="@+id/boysSkinCare"
                 android:layout_width="wrap_content"
@@ -360,6 +364,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/boysSkinCare" />
 
+            <!-- Top Brand -->
             <TextView
                 android:layout_width="wrap_content"
                 android:id="@+id/TopBrandText"
@@ -375,7 +380,6 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:id="@+id/TopBrand"
-                android:layout_below="@+id/TopBrandText"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/TopBrandText"
@@ -406,7 +410,7 @@
                             android:layout_height="@dimen/_80sdp"
                             android:layout_margin="@dimen/_3sdp"
                             android:background="@color/FixColorWhite"
-                            android:src="@drawable/delivery_truck" />
+                            android:src="@drawable/dabur" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -430,7 +434,7 @@
                             android:layout_height="@dimen/_80sdp"
                             android:layout_margin="@dimen/_3sdp"
                             android:background="@color/FixColorWhite"
-                            android:src="@drawable/delivery_truck" />
+                            android:src="@drawable/itc" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -454,7 +458,7 @@
                             android:layout_height="@dimen/_80sdp"
                             android:layout_margin="@dimen/_3sdp"
                             android:background="@color/FixColorWhite"
-                            android:src="@drawable/delivery_truck" />
+                            android:src="@drawable/colgate" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -478,7 +482,7 @@
                             android:layout_height="@dimen/_80sdp"
                             android:layout_margin="@dimen/_3sdp"
                             android:background="@color/FixColorWhite"
-                            android:src="@drawable/delivery_truck" />
+                            android:src="@drawable/aashirvaad" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -491,6 +495,7 @@
                 </GridLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <!-- Bottom Carousel -->
             <org.imaginativeworld.whynotimagecarousel.ImageCarousel
                 android:id="@+id/BottomCarousel"
                 android:layout_width="0dp"
@@ -504,6 +509,7 @@
                 app:showBottomShadow="false"
                 app:showNavigationButtons="true" />
 
+            <!-- MultiView Adapter -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/MultiViewAdapter"
                 android:layout_width="match_parent"
@@ -551,7 +557,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Full-Screen Loading View (for initial load) -->
+    <!-- Full-Screen Loading View -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/fullScreenLoadingView"
         android:layout_width="match_parent"
@@ -563,7 +569,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Wave Background -->
         <ImageView
             android:id="@+id/waveBackground"
             android:layout_width="match_parent"
@@ -581,7 +586,6 @@
             app:lottie_rawRes="@raw/loading_animation"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
-
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/loadingPrimaryText"
             app:layout_constraintStart_toStartOf="parent"
@@ -643,5 +647,199 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Skeleton Layout -->
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:shimmer_duration="1000"
+        app:shimmer_auto_start="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/skeletonLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <!-- Skeleton TopNav -->
+            <View
+                android:id="@+id/skeletonTopNav"
+                android:layout_width="0dp"
+                android:layout_height="150dp"
+                android:background="@drawable/skeleton_shape"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Skeleton Carousel -->
+            <View
+                android:id="@+id/skeletonCarousel"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_190sdp"
+                android:background="@drawable/skeleton_shape"
+                app:layout_constraintTop_toBottomOf="@id/skeletonTopNav"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Skeleton Category Title -->
+            <View
+                android:id="@+id/skeletonCategoryTitle"
+                android:layout_width="150dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_2ssp"
+                android:background="@drawable/skeleton_shape"
+                app:layout_constraintTop_toBottomOf="@id/skeletonCarousel"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <!-- Skeleton Categories -->
+            <LinearLayout
+                android:id="@+id/skeletonCategories"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_80sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@id/skeletonCategoryTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_margin="4dp"
+                    android:background="@drawable/skeleton_shape" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_margin="4dp"
+                    android:background="@drawable/skeleton_shape" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_margin="4dp"
+                    android:background="@drawable/skeleton_shape" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_margin="4dp"
+                    android:background="@drawable/skeleton_shape" />
+            </LinearLayout>
+
+            <!-- Skeleton Bestsellers Title -->
+            <View
+                android:id="@+id/skeletonBestsellersTitle"
+                android:layout_width="150dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_2ssp"
+                android:background="@drawable/skeleton_shape"
+                app:layout_constraintTop_toBottomOf="@id/skeletonCategories"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <!-- Skeleton RecyclerView (Bestsellers) -->
+            <View
+                android:id="@+id/skeletonRecyclerCategory"
+                android:layout_width="0dp"
+                android:layout_height="200dp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:background="@drawable/skeleton_shape"
+                app:layout_constraintTop_toBottomOf="@id/skeletonBestsellersTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Skeleton Care Title -->
+            <View
+                android:id="@+id/skeletonCareTitle"
+                android:layout_width="150dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_2ssp"
+                android:background="@drawable/skeleton_shape"
+                app:layout_constraintTop_toBottomOf="@id/skeletonRecyclerCategory"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <!-- Skeleton RecyclerView (Care) -->
+            <View
+                android:id="@+id/skeletonCareRecycler"
+                android:layout_width="0dp"
+                android:layout_height="200dp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:background="@drawable/skeleton_shape"
+                app:layout_constraintTop_toBottomOf="@id/skeletonCareTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Skeleton Top Brand Title -->
+            <View
+                android:id="@+id/skeletonTopBrandTitle"
+                android:layout_width="150dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_2ssp"
+                android:background="@drawable/skeleton_shape"
+                app:layout_constraintTop_toBottomOf="@id/skeletonCareRecycler"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <!-- Skeleton Top Brand -->
+            <View
+                android:id="@+id/skeletonTopBrand"
+                android:layout_width="0dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:background="@drawable/skeleton_shape"
+                app:layout_constraintTop_toBottomOf="@id/skeletonTopBrandTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Skeleton Bottom Carousel -->
+            <View
+                android:id="@+id/skeletonBottomCarousel"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_190sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:background="@drawable/skeleton_shape"
+                app:layout_constraintTop_toBottomOf="@id/skeletonTopBrand"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- Skeleton MultiView Title -->
+            <View
+                android:id="@+id/skeletonMultiViewTitle"
+                android:layout_width="150dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_2ssp"
+                android:background="@drawable/skeleton_shape"
+                app:layout_constraintTop_toBottomOf="@id/skeletonBottomCarousel"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <!-- Skeleton MultiView -->
+            <View
+                android:id="@+id/skeletonMultiView"
+                android:layout_width="0dp"
+                android:layout_height="200dp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:background="@drawable/skeleton_shape"
+                app:layout_constraintTop_toBottomOf="@id/skeletonMultiViewTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

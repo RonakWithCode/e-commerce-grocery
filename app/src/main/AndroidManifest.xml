@@ -96,10 +96,10 @@
             </intent-filter>
         </activity>
 
-        <!-- Main Activity (exported only if it needs to handle external intents) -->
+        <!-- Main Activity -->
         <activity
             android:name=".MainActivity"
-            android:exported="true" /> <!-- Changed to false unless it needs an intent filter -->
+            android:exported="true" />
 
         <!-- Firebase Messaging Service -->
         <service
@@ -114,7 +114,6 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDtHQQXgNaO_mJLA-YPRXTgSYEi9RojK4Y" />
-        <!-- Removed deprecated com.google.android.gms.version meta-data -->
         <meta-data
             android:name="firebase_analytics_collection_enabled"
             android:value="true" />

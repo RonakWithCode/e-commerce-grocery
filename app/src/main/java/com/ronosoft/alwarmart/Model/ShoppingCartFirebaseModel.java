@@ -3,7 +3,6 @@ package com.ronosoft.alwarmart.Model;
 import androidx.annotation.Keep;
 
 @Keep
-
 public class ShoppingCartFirebaseModel {
     private String productId;
     private int productSelectQuantity;

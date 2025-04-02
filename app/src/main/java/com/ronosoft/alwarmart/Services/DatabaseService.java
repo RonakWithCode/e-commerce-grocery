@@ -155,6 +155,38 @@ public class DatabaseService {
                 });
     }
 
+
+
+    /*
+    * this is function is only called in the homeFragment
+    */
+    public void getAllProductsByCategoryOnlyForHomeFragment(String category, GetAllProductsCallback callback) {
+        database.collection("Product")
+                .whereEqualTo("category", category)
+                .orderBy("available", Query.Direction.DESCENDING) // Changed to "available"
+                .limit(10)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        ArrayList<ProductModel> products = new ArrayList<>();
+                        QuerySnapshot querySnapshot = task.getResult();
+                        if (querySnapshot != null) {
+                            for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                                ProductModel product = document.toObject(ProductModel.class);
+                                if (product != null && product.isAvailable()) { // Assuming isAvailable() checks "available"
+                                    products.add(product);
+                                }
+                            }
+                        }
+                        callback.onSuccess(products);
+                    } else {
+                        callback.onError(Objects.requireNonNull(task.getException()).toString());
+                    }
+                });
+    }
+
+
+
     /**
      * Retrieves products filtered by brand, checking "available".
      */

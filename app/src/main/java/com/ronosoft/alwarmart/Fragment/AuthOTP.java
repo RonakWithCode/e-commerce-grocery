@@ -65,7 +65,8 @@ public class AuthOTP extends Fragment {
 
     private static final String TAG = "AuthOTP";
     private static final String ARG_NUMBER = "number";
-    private static final String API_BASE_URL = "https://alwar-mart-admin-on-web-for-mobile-app.vercel.app/api/generate-token";
+    private static final String API_BASE_URL_SERVER_1 = "https://almartalwar.vercel.app/api/generate-token";
+    private static final String API_BASE_URL_SERVER_2 = "https://alwar-mart-server1.vercel.app/api/generate-token";
 
     private FragmentAuthOTPBinding binding;
     private EditText mEt1, mEt2, mEt3, mEt4, mEt5, mEt6;
@@ -128,8 +129,6 @@ public class AuthOTP extends Fragment {
         return binding.getRoot();
     }
 
-
-
     private void initializeOTPless() {
         try {
             showLoading();
@@ -146,10 +145,8 @@ public class AuthOTP extends Fragment {
 
     private void setupViews() {
         initializeEditTexts();
-        binding.fullNumber.setText(number+"");
+        binding.fullNumber.setText(number + "");
     }
-
-
 
     private void sendOTP() {
         showLoading();
@@ -214,7 +211,7 @@ public class AuthOTP extends Fragment {
             String idToken = responseData.getString("idToken");
 
             saveTokens(otplessToken, idToken);
-            getCustomToken(userId);
+            getCustomToken(userId, API_BASE_URL_SERVER_1); // Start with Server 1
         } catch (Exception e) {
             hideLoading();
             Log.e(TAG, "Error handling authentication: " + e.getMessage(), e);
@@ -232,9 +229,9 @@ public class AuthOTP extends Fragment {
                 .apply();
     }
 
-    private void getCustomToken(String userId) {
+    private void getCustomToken(String userId, String serverUrl) {
         showLoading();
-        Log.d(TAG, "Requesting custom token for userId: " + userId);
+        Log.d(TAG, "Requesting custom token for userId: " + userId + " from server: " + serverUrl);
         JSONObject jsonBody = new JSONObject();
         try {
             jsonBody.put("uid", userId);
@@ -249,28 +246,30 @@ public class AuthOTP extends Fragment {
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         RequestBody body = RequestBody.create(jsonBody.toString(), JSON);
         Request request = new Request.Builder()
-                .url(API_BASE_URL)
+                .url(serverUrl)
                 .post(body)
                 .addHeader("Content-Type", "application/json")
                 .build();
 
-        Log.d(TAG, "Sending request to: " + API_BASE_URL);
-        Log.d(TAG, "Request body: " + jsonBody.toString());
-
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Log.e(TAG, "Network request failed", e);
+                Log.e(TAG, "Network request failed for server: " + serverUrl, e);
                 requireActivity().runOnUiThread(() -> {
-                    hideLoading();
-                    showError("Network error: " + e.getMessage());
+                    // If the failed server was Server 1, retry with Server 2
+                    if (serverUrl.equals(API_BASE_URL_SERVER_1)) {
+                        Log.d(TAG, "Retrying with Server 2...");
+                        getCustomToken(userId, API_BASE_URL_SERVER_2);
+                    } else {
+                        hideLoading();
+                        showError("Network error: " + e.getMessage());
+                    }
                 });
             }
+
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 String responseBody = response.body() != null ? response.body().string() : "";
-                Log.d(TAG, "Response code: " + response.code());
-                Log.d(TAG, "Response body: " + responseBody);
                 if (response.isSuccessful()) {
                     try {
                         JSONObject jsonResponse = new JSONObject(responseBody);
@@ -279,8 +278,14 @@ public class AuthOTP extends Fragment {
                             if (!customToken.contains(".")) {
                                 Log.e(TAG, "Invalid custom token format: " + customToken);
                                 requireActivity().runOnUiThread(() -> {
-                                    hideLoading();
-                                    showError("Received invalid token format");
+                                    // If the token is invalid and we're on Server 1, retry with Server 2
+                                    if (serverUrl.equals(API_BASE_URL_SERVER_1)) {
+                                        Log.d(TAG, "Retrying with Server 2 due to invalid token...");
+                                        getCustomToken(userId, API_BASE_URL_SERVER_2);
+                                    } else {
+                                        hideLoading();
+                                        showError("Received invalid token format");
+                                    }
                                 });
                                 return;
                             }
@@ -290,22 +295,40 @@ public class AuthOTP extends Fragment {
                             String error = jsonResponse.optString("error", "Unknown error");
                             Log.e(TAG, "Error in response: " + error);
                             requireActivity().runOnUiThread(() -> {
-                                hideLoading();
-                                showError("Authentication failed: " + error);
+                                // If the response indicates failure and we're on Server 1, retry with Server 2
+                                if (serverUrl.equals(API_BASE_URL_SERVER_1)) {
+                                    Log.d(TAG, "Retrying with Server 2 due to server error...");
+                                    getCustomToken(userId, API_BASE_URL_SERVER_2);
+                                } else {
+                                    hideLoading();
+                                    showError("Authentication failed: " + error);
+                                }
                             });
                         }
                     } catch (Exception e) {
                         Log.e(TAG, "Error parsing response", e);
                         requireActivity().runOnUiThread(() -> {
-                            hideLoading();
-                            showError("Failed to process server response");
+                            // If parsing fails and we're on Server 1, retry with Server 2
+                            if (serverUrl.equals(API_BASE_URL_SERVER_1)) {
+                                Log.d(TAG, "Retrying with Server 2 due to parsing error...");
+                                getCustomToken(userId, API_BASE_URL_SERVER_2);
+                            } else {
+                                hideLoading();
+                                showError("Failed to process server response");
+                            }
                         });
                     }
                 } else {
                     Log.e(TAG, "Server error: " + response.code());
                     requireActivity().runOnUiThread(() -> {
-                        hideLoading();
-                        showError("Server error: " + response.code());
+                        // If the server returns an error and we're on Server 1, retry with Server 2
+                        if (serverUrl.equals(API_BASE_URL_SERVER_1)) {
+                            Log.d(TAG, "Retrying with Server 2 due to server error...");
+                            getCustomToken(userId, API_BASE_URL_SERVER_2);
+                        } else {
+                            hideLoading();
+                            showError("Server error: " + response.code());
+                        }
                     });
                 }
             }
@@ -325,17 +348,19 @@ public class AuthOTP extends Fragment {
                         FirebaseUser user = mAuth.getCurrentUser();
 
                         if (user != null) {
-//                            Map<String, Object> authData = new HashMap<>();
-//                            authData.put("status", "success");
-//                            authData.put("uid", user.getUid());
-//                            authData.put("email", user.getEmail());
-//                            authData.put("displayName", user.getDisplayName());
-//                            authData.put("phoneNumber", user.getPhoneNumber());
-//                            authData.put("provider", user.getProviderId());
-//                            authData.put("tenantId", mAuth.getTenantId());
-//                            authData.put("timestamp", System.currentTimeMillis());
-//
-//                            authRef.child("firebase").child(logId).setValue(authData);
+                            // Uncomment if you need to log auth data
+                            /*
+                            Map<String, Object> authData = new HashMap<>();
+                            authData.put("status", "success");
+                            authData.put("uid", user.getUid());
+                            authData.put("email", user.getEmail());
+                            authData.put("displayName", user.getDisplayName());
+                            authData.put("phoneNumber", user.getPhoneNumber());
+                            authData.put("provider", user.getProviderId());
+                            authData.put("tenantId", mAuth.getTenantId());
+                            authData.put("timestamp", System.currentTimeMillis());
+                            authRef.child("firebase").child(logId).setValue(authData);
+                            */
                         }
                         navigateToNextScreen();
                     } else {
@@ -537,9 +562,7 @@ public class AuthOTP extends Fragment {
         }
     }
 
-
     private void startResendTimer() {
-        // Disable the resend button and start a 60-second countdown.
         binding.tvResend.setEnabled(false);
         resendCountDownTimer = new CountDownTimer(60000, 1000) {
             @Override
@@ -553,7 +576,6 @@ public class AuthOTP extends Fragment {
             }
         }.start();
     }
-
 
     @Override
     public void onDestroyView() {

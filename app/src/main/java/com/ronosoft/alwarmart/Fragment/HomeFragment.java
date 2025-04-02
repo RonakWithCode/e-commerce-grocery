@@ -51,7 +51,6 @@ import com.ronosoft.alwarmart.Model.AddressModel;
 import com.ronosoft.alwarmart.Model.BannerModels;
 import com.ronosoft.alwarmart.Model.HomeProductModel;
 import com.ronosoft.alwarmart.Model.ProductModel;
-//import com.ronosoft.alwarmart.Model.PromotionNotification;
 import com.ronosoft.alwarmart.Model.UserinfoModels;
 import com.ronosoft.alwarmart.R;
 import com.ronosoft.alwarmart.Services.DatabaseService;
@@ -81,7 +80,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class HomeFragment extends Fragment {
-
     private FragmentHomeBinding binding;
     private DatabaseService databaseService;
     private HomeCategoryAdapter homeCategoryAdapter, homeProductBoysSkinAdapter;
@@ -90,14 +88,13 @@ public class HomeFragment extends Fragment {
     private String userId;
     private Dialog homeProductBottomSheetDialog;
     private FirebaseFirestore firestore;
-    private Dialog loadingDialog;
     private boolean isLoadingSecondList = false;
     private boolean secondListLoaded = false;
 
     private final String[] firstList = {"Dry Fruits", "Stationery", "Namkeen", "Noodles"};
     private final String[] secondList = {"Chocolate", "Candies", "Toilet & Bathroom Cleaners"};
-    private final String[] fixedCategories = {"Dairy", "snacks", "BISCUITS", "hair oil", "Grains", "Pulses", "Honey & Spreads"};
-    private final String[] boysSkinCategories = {"Toothpaste", "Soaps & Body Care", "Edible Oils"};
+    private final String[] fixedCategories = {"Honey & Spreads", "snacks", "Dairy"};
+    private final String[] boysSkinCategories = {"Edible Oils", "Soaps & Body Care", "Toothpaste"};
 
     // Pagination variables
     private static final int PAGE_SIZE = 5;
@@ -106,20 +103,15 @@ public class HomeFragment extends Fragment {
 
     // Fun facts and animation handler
     private String[] funFacts;
-    private Handler funFactHandler;
-    private Runnable funFactRunnable;
+    private Handler handler;
+    private Runnable skeletonRunnable, funFactRunnable;
     private final long FUN_FACT_INTERVAL = 2000; // Change fact every 2 seconds
-
-    // Notification-related variables
-//    private PromotionNotification activePromotion;
-//    private ArrayList<CarouselItem> promoCarouselItems = new ArrayList<>();
 
     // Track initial loading state
     private AtomicBoolean isCarouselLoaded = new AtomicBoolean(false);
     private AtomicBoolean areCategoriesLoaded = new AtomicBoolean(false);
     private AtomicBoolean areBoysSkinCategoriesLoaded = new AtomicBoolean(false);
     private AtomicBoolean areMultiViewFirstListLoaded = new AtomicBoolean(false);
-//    private AtomicBoolean isPromotionLoaded = new AtomicBoolean(false);
 
     public HomeFragment() {
         // Required empty public constructor
@@ -134,21 +126,30 @@ public class HomeFragment extends Fragment {
         databaseService = new DatabaseService();
         firestore = FirebaseFirestore.getInstance();
         homeProductBottomSheetDialog = new Dialog(requireContext());
+        handler = new Handler(Looper.getMainLooper());
 
         // Load fun facts
         funFacts = getResources().getStringArray(R.array.fun_facts);
-        funFactHandler = new Handler(Looper.getMainLooper());
 
-        // Show full-screen loading view
+        // Show initial loading animation immediately
         binding.fullScreenLoadingView.setVisibility(View.VISIBLE);
         binding.mainContent.setVisibility(View.GONE);
+        binding.skeletonLayout.setVisibility(View.GONE);
 
-        // Start Lottie animation immediately
-        if (binding != null && binding.loadingAnimation != null) {
-            binding.loadingAnimation.setAnimation("loading_animation.lottie");
-            binding.loadingAnimation.playAnimation();
-        }
+        // Start Lottie animation
+        binding.loadingAnimation.setAnimation("loading_animation.lottie");
+        binding.loadingAnimation.playAnimation();
         startFunFactCycle();
+
+        // Schedule skeleton screen after 4.5 seconds
+        skeletonRunnable = () -> {
+            if (binding != null && binding.fullScreenLoadingView.getVisibility() == View.VISIBLE) {
+                binding.fullScreenLoadingView.setVisibility(View.GONE);
+                binding.skeletonLayout.setVisibility(View.VISIBLE);
+                binding.shimmerLayout.startShimmer();
+            }
+        };
+        handler.postDelayed(skeletonRunnable, 4500); // 3 seconds delay
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = auth.getCurrentUser();
@@ -193,7 +194,7 @@ public class HomeFragment extends Fragment {
                 }
                 @Override
                 public void onError(String errorMessage) {
-                    // Silent fail, Crashlytics will catch if critical
+                    // Silent fail
                 }
             });
         }
@@ -250,131 +251,8 @@ public class HomeFragment extends Fragment {
 
         setupAdapters();
         loadInitialData();
-//        fetchActivePromotion(); // Fetch admin notifications
 
         return binding.getRoot();
-    }
-
-//    private void fetchActivePromotion() {
-//        long currentTime = System.currentTimeMillis();
-//        firestore.collection("promotions")
-//                .whereEqualTo("isActive", true)
-//                .whereLessThanOrEqualTo("startTime", currentTime)
-//                .whereGreaterThanOrEqualTo("endTime", currentTime)
-//                .limit(1)
-//                .get()
-//                .addOnCompleteListener(task -> {
-//                    if (isAdded() && binding != null) {
-//                        if (task.isSuccessful() && !task.getResult().isEmpty()) {
-//                            DocumentSnapshot document = task.getResult().getDocuments().get(0);
-//                            activePromotion = document.toObject(PromotionNotification.class);
-//                            if (activePromotion != null) {
-//                                updateUIWithPromotion();
-//                            }
-//                        }
-//                        isPromotionLoaded.set(true);
-//                        checkIfInitialLoadingComplete();
-//                    }
-//                }).addOnFailureListener(e -> {
-//                    if (isAdded() && binding != null) {
-//                        isPromotionLoaded.set(true);
-//                        checkIfInitialLoadingComplete();
-//                    }
-//                });
-//    }
-
-//    private void updateUIWithPromotion() {
-//        if (activePromotion != null && binding != null) {
-//            binding.notificationBanner.setVisibility(View.VISIBLE);
-//            AlphaAnimation fadeIn = new AlphaAnimation(0f, 1f);
-//            fadeIn.setDuration(1000);
-//            binding.notificationBanner.startAnimation(fadeIn);
-//
-//            binding.notificationTitle.setText(activePromotion.getTitle());
-//            binding.notificationDescription.setText(activePromotion.getDescription());
-//            if (activePromotion.getBannerImageUrl() != null) {
-//                Glide.with(this)
-//                        .load(activePromotion.getBannerImageUrl())
-//                        .placeholder(R.drawable.skeleton_shape)
-//                        .into(binding.notificationImage);
-//            }
-//            if (activePromotion.getActionButtonText() != null) {
-//                binding.notificationActionButton.setText(activePromotion.getActionButtonText());
-//                binding.notificationActionButton.setVisibility(View.VISIBLE);
-//                binding.notificationActionButton.setOnClickListener(v -> {
-//                    if (activePromotion.getActionButtonUrl() != null) {
-//                        openCategory(activePromotion.getActionButtonUrl());
-//                    }
-//                });
-//            } else {
-//                binding.notificationActionButton.setVisibility(View.GONE);
-//            }
-//
-//            binding.notificationDismiss.setOnClickListener(v -> {
-//                AlphaAnimation fadeOut = new AlphaAnimation(1f, 0f);
-//                fadeOut.setDuration(500);
-//                fadeOut.setAnimationListener(new Animation.AnimationListener() {
-//                    @Override
-//                    public void onAnimationStart(Animation animation) {}
-//                    @Override
-//                    public void onAnimationEnd(Animation animation) {
-//                        if (binding != null) {
-//                            binding.notificationBanner.setVisibility(View.GONE);
-//                        }
-//                    }
-//                    @Override
-//                    public void onAnimationRepeat(Animation animation) {}
-//                });
-//                binding.notificationBanner.startAnimation(fadeOut);
-//            });
-//
-//            List<String> promoCategories = activePromotion.getCategories();
-//            if (promoCategories != null && !promoCategories.isEmpty()) {
-//                loadPromotionalProducts(promoCategories);
-//                binding.promoCarousel.setVisibility(View.VISIBLE);
-//                binding.promoCarousel.setData(promoCarouselItems);
-//            }
-//        }
-//    }
-
-//    private void loadPromotionalProducts(List<String> categories) {
-//        promoCarouselItems.clear();
-//        for (String category : categories) {
-//            firestore.collection("Product")
-//                    .whereEqualTo("category", category)
-//                    .whereEqualTo("available", true)
-//                    .limit(5)
-//                    .get()
-//                    .addOnCompleteListener(task -> {
-//                        if (isAdded() && binding != null && task.isSuccessful()) {
-//                            for (DocumentSnapshot document : task.getResult()) {
-//                                ProductModel product = document.toObject(ProductModel.class);
-//                                if (product != null && !product.getProductImage().isEmpty()) {
-//                                    promoCarouselItems.add(new CarouselItem(
-//                                            product.getProductImage().get(0),
-//                                            product.getProductName()
-//                                    ));
-//                                }
-//                            }
-//                            binding.promoCarousel.setData(promoCarouselItems);
-//                        }
-//                    });
-//        }
-//    }
-
-    private void showLoadingDialog() {
-        loadingDialog = new Dialog(requireContext());
-        loadingDialog.setContentView(R.layout.loading_dialog);
-        Objects.requireNonNull(loadingDialog.getWindow()).setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        loadingDialog.setCancelable(false);
-        loadingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        loadingDialog.show();
-    }
-
-    private void hideLoadingDialog() {
-        if (loadingDialog != null && loadingDialog.isShowing()) {
-            loadingDialog.dismiss();
-        }
     }
 
     public void SeeAll() {
@@ -384,7 +262,7 @@ public class HomeFragment extends Fragment {
             transaction.addToBackStack("SelectLanguageFragment");
             transaction.commit();
         } catch (Exception e) {
-            // Silent fail, Crashlytics will catch if critical
+            // Silent fail
         }
     }
 
@@ -426,24 +304,6 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
-
-//        binding.promoCarousel.setCarouselListener(new CarouselListener() {
-//            @Nullable
-//            @Override
-//            public ViewBinding onCreateViewHolder(@NonNull LayoutInflater layoutInflater, @NonNull ViewGroup viewGroup) {
-//                return null;
-//            }
-//            @Override
-//            public void onBindViewHolder(@NonNull ViewBinding viewBinding, @NonNull CarouselItem carouselItem, int i) {}
-//            @Override
-//            public void onClick(int i, @NonNull CarouselItem carouselItem) {
-//                if (activePromotion != null && activePromotion.getCategories() != null && !activePromotion.getCategories().isEmpty()) {
-//                    openCategory(activePromotion.getCategories().get(0));
-//                }
-//            }
-//            @Override
-//            public void onLongClick(int i, @NonNull CarouselItem carouselItem) {}
-//        });
     }
 
     private void loadInitialData() {
@@ -565,21 +425,6 @@ public class HomeFragment extends Fragment {
         });
 
         Glide.with(context)
-                .load(R.drawable.colgate)
-                .placeholder(R.drawable.skeleton_shape)
-                .error(R.drawable.skeleton_shape)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .centerCrop()
-                .override(300, 300)
-                .into(binding.Colgate);
-
-        binding.Colgate.setOnClickListener(view -> {
-            Intent intent = new Intent(context, BrandActivity.class);
-            intent.putExtra("brand", "Colgate");
-            context.startActivity(intent);
-        });
-
-        Glide.with(context)
                 .load(R.drawable.itc)
                 .placeholder(R.drawable.skeleton_shape)
                 .error(R.drawable.skeleton_shape)
@@ -591,6 +436,21 @@ public class HomeFragment extends Fragment {
         binding.itc.setOnClickListener(view -> {
             Intent intent = new Intent(context, BrandActivity.class);
             intent.putExtra("brand", "ITC");
+            context.startActivity(intent);
+        });
+
+        Glide.with(context)
+                .load(R.drawable.colgate)
+                .placeholder(R.drawable.skeleton_shape)
+                .error(R.drawable.skeleton_shape)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .centerCrop()
+                .override(300, 300)
+                .into(binding.Colgate);
+
+        binding.Colgate.setOnClickListener(view -> {
+            Intent intent = new Intent(context, BrandActivity.class);
+            intent.putExtra("brand", "Colgate");
             context.startActivity(intent);
         });
 
@@ -608,7 +468,6 @@ public class HomeFragment extends Fragment {
             intent.putExtra("brand", "Aashirvaad");
             context.startActivity(intent);
         });
-        hideLoadingDialog();
     }
 
     void LoadCarousel() {
@@ -727,8 +586,20 @@ public class HomeFragment extends Fragment {
                         requireContext()
                 )
         );
+
         dialogBinding.title.setText(model.getTitle());
         dialogBinding.seeMore.setOnClickListener(v -> {
+            homeProductBottomSheetDialog.dismiss();
+            Bundle bundle = new Bundle();
+            bundle.putString("filter", model.getTitle());
+            ProductWithSlideCategoryFragment fragment = new ProductWithSlideCategoryFragment();
+            fragment.setArguments(bundle);
+            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.loader, fragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        });
+        dialogBinding.seeMoreBottom.setOnClickListener(v -> {
             homeProductBottomSheetDialog.dismiss();
             Bundle bundle = new Bundle();
             bundle.putString("filter", model.getTitle());
@@ -762,7 +633,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadProduct(String category, ArrayList<HomeProductModel> productList, HomeCategoryAdapter adapter, AtomicBoolean loadingFlag) {
-        databaseService.getAllProductsByCategoryOnly(category, new DatabaseService.GetAllProductsCallback() {
+        databaseService.getAllProductsByCategoryOnlyForHomeFragment(category, new DatabaseService.GetAllProductsCallback() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onSuccess(ArrayList<ProductModel> products) {
@@ -815,18 +686,18 @@ public class HomeFragment extends Fragment {
                     Random random = new Random();
                     int index = random.nextInt(funFacts.length);
                     binding.loadingFunFact.setText(funFacts[index]);
-                    funFactHandler.postDelayed(this, FUN_FACT_INTERVAL);
+                    handler.postDelayed(this, FUN_FACT_INTERVAL);
                 }
             }
         };
-        funFactHandler.post(funFactRunnable);
+        handler.post(funFactRunnable);
     }
 
     private void hideBottonLoading() {
         if (binding != null) {
             binding.customLoadingView.setVisibility(View.GONE);
             binding.loadingTruck.clearAnimation();
-            funFactHandler.removeCallbacks(funFactRunnable);
+            handler.removeCallbacks(funFactRunnable);
         }
     }
 
@@ -860,23 +731,26 @@ public class HomeFragment extends Fragment {
                         public void onAnimationRepeat(Animation animation) {}
                     });
                     secondaryText.startAnimation(fadeOut);
-                    funFactHandler.postDelayed(this, FUN_FACT_INTERVAL);
+                    handler.postDelayed(this, FUN_FACT_INTERVAL);
                 }
             }
         };
-        funFactHandler.post(funFactRunnable);
+        handler.post(funFactRunnable);
     }
 
     private void checkIfInitialLoadingComplete() {
         if (isCarouselLoaded.get() && areCategoriesLoaded.get() && areBoysSkinCategoriesLoaded.get() &&
-                areMultiViewFirstListLoaded.get() /*&& isPromotionLoaded.get() */) {
+                areMultiViewFirstListLoaded.get()) {
             if (binding != null) {
                 if (binding.loadingAnimation != null && binding.loadingAnimation.isAnimating()) {
                     binding.loadingAnimation.cancelAnimation();
                 }
                 binding.fullScreenLoadingView.setVisibility(View.GONE);
+                binding.shimmerLayout.stopShimmer();
+                binding.skeletonLayout.setVisibility(View.GONE);
                 binding.mainContent.setVisibility(View.VISIBLE);
-                funFactHandler.removeCallbacks(funFactRunnable);
+                handler.removeCallbacks(skeletonRunnable);
+                handler.removeCallbacks(funFactRunnable);
             }
         }
     }
@@ -889,7 +763,7 @@ public class HomeFragment extends Fragment {
                 binding.loadingAnimation.cancelAnimation();
             }
             binding.loadingTruck.clearAnimation();
-            funFactHandler.removeCallbacksAndMessages(null);
+            handler.removeCallbacksAndMessages(null);
             binding = null;
         }
     }

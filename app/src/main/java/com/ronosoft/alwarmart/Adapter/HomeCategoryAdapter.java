@@ -17,17 +17,20 @@ import com.ronosoft.alwarmart.databinding.HomeCategoryLayoutBinding;
 import com.ronosoft.alwarmart.interfaceClass.HomeCategoryInterface;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class HomeCategoryAdapter extends RecyclerView.Adapter<HomeCategoryAdapter.HomeCategoryAdapterViewHolder> {
 
     private ArrayList<HomeProductModel> models;
     private Context context;
     private HomeCategoryInterface homeCategoryInterface;
+    private Random random; // Added Random object
 
     public HomeCategoryAdapter(ArrayList<HomeProductModel> models, Context context, HomeCategoryInterface homeCategoryInterface) {
         this.models = models;
         this.context = context;
         this.homeCategoryInterface = homeCategoryInterface;
+        this.random = new Random(); // Initialize Random object
     }
 
     @NonNull
@@ -43,17 +46,20 @@ public class HomeCategoryAdapter extends RecyclerView.Adapter<HomeCategoryAdapte
         HomeProductModel homeCategoryModel = models.get(position);
         holder.binding.ProductName.setText(homeCategoryModel.getTitle());
 
-        // Safely get product list and its size.
-        int productSize = 0;
+        // Get actual product list size and add random number between 10 and 29
+        int actualSize = 0;
         if (homeCategoryModel.getProduct() != null) {
-            productSize = homeCategoryModel.getProduct().size();
+            actualSize = homeCategoryModel.getProduct().size();
         }
+        int randomAddition = random.nextInt(20) + 10; // Generates number between 10 and 29 (0-19 + 10)
+        int productSize = actualSize + randomAddition;
+
         holder.binding.ProductSize.setText(productSize + " products");
         holder.binding.Text1.setText("+" + productSize);
 
         // Load images for first three products if available.
         try {
-            if (productSize > 0) {
+            if (actualSize > 0) {  // Use actualSize here since we're only displaying real products
                 if (homeCategoryModel.getProduct().get(0) != null &&
                         homeCategoryModel.getProduct().get(0).getProductImage() != null &&
                         !homeCategoryModel.getProduct().get(0).getProductImage().isEmpty()) {
@@ -66,7 +72,7 @@ public class HomeCategoryAdapter extends RecyclerView.Adapter<HomeCategoryAdapte
                             .into(holder.binding.View1);
                 }
             }
-            if (productSize > 1) {
+            if (actualSize > 1) {
                 if (homeCategoryModel.getProduct().get(1) != null &&
                         homeCategoryModel.getProduct().get(1).getProductImage() != null &&
                         !homeCategoryModel.getProduct().get(1).getProductImage().isEmpty()) {
@@ -79,7 +85,7 @@ public class HomeCategoryAdapter extends RecyclerView.Adapter<HomeCategoryAdapte
                             .into(holder.binding.View2);
                 }
             }
-            if (productSize > 2) {
+            if (actualSize > 2) {
                 if (homeCategoryModel.getProduct().get(2) != null &&
                         homeCategoryModel.getProduct().get(2).getProductImage() != null &&
                         !homeCategoryModel.getProduct().get(2).getProductImage().isEmpty()) {

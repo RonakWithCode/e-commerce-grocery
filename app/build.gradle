@@ -12,7 +12,7 @@ android {
         applicationId "com.ronosoft.alwarmart"
         minSdk 24
         targetSdk 34
-        versionCode 12 // Matches your Play Store version
+        versionCode 14
         versionName "1.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
@@ -29,7 +29,7 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false // Consider enabling for production with proguardFiles
+            minifyEnabled false
             shrinkResources false
             signingConfig signingConfigs.release
         }
