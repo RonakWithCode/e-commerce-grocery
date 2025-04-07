@@ -91,9 +91,9 @@ public class HomeFragment extends Fragment {
     private boolean isLoadingSecondList = false;
     private boolean secondListLoaded = false;
 
-    private final String[] firstList = {"Dry Fruits", "Stationery", "Namkeen", "Noodles"};
+    private final String[] firstList = {"Dry Fruits", "SKIN CARE", "Namkeen", "Noodles"};
     private final String[] secondList = {"Chocolate", "Candies", "Toilet & Bathroom Cleaners"};
-    private final String[] fixedCategories = {"Honey & Spreads", "snacks", "Dairy"};
+    private final String[] fixedCategories = {"hair oil", "snacks", "Dairy"};
     private final String[] boysSkinCategories = {"Edible Oils", "Soaps & Body Care", "Toothpaste"};
 
     // Pagination variables
