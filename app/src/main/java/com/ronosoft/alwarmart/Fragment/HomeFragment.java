@@ -247,6 +247,7 @@ public class HomeFragment extends Fragment {
         }, requireActivity());
 
         binding.BestsellersSee.setOnClickListener(v -> SeeAll());
+        binding.CategoryTextViewSee.setOnClickListener(v -> SeeAll());
         binding.boysSkinCareSee.setOnClickListener(v -> SeeAll());
 
         setupAdapters();

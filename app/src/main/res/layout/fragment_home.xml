@@ -134,6 +134,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/see_more"
                 android:layout_marginTop="@dimen/_2ssp"
+
                 android:layout_marginEnd="@dimen/_9sdp"
                 android:textColor="@color/green_primary"
                 android:textSize="@dimen/_17ssp"
