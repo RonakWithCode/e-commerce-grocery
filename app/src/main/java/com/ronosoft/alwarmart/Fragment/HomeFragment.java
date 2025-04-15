@@ -20,6 +20,7 @@ import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,10 +38,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.ronosoft.alwarmart.Activity.BrandActivity;
 import com.ronosoft.alwarmart.Activity.FragmentLoader;
 import com.ronosoft.alwarmart.Adapter.HomeCategoryAdapter;
@@ -58,11 +60,6 @@ import com.ronosoft.alwarmart.databinding.CategoryViewDialogBinding;
 import com.ronosoft.alwarmart.databinding.FragmentHomeBinding;
 import com.ronosoft.alwarmart.javaClasses.AddressDeliveryService;
 import com.ronosoft.alwarmart.javaClasses.basicFun;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import org.imaginativeworld.whynotimagecarousel.ImageCarousel;
 import org.imaginativeworld.whynotimagecarousel.listener.CarouselListener;
@@ -77,6 +74,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class HomeFragment extends Fragment {
@@ -87,25 +86,23 @@ public class HomeFragment extends Fragment {
     private ArrayList<HomeProductModel> multiViewModel, homeProductModel, homeProductModelBoysSkin;
     private String userId;
     private Dialog homeProductBottomSheetDialog;
-    private FirebaseFirestore firestore;
     private boolean isLoadingSecondList = false;
     private boolean secondListLoaded = false;
 
-    private final String[] firstList = {"Dry Fruits", "SKIN CARE", "Namkeen", "Noodles"};
-    private final String[] secondList = {"Chocolate", "Candies", "Toilet & Bathroom Cleaners"};
-    private final String[] fixedCategories = {"hair oil", "snacks", "Dairy"};
-    private final String[] boysSkinCategories = {"Edible Oils", "Soaps & Body Care", "Toothpaste"};
+    // Categories to meet minimum requirements
+    private final String[] firstList = {"Dry Fruits", "Toilet & Bathroom Cleaners"};
+    private final String[] secondList = {"Health drink"};
+    private final String[] fixedCategories = {"hair oil", "snacks", "Dairy", "Grains"};
+    private final String[] boysSkinCategories = {"Toothpaste", "Soaps & Body Care", "Edible Oils"};
 
     // Pagination variables
-    private static final int PAGE_SIZE = 5;
-    private Map<String, DocumentSnapshot> lastDocuments = new HashMap<>();
-    private Map<String, Boolean> hasMoreData = new HashMap<>();
+    private static final int PAGE_SIZE = 4;
 
     // Fun facts and animation handler
     private String[] funFacts;
     private Handler handler;
     private Runnable skeletonRunnable, funFactRunnable;
-    private final long FUN_FACT_INTERVAL = 2000; // Change fact every 2 seconds
+    private final long FUN_FACT_INTERVAL = 2000;
 
     // Track initial loading state
     private AtomicBoolean isCarouselLoaded = new AtomicBoolean(false);
@@ -113,9 +110,14 @@ public class HomeFragment extends Fragment {
     private AtomicBoolean areBoysSkinCategoriesLoaded = new AtomicBoolean(false);
     private AtomicBoolean areMultiViewFirstListLoaded = new AtomicBoolean(false);
 
-    public HomeFragment() {
-        // Required empty public constructor
-    }
+    // Listener for banners
+    private ValueEventListener bannerListener;
+    private DatabaseReference bannerRef;
+
+    // Executor for async tasks
+    private final ExecutorService executorService = Executors.newFixedThreadPool(2);
+
+    public HomeFragment() {}
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -124,14 +126,13 @@ public class HomeFragment extends Fragment {
 
         // Initialize services
         databaseService = new DatabaseService();
-        firestore = FirebaseFirestore.getInstance();
         homeProductBottomSheetDialog = new Dialog(requireContext());
         handler = new Handler(Looper.getMainLooper());
 
         // Load fun facts
         funFacts = getResources().getStringArray(R.array.fun_facts);
 
-        // Show initial loading animation immediately
+        // Show initial loading animation
         binding.fullScreenLoadingView.setVisibility(View.VISIBLE);
         binding.mainContent.setVisibility(View.GONE);
         binding.skeletonLayout.setVisibility(View.GONE);
@@ -141,7 +142,7 @@ public class HomeFragment extends Fragment {
         binding.loadingAnimation.playAnimation();
         startFunFactCycle();
 
-        // Schedule skeleton screen after 4.5 seconds
+        // Schedule skeleton screen after 2 seconds
         skeletonRunnable = () -> {
             if (binding != null && binding.fullScreenLoadingView.getVisibility() == View.VISIBLE) {
                 binding.fullScreenLoadingView.setVisibility(View.GONE);
@@ -149,7 +150,7 @@ public class HomeFragment extends Fragment {
                 binding.shimmerLayout.startShimmer();
             }
         };
-        handler.postDelayed(skeletonRunnable, 4500); // 3 seconds delay
+        handler.postDelayed(skeletonRunnable, 2000);
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = auth.getCurrentUser();
@@ -164,7 +165,7 @@ public class HomeFragment extends Fragment {
             binding.txtDeliveryTime.setText("Alwar Mart in 10 minutes");
         }
 
-        // Load default address if logged in
+        // Load default address
         AddressDeliveryService addressDeliveryService = new AddressDeliveryService();
         if (currentUser != null) {
             AddressModel defaultAddress = addressDeliveryService.getDefaultAddress(requireContext());
@@ -182,20 +183,24 @@ public class HomeFragment extends Fragment {
             }
         }
 
-        // Retrieve user info if logged in (background task)
+        // Retrieve user info asynchronously
         final UserinfoModels[] userInfo = new UserinfoModels[1];
         if (currentUser != null) {
-            databaseService.getUserInfo(userId, new DatabaseService.getUserInfoCallback() {
-                @Override
-                public void onSuccess(UserinfoModels user) {
-                    if (isAdded()) {
-                        userInfo[0] = user;
+            executorService.execute(() -> {
+                databaseService.getUserInfo(userId, new DatabaseService.getUserInfoCallback() {
+                    @Override
+                    public void onSuccess(UserinfoModels user) {
+                        if (isAdded()) {
+                            userInfo[0] = user;
+                        }
                     }
-                }
-                @Override
-                public void onError(String errorMessage) {
-                    // Silent fail
-                }
+                    @Override
+                    public void onError(String errorMessage) {
+                        if (isAdded()) {
+                            handler.post(() -> Toast.makeText(requireContext(), "Failed to load user info", Toast.LENGTH_SHORT).show());
+                        }
+                    }
+                });
             });
         }
 
@@ -262,8 +267,8 @@ public class HomeFragment extends Fragment {
             transaction.replace(R.id.loader, new ProductWithSlideCategoryFragment());
             transaction.addToBackStack("SelectLanguageFragment");
             transaction.commit();
-        } catch (Exception e) {
-            // Silent fail
+        } catch (IllegalStateException e) {
+            Toast.makeText(requireContext(), "Unable to load category", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -271,14 +276,17 @@ public class HomeFragment extends Fragment {
         LinearLayoutManager categoryLayoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
         binding.recyclerCategory.setLayoutManager(categoryLayoutManager);
         binding.recyclerCategory.setAdapter(homeCategoryAdapter);
+        binding.recyclerCategory.setHasFixedSize(true);
 
         LinearLayoutManager boysSkinLayoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
         binding.boysSkinCareRecyclerView.setLayoutManager(boysSkinLayoutManager);
         binding.boysSkinCareRecyclerView.setAdapter(homeProductBoysSkinAdapter);
+        binding.boysSkinCareRecyclerView.setHasFixedSize(true);
 
         LinearLayoutManager multiViewManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false);
         binding.MultiViewAdapter.setLayoutManager(multiViewManager);
         binding.MultiViewAdapter.setAdapter(multiViewAdapter);
+        binding.MultiViewAdapter.setHasFixedSize(true);
 
         binding.MultiViewAdapter.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -293,14 +301,6 @@ public class HomeFragment extends Fragment {
                         isLoadingSecondList = true;
                         showBottonLoading();
                         loadSecondList(secondList);
-                    } else {
-                        for (HomeProductModel model : multiViewModel) {
-                            String category = model.getTitle();
-                            if (Boolean.TRUE.equals(hasMoreData.getOrDefault(category, true))) {
-                                showBottonLoading();
-                                loadProductsMultiView(category, PAGE_SIZE);
-                            }
-                        }
                     }
                 }
             }
@@ -310,11 +310,15 @@ public class HomeFragment extends Fragment {
     private void loadInitialData() {
         binding.recyclerCategory.setVisibility(View.VISIBLE);
         LoadCarousel();
-        loadProductsForCategories(fixedCategories);
-        loadProductsForCategoriesByBoysSkin(boysSkinCategories);
-        LoadProductCategory();
         setupOnclick();
-        loadProductsForMultiView(firstList, secondList);
+        // Load critical data first
+        loadProductsForCategories(fixedCategories);
+        // Defer non-critical loads
+        handler.postDelayed(() -> {
+            loadProductsForCategoriesByBoysSkin(boysSkinCategories);
+            loadProductsForMultiView(firstList, secondList);
+            LoadProductCategory();
+        }, 1000);
     }
 
     private void setupOnclick() {
@@ -329,24 +333,26 @@ public class HomeFragment extends Fragment {
         bundle.putString("filter", category);
         ProductWithSlideCategoryFragment fragment = new ProductWithSlideCategoryFragment();
         fragment.setArguments(bundle);
-        FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.loader, fragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        try {
+            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.loader, fragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        } catch (IllegalStateException e) {
+            Toast.makeText(requireContext(), "Unable to load category", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void loadProductsForMultiView(String[] firstCategory, String[] secondCategory) {
         Set<String> categories = new HashSet<>();
         for (String category : firstCategory) {
             categories.add(category);
-            hasMoreData.put(category, true);
             loadProductsMultiView(category, PAGE_SIZE);
         }
     }
 
     private void loadSecondList(String[] secondCategory) {
         for (String category : secondCategory) {
-            hasMoreData.put(category, true);
             loadProductsMultiView(category, PAGE_SIZE);
         }
         secondListLoaded = true;
@@ -355,56 +361,42 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadProductsMultiView(String category, int limit) {
-        Query query = firestore.collection("Product")
-                .whereEqualTo("category", category)
-                .orderBy("available", Query.Direction.DESCENDING)
-                .limit(limit);
-
-        DocumentSnapshot lastDoc = lastDocuments.get(category);
-        if (lastDoc != null) {
-            query = query.startAfter(lastDoc);
-        }
-
-        query.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                ArrayList<ProductModel> products = new ArrayList<>();
-                QuerySnapshot querySnapshot = task.getResult();
-                if (querySnapshot != null) {
-                    List<DocumentSnapshot> documents = querySnapshot.getDocuments();
-                    for (DocumentSnapshot document : documents) {
-                        ProductModel product = document.toObject(ProductModel.class);
-                        if (product != null && product.isAvailable()) {
-                            products.add(product);
-                        }
-                    }
+        executorService.execute(() -> {
+            databaseService.getAllProductsByCategoryOnlyForHomeFragment(category, new DatabaseService.GetAllProductsCallback() {
+                @Override
+                public void onSuccess(ArrayList<ProductModel> products) {
                     if (isAdded() && binding != null) {
-                        HomeProductModel existingModel = null;
-                        for (HomeProductModel model : multiViewModel) {
-                            if (model.getTitle().equals(category)) {
-                                existingModel = model;
-                                break;
+                        handler.post(() -> {
+                            HomeProductModel existingModel = null;
+                            for (HomeProductModel model : multiViewModel) {
+                                if (model.getTitle().equals(category)) {
+                                    existingModel = model;
+                                    break;
+                                }
                             }
-                        }
-                        if (existingModel != null) {
-                            existingModel.getProduct().addAll(products);
-                            multiViewAdapter.notifyItemChanged(multiViewModel.indexOf(existingModel));
-                        } else {
-                            multiViewModel.add(new HomeProductModel(category, products));
-                            multiViewAdapter.notifyItemInserted(multiViewModel.size() - 1);
-                        }
-
-                        if (!documents.isEmpty()) {
-                            lastDocuments.put(category, documents.get(documents.size() - 1));
-                            hasMoreData.put(category, documents.size() == limit);
-                        } else {
-                            hasMoreData.put(category, false);
-                        }
+                            if (existingModel != null) {
+                                existingModel.getProduct().addAll(products);
+                                multiViewAdapter.notifyItemChanged(multiViewModel.indexOf(existingModel));
+                            } else {
+                                multiViewModel.add(new HomeProductModel(category, products));
+                                multiViewAdapter.notifyItemInserted(multiViewModel.size() - 1);
+                            }
+                            areMultiViewFirstListLoaded.set(true);
+                            checkIfInitialLoadingComplete();
+                        });
                     }
                 }
-                areMultiViewFirstListLoaded.set(true);
-                checkIfInitialLoadingComplete();
-            }
-            hideBottonLoading();
+                @Override
+                public void onError(String errorMessage) {
+                    if (isAdded()) {
+                        handler.post(() -> {
+                            Toast.makeText(requireContext(), "Failed to load products: " + errorMessage, Toast.LENGTH_SHORT).show();
+                            areMultiViewFirstListLoaded.set(true);
+                            checkIfInitialLoadingComplete();
+                        });
+                    }
+                }
+            });
         });
     }
 
@@ -412,11 +404,12 @@ public class HomeFragment extends Fragment {
         Context context = requireContext();
         Glide.with(context)
                 .load(R.drawable.dabur)
+                .thumbnail(0.25f)
                 .placeholder(R.drawable.skeleton_shape)
                 .error(R.drawable.skeleton_shape)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .override(100, 100)
                 .centerCrop()
-                .override(300, 300)
                 .into(binding.Dabur);
 
         binding.Dabur.setOnClickListener(view -> {
@@ -427,11 +420,12 @@ public class HomeFragment extends Fragment {
 
         Glide.with(context)
                 .load(R.drawable.itc)
+                .thumbnail(0.25f)
                 .placeholder(R.drawable.skeleton_shape)
                 .error(R.drawable.skeleton_shape)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .override(100, 100)
                 .centerCrop()
-                .override(300, 300)
                 .into(binding.itc);
 
         binding.itc.setOnClickListener(view -> {
@@ -442,11 +436,12 @@ public class HomeFragment extends Fragment {
 
         Glide.with(context)
                 .load(R.drawable.colgate)
+                .thumbnail(0.25f)
                 .placeholder(R.drawable.skeleton_shape)
                 .error(R.drawable.skeleton_shape)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .override(100, 100)
                 .centerCrop()
-                .override(300, 300)
                 .into(binding.Colgate);
 
         binding.Colgate.setOnClickListener(view -> {
@@ -457,11 +452,12 @@ public class HomeFragment extends Fragment {
 
         Glide.with(context)
                 .load(R.drawable.aashirvaad)
+                .thumbnail(0.25f)
                 .placeholder(R.drawable.skeleton_shape)
                 .error(R.drawable.skeleton_shape)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .override(100, 100)
                 .centerCrop()
-                .override(300, 300)
                 .into(binding.Aashirvaad);
 
         binding.Aashirvaad.setOnClickListener(view -> {
@@ -477,8 +473,8 @@ public class HomeFragment extends Fragment {
         ImageCarousel topCarousel = binding.carousel;
         ImageCarousel bottomCarousel = binding.BottomCarousel;
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference bannerRef = database.getReference().child("Banner");
-        bannerRef.addValueEventListener(new ValueEventListener() {
+        bannerRef = database.getReference().child("Banner");
+        bannerListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 topBannerModels.clear();
@@ -504,72 +500,12 @@ public class HomeFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError error) {
                 isCarouselLoaded.set(true);
                 checkIfInitialLoadingComplete();
-            }
-        });
-        topCarousel.setCarouselListener(new CarouselListener() {
-            @Nullable
-            @Override
-            public ViewBinding onCreateViewHolder(@NonNull LayoutInflater layoutInflater, @NonNull ViewGroup viewGroup) {
-                return null;
-            }
-            @Override
-            public void onBindViewHolder(@NonNull ViewBinding viewBinding, @NonNull CarouselItem carouselItem, int i) {}
-            @Override
-            public void onClick(int i, @NonNull CarouselItem carouselItem) {
-                if (topBannerModels.size() > i && carouselItem.getHeaders() != null) {
-                    BannerModels banner = topBannerModels.get(i);
-                    FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-                    Bundle bundle = new Bundle();
-                    bundle.putString("filter", banner.getQuery());
-                    if (banner.getFilterByCategory()) {
-                        ProductFilterFragment fragment = new ProductFilterFragment();
-                        fragment.setArguments(bundle);
-                        transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
-                    } else {
-                        bundle.putString("filterName", banner.getBannerCaption());
-                        ProductFilterByQueryFragment fragment = new ProductFilterByQueryFragment();
-                        fragment.setArguments(bundle);
-                        transaction.replace(R.id.loader, fragment, "ProductFilterByQueryFragment");
-                    }
-                    transaction.addToBackStack(null);
-                    transaction.commit();
+                if (isAdded()) {
+                    Toast.makeText(requireContext(), "Failed to load banners", Toast.LENGTH_SHORT).show();
                 }
             }
-            @Override
-            public void onLongClick(int i, @NonNull CarouselItem carouselItem) {}
-        });
-        bottomCarousel.setCarouselListener(new CarouselListener() {
-            @Nullable
-            @Override
-            public ViewBinding onCreateViewHolder(@NonNull LayoutInflater layoutInflater, @NonNull ViewGroup viewGroup) {
-                return null;
-            }
-            @Override
-            public void onBindViewHolder(@NonNull ViewBinding viewBinding, @NonNull CarouselItem carouselItem, int i) {}
-            @Override
-            public void onClick(int i, @NonNull CarouselItem carouselItem) {
-                if (bottomBannerModels.size() > i && carouselItem.getHeaders() != null) {
-                    BannerModels banner = bottomBannerModels.get(i);
-                    FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-                    Bundle bundle = new Bundle();
-                    bundle.putString("filter", banner.getQuery());
-                    if (banner.getFilterByCategory()) {
-                        ProductFilterFragment fragment = new ProductFilterFragment();
-                        fragment.setArguments(bundle);
-                        transaction.replace(R.id.loader, fragment, "ProductFilterFragment");
-                    } else {
-                        bundle.putString("filterName", banner.getBannerCaption());
-                        ProductFilterByQueryFragment fragment = new ProductFilterByQueryFragment();
-                        fragment.setArguments(bundle);
-                        transaction.replace(R.id.loader, fragment, "ProductFilterByQueryFragment");
-                    }
-                    transaction.addToBackStack(null);
-                    transaction.commit();
-                }
-            }
-            @Override
-            public void onLongClick(int i, @NonNull CarouselItem carouselItem) {}
-        });
+        };
+        bannerRef.addValueEventListener(bannerListener);
     }
 
     void ViewCat(HomeProductModel model) {
@@ -591,25 +527,11 @@ public class HomeFragment extends Fragment {
         dialogBinding.title.setText(model.getTitle());
         dialogBinding.seeMore.setOnClickListener(v -> {
             homeProductBottomSheetDialog.dismiss();
-            Bundle bundle = new Bundle();
-            bundle.putString("filter", model.getTitle());
-            ProductWithSlideCategoryFragment fragment = new ProductWithSlideCategoryFragment();
-            fragment.setArguments(bundle);
-            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.loader, fragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
+            openCategory(model.getTitle());
         });
         dialogBinding.seeMoreBottom.setOnClickListener(v -> {
             homeProductBottomSheetDialog.dismiss();
-            Bundle bundle = new Bundle();
-            bundle.putString("filter", model.getTitle());
-            ProductWithSlideCategoryFragment fragment = new ProductWithSlideCategoryFragment();
-            fragment.setArguments(bundle);
-            FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.loader, fragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
+            openCategory(model.getTitle());
         });
         dialogBinding.closeButton.setOnClickListener(v -> homeProductBottomSheetDialog.dismiss());
         homeProductBottomSheetDialog.setContentView(dialogBinding.getRoot());
@@ -626,31 +548,43 @@ public class HomeFragment extends Fragment {
             Bundle bundle = new Bundle();
             bundle.putParcelableArrayList("model", homeProductModel);
             fragment.setArguments(bundle);
-            getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.loader, fragment)
-                    .addToBackStack("HomeFragment")
-                    .commit();
+            try {
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.loader, fragment)
+                        .addToBackStack("HomeFragment")
+                        .commit();
+            } catch (IllegalStateException e) {
+                Toast.makeText(requireContext(), "Unable to open search", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
     private void loadProduct(String category, ArrayList<HomeProductModel> productList, HomeCategoryAdapter adapter, AtomicBoolean loadingFlag) {
-        databaseService.getAllProductsByCategoryOnlyForHomeFragment(category, new DatabaseService.GetAllProductsCallback() {
-            @SuppressLint("NotifyDataSetChanged")
-            @Override
-            public void onSuccess(ArrayList<ProductModel> products) {
-                if (isAdded()) {
-                    productList.add(new HomeProductModel(category, products));
-                    adapter.notifyItemInserted(productList.size() - 1);
-                    loadingFlag.set(true);
-                    checkIfInitialLoadingComplete();
+        executorService.execute(() -> {
+            databaseService.getAllProductsByCategoryOnlyForHomeFragment(category, new DatabaseService.GetAllProductsCallback() {
+                @SuppressLint("NotifyDataSetChanged")
+                @Override
+                public void onSuccess(ArrayList<ProductModel> products) {
+                    if (isAdded()) {
+                        handler.post(() -> {
+                            productList.add(new HomeProductModel(category, products));
+                            adapter.notifyItemInserted(productList.size() - 1);
+                            loadingFlag.set(true);
+                            checkIfInitialLoadingComplete();
+                        });
+                    }
                 }
-            }
-            @Override
-            public void onError(String errorMessage) {
-                basicFun.AlertDialog(requireContext(), errorMessage);
-                loadingFlag.set(true);
-                checkIfInitialLoadingComplete();
-            }
+                @Override
+                public void onError(String errorMessage) {
+                    if (isAdded()) {
+                        handler.post(() -> {
+                            Toast.makeText(requireContext(), "Failed to load products: " + errorMessage, Toast.LENGTH_SHORT).show();
+                            loadingFlag.set(true);
+                            checkIfInitialLoadingComplete();
+                        });
+                    }
+                }
+            });
         });
     }
 
@@ -759,6 +693,11 @@ public class HomeFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (bannerRef != null && bannerListener != null) {
+            bannerRef.removeEventListener(bannerListener);
+            bannerRef = null;
+            bannerListener = null;
+        }
         if (binding != null) {
             if (binding.loadingAnimation != null && binding.loadingAnimation.isAnimating()) {
                 binding.loadingAnimation.cancelAnimation();
@@ -767,5 +706,9 @@ public class HomeFragment extends Fragment {
             handler.removeCallbacksAndMessages(null);
             binding = null;
         }
+        if (homeProductBottomSheetDialog != null && homeProductBottomSheetDialog.isShowing()) {
+            homeProductBottomSheetDialog.dismiss();
+        }
+        executorService.shutdown();
     }
 }

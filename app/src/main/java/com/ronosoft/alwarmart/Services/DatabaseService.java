@@ -1,6 +1,7 @@
 package com.ronosoft.alwarmart.Services;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -159,6 +160,7 @@ public class DatabaseService {
 
     /*
     * this is function is only called in the homeFragment
+    * get product from firebase on the basis of category
     */
     public void getAllProductsByCategoryOnlyForHomeFragment(String category, GetAllProductsCallback callback) {
         database.collection("Product")
@@ -301,6 +303,7 @@ public class DatabaseService {
                 if (querySnapshot != null) {
                     for (DocumentSnapshot document : querySnapshot.getDocuments()) {
                         ProductCategoryModel categoryModel = document.toObject(ProductCategoryModel.class);
+//                        Log.i(TAG, "getAllCategory: "+ca);
                         if (categoryModel != null) {
                             categoryModels.add(categoryModel);
                         }
