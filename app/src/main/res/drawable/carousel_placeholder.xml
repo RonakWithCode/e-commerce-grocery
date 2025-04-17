@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Background Gradient -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:startColor="#FFE0E0E0"
+                android:endColor="#FFB0B0B0"
+                android:angle="45" />
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+
+    <!-- Subtle Overlay with Placeholder Icon -->
+    <item
+        android:gravity="center"
+        android:drawable="@drawable/ic_carousel_placeholder"
+        android:width="48dp"
+        android:height="48dp" />
+
+    <!-- Semi-transparent Overlay for Loading Effect -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#80FFFFFF" />
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+</layer-list>

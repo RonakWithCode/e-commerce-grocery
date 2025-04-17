@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.TransitionOptions;
 import com.bumptech.glide.request.target.Target;
 import com.ronosoft.alwarmart.Activity.AuthMangerActivity;
 import com.ronosoft.alwarmart.Manager.ProductManager;
@@ -26,6 +28,7 @@ import com.ronosoft.alwarmart.Services.AuthService;
 import com.ronosoft.alwarmart.databinding.RecommendationsViewBinding;
 import com.ronosoft.alwarmart.interfaceClass.onClickProductAdapter;
 import com.google.firebase.auth.FirebaseAuth;
+import com.ronosoft.alwarmart.javaClasses.TokenManager;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -173,6 +176,9 @@ public class ProductAdapter extends ListAdapter<ProductModel, ProductAdapter.Pro
                 if (newQty <= product.getMaxSelectableQuantity()) {
                     holder.binding.quantity.setText(String.valueOf(newQty));
                     updateQuantity(product.getProductId(), newQty);
+                }
+                else {
+                    Toast.makeText(context, "Maximum quantity can be select "+product.getMaxSelectableQuantity(), Toast.LENGTH_SHORT).show();
                 }
             } catch (NumberFormatException e) {
                 Log.e("ProductAdapter", "Invalid quantity format", e);

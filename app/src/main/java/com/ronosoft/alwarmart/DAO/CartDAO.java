@@ -45,4 +45,9 @@ public interface CartDAO {
 
     @Query("SELECT * FROM cart WHERE productId = :productId")
     LiveData<ShoppingCartFirebaseModelDAO> observeProductById(String productId);
+
+
+
+    @Query("SELECT * FROM cart")
+    LiveData<List<ShoppingCartFirebaseModelDAO>> getAllCartItems();
 }

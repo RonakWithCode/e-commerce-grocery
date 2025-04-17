@@ -155,4 +155,10 @@ public class ProductManager {
     }
 
 
+    // New method to get all cart items as LiveData
+    public LiveData<List<ShoppingCartFirebaseModelDAO>> getAllCartItems() {
+        return databaseHelper.ModelDAO().getAllCartItems();
+    }
+
+
 }

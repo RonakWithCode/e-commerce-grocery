@@ -138,4 +138,11 @@
 
     <color name="success_green">#4CAF50</color>
     <color name="discount_red">#E53935</color>
+
+
+
+
+
+    <color name="orderYellowStart">#FFE074</color>
+    <color name="orderYellowEnd">#FFE074</color>
 </resources>

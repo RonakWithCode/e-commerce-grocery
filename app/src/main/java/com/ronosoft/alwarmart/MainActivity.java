@@ -1,13 +1,13 @@
 package com.ronosoft.alwarmart;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -16,21 +16,25 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.LiveData;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.Firebase;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.ronosoft.alwarmart.Activity.OrderDetailsActivity;
+import com.ronosoft.alwarmart.DAO.ShoppingCartFirebaseModelDAO;
 import com.ronosoft.alwarmart.Fragment.HomeFragment;
 import com.ronosoft.alwarmart.Fragment.MoreFragment;
 import com.ronosoft.alwarmart.Fragment.ProductFilterByQueryFragment;
 import com.ronosoft.alwarmart.Fragment.ProductWithSlideCategoryFragment;
 import com.ronosoft.alwarmart.Fragment.SearchFragment;
 import com.ronosoft.alwarmart.Fragment.ShoppingCartsFragment;
+import com.ronosoft.alwarmart.Manager.ProductManager;
 import com.ronosoft.alwarmart.databinding.ActivityMainBinding;
-import com.ronosoft.alwarmart.javaClasses.TokenManager;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,60 +42,53 @@ public class MainActivity extends AppCompatActivity {
     private static final String ORDER_ID = "orderId";
     private static final String OFFERID = "offerId";
     private static final String NOTIFICATION_TYPE = "notification_type";
+    private ProductManager productManager;
 
-    // Permission Launchers
+    // Permission launcher for runtime permissions
     private ActivityResultLauncher<String[]> multiplePermissionLauncher;
-    private final Map<String, Boolean> permissionStatus = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Explicitly disable dark mode
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Initialize token (commented out, kept as is)
-        /*
-        try {
-            String token = TokenManager.getInstance(this).getToken();
-        } catch (Exception e) {
-            // Silently handled, Crashlytics will catch if critical
-        }
-        */
+        // Initialize Firebase
+        FirebaseApp.initializeApp(this);
 
-        // Initialize permission launcher
+        // Initialize ProductManager
+        productManager = new ProductManager(this);
+
         initializePermissionLauncher();
-
         setupUI();
         handleNotificationIntent(getIntent());
         setupBottomNavigation();
         requestRequiredPermissions();
+
+        binding.fabCart.setVisibility(View.GONE);
+        binding.cartBadge.setVisibility(View.GONE);
+
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+
+            setupFabCart();
+        }
     }
 
     private void initializePermissionLauncher() {
         multiplePermissionLauncher = registerForActivityResult(
                 new ActivityResultContracts.RequestMultiplePermissions(),
-                result -> {
-                    permissionStatus.clear();
-                    permissionStatus.putAll(result);
-
-                    // Handle permission results
-                    for (Map.Entry<String, Boolean> entry : result.entrySet()) {
-                        String permission = entry.getKey();
-                        boolean granted = entry.getValue();
-                        if (!granted) {
-                            handlePermissionDenied(permission);
-                        }
+                result -> result.forEach((permission, granted) -> {
+                    if (!granted && shouldShowRequestPermissionRationale(permission)) {
+                        // Optionally, show a dialog to explain why this permission is needed.
                     }
-                }
+                })
         );
     }
 
     private void requestRequiredPermissions() {
         String[] permissions;
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             permissions = new String[]{
                     Manifest.permission.POST_NOTIFICATIONS,
@@ -104,36 +101,13 @@ public class MainActivity extends AppCompatActivity {
                     Manifest.permission.ACCESS_COARSE_LOCATION
             };
         }
-
-        // Filter out already granted permissions
-        String[] permissionsToRequest = filterUngrantedPermissions(permissions);
-
-        if (permissionsToRequest.length > 0) {
-            multiplePermissionLauncher.launch(permissionsToRequest);
-        }
-    }
-
-    private String[] filterUngrantedPermissions(String[] permissions) {
-        return java.util.Arrays.stream(permissions)
+        String[] permissionsToRequest = Arrays.stream(permissions)
                 .filter(permission -> ContextCompat.checkSelfPermission(this, permission)
                         != PackageManager.PERMISSION_GRANTED)
                 .toArray(String[]::new);
-    }
 
-    private void handlePermissionDenied(String permission) {
-        switch (permission) {
-            case Manifest.permission.POST_NOTIFICATIONS:
-                // Notification permission denied - Push notifications won't work
-                break;
-            case Manifest.permission.ACCESS_FINE_LOCATION:
-            case Manifest.permission.ACCESS_COARSE_LOCATION:
-                // Location permission denied - Location features will be limited
-                break;
-        }
-
-        // Optionally show rationale if permission was denied
-        if (shouldShowRequestPermissionRationale(permission)) {
-            // You can show a dialog explaining why the permission is needed
+        if (permissionsToRequest.length > 0) {
+            multiplePermissionLauncher.launch(permissionsToRequest);
         }
     }
 
@@ -145,64 +119,45 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupUI() {
-        try {
-            loadInitialFragment();
-        } catch (Exception e) {
-            // Silently handled, Crashlytics will catch if critical
-        }
+        loadInitialFragment();
     }
 
     private void loadInitialFragment() {
-        loadFragment(new HomeFragment(), "HomeFragment");
+        loadFragment(new HomeFragment(), "HomeFragment", false);
     }
 
     private void handleNotificationIntent(Intent intent) {
         if (intent == null || !intent.hasExtra(NOTIFICATION_TYPE)) return;
 
         String notificationType = intent.getStringExtra(NOTIFICATION_TYPE);
-
-        switch (notificationType) {
-            case "order_status":
-                String orderId = intent.getStringExtra(ORDER_ID);
-                if (orderId != null && !orderId.isEmpty()) {
-                    openOrderDetails(orderId);
-                }
-                break;
-            case "offer":
-                String offerId = intent.getStringExtra(OFFERID);
-                String filterName = intent.getStringExtra("filterName");
-                if (offerId != null && !offerId.isEmpty()) {
-                    loadOfferFragment(offerId, filterName);
-                }
-                break;
+        if ("order_status".equals(notificationType)) {
+            String orderId = intent.getStringExtra(ORDER_ID);
+            if (orderId != null && !orderId.isEmpty()) {
+                openOrderDetails(orderId);
+            }
+        } else if ("offer".equals(notificationType)) {
+            String offerId = intent.getStringExtra(OFFERID);
+            String filterName = intent.getStringExtra("filterName");
+            if (offerId != null && !offerId.isEmpty()) {
+                loadOfferFragment(offerId, filterName);
+            }
         }
     }
 
     private void loadOfferFragment(String offerId, String filterName) {
-        try {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            Bundle bundle = new Bundle();
-            bundle.putString("filter", offerId);
-            bundle.putString("filterName", filterName);
-            ProductFilterByQueryFragment fragment = new ProductFilterByQueryFragment();
-            fragment.setArguments(bundle);
-            transaction.replace(R.id.loader, fragment, "ProductFilterByQueryFragment");
-            transaction.addToBackStack(null);
-            transaction.commit();
-        } catch (Exception e) {
-            // Silently handled, Crashlytics will catch if critical
-        }
+        Bundle bundle = new Bundle();
+        bundle.putString("filter", offerId);
+        bundle.putString("filterName", filterName);
+        ProductFilterByQueryFragment fragment = new ProductFilterByQueryFragment();
+        fragment.setArguments(bundle);
+        loadFragment(fragment, "ProductFilterByQueryFragment", true);
     }
 
     private void openOrderDetails(String orderId) {
-        try {
-            Intent intent = new Intent(this, OrderDetailsActivity.class);
-            intent.putExtra("Type", "seeOrderNotification");
-            intent.putExtra(ORDER_ID, orderId);
-            startActivity(intent);
-        } catch (Exception e) {
-            // Silently handled, Crashlytics will catch if critical
-        }
+        Intent intent = new Intent(this, OrderDetailsActivity.class);
+        intent.putExtra("Type", "seeOrderNotification");
+        intent.putExtra(ORDER_ID, orderId);
+        startActivity(intent);
     }
 
     private void setupBottomNavigation() {
@@ -212,75 +167,103 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @SuppressLint("NonConstantResourceId")
     private void handleBottomNavigation(int itemId) {
         Fragment fragment = null;
-        try {
-            switch (itemId) {
-                case R.id.homeBtn:
-                    fragment = new HomeFragment();
-                    break;
-                case R.id.GoCategory:
-                    fragment = new ProductWithSlideCategoryFragment();
-                    break;
-                case R.id.shoppingCartsBtn:
-                    fragment = new ShoppingCartsFragment();
-                    break;
-                case R.id.moreBtn:
-                    fragment = new MoreFragment();
-                    break;
-            }
-            if (fragment != null) {
-                loadFragment(fragment, fragment.getClass().getSimpleName());
-            }
-        } catch (Exception e) {
-            // Silently handled, Crashlytics will catch if critical
+        String tag = "";
+        switch (itemId) {
+            case R.id.homeBtn:
+                fragment = new HomeFragment();
+                tag = "HomeFragment";
+                break;
+            case R.id.GoCategory:
+                fragment = new ProductWithSlideCategoryFragment();
+                tag = "ProductWithSlideCategoryFragment";
+                break;
+            case R.id.shoppingCartsBtn:
+                fragment = new ShoppingCartsFragment();
+                tag = "ShoppingCartsFragment";
+                break;
+            case R.id.moreBtn:
+                fragment = new MoreFragment();
+                tag = "MoreFragment";
+                break;
+        }
+        if (fragment != null) {
+            loadFragment(fragment, tag, false);
         }
     }
 
-    public void loadFragment(Fragment fragment, String tag) {
-        try {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.loader, fragment, tag);
+    private void setupFabCart() {
+        // Initially hide the FAB and badge
+
+        binding.fabCart.setVisibility(View.GONE);
+        binding.cartBadge.setVisibility(View.GONE);
+
+        // Sync cart from Firebase to ensure local database is up-to-date1626
+        productManager.syncCartFromFirebase(new ProductManager.SyncCartCallback() {
+            @Override
+            public void onSyncSuccess() {
+                checkCartAndUpdateFab();
+            }
+
+            @Override
+            public void onSyncFailure(String error) {
+                // Hide FAB and badge on sync failure
+                binding.fabCart.setVisibility(View.GONE);
+                binding.cartBadge.setVisibility(View.GONE);
+            }
+        });
+
+        // Set FAB click listener to open ShoppingCartsFragment
+        binding.fabCart.setOnClickListener(view -> {
+            loadFragment(new ShoppingCartsFragment(), "ShoppingCartsFragment", true);
+        });
+    }
+
+    private void checkCartAndUpdateFab() {
+        // Observe all cart items using LiveData
+        LiveData<List<ShoppingCartFirebaseModelDAO>> cartItemsLiveData = productManager.getAllCartItems();
+        cartItemsLiveData.observe(this, cartItems -> {
+            if (cartItems != null && !cartItems.isEmpty()) {
+                // Calculate total quantity
+                int totalQuantity = cartItems.size();
+                binding.fabCart.setVisibility(View.VISIBLE);
+                binding.cartBadge.setVisibility(View.VISIBLE);
+                binding.cartBadge.setText(String.valueOf(totalQuantity));
+            } else {
+                binding.fabCart.setVisibility(View.GONE);
+                binding.cartBadge.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    public void loadFragment(Fragment fragment, String tag, boolean addToBackStack) {
+        if (fragment == null || getSupportFragmentManager().isStateSaved()) return;
+        androidx.fragment.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.loader, fragment, tag);
+        if (addToBackStack) {
             transaction.addToBackStack(tag);
-            transaction.commit();
-        } catch (Exception e) {
-            // Silently handled, Crashlytics will catch if critical
         }
+        transaction.commit();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        try {
-            getMenuInflater().inflate(R.menu.toolba_rmenu_main, menu);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+        getMenuInflater().inflate(R.menu.toolba_rmenu_main, menu);
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        try {
-            if (item.getItemId() == R.id.action_search) {
-                openSearchFragment();
-                return true;
-            }
-            return super.onOptionsItemSelected(item);
-        } catch (Exception e) {
-            return false;
+        if (item.getItemId() == R.id.action_search) {
+            openSearchFragment();
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     private void openSearchFragment() {
-        try {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.loader, new SearchFragment())
-                    .addToBackStack("HomeFragment")
-                    .commit();
-        } catch (Exception e) {
-            // Silently handled, Crashlytics will catch if critical
-        }
+        loadFragment(new SearchFragment(), "SearchFragment", true);
     }
 
     @Override
@@ -289,7 +272,6 @@ public class MainActivity extends AppCompatActivity {
         binding = null;
     }
 
-    // Public method to check if a specific permission is granted
     public boolean isPermissionGranted(String permission) {
         return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;
     }

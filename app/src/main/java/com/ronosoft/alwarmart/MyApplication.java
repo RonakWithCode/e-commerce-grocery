@@ -30,7 +30,7 @@ public class MyApplication extends Application {
 
         // Configure Firestore with offline persistence
         try {
-            FirebaseFirestore.setLoggingEnabled(true);
+            FirebaseFirestore.setLoggingEnabled(false);
             FirebaseDatabase.getInstance().setLogLevel(com.google.firebase.database.Logger.Level.DEBUG);
             FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
                     .setPersistenceEnabled(true)

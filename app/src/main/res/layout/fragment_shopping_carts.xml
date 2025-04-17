@@ -89,7 +89,7 @@
     <LinearLayout
         android:id="@+id/IsEnity"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical"
         android:padding="32dp"
@@ -109,16 +109,6 @@
             android:textAppearance="?attr/textAppearanceHeadline6"
             android:textAlignment="center"/>
     </LinearLayout>
-
-    <!-- Loading State -->
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/linearLayout_placeHolder"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="16dp">
-
-        <include layout="@layout/shopping_carts_placeholder_layout"/>
-    </com.facebook.shimmer.ShimmerFrameLayout>
 
     <!-- Not Authenticated State -->
     <LinearLayout
@@ -147,6 +137,17 @@
             app:cornerRadius="24dp"/>
     </LinearLayout>
 
+    <!-- Lottie Animation for Loading -->
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/loading_animation"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        app:lottie_rawRes="@raw/loading_animation"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true" />
+
     <!-- Bottom Checkout Bar -->
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
@@ -163,12 +164,5 @@
             android:textAllCaps="false"
             app:cornerRadius="8dp"/>
     </com.google.android.material.card.MaterialCardView>
-
-    <!-- Loading Progress -->
-    <ProgressBar
-        android:id="@+id/progress_circular"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

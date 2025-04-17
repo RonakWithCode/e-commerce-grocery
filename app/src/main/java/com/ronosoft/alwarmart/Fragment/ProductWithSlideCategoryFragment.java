@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -26,6 +25,7 @@ import com.ronosoft.alwarmart.Services.DatabaseService;
 import com.ronosoft.alwarmart.databinding.FragmentProductWithSlideCategoryBinding;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class ProductWithSlideCategoryFragment extends Fragment {
 
@@ -53,36 +53,49 @@ public class ProductWithSlideCategoryFragment extends Fragment {
      * Initialize required variables and check incoming filter arguments.
      */
     private void initializeViews() {
-        hideActionBar();
+        // Hide ActionBar only if activity is AppCompatActivity
+        if (getActivity() instanceof AppCompatActivity) {
+            ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.hide();
+            }
+        }
+
         productModels = new ArrayList<>();
         categoryModels = new ArrayList<>();
         databaseService = new DatabaseService();
-        if (getArguments() != null) {
-            currentFilter = getArguments().getString("filter", "no");
+
+        // Safely retrieve arguments
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            currentFilter = arguments.getString("filter", "no");
         }
+
         // Start shimmer effect for skeleton screen
-        binding.skeletonLayout.startShimmer();
+        if (binding != null) {
+            binding.skeletonLayout.startShimmer();
+        }
     }
 
     /**
      * Sets up adapters for category list and products grid.
      */
     private void setupAdapters() {
-        // SlideCategoryAdapter: When a category is clicked, load its products.
+        // Initialize SlideCategoryAdapter
         categoryAdapter = new SlideCategoryAdapter(categoryModels, requireContext(), productCategory -> {
-            if (productCategory != null && productCategory.getTag() != null) {
+            if (productCategory != null && productCategory.getTag() != null && isAdded()) {
                 loadProductByCategory(productCategory.getTag());
             }
         });
-        binding.slideView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        binding.slideView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
         binding.slideView.setAdapter(categoryAdapter);
 
-        // ProductAdapter: Displays products in a grid.
+        // Initialize ProductAdapter
         productAdapter = new ProductAdapter(
                 getViewLifecycleOwner(),
                 productModels,
-                (ProductModel productModel, ArrayList<ProductModel> sameProducts) -> {
-                    // Show product view dialog.
+                (productModel, sameProducts) -> {
+                    // Ensure fragment is attached before showing dialog
                     if (isAdded() && getActivity() != null) {
                         new ProductViewCard(getActivity()).showProductViewDialog(productModel, sameProducts);
                     }
@@ -97,31 +110,49 @@ public class ProductWithSlideCategoryFragment extends Fragment {
      * Sets up click and refresh listeners.
      */
     private void setupListeners() {
-        binding.backBtn.setOnClickListener(v -> handleBackPress());
-        binding.searchBta.setOnClickListener(v -> openSearchFragment());
-        binding.swipeRefresh.setOnRefreshListener(this::refreshData);
-        binding.retryButton.setOnClickListener(v -> loadInitialData());
+        binding.searchBta.setOnClickListener(v -> {
+            if (isAdded()) {
+                openSearchFragment();
+            }
+        });
+        binding.swipeRefresh.setOnRefreshListener(() -> {
+            if (isAdded()) {
+                refreshData();
+            }
+        });
+        binding.retryButton.setOnClickListener(v -> {
+            if (isAdded()) {
+                loadInitialData();
+            }
+        });
     }
 
     /**
      * Loads initial data: categories and products.
      */
     private void loadInitialData() {
+        if (!isAdded() || binding == null) return;
         showLoading();
-        // Load categories first.
+
+        // Load categories
         databaseService.getAllCategory(new DatabaseService.GetAllCategoryCallback() {
             @Override
             public void onSuccess(ArrayList<ProductCategoryModel> categories) {
                 if (!isAdded() || binding == null) return;
+
                 categoryModels.clear();
                 categoryModels.addAll(categories);
                 categoryAdapter.notifyDataSetChanged();
+
                 if (categories.isEmpty()) {
                     showError("No categories found");
                     return;
                 }
-                // Determine which category to load products for.
-                String categoryToLoad = currentFilter.equals("no") ? categories.get(0).getTag() : currentFilter;
+
+                // Load products for the first category or filtered category
+                String categoryToLoad = currentFilter.equals("no") && !categories.isEmpty()
+                        ? categories.get(0).getTag()
+                        : currentFilter;
                 loadProductByCategory(categoryToLoad);
             }
 
@@ -137,16 +168,20 @@ public class ProductWithSlideCategoryFragment extends Fragment {
      * Loads products for the given category.
      */
     private void loadProductByCategory(String category) {
+        if (!isAdded() || binding == null) return;
         showLoading();
+
         databaseService.getAllProductsByCategoryOnly(category, new DatabaseService.GetAllProductsCallback() {
             @Override
             public void onSuccess(ArrayList<ProductModel> products) {
                 if (!isAdded() || binding == null) return;
+
                 productModels.clear();
                 productModels.addAll(products);
                 productAdapter.notifyDataSetChanged();
                 binding.title.setText(category);
                 hideLoading();
+
                 if (products.isEmpty()) {
                     showError("No products found in this category");
                 }
@@ -194,32 +229,14 @@ public class ProductWithSlideCategoryFragment extends Fragment {
      * Displays an error message.
      */
     private void showError(String message) {
-        hideLoading();
         if (binding != null) {
+            hideLoading();
             binding.errorState.setVisibility(View.VISIBLE);
             binding.errorMessage.setText(message);
-            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    /**
-     * Hides the ActionBar.
-     */
-    private void hideActionBar() {
-        if (getActivity() instanceof AppCompatActivity) {
-            ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-            if (actionBar != null) {
-                actionBar.hide();
+            // Ensure context is available before showing Toast
+            if (isAdded() && getContext() != null) {
+                Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
             }
-        }
-    }
-
-    /**
-     * Handles the back press.
-     */
-    private void handleBackPress() {
-        if (getActivity() != null) {
-            getActivity().onBackPressed();
         }
     }
 
@@ -235,9 +252,33 @@ public class ProductWithSlideCategoryFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        // Clean up binding and stop shimmer to prevent memory leaks
         if (binding != null) {
             binding.skeletonLayout.stopShimmer();
             binding = null;
+        }
+        // Clear adapters to prevent memory leaks
+        if (binding != null) {
+            binding.slideView.setAdapter(null);
+            binding.Products.setAdapter(null);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Stop shimmer when fragment is paused to save resources
+        if (binding != null) {
+            binding.skeletonLayout.stopShimmer();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Restart shimmer if loading is visible
+        if (binding != null && binding.skeletonLayout.getVisibility() == View.VISIBLE) {
+            binding.skeletonLayout.startShimmer();
         }
     }
 }

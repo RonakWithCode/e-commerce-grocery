@@ -38,9 +38,9 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/green_primary" />
 
-        <!-- Splash Screen (Entry Point) -->
+        <!-- Main Activity (Entry Point) -->
         <activity
-            android:name=".Activity.SolashScreen"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -49,6 +49,10 @@
         </activity>
 
         <!-- Other Activities -->
+        <activity
+            android:name=".Activity.SolashScreen"
+            android:exported="false" />
+
         <activity
             android:name=".Activity.BrandActivity"
             android:exported="false" />
@@ -95,11 +99,6 @@
                     android:scheme="otpless.ju7polncn4p9vt1gy3ld" />
             </intent-filter>
         </activity>
-
-        <!-- Main Activity -->
-        <activity
-            android:name=".MainActivity"
-            android:exported="true" />
 
         <!-- Firebase Messaging Service -->
         <service

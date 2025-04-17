@@ -1,204 +1,185 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_marginTop="@dimen/_10sdp"
-    android:layout_marginBottom="@dimen/_5sdp"
-    app:cardCornerRadius="@dimen/_20sdp"
-    app:cardBackgroundColor="@color/OrderMainBackgroundColor"
-    android:background="@color/OrderMainBackgroundColor"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_marginHorizontal="@dimen/_8sdp"
+    android:layout_marginVertical="@dimen/_8sdp"
+    app:cardBackgroundColor="@color/OrderMainBackgroundColor"
+    app:cardCornerRadius="@dimen/_12sdp"
+    app:cardElevation="@dimen/_2sdp">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-
-    <TextView
-        android:id="@+id/OrderId"
-        android:textColor="@color/MainTextColor"
-        android:textStyle="bold"
-        android:layout_alignParentStart="true"
-        android:textSize="@dimen/_20ssp"
-        android:layout_marginStart="@dimen/_9sdp"
-        android:layout_marginTop="@dimen/_5sdp"
-        android:layout_alignParentTop="true"
-        android:maxLines="1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
-    <TextView
-        android:id="@+id/OrderStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:maxLines="1"
-        android:paddingStart="@dimen/_7sdp"
-        android:paddingBottom="@dimen/_3sdp"
-        android:paddingTop="@dimen/_2sdp"
-        android:paddingEnd="@dimen/_9sdp"
-        android:layout_marginStart="@dimen/_7sdp"
-        android:layout_marginTop="@dimen/_8sdp"
-        android:layout_marginEnd="@dimen/_5sdp"
-        android:layout_toEndOf="@+id/OrderId"
-        android:textAlignment="center"
-        android:textColor="@color/FixBlack"
-        android:textSize="@dimen/_12ssp"
-        android:textStyle="bold" />
-
-
-    <TextView
-        android:id="@+id/OrderName"
-        android:textColor="@color/green_primary"
-        android:textStyle="bold"
-        android:layout_alignParentStart="true"
-        android:textSize="@dimen/_15ssp"
-        android:layout_marginStart="@dimen/_19sdp"
-        android:layout_marginTop="@dimen/_1sdp"
-        android:layout_below="@id/OrderId"
-        android:text="Ashok jain"
-        android:lines="1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-    <TextView
-        android:id="@+id/order_contact_phone"
-        android:textColor="@color/MainTextColor"
-        android:textStyle="bold"
-        android:layout_alignParentStart="true"
-        android:textSize="@dimen/_15ssp"
-        android:layout_marginStart="@dimen/_19sdp"
-        android:layout_marginTop="@dimen/_1sdp"
-        android:layout_below="@id/OrderName"
-        android:text="+91 7023941072"
-        android:lines="1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
-    <TextView
-        android:id="@+id/orderAddress"
-        android:layout_width="@dimen/_260sdp"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/order_contact_phone"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="@dimen/_19sdp"
-        android:layout_marginTop="@dimen/_1sdp"
-        android:maxLines="2"
-        android:text="Malviya Nagar, Alwar, Rajasthan 30100Malviya Nagar, Alwar, Rajasthan 301001...1..."
-        android:textColor="@color/orderAddressColor"
-        android:textSize="@dimen/_10ssp"
-        android:textStyle="bold" />
-
-
-    <View
-        android:layout_below="@+id/orderAddress"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_2sdp"
-        android:layout_marginStart="@dimen/_5sdp"
-        android:layout_marginEnd="@dimen/_5sdp"
-        android:layout_marginTop="@dimen/_2sdp"
-        android:id="@+id/line1"
-        android:background="@color/OrderLineColor"
-        android:alpha="0.9"/>
-
-    <TextView
-        android:id="@+id/OrderDate"
-        android:textColor="@color/MainTextColor"
-        android:textStyle="bold"
-        android:layout_alignParentStart="true"
-        android:textSize="@dimen/_14ssp"
-        android:layout_marginStart="@dimen/_12sdp"
-        android:layout_marginTop="@dimen/_5sdp"
-        android:text="10 Apr 2023 at 07:45 PM"
-        android:layout_below="@id/line1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
-
-    <TextView
-        android:id="@+id/OrderPrice"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/line1"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="@dimen/_25sdp"
-        android:layout_marginTop="@dimen/_5sdp"
-        android:layout_marginEnd="@dimen/_19sdp"
-        android:layout_toEndOf="@+id/OrderId"
-        android:padding="@dimen/_1sdp"
-        android:text="₹10150"
-        android:textAlignment="textEnd"
-        android:textColor="@color/MainTextColor"
-        android:textSize="@dimen/_14ssp"
-        android:textStyle="bold" />
-
-    <View
-        android:layout_below="@+id/OrderDate"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_2sdp"
-        android:layout_marginStart="@dimen/_5sdp"
-        android:layout_marginEnd="@dimen/_5sdp"
-        android:layout_marginTop="@dimen/_2sdp"
-        android:id="@+id/line2"
-        android:background="@color/OrderLineColor"
-        android:alpha="0.9"/>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/Call"
-        android:layout_marginStart="@dimen/_10sdp"
-        android:layout_marginEnd="@dimen/_10sdp"
-        android:background="@drawable/button_background"
-        android:layout_marginTop="@dimen/_8sdp"
-        android:layout_below="@+id/line2"
-        android:textColor="@color/green_primary"
-        android:textSize="@dimen/_15ssp"
-        app:icon="@drawable/phone_icon"
-        app:iconGravity="start"
-        app:iconTint="@color/green_primary"
-        android:textStyle="bold"
-        app:cornerRadius="@dimen/_12sdp"
-        android:text="@string/request_to_call"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/productRecyclerView"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/Call"
-        android:layout_marginTop="@dimen/_8sdp"
-        android:layout_marginStart="@dimen/_10sdp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        tools:itemCount="2"
-        android:layout_marginEnd="@dimen/_10sdp"
-        android:background="@color/productRecyclerViewColor" />
+        android:padding="@dimen/_16sdp">
 
-    <TextView
-        android:id="@+id/seeAllButton"
-        app:cornerRadius="8dp"
-        android:layout_centerHorizontal="true"
-        android:layout_width="wrap_content"
-        android:layout_marginBottom="@dimen/_5sdp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_8sdp"
-        android:layout_below="@id/productRecyclerView"
-        android:background="@drawable/round_status"
-        android:padding="@dimen/_2sdp"
-        android:text="+7 more"
-        android:textAlignment="center"
-        android:textColor="@color/green_primary"
-        android:textSize="@dimen/_12ssp"
-        android:textStyle="normal" />
-    <View
-        android:layout_below="@+id/seeAllButton"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_2sdp"
-        android:layout_marginTop="@dimen/_2sdp"
-        android:id="@+id/line3"
-        android:background="@color/OrderLineColor"
-        android:alpha="0.9"/>
-    </RelativeLayout>
+        <!-- Order ID and Status -->
+        <TextView
+            android:id="@+id/OrderId"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/MainTextColor"
+            android:textSize="@dimen/_16ssp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/OrderStatus"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="#123456" />
 
+        <TextView
+            android:id="@+id/OrderStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/round_status"
+            android:paddingHorizontal="@dimen/_8sdp"
+            android:paddingVertical="@dimen/_4sdp"
+            android:textAlignment="center"
+            android:textColor="@color/FixBlack"
+            android:textSize="@dimen/_12ssp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/OrderId"
+            tools:text="Processing" />
+
+        <!-- Customer Name -->
+        <TextView
+            android:id="@+id/OrderName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/green_primary"
+            android:textSize="@dimen/_14ssp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/OrderId"
+            tools:text="Ashok Jain" />
+
+        <!-- Contact Phone -->
+        <TextView
+            android:id="@+id/order_contact_phone"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/MainTextColor"
+            android:textSize="@dimen/_14ssp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/OrderName"
+            tools:text="+91 7023941072" />
+
+        <!-- Address -->
+        <TextView
+            android:id="@+id/orderAddress"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="@color/orderAddressColor"
+            android:textSize="@dimen/_12ssp"
+            android:textStyle="normal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/order_contact_phone"
+            tools:text="Malviya Nagar, Alwar, Rajasthan 301001" />
+
+        <!-- Divider -->
+        <View
+            android:id="@+id/line1"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_1sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:alpha="0.9"
+            android:background="@color/OrderLineColor"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/orderAddress" />
+
+        <!-- Order Date -->
+        <TextView
+            android:id="@+id/OrderDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/MainTextColor"
+            android:textSize="@dimen/_14ssp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/OrderPrice"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/line1"
+            tools:text="10 Apr 2023 at 07:45 PM" />
+
+        <!-- Order Price -->
+        <TextView
+            android:id="@+id/OrderPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:padding="@dimen/_6sdp"
+            android:textAlignment="textEnd"
+            android:textColor="@color/MainTextColor"
+            android:textSize="@dimen/_14ssp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/line1"
+            tools:text="₹10150" />
+
+        <!-- Divider -->
+        <View
+            android:id="@+id/line2"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_1sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:alpha="0.9"
+            android:background="@color/OrderLineColor"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/OrderDate" />
+
+        <!-- Product RecyclerView -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/productRecyclerView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:background="@color/productRecyclerViewColor"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/line2"
+            tools:itemCount="2" />
+
+        <!-- See All Button -->
+        <TextView
+            android:id="@+id/seeAllButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginBottom="@dimen/_8sdp"
+            android:background="@drawable/round_status"
+            android:padding="@dimen/_8sdp"
+            android:textAlignment="center"
+            android:textColor="@color/green_primary"
+            android:textSize="@dimen/_12ssp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/productRecyclerView"
+            tools:text="+7 more" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

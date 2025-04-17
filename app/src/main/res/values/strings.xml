@@ -1,7 +1,6 @@
 <resources>
     <string name="phone_required">Phone number is required</string>
     <!--    <string name="invalid_phone">Enter a valid 10-digit phone number</string>-->
-    <string name="accept_terms_error">Please accept the terms and conditions</string>
 
 
     <string name="app_name">Alwar Mart</string>
@@ -10,7 +9,6 @@
     <string name="name">Name</string>
     <string name="mail">Mail</string>
 
-    <string name="accept_terms_and_conditions">Accept Terms and Conditions</string>
     <string name="read_more"><a href="https://crazy-studio-website.web.app/PrivacyPolicy.html">Read More</a></string>
     <string name="icon">Icon</string>
     <string name="otp">OTP</string>
@@ -158,7 +156,6 @@
     <string name="give_some_basic_information">give some basic information</string>
     <string name="chose_username">Chose username</string>
     <string name="you_can_change_latter">You can change latter</string>
-    <string name="continue_text">Continue</string>
     <string name="information">Information</string>
     <string name="choose_your_language">choose your language</string>
     <string name="change_your_language">Change your language</string>
@@ -210,7 +207,6 @@
     <string name="dabur">DABUR</string>
     <string name="itc">ITC</string>
     <string name="go_to_current_location">Go to current location</string>
-    <string name="welcome_to">Welcome to</string>
     <string name="explore_all_products">Explore all products</string>
     <string name="inclusive_of_all_taxes">(Inclusive of all taxes)</string>
     <string name="similar_products">Similar products</string>
@@ -328,8 +324,6 @@
 
 
     <string name="welcome_text">Welcome to</string>
-    <string name="delivery_estimate">Estimated delivery within 45 minutes</string>
-    <string name="phone_number_hint">Phone Number</string>
 
     <!-- OTP Verification Strings -->
     <string name="resend_countdown">Resend OTP in %d seconds</string>
@@ -423,25 +417,41 @@
 
     <string name="cart_is_enity">Your cart is empty</string>
     <string name="care">Care</string>
-
-
+    <string name="tap_to_go_on_cart">Tap to go on Cart</string>
 
     <!-- Fun Facts for Loading -->
     <string-array name="fun_facts">
-        <item>Did you know? We deliver in under 10 minutes!</item>
-        <item>Freshness guaranteed with every order!</item>
-        <item>We’re packing your favorites with care!</item>
-        <item>Did you know? Honey can be a natural sweetener for your tea!</item>
-        <item>Tip: Add some dry fruits for a healthy snack!</item>
+        <item>⚡ Did you know? We deliver in just 10 mins!</item>
+        <item>🍅 Fresh items, packed with care!</item>
+        <item>📦 Your order is getting ready right now!</item>
+        <item>🍯 Fun fact: Honey is a tasty natural sweetener!</item>
+        <item>🥜 Dry fruits make a great quick snack!</item>
     </string-array>
 
     <!-- Loading Tips -->
     <string-array name="loading_tips">
-        <item>Loading Tip: Add milk to your cart for a healthy breakfast!</item>
-        <item>Loading Tip: Stock up on grains for quick meals!</item>
-        <item>Loading Tip: Try our fresh fruits for a healthy snack!</item>
-        <item>Loading Tip: Don’t forget to add some spices for flavor!</item>
-        <item>Loading Tip: Check out our deals on dairy products!</item>
+        <item>🥛 Tip: Add milk for a healthy start!</item>
+        <item>🍚 Tip: Keep grains ready for easy meals!</item>
+        <item>🍎 Tip: Fresh fruits = healthy munching!</item>
+        <item>🌶️ Tip: Don’t forget spices for that desi flavor!</item>
+        <item>🧀 Tip: Check out hot deals on dairy!</item>
     </string-array>
 
+
+
+    <string name="app_logo">App Logo</string>
+    <string name="welcome_to">Welcome to</string>
+    <string name="estimated_delivery">Estimated delivery within 45 minutes</string>
+    <string name="phone_number_hint">Phone Number</string>
+    <string name="phone_number_input">Enter your phone number</string>
+    <string name="accept_terms_and_conditions">I accept the Terms and Conditions</string>
+    <string name="read_terms_conditions">Read Terms and Conditions</string>
+    <string name="continue_text">Continue</string>
+    <string name="continue_button">Continue to OTP verification</string>
+    <string name="phone_required_error">Phone number is required</string>
+    <string name="phone_invalid_error">Enter a valid 10-digit phone number</string>
+    <string name="phone_digits_only_error">Phone number must contain only digits</string>
+    <string name="accept_terms_error">Please accept the terms and conditions</string>
+    <string name="navigation_error">Unable to navigate to OTP screen</string>
+    <string name="terms_open_error">Unable to open terms and conditions</string>
 </resources>

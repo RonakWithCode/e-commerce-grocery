@@ -1,25 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
     <item
         android:id="@+id/homeBtn"
         android:title="@string/home"
         android:icon="@drawable/ic_baseline_home_24"/>
-
     <item
         android:id="@+id/GoCategory"
         android:title="@string/category"
         android:icon="@drawable/category"/>
-
-
     <item
         android:id="@+id/shoppingCartsBtn"
         android:title="@string/shopping_carts"
         android:icon="@drawable/ic_baseline_shopping_cart_24"/>
-
     <item
         android:id="@+id/moreBtn"
         android:title="@string/more"
         android:icon="@drawable/ic_baseline_more_vert_24"/>
-
 </menu>
