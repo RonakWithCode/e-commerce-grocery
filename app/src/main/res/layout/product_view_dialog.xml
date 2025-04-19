@@ -287,196 +287,276 @@
                     tools:text="Product description goes here"/>
 
 
-
+                <!---->
                 <!-- After the Description TextView and before PriceBox -->
                 <LinearLayout
                     android:id="@+id/benefitsContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/Licenses"
-                    android:layout_marginHorizontal="@dimen/_16sdp"
-                    android:layout_marginTop="@dimen/_16sdp"
-                    android:orientation="vertical">
+                    android:layout_marginHorizontal="@dimen/_20sdp"
+                    android:layout_marginTop="@dimen/_20sdp"
+                    android:orientation="vertical"
+                    android:background="?attr/colorSurface">
 
-                    <!-- 24/7 Support -->
-                    <LinearLayout
+
+                    <androidx.cardview.widget.CardView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:padding="@dimen/_8sdp">
-
-                        <ImageView
-                            android:layout_width="@dimen/_24sdp"
-                            android:layout_height="@dimen/_24sdp"
-                            android:src="@drawable/ic_support"
-                            app:tint="@color/green_primary"/>
+                        android:layout_marginBottom="@dimen/_8sdp"
+                        app:cardElevation="@dimen/_2sdp"
+                        app:cardCornerRadius="@dimen/_8sdp"
+                        app:cardBackgroundColor="?attr/colorSurface">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/_12sdp"
-                            android:orientation="vertical">
+                            android:gravity="center_vertical"
+                            android:padding="@dimen/_12sdp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:background="?attr/selectableItemBackground">
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="24/7 Customer Support"
-                                android:textColor="@color/black"
-                                android:textSize="@dimen/_12ssp"
-                                android:textStyle="bold"/>
+                            <ImageView
+                                android:layout_width="@dimen/_28sdp"
+                                android:layout_height="@dimen/_28sdp"
+                                android:src="@drawable/ic_support"
+                                app:tint="?attr/colorPrimary"
+                                android:contentDescription="24/7 Support Icon"/>
 
-                            <TextView
-                                android:layout_width="wrap_content"
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="We're here to help anytime"
-                                android:textColor="@color/gray"
-                                android:textSize="@dimen/_10ssp"/>
+                                android:layout_marginStart="@dimen/_16sdp"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="24/7 Premium Support"
+                                    android:textColor="?attr/colorOnSurface"
+                                    android:textSize="@dimen/_14ssp"
+                                    android:textStyle="bold"
+                                    android:fontFamily="sans-serif-medium"/>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Expert help, anytime you need it"
+                                    android:textColor="@color/gray_600"
+                                    android:textSize="@dimen/_12ssp"
+                                    android:fontFamily="sans-serif"/>
+                            </LinearLayout>
                         </LinearLayout>
-                    </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+
 
                     <!-- Best Price Guarantee -->
-                    <LinearLayout
+                    <androidx.cardview.widget.CardView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:padding="@dimen/_8sdp">
-
-                        <ImageView
-                            android:layout_width="@dimen/_24sdp"
-                            android:layout_height="@dimen/_24sdp"
-                            android:src="@drawable/ic_best_price"
-                            app:tint="@color/green_primary"/>
+                        android:layout_marginBottom="@dimen/_8sdp"
+                        app:cardElevation="@dimen/_2sdp"
+                        app:cardCornerRadius="@dimen/_8sdp"
+                        app:cardBackgroundColor="?attr/colorSurface">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/_12sdp"
-                            android:orientation="vertical">
+                            android:gravity="center_vertical"
+                            android:padding="@dimen/_12sdp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:background="?attr/selectableItemBackground">
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Best Price Guarantee"
-                                android:textColor="@color/black"
-                                android:textSize="@dimen/_12ssp"
-                                android:textStyle="bold"/>
+                            <ImageView
+                                android:layout_width="@dimen/_28sdp"
+                                android:layout_height="@dimen/_28sdp"
+                                android:src="@drawable/ic_best_price"
+                                app:tint="?attr/colorPrimary"
+                                android:contentDescription="Best Price Guarantee Icon"/>
 
-                            <TextView
-                                android:layout_width="wrap_content"
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Quality products at competitive prices"
-                                android:textColor="@color/gray"
-                                android:textSize="@dimen/_10ssp"/>
+                                android:layout_marginStart="@dimen/_16sdp"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Best Price Assurance"
+                                    android:textColor="?attr/colorOnSurface"
+                                    android:textSize="@dimen/_14ssp"
+                                    android:textStyle="bold"
+                                    android:fontFamily="sans-serif-medium"/>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Unbeatable value, trusted by thousands"
+                                    android:textColor="@color/gray_600"
+                                    android:textSize="@dimen/_12ssp"
+                                    android:fontFamily="sans-serif"/>
+                            </LinearLayout>
                         </LinearLayout>
-                    </LinearLayout>
+                    </androidx.cardview.widget.CardView>
 
                     <!-- Easy Returns -->
-                    <LinearLayout
+                    <androidx.cardview.widget.CardView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:padding="@dimen/_8sdp">
-
-                        <ImageView
-                            android:layout_width="@dimen/_24sdp"
-                            android:layout_height="@dimen/_24sdp"
-                            android:src="@drawable/ic_return"
-                            app:tint="@color/green_primary"/>
+                        android:layout_marginBottom="@dimen/_8sdp"
+                        app:cardElevation="@dimen/_2sdp"
+                        app:cardCornerRadius="@dimen/_8sdp"
+                        app:cardBackgroundColor="?attr/colorSurface">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/_12sdp"
-                            android:orientation="vertical">
+                            android:gravity="center_vertical"
+                            android:padding="@dimen/_12sdp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:background="?attr/selectableItemBackground">
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Easy Doorstep Returns"
-                                android:textColor="@color/black"
-                                android:textSize="@dimen/_12ssp"
-                                android:textStyle="bold"/>
+                            <ImageView
+                                android:layout_width="@dimen/_28sdp"
+                                android:layout_height="@dimen/_28sdp"
+                                android:src="@drawable/ic_return"
+                                app:tint="?attr/colorPrimary"
+                                android:contentDescription="Easy Returns Icon"/>
 
-                            <TextView
-                                android:layout_width="wrap_content"
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Hassle-free returns at your doorstep"
-                                android:textColor="@color/gray"
-                                android:textSize="@dimen/_10ssp"/>
+                                android:layout_marginStart="@dimen/_16sdp"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Hassle-Free Returns"
+                                    android:textColor="?attr/colorOnSurface"
+                                    android:textSize="@dimen/_14ssp"
+                                    android:textStyle="bold"
+                                    android:fontFamily="sans-serif-medium"/>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Returns for damaged or expired items"
+                                    android:textColor="@color/gray_600"
+                                    android:textSize="@dimen/_12ssp"
+                                    android:fontFamily="sans-serif"/>
+                            </LinearLayout>
                         </LinearLayout>
-                    </LinearLayout>
+                    </androidx.cardview.widget.CardView>
 
                     <!-- Scheduled Delivery -->
-                    <LinearLayout
+                    <androidx.cardview.widget.CardView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:padding="@dimen/_8sdp">
-
-                        <ImageView
-                            android:layout_width="@dimen/_24sdp"
-                            android:layout_height="@dimen/_24sdp"
-                            android:src="@drawable/ic_schedule_delivery"
-                            app:tint="@color/green_primary"/>
+                        android:layout_marginBottom="@dimen/_8sdp"
+                        app:cardElevation="@dimen/_2sdp"
+                        app:cardCornerRadius="@dimen/_8sdp"
+                        app:cardBackgroundColor="?attr/colorSurface">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/_12sdp"
-                            android:orientation="vertical">
+                            android:gravity="center_vertical"
+                            android:padding="@dimen/_12sdp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:background="?attr/selectableItemBackground">
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Scheduled Delivery"
-                                android:textColor="@color/black"
-                                android:textSize="@dimen/_12ssp"
-                                android:textStyle="bold"/>
+                            <ImageView
+                                android:layout_width="@dimen/_28sdp"
+                                android:layout_height="@dimen/_28sdp"
+                                android:src="@drawable/ic_schedule_delivery"
+                                app:tint="?attr/colorPrimary"
+                                android:contentDescription="Scheduled Delivery Icon"/>
 
-                            <TextView
-                                android:layout_width="wrap_content"
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Choose your preferred delivery time"
-                                android:textColor="@color/gray"
-                                android:textSize="@dimen/_10ssp"/>
+                                android:layout_marginStart="@dimen/_16sdp"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Flexible Delivery"
+                                    android:textColor="?attr/colorOnSurface"
+                                    android:textSize="@dimen/_14ssp"
+                                    android:textStyle="bold"
+                                    android:fontFamily="sans-serif-medium"/>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Delivery at your convenience"
+                                    android:textColor="@color/gray_600"
+                                    android:textSize="@dimen/_12ssp"
+                                    android:fontFamily="sans-serif"/>
+                            </LinearLayout>
                         </LinearLayout>
-                    </LinearLayout>
+                    </androidx.cardview.widget.CardView>
 
                     <!-- Cash on Delivery -->
-                    <LinearLayout
+                    <androidx.cardview.widget.CardView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:padding="@dimen/_8sdp">
-
-                        <ImageView
-                            android:layout_width="@dimen/_24sdp"
-                            android:layout_height="@dimen/_24sdp"
-                            android:src="@drawable/ic_cod"
-                            app:tint="@color/green_primary"/>
+                        android:layout_marginBottom="@dimen/_8sdp"
+                        app:cardElevation="@dimen/_2sdp"
+                        app:cardCornerRadius="@dimen/_8sdp"
+                        app:cardBackgroundColor="?attr/colorSurface">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/_12sdp"
-                            android:orientation="vertical">
+                            android:gravity="center_vertical"
+                            android:padding="@dimen/_12sdp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:background="?attr/selectableItemBackground">
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Cash on Delivery"
-                                android:textColor="@color/black"
-                                android:textSize="@dimen/_12ssp"
-                                android:textStyle="bold"/>
+                            <ImageView
+                                android:layout_width="@dimen/_28sdp"
+                                android:layout_height="@dimen/_28sdp"
+                                android:src="@drawable/ic_cod"
+                                app:tint="?attr/colorPrimary"
+                                android:contentDescription="Cash on Delivery Icon"/>
 
-                            <TextView
-                                android:layout_width="wrap_content"
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Pay when you receive your order"
-                                android:textColor="@color/gray"
-                                android:textSize="@dimen/_10ssp"/>
+                                android:layout_marginStart="@dimen/_16sdp"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Cash on Delivery"
+                                    android:textColor="?attr/colorOnSurface"
+                                    android:textSize="@dimen/_14ssp"
+                                    android:textStyle="bold"
+                                    android:fontFamily="sans-serif-medium"/>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Pay securely upon receipt"
+                                    android:textColor="@color/gray_600"
+                                    android:textSize="@dimen/_12ssp"
+                                    android:fontFamily="sans-serif"/>
+                            </LinearLayout>
                         </LinearLayout>
-                    </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+
                 </LinearLayout>
 
             </RelativeLayout>

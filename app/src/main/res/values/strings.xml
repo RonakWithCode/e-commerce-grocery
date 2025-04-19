@@ -319,7 +319,6 @@
     <string name="order_status">Order Status</string>
 
     <string name="error_icon">Error Icon</string>
-    <string name="retry">Retry</string>
     <string name="brand_icon">brand icon</string>
 
 
@@ -454,4 +453,9 @@
     <string name="accept_terms_error">Please accept the terms and conditions</string>
     <string name="navigation_error">Unable to navigate to OTP screen</string>
     <string name="terms_open_error">Unable to open terms and conditions</string>
+
+
+
+    <string name="error_loading_cart">Error loading cart</string>
+    <string name="retry">Retry</string>
 </resources>

@@ -46,6 +46,7 @@
     <style name="AppBottomSheetDialogTheme" parent="Theme.MaterialComponents.Light">
         <item name="bottomSheetStyle">@style/AppModalStyle</item>
         <!-- Disable Force Dark Mode -->
+
         <item name="android:forceDarkAllowed">false</item>
     </style>
 

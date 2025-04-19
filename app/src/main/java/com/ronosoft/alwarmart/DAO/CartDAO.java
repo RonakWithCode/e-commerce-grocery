@@ -48,6 +48,7 @@ public interface CartDAO {
 
 
 
+
     @Query("SELECT * FROM cart")
     LiveData<List<ShoppingCartFirebaseModelDAO>> getAllCartItems();
 }

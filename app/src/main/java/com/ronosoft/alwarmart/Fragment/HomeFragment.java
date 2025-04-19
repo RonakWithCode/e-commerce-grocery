@@ -38,7 +38,6 @@ import androidx.viewbinding.ViewBinding;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.android.gms.auth.api.Auth;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -72,7 +71,6 @@ import org.imaginativeworld.whynotimagecarousel.model.CarouselItem;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
@@ -121,6 +119,8 @@ public class HomeFragment extends Fragment {
     private ExecutorService executorService;
     private FirebaseAuth auth = FirebaseAuth.getInstance();
 
+    private UserinfoModels info;
+
     public HomeFragment() {}
 
     @SuppressLint("SetTextI18n")
@@ -129,6 +129,7 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
 
         // Initialize services
+        info = new UserinfoModels();
         databaseService = new DatabaseService();
         homeProductBottomSheetDialog = new Dialog(requireContext());
         handler = new Handler(Looper.getMainLooper());
@@ -220,26 +221,24 @@ public class HomeFragment extends Fragment {
         // Address selection listener
         binding.addressContainer.setOnClickListener(v -> {
             if (currentUser == null) return;
-            ArrayList<AddressModel> addresses = fetchUserAddresses();
-            if (addresses.isEmpty()) {
+
+            ArrayList<AddressModel> addresses = info.getAddress();
+            if (addresses != null && !addresses.isEmpty()) {
+                showAddressBottomSheet(addresses);
+            } else {
                 navigateToFragment("UserAccountFragment");
-                return;
+                Toast.makeText(requireContext(), "Please add an address", Toast.LENGTH_SHORT).show();
             }
-            showAddressBottomSheet(addresses);
         });
 
         // Profile icon click listener
-        binding.profileIcon.setOnClickListener(v ->
-
-                {
-                    if (currentUser !=null) {
-                        navigateToFragment("UserAccountFragment");
-                    }
-                    else {
-                        startActivity(new Intent(requireContext(), AuthMangerActivity.class));
-                    }
-                }
-        );
+        binding.profileIcon.setOnClickListener(v -> {
+            if (currentUser != null) {
+                navigateToFragment("UserAccountFragment");
+            } else {
+                startActivity(new Intent(requireContext(), AuthMangerActivity.class));
+            }
+        });
     }
 
     private void loadUserInfoAsync() {
@@ -249,7 +248,8 @@ public class HomeFragment extends Fragment {
                     @Override
                     public void onSuccess(UserinfoModels user) {
                         if (isAdded() && user != null) {
-                            // Cache user info if needed
+                            info = user; // Update the info object with fetched data
+                            handler.post(() -> loadDefaultAddress()); // Refresh address after user info is loaded
                         }
                     }
 
@@ -270,7 +270,7 @@ public class HomeFragment extends Fragment {
         if (defaultAddress != null) {
             int deliveryTime = addressDeliveryService.calculateDeliveryTime(defaultAddress);
             binding.txtDeliveryTime.setText(String.format("Alwar Mart in %d mins", deliveryTime));
-            String addrText = String.format("HOME - %s, %s", defaultAddress.getAddress());
+            String addrText = String.format("HOME - %s, %s", defaultAddress.getFlatHouse(), defaultAddress.getAddress());
             if (addrText.length() > 30) {
                 addrText = addrText.substring(0, 30) + "...";
             }
@@ -279,16 +279,6 @@ public class HomeFragment extends Fragment {
             binding.address.setText("HOME - Add Address");
             binding.txtDeliveryTime.setText("Alwar Mart in 10 mins");
         }
-    }
-
-    private ArrayList<AddressModel> fetchUserAddresses() {
-        ArrayList<AddressModel> addresses = new ArrayList<>();
-        AddressDeliveryService service = new AddressDeliveryService();
-        AddressModel defaultAddress = service.getDefaultAddress(requireContext());
-        if (defaultAddress != null) {
-            addresses.add(defaultAddress);
-        }
-        return addresses;
     }
 
     private void showAddressBottomSheet(ArrayList<AddressModel> addresses) {
@@ -571,9 +561,7 @@ public class HomeFragment extends Fragment {
             }
 
             @Override
-            public void onBindViewHolder(@NonNull ViewBinding viewBinding, @NonNull CarouselItem carouselItem, int i) {
-
-            }
+            public void onBindViewHolder(@NonNull ViewBinding viewBinding, @NonNull CarouselItem carouselItem, int i) {}
 
             @Override
             public void onClick(int position, @NonNull CarouselItem item) {
@@ -601,7 +589,6 @@ public class HomeFragment extends Fragment {
         });
 
         bottomCarousel.setCarouselListener(new CarouselListener() {
-
             @Nullable
             @Override
             public ViewBinding onCreateViewHolder(@NonNull LayoutInflater layoutInflater, @NonNull ViewGroup viewGroup) {
@@ -609,9 +596,7 @@ public class HomeFragment extends Fragment {
             }
 
             @Override
-            public void onBindViewHolder(@NonNull ViewBinding viewBinding, @NonNull CarouselItem carouselItem, int i) {
-
-            }
+            public void onBindViewHolder(@NonNull ViewBinding viewBinding, @NonNull CarouselItem carouselItem, int i) {}
 
             @Override
             public void onClick(int position, @NonNull CarouselItem item) {
@@ -668,7 +653,6 @@ public class HomeFragment extends Fragment {
         });
         dialogBinding.closeButton.setOnClickListener(v -> homeProductBottomSheetDialog.dismiss());
 
-
         // Set up the bottom sheet dialog
         homeProductBottomSheetDialog.setContentView(dialogBinding.getRoot());
         Objects.requireNonNull(homeProductBottomSheetDialog.getWindow()).setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -677,8 +661,6 @@ public class HomeFragment extends Fragment {
         homeProductBottomSheetDialog.getWindow().setGravity(Gravity.BOTTOM);
         homeProductBottomSheetDialog.show();
     }
-
-
 
     private void loadProduct(String category, ArrayList<HomeProductModel> productList, HomeCategoryAdapter adapter, AtomicBoolean loadingFlag) {
         if (!executorService.isShutdown()) {

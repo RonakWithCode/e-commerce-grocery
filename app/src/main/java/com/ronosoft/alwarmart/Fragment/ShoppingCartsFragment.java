@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import com.ronosoft.alwarmart.Activity.AuthMangerActivity;
 import com.ronosoft.alwarmart.Activity.OderActivity;
 import com.ronosoft.alwarmart.Adapter.ProductAdapter;
@@ -28,7 +27,6 @@ import com.ronosoft.alwarmart.Services.RecommendationSystemService;
 import com.ronosoft.alwarmart.databinding.FragmentShoppingCartsBinding;
 import com.ronosoft.alwarmart.interfaceClass.ShoppingCartsInterface;
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInterface {
 
@@ -70,16 +68,23 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
             setViewVisibility(binding.relativeNotAuth, View.GONE);
             setViewVisibility(binding.main, View.VISIBLE);
             setViewVisibility(binding.Buy, View.VISIBLE);
+            setViewVisibility(binding.errorState, View.GONE);
         } else {
             setViewVisibility(binding.relativeNotAuth, View.VISIBLE);
             setViewVisibility(binding.main, View.GONE);
             setViewVisibility(binding.loadingAnimation, View.GONE);
             setViewVisibility(binding.IsEnity, View.GONE);
             setViewVisibility(binding.Buy, View.GONE);
+            setViewVisibility(binding.errorState, View.GONE);
             binding.siginUp.setOnClickListener(v -> navigateToAuth());
         }
 
         binding.Buy.setOnClickListener(v -> proceedToCheckout());
+        binding.retryButton.setOnClickListener(v -> {
+            setViewVisibility(binding.errorState, View.GONE);
+            setViewVisibility(binding.loadingAnimation, View.VISIBLE);
+            fetchCartItems();
+        });
         setViewVisibility(binding.loadingAnimation, View.VISIBLE);
     }
 
@@ -90,7 +95,7 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false);
         binding.ProductCart.setLayoutManager(layoutManager);
         binding.ProductCart.setAdapter(cartsAdapter);
-        binding.ProductCart.setHasFixedSize(true); // Optimize RecyclerView performance
+        binding.ProductCart.setHasFixedSize(true);
 
         fetchCartItems();
     }
@@ -117,6 +122,7 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
         if (!isAdded()) return;
 
         setViewVisibility(binding.loadingAnimation, View.GONE);
+        setViewVisibility(binding.errorState, View.GONE);
 
         if (newCartItems == null || newCartItems.isEmpty()) {
             showEmptyCartState();
@@ -139,6 +145,7 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
         setViewVisibility(binding.main, View.GONE);
         setViewVisibility(binding.IsEnity, View.VISIBLE);
         setViewVisibility(binding.Buy, View.GONE);
+        setViewVisibility(binding.errorState, View.GONE);
         showToast("Your cart is empty");
     }
 
@@ -149,9 +156,14 @@ public class ShoppingCartsFragment extends Fragment implements ShoppingCartsInte
 
     private void handleCartError(String errorMessage) {
         setViewVisibility(binding.loadingAnimation, View.GONE);
-        if ("Cart is empty".equals(errorMessage)) {
+        if ("Cart is empty".equals(errorMessage) || "No available products found in cart".equals(errorMessage)) {
             showEmptyCartState();
         } else {
+            setViewVisibility(binding.errorState, View.VISIBLE);
+            binding.errorMessage.setText("Error loading cart: " + errorMessage);
+            setViewVisibility(binding.main, View.GONE);
+            setViewVisibility(binding.IsEnity, View.GONE);
+            setViewVisibility(binding.Buy, View.GONE);
             showToast("Error loading cart: " + errorMessage);
         }
         Log.e(TAG, "Cart error: " + errorMessage);

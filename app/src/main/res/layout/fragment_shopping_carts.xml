@@ -110,6 +110,41 @@
             android:textAlignment="center"/>
     </LinearLayout>
 
+    <!-- Error State -->
+    <LinearLayout
+        android:id="@+id/errorState"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="32dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:src="@drawable/error_icon"
+            android:contentDescription="@string/network_error"/>
+
+        <TextView
+            android:id="@+id/errorMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/error_loading_cart"
+            android:textAppearance="?attr/textAppearanceHeadline6"
+            android:textAlignment="center"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/retryButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/retry"
+            android:textAllCaps="false"
+            app:cornerRadius="24dp"/>
+    </LinearLayout>
+
     <!-- Not Authenticated State -->
     <LinearLayout
         android:id="@+id/relative_not_auth"

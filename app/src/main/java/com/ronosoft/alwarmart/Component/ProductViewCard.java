@@ -69,6 +69,7 @@ public class ProductViewCard {
         put("Kg", "Kg");
         put("Grams", "g");
         put("Gram", "g");
+        put("ML", "Ml");
         put("HalfKg", "0.5 Kg");
         put("QuarterKg", "0.25 Kg");
         put("Litre", "L");
@@ -296,6 +297,9 @@ public class ProductViewCard {
                         .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
                         .centerCrop()
                         .into(binding.FoodTypeIcon);
+
+
+
                 break;
             case "FoodNonVeg":
                 diet = "NonVeg";

@@ -35,6 +35,7 @@ import com.ronosoft.alwarmart.Model.UserinfoModels;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class DatabaseService {
     private final FirebaseFirestore database = FirebaseFirestore.getInstance();
@@ -159,9 +160,9 @@ public class DatabaseService {
 
 
     /*
-    * this is function is only called in the homeFragment
-    * get product from firebase on the basis of category
-    */
+     * this is function is only called in the homeFragment
+     * get product from firebase on the basis of category
+     */
     public void getAllProductsByCategoryOnlyForHomeFragment(String category, GetAllProductsCallback callback) {
         database.collection("Product")
                 .whereEqualTo("category", category)
@@ -319,50 +320,95 @@ public class DatabaseService {
     /**
      * Retrieves the user's cart using Firebase Realtime Database.
      */
+
+
     public void getUserCartById(String id, GetUserCartByIdCallback callback) {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        firebaseDatabase.getReference().child("Cart").child(id).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    ArrayList<ShoppingCartFirebaseModel> list = new ArrayList<>();
-                    ArrayList<String> productIds = new ArrayList<>();
-                    for (DataSnapshot snapshot1 : snapshot.getChildren()) {
-                        ShoppingCartFirebaseModel productModel = snapshot1.getValue(ShoppingCartFirebaseModel.class);
-                        if (productModel != null) {
-                            list.add(productModel);
-                            productIds.add(productModel.getProductId());
+        firebaseDatabase.getReference().child("Cart").child(id)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            ArrayList<ShoppingCartFirebaseModel> list = new ArrayList<>();
+                            ArrayList<String> productIds = new ArrayList<>();
+                            for (DataSnapshot snapshot1 : snapshot.getChildren()) {
+                                ShoppingCartFirebaseModel productModel = snapshot1.getValue(ShoppingCartFirebaseModel.class);
+                                if (productModel != null) {
+                                    list.add(productModel);
+                                    productIds.add(productModel.getProductId());
+                                }
+                            }
+                            if (productIds.isEmpty()) {
+                                callback.onError("Cart is empty");
+                                return;
+                            }
+                            getProductsByModelIdInBatches(productIds, list, callback);
+                        } else {
+                            callback.onError("Cart is empty");
                         }
                     }
-                    getProductsByModelId(productIds, new GetAllShoppingCartsProductModelCallback() {
-                        @Override
-                        public void onSuccess(ArrayList<ShoppingCartsProductModel> products) {
-                            ArrayList<ShoppingCartsProductModel> finalProduct = new ArrayList<>();
-                            for (ShoppingCartsProductModel product : products) {
-                                for (ShoppingCartFirebaseModel cartModel : list) {
-                                    if (product.getProductId().equals(cartModel.getProductId())) {
-                                        product.setSelectableQuantity(cartModel.getProductSelectQuantity());
-                                        finalProduct.add(product);
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("DatabaseService", "Firebase Database error: " + error.getMessage());
+                        callback.onError("Failed to load cart: " + error.getMessage());
+                    }
+                });
+    }
+
+    private void getProductsByModelIdInBatches(ArrayList<String> modelIds, ArrayList<ShoppingCartFirebaseModel> cartModels,
+                                               GetUserCartByIdCallback callback) {
+        ArrayList<ShoppingCartsProductModel> finalProducts = new ArrayList<>();
+        List<List<String>> batches = partitionList(modelIds, 30); // Firestore whereIn limit is 30
+        AtomicInteger completedBatches = new AtomicInteger(0);
+        int totalBatches = batches.size();
+
+        for (List<String> batch : batches) {
+            database.collection("Product")
+                    .whereIn("productId", batch)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            QuerySnapshot querySnapshot = task.getResult();
+                            if (querySnapshot != null) {
+                                for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                                    ShoppingCartsProductModel product = document.toObject(ShoppingCartsProductModel.class);
+                                    if (product != null && product.isAvailable()) {
+                                        for (ShoppingCartFirebaseModel cartModel : cartModels) {
+                                            if (product.getProductId().equals(cartModel.getProductId())) {
+                                                product.setSelectableQuantity(cartModel.getProductSelectQuantity());
+                                                finalProducts.add(product);
+                                                break;
+                                            }
+                                        }
                                     }
                                 }
                             }
-                            callback.onSuccess(finalProduct);
-                        }
-                        @Override
-                        public void onError(String errorMessage) {
-                            callback.onError(errorMessage);
+                            if (completedBatches.incrementAndGet() == totalBatches) {
+                                if (finalProducts.isEmpty()) {
+                                    callback.onError("No available products found in cart");
+                                } else {
+                                    callback.onSuccess(finalProducts);
+                                }
+                            }
+                        } else {
+                            Log.e("DatabaseService", "Firestore error: " + Objects.requireNonNull(task.getException()).getMessage());
+                            callback.onError("Failed to load products: " + task.getException().getMessage());
+                            completedBatches.incrementAndGet();
                         }
                     });
-                } else {
-                    callback.onError("Cart is empty");
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                callback.onError(error.toString());
-            }
-        });
+        }
     }
+
+    // Utility method to partition a list into smaller sublists
+    private <T> List<List<T>> partitionList(List<T> list, int size) {
+        List<List<T>> partitions = new ArrayList<>();
+        for (int i = 0; i < list.size(); i += size) {
+            partitions.add(new ArrayList<>(list.subList(i, Math.min(i + size, list.size()))));
+        }
+        return partitions;
+    }
+
 
     public void getUserCartByIdShoppingCarts(String id, GetUserCartByIdShoppingCartsProductCallback callback) {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -443,28 +489,6 @@ public class DatabaseService {
         });
     }
 
-    public void getProductsByModelId(ArrayList<String> modelIds, GetAllShoppingCartsProductModelCallback callback) {
-        database.collection("Product")
-                .whereIn("productId", modelIds)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        ArrayList<ShoppingCartsProductModel> products = new ArrayList<>();
-                        QuerySnapshot querySnapshot = task.getResult();
-                        if (querySnapshot != null) {
-                            for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-                                ShoppingCartsProductModel product = document.toObject(ShoppingCartsProductModel.class);
-                                if (product != null && product.isAvailable()) {
-                                    products.add(product);
-                                }
-                            }
-                        }
-                        callback.onSuccess(products);
-                    } else {
-                        callback.onError(Objects.requireNonNull(task.getException()).toString());
-                    }
-                });
-    }
 
     public void getProductsByModelIdFirebase(ArrayList<String> modelIds, GetAllShoppingCartsProductModelFirebaseCallback callback) {
         database.collection("Product")

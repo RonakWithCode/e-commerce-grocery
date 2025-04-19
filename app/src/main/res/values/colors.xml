@@ -145,4 +145,5 @@
 
     <color name="orderYellowStart">#FFE074</color>
     <color name="orderYellowEnd">#FFE074</color>
+    <color name="gray_600">#B0B0B0</color>
 </resources>
